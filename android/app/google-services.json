@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "905764618540",
+    "firebase_url": "https://tribes-fe811.firebaseio.com",
+    "project_id": "tribes-fe811",
+    "storage_bucket": "tribes-fe811.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905764618540:android:814a0cb6e66a11707aec89",
+        "android_client_info": {
+          "package_name": "dev.danielholmberg.tribes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "905764618540-6fn595438rn0a36m5umkuvvnlu12m0kg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxuhgjHQGhEAsHlMT7gpoBLSJT9j0mpYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "905764618540-6fn595438rn0a36m5umkuvvnlu12m0kg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
