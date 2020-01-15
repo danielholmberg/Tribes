@@ -11,26 +11,33 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class Posts extends StatelessWidget {
-
+  
   final String tribeID;
-  Posts({ this.tribeID });
+  Posts({this.tribeID});
 
   @override
   Widget build(BuildContext context) {
-    
-    return SafeArea(
+    print('Building Posts()...');
+    print('Tribe id: $tribeID');
+
+    return Container(
       child: Stack(
         children: <Widget>[
           FirestoreAnimatedList(
+            padding: EdgeInsets.only(bottom: 80.0),
             query: DatabaseService().posts(tribeID),
             itemBuilder: (
               BuildContext context,
               DocumentSnapshot snapshot,
               Animation<double> animation,
               int index,
-            ) => FadeTransition(
+            ) =>
+                FadeTransition(
               opacity: animation,
               child: PostTile(post: Post.fromSnapshot(snapshot)),
+            ),
+            emptyChild: Center(
+              child: Text('No post created yet!'),
             ),
           ),
         ],

@@ -6,10 +6,11 @@ class Post {
   final String userID;
   final String title;
   final String content;
-  final String created;
+  final String tribeID;
+  final int created;
   final List<String> attachments = new List<String>();
 
-  Post({ this.id, this.userID, this.title, this.content, this.created });
+  Post({ this.id, this.userID, this.title, this.content, this.tribeID, this.created });
 
   factory Post.fromSnapshot(DocumentSnapshot doc) {
     return Post(
@@ -17,7 +18,8 @@ class Post {
         userID: doc.data['userID'] ?? '',
         title: doc.data['title'] ?? '',
         content: doc.data['content'] ?? '',
-        created: doc.data['created'] ?? '',
+        tribeID: doc.data['tribeID'] ?? '',
+        created: doc.data['created'] ?? 0,
       );
   }
 

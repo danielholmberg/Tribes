@@ -9,6 +9,7 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class TribeTile extends StatelessWidget {
+
   final Tribe tribe;
   final bool active;
   TribeTile({this.tribe, this.active});
@@ -25,7 +26,7 @@ class TribeTile extends StatelessWidget {
       print('Tapped tribe: ${tribe.name}');
       Navigator.push(context, MaterialPageRoute(
         builder: (_) {
-          return TribeRoom();
+          return TribeRoom(tribe: tribe);
         },
       ));
     }
@@ -57,6 +58,7 @@ class TribeTile extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'TribesRounded',
                   ),
                 ),
                 Text(
@@ -65,6 +67,7 @@ class TribeTile extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'TribesRounded',
                   ),
                 ),
               ],

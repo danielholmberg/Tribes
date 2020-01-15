@@ -8,6 +8,10 @@ import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 
 class NewPost extends StatefulWidget {  
+
+  String tribeID;
+  NewPost({this.tribeID});
+
   @override
   _NewPostState createState() => _NewPostState();
 }
@@ -95,7 +99,7 @@ class _NewPostState extends State<NewPost> {
                 ),
                 onPressed: () async {
                   if(_formKey.currentState.validate()) {
-                    await DatabaseService().addNewPost(user.uid, title, content);
+                    await DatabaseService().addNewPost(user.uid, title, content, widget.tribeID);
                     Navigator.pop(context);
                   }
                 },

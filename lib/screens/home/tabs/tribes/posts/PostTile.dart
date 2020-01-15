@@ -36,7 +36,7 @@ class PostTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(post.title, style: DynamicTheme.of(context).data.textTheme.subhead),
+                      Text(post.title, style: DynamicTheme.of(context).data.textTheme.title),
                       Text(post.content, style: DynamicTheme.of(context).data.textTheme.body1)
                     ],
                   ),
@@ -53,7 +53,7 @@ class PostTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(post.title, style: DynamicTheme.of(context).data.textTheme.subhead),
+                Text(post.title, style: DynamicTheme.of(context).data.textTheme.title),
                 Text(post.content, style: DynamicTheme.of(context).data.textTheme.body1)
               ],
             ),
