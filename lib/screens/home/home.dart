@@ -1,9 +1,13 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tribes/models/Post.dart';
-import 'package:tribes/screens/home/widgets/NewPost.dart';
-import 'package:tribes/screens/home/widgets/Posts.dart';
-import 'package:tribes/services/auth.dart';
+import 'package:tribes/models/User.dart';
+import 'package:tribes/screens/home/tabs/chats/Chats.dart';
+import 'package:tribes/screens/home/tabs/profile/Profile.dart';
+import 'package:tribes/screens/home/tabs/tribes/Tribes.dart';
+import 'package:tribes/screens/home/tabs/map/Map.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
@@ -12,43 +16,68 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
 
-  final AuthService _auth = AuthService();
+  int _currentIndex = 0;
+  final List<Widget> _tabList = [Tribes(), Map(), Chats(), Profile()];
+  TabController _tabController;
+
+  @override
+  void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    _tabController = TabController(length: _tabList.length, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([]);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _onTabTap(int currentIndex) {
+    print('$currentIndex');
+    _tabController.animateTo(currentIndex);
+    setState(() {
+      _currentIndex = currentIndex;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<Post>>.value(
-      value: DatabaseService().posts,
+    final User user = Provider.of<User>(context);
+
+    return StreamProvider<UserData>.value(
+      value: DatabaseService().currentUser(user.uid),
       child: Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).accentColor,
-          elevation: Constants.appBarElevation,
-          title: Text('Home'),
-          actions: <Widget>[
-            FlatButton.icon(
-              icon: Icon(Icons.person),
-              label: Text('Sign out'),
-              onPressed: () async {
-                await _auth.signOut();
-              },
-            )
-          ],
-          iconTheme: Theme.of(context).iconTheme,
-          textTheme: Theme.of(context).textTheme,
+        backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+        body: TabBarView(
+          physics: NeverScrollableScrollPhysics(), // Disable horizontal swipe
+          controller: _tabController,
+          children: _tabList,
         ),
-        body: Posts(),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.edit),
-          backgroundColor: Theme.of(context).accentColor,
-          elevation: Constants.buttonElevation,
-          onPressed: () {
-            Navigator.push(
-              context, 
-              MaterialPageRoute(builder: (context) => NewPost())
-            );
-          },
+        extendBody: true, // In order to show screen behind navigation bar
+        bottomNavigationBar: Container(
+          child: FloatingNavbar(
+            currentIndex: _currentIndex,
+            backgroundColor: DynamicTheme.of(context).data.primaryColor,
+            selectedItemColor: DynamicTheme.of(context).data.primaryColor,
+            fontSize: 12.0,
+            items: [
+              FloatingNavbarItem(icon: Icons.home, title: 'Tribes'),
+              FloatingNavbarItem(icon: Icons.map, title: 'Map'),
+              FloatingNavbarItem(icon: Icons.chat, title: 'Chat'),
+              FloatingNavbarItem(icon: Icons.person, title: 'Profile'),
+            ],
+            onTap: (index) {
+              _onTabTap(index);
+              return index;
+            },
+          ),
         ),
       ),
     );

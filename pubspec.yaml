@@ -24,6 +24,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
 
+  # Font Awesome Icons
+  font_awesome_flutter: ^8.5.0
+
   # Provider
   provider: ^3.1.0
 
@@ -33,6 +36,22 @@ dependencies:
   # Firebase
   firebase_auth: ^0.14.0+5
   cloud_firestore: ^0.12.9+4
+  firestore_ui: ^1.7.2
+
+  # Toast
+  fluttertoast: ^3.1.3
+
+  # Dynamic Theme
+  dynamic_theme: ^1.0.0
+  
+  # Bottom Navigation Bar
+  floating_bottom_navigation_bar: ^1.0.2
+
+  # Google Maps
+  google_maps_flutter: ^0.5.21+15
+
+  # Location
+  geolocator: ^5.2.0
 
 dev_dependencies:
   flutter_test:

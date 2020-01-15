@@ -1,54 +1,79 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tribes/models/Post.dart';
+import 'package:tribes/models/Tribe.dart';
+import 'package:tribes/models/User.dart';
 
 class DatabaseService {
 
-  final String uid;
-  DatabaseService({ this.uid });
+  // Users Ref
+  final CollectionReference usersRoot = Firestore.instance.collection('users');
 
-  // Users Collection Ref
-  final CollectionReference usersCollection = Firestore.instance.collection('users');
+  // Posts Ref
+  final CollectionReference postsRoot = Firestore.instance.collection('posts');
+  
+  // Tribes Ref
+  final CollectionReference tribesRoot = Firestore.instance.collection('tribes');
 
-  // Posts Collection Ref
-  final CollectionReference postsCollection = Firestore.instance.collection('posts');
+  Future createUserDocument(String uid) async {
+    return usersRoot.document(uid).setData({ 
+      'created': new DateTime.now().millisecondsSinceEpoch 
+    });
+  } 
 
-
-  Future updateUserData(String name, String username, String info) async {
-    return await usersCollection.document(this.uid).setData({
+  Future updateUserData(String uid, String name, String username, String info, double lat, double lng) async {
+    var data = {
       'name': name,
       'username': username,
       'info': info,
-    });
+      'lat': lat,
+      'lng': lng,
+    };
+    print('New profile data: $data');
+
+    return await usersRoot.document(uid).updateData(data);
   }
 
-  // Post List from snapshot
-  List<Post> _postListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      return Post(
-        id: doc.documentID,
-        userID: doc.data['userID'] ?? '',
-        tribeID: doc.data['tribeID'] ?? '',
-        title: doc.data['title'] ?? '',
-        content: doc.data['content'] ?? '',
-      );
-    }).toList();
+  Future updateUserLocation(String uid, double lat, double lng) async {
+    print('Updating current user location in Firebase: [$lat, $lng]');
+      return await usersRoot.document(uid).updateData({
+        'lat': lat,
+        'lng': lng,
+      });
   }
 
-  // Get Posts Stream
-  Stream<List<Post>> get posts {
-    return postsCollection.snapshots().map(_postListFromSnapshot);
+  /*Stream<Marker> tribeMemberLocation(String tribeID) {
+    return tribesRoot.document(tribeID).collection('members').snapshots();
+  }*/
+
+  // Get joined Tribes Stream
+  Stream<List<Tribe>> joinedTribes(String userID) {
+    return tribesRoot.where('members', arrayContains: userID).snapshots()
+      .map((list) => list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList());
+  }
+
+  // Get Posts Stream related to a specific Tribe
+  Stream<QuerySnapshot> posts(String tribeID) {
+    // Return QuerySnapshot to make it work with FirebaseAnimatedList.
+    return postsRoot.where('tribeID', isEqualTo: tribeID).snapshots();
   }
 
   // Add a new Post
-  Future addNewPost(String tribeID, String title, String content) async {
-    DocumentReference postRef = postsCollection.document();
-    return await postsCollection.document(postRef.documentID).setData({
+  Future addNewPost(String userID, String title, String content) async {
+    DocumentReference postRef = postsRoot.document();
+
+    var data = {
       'id': postRef.documentID,
-      'userID': uid,
-      'tribeID': tribeID,
+      'userID': userID,
       'title': title,
       'content': content,
-    });
+      'created': new DateTime.now().millisecondsSinceEpoch,
+    };
+    
+    print('Publishing post: $data');
+    return await postRef.setData(data);
+  }
+
+  Stream<UserData> currentUser(String uid) {
+    return usersRoot.document(uid).snapshots().map((snapshot) => UserData.fromSnapshot(snapshot));
   }
 
 }

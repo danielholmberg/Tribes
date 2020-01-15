@@ -1,29 +1,84 @@
 library Decorations;
 
 import 'package:flutter/material.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
-const emailInputDecoration = InputDecoration(
+const signInInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
-  suffixIcon: Icon(Icons.email),
-  hintStyle: TextStyle(color: Colors.grey),
+  hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
   enabledBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Colors.white, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.pink, width: 2.0),
+    borderSide: BorderSide(color: Constants.accentColor, width: 2.0),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Constants.errorColor, width: 2.0),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Constants.errorColor, width: 2.0),
+  ),
+);
+
+const registerInput = InputDecoration(
+  fillColor: Colors.white,
+  filled: true,
+  hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
+  enabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.white, width: 2.0),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Constants.accentColor, width: 2.0),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Constants.errorColor, width: 2.0),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Constants.errorColor, width: 2.0),
+  ),
+);
+
+const postTitleInput = InputDecoration(
+  fillColor: Colors.white,
+  filled: true,
+  labelText: 'Title',
+  labelStyle: TextStyle(color: Constants.postInputFocusColor),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.postBackgroundColor, width: 2.0),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.postInputFocusColor, width: 2.0),
   )
 );
 
-const passwordInputDecoration = InputDecoration(
+const postContentInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
-  suffixIcon: Icon(Icons.lock),
-  hintStyle: TextStyle(color: Colors.grey),
+  labelText: 'Content',
+  labelStyle: TextStyle(color: Constants.postInputFocusColor),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.white, width: 2.0),
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.postBackgroundColor, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.pink, width: 2.0),
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.postInputFocusColor, width: 2.0),
+  )
+);
+
+const profileSettingsInput = InputDecoration(
+  fillColor: Colors.white,
+  filled: true,
+  labelStyle: TextStyle(color: Constants.postInputFocusColor),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.postBackgroundColor, width: 2.0),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.postInputFocusColor, width: 2.0),
   )
 );

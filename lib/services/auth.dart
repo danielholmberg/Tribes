@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 
@@ -17,23 +18,23 @@ class AuthService {
       .map((FirebaseUser user) => _userFromFirebaseUser(user));
   }
 
-  // Sign in Anonymously
-  Future signInAnon() async {
-    try {
-      AuthResult result =  await _auth.signInAnonymously();
-      FirebaseUser user = result.user;
-      return _userFromFirebaseUser(user); 
-    } catch(e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
   // Sign-in with Email & Password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
+
+      Position location = await Geolocator().getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best, 
+        locationPermissionLevel: GeolocationPermission.locationAlways
+      );
+
+      await DatabaseService().updateUserLocation(
+        user.uid,
+        location != null ? location.latitude : 58.4167, 
+        location != null ? location.longitude : 15.6167,
+      );
+      
       return _userFromFirebaseUser(user); 
     } catch(e) {
       print(e);
@@ -48,11 +49,7 @@ class AuthService {
       FirebaseUser user = result.user;
 
       // Create User Document in Database
-      await DatabaseService(uid: user.uid).updateUserData(
-        'Daniel Holmberg', 
-        'Cuadore', 
-        'Trevlig grabb från Täby Kyrkby!'
-      );
+      await DatabaseService().createUserDocument(user.uid);
 
       return _userFromFirebaseUser(user); 
     } catch(e) {
@@ -64,6 +61,7 @@ class AuthService {
   // Sign out
   Future signOut() async {
     try {
+      print('Signing out...');
       return await _auth.signOut();
     } catch(e) {
       print(e.toString());
