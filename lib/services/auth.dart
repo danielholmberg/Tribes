@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 class AuthService {
 
@@ -30,9 +31,8 @@ class AuthService {
       );
 
       await DatabaseService().updateUserLocation(
-        user.uid,
-        location != null ? location.latitude : 58.4167, 
-        location != null ? location.longitude : 15.6167,
+        location != null ? location.latitude : Constants.initialLat, 
+        location != null ? location.longitude : Constants.initialLng,
       );
       
       return _userFromFirebaseUser(user); 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 
@@ -33,23 +34,34 @@ class DatabaseService {
     return await usersRoot.document(uid).updateData(data);
   }
 
-  Future updateUserLocation(String uid, double lat, double lng) async {
-    print('Updating current user location in Firebase: [$lat, $lng]');
-    return await usersRoot.document(uid).updateData({
-      'lat': lat,
-      'lng': lng,
-    });
+  Future updateUserLocation(double lat, double lng) async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+
+    if (currentUser != null) {
+      print('Updating current user location in Firebase: [$lat, $lng]');
+      return await usersRoot.document(currentUser.uid).updateData({'lat': lat,'lng': lng});
+    } else {
+      return null;
+    }
   }
 
-  /*Stream<Marker> tribeMemberLocation(String tribeID) {
-    return tribesRoot.document(tribeID).collection('members').snapshots();
-  }*/
+  Stream<List<UserData>> membersData(String tribeID) {
+    return tribesRoot.document(tribeID).snapshots()
+      .map((tribeData) => tribeData.data['members']
+      .map((userID) => usersRoot.document(userID).snapshots()
+      .map((userData) => UserData.fromSnapshot(userData))
+      .toList()));
+  }
+
+  Stream<List<UserData>> get users {
+    return usersRoot.snapshots().map(
+      (list) => list.documents.map((userData) => UserData.fromSnapshot(userData)).toList());
+  }
 
   // Get joined Tribes Stream
   Stream<List<Tribe>> joinedTribes(String userID) {
     return tribesRoot.where('members', arrayContains: userID).snapshots().map(
-        (list) =>
-            list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList());
+        (list) => list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList());
   }
 
   // Get Posts Stream related to a specific Tribe
@@ -59,7 +71,8 @@ class DatabaseService {
   }
 
   // Add a new Post
-  Future addNewPost(String userID, String title, String content, String tribeID) async {
+  Future addNewPost(
+      String userID, String title, String content, String tribeID) async {
     DocumentReference postRef = postsRoot.document();
 
     var data = {
@@ -81,4 +94,5 @@ class DatabaseService {
         .snapshots()
         .map((snapshot) => UserData.fromSnapshot(snapshot));
   }
+
 }

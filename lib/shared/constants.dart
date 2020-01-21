@@ -53,6 +53,8 @@ const postInputFocusColor = tribesColor;
 // - Chat
 const newMessageFormPadding = 16.0;
 const sendButtonColor = chatsColor;
+const initialLat = 59.325695;
+const initialLng = 18.071869;
 
 // [Profile]
 // - Settings

@@ -1,53 +1,62 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 class Map extends StatefulWidget {
-  
   @override
   _MapState createState() => _MapState();
 }
 
 class _MapState extends State<Map> with AutomaticKeepAliveClientMixin {
-  
-  GoogleMapController mapController;
-  LatLng _initialPosition = LatLng(58.4167, 15.6167);
-  bool loadingMap = true;
+  // Old Town @ Stockholm,Sweden
+  LatLng _initialPosition = LatLng(Constants.initialLat, Constants.initialLng);
 
-  StreamSubscription<Position> positionStream = Geolocator().getPositionStream(
-    LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10)).listen((Position position) async {
-        print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
-        if(position != null) {
-          
-          //await DatabaseService().updateUserLocation( position.latitude, position.longitude);
-        }
+  GoogleMapController mapController;
+  bool showGoogleMaps = false;
+  BitmapDescriptor markerIcon;
+
+  StreamSubscription<Position> positionStream = Geolocator()
+      .getPositionStream(
+          LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10))
+      .listen((Position position) async {
+    print(position == null
+        ? 'Unknown'
+        : position.latitude.toString() + ', ' + position.longitude.toString());
+    if (position != null) {
+      dynamic result = await DatabaseService()
+          .updateUserLocation(position.latitude, position.longitude);
+      if (result == null) print('Failed to update user location!');
     }
-  );
+  });
 
   void _onMapCreated(GoogleMapController controller) async {
-    mapController = controller;
-
-    await Future.delayed(Duration(milliseconds: 1000));
-
     setState(() {
-      loadingMap = false;
+      mapController = controller;
     });
 
-    Position currentPosition = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(
+    Position currentPosition = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(currentPosition.latitude, currentPosition.longitude),
-        zoom: 15.0)
-    ));
+        zoom: 15.0)));
+  }
+
+  @override
+  void initState() {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        showGoogleMaps = true;
+      });
+    });
+    super.initState();
   }
 
   @override
@@ -66,22 +75,53 @@ class _MapState extends State<Map> with AutomaticKeepAliveClientMixin {
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            GoogleMap(
-              padding: EdgeInsets.fromLTRB(8.0, 32.0, 8.0, 0.0),
-              onMapCreated: _onMapCreated,
-              myLocationButtonEnabled: true,
-              myLocationEnabled: true,
-              initialCameraPosition: CameraPosition(
-                target: _initialPosition,
-                zoom: 11.0,
-              ),
-            ),
-            loadingMap 
-            ? Container(
-              color: DynamicTheme.of(context).data.backgroundColor,
-              child: Center(child: CircularProgressIndicator())
-            ) 
-            : Text('Map'),
+            showGoogleMaps
+                ? StreamBuilder<List<Tribe>>(
+                    stream: DatabaseService().joinedTribes(currentUser.uid),
+                    builder: (context, snapshot) {
+                      List<Tribe> tribesList =
+                          snapshot.hasData ? snapshot.data : [];
+
+                      return StreamBuilder<List<UserData>>(
+                          stream: DatabaseService().users,
+                          builder: (context, snapshot) {
+                            List<UserData> membersList =
+                                snapshot.hasData ? snapshot.data : [];
+                            Set<Marker> markers = Set<Marker>();
+
+                            for (int i = 0; i < membersList.length; i++) {
+                              UserData user = membersList[i];
+
+                              tribesList.forEach((Tribe tribe) {
+                                if (tribe.members.contains(user.uid)) {
+                                  markers.add(Marker(
+                                    markerId: MarkerId(user.uid),
+                                    position: LatLng(user.lat, user.lng),
+                                    icon: markerIcon,
+                                    infoWindow: InfoWindow(
+                                      title: user.username,
+                                    ),
+                                  ));
+                                }
+                              });
+                            }
+
+                            return GoogleMap(
+                              padding: EdgeInsets.fromLTRB(8.0, 32.0, 8.0, 0.0),
+                              onMapCreated: _onMapCreated,
+                              myLocationButtonEnabled: true,
+                              myLocationEnabled: true,
+                              initialCameraPosition: CameraPosition(
+                                target: _initialPosition,
+                                zoom: 5.0,
+                              ),
+                              markers: markers,
+                            );
+                          });
+                    })
+                : Container(
+                    color: DynamicTheme.of(context).data.backgroundColor,
+                    child: Center(child: CircularProgressIndicator())),
           ],
         ),
       ),

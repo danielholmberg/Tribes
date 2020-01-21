@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 // User class to check Authentication status
 class User {
@@ -26,14 +27,30 @@ class UserData {
       name: doc.data['name'] ?? '',
       username: doc.data['username'] ?? '',
       info: doc.data['info'] ?? '',
-      lat: doc.data['lat'] ?? 58.4167,
-      lng: doc.data['lng'] ?? 15.6167,
+      lat: doc.data['lat'] ?? Constants.initialLat,
+      lng: doc.data['lng'] ?? Constants.initialLng,
     );
   }
 
   @override
   String toString() {
     return '[$uid, $name, $username, $info, $lat, $lng]';
+  }
+
+}
+
+class UserLocationMarker {
+
+  final double lat;
+  final double lng;
+
+  UserLocationMarker({this.lat, this.lng});
+
+  factory UserLocationMarker.fromSnapshot(DocumentSnapshot doc) {
+    return UserLocationMarker(
+      lat: doc.data['lat'],
+      lng: doc.data['lng'],
+    );
   }
 
 }
