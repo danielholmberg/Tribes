@@ -53,6 +53,9 @@ dependencies:
   # Location
   geolocator: ^5.2.0
 
+  # Colorpicker
+  flutter_colorpicker: ^0.2.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

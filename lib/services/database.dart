@@ -76,7 +76,6 @@ class DatabaseService {
     DocumentReference postRef = postsRoot.document();
 
     var data = {
-      'id': postRef.documentID,
       'userID': userID,
       'title': title,
       'content': content,
@@ -86,6 +85,29 @@ class DatabaseService {
 
     print('Publishing post: $data');
     return await postRef.setData(data);
+  }
+
+  Future createNewTribe(String name, String desc, String color, bool hasImage) async {
+    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+
+    var data = {
+      'name': name,
+      'desc': desc,
+      'members': [currentUser.uid],
+      'founder': currentUser.uid,
+      'color': color,
+      'image': hasImage,
+      'updated': new DateTime.now().millisecondsSinceEpoch,
+      'created': new DateTime.now().millisecondsSinceEpoch,
+    };
+
+    try {
+      print('Creating new Tribe: $data');
+      return await tribesRoot.document().setData(data);
+    } catch(e) {
+      print('Failed with error: ${e.toString()}');
+      return null;
+    }
   }
 
   Stream<UserData> currentUser(String uid) {

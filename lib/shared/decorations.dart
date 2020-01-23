@@ -82,3 +82,17 @@ const profileSettingsInput = InputDecoration(
     borderSide: BorderSide(color: Constants.postInputFocusColor, width: 2.0),
   )
 );
+
+const newTribesInput = InputDecoration(
+  fillColor: Constants.backgroundColor,
+  filled: true,
+  labelStyle: TextStyle(color: Constants.tribesColor),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.backgroundColor, width: 2.0),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.tribesColor, width: 2.0),
+  )
+);

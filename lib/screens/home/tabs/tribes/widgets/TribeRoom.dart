@@ -30,7 +30,7 @@ class _TribeRoomState extends State<TribeRoom> {
             return <Widget>[
               SliverAppBar(
                 elevation: 8.0,
-                backgroundColor: DynamicTheme.of(context).data.primaryColor,
+                backgroundColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
                 expandedHeight: 200.0,
                 floating: false,
                 pinned: true,

@@ -37,7 +37,7 @@ class Posts extends StatelessWidget {
               child: PostTile(post: Post.fromSnapshot(snapshot)),
             ),
             emptyChild: Center(
-              child: Text('No post created yet!'),
+              child: Text('No posts created yet!'),
             ),
           ),
         ],

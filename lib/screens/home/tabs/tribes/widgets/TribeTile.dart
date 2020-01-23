@@ -39,11 +39,11 @@ class TribeTile extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: horizontal),
         child: Container(
           decoration: BoxDecoration(
-              color: Color(tribe.color),
+              color: tribe.color,
               borderRadius: BorderRadius.circular(20.0),
               boxShadow: [
                 BoxShadow(
-                  color: Color(tribe.color),
+                  color: tribe.color,
                   blurRadius: blur,
                   offset: Offset(offset, offset),
                 ),
