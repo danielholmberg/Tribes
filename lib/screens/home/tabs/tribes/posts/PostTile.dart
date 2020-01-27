@@ -71,13 +71,17 @@ class _PostTileState extends State<PostTile> {
                                 'Are your sure you want to discard changes?'),
                             actions: <Widget>[
                               FlatButton(
-                                child: Text('No'),
+                                child: Text('No', 
+                                  style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                                ),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
                               ),
                               FlatButton(
-                                child: Text('Yes'),
+                                child: Text('Yes',
+                                  style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                                ),
                                 onPressed: () async {
                                   Navigator.of(context).pop(); // Dialog: "Are you sure...?"
                                   setState(() => isEditing = false);
@@ -93,27 +97,48 @@ class _PostTileState extends State<PostTile> {
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   actions: isEditing ? <Widget>[
-                    FlatButton.icon(
+                    IconButton(
                       color: DynamicTheme.of(context).data.backgroundColor,
                       icon: Icon(Icons.delete, 
                         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
                       ),
-                      label: Text('Delete', 
-                        style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
-                      ),
-                      onPressed: () async {
-                        await DatabaseService().deletePost(widget.post.id);
-                        Navigator.of(context).pop();
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: Constants
+                                .profileSettingsBackgroundColor,
+                            title: Text(
+                                'Are your sure you want to delete this post?'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('No', 
+                                  style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('Yes',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onPressed: () async {
+                                  await DatabaseService().deletePost(widget.post.id);
+                                  Navigator.of(context).pop(); // Dialog: "Are you sure...?"
+                                  Navigator.of(context).pop(); // PostTile
+                                },
+                              ),
+                            ],
+                          ),
+                        );
                       },
                     ),
                   ] : <Widget> [
-                    FlatButton.icon(
+                    IconButton(
                       color: DynamicTheme.of(context).data.backgroundColor,
                       icon: Icon(Icons.edit, 
                         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
-                      ),
-                      label: Text('Edit', 
-                        style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
                       ),
                       onPressed: () {
                         setState(() {
