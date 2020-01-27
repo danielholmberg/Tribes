@@ -48,10 +48,13 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                         padding: EdgeInsets.all(16.0),
                         shrinkWrap: true,
                         children: <Widget>[
-                          Text(
-                            'Profile Settings',
-                            style:
-                                DynamicTheme.of(context).data.textTheme.title,
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Profile Settings',
+                              style:
+                                  DynamicTheme.of(context).data.textTheme.title,
+                            ),
                           ),
                           Container(
                             child: Form(

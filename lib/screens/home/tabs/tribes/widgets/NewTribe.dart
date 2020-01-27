@@ -6,6 +6,7 @@ import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class NewTribe extends StatefulWidget {
   @override
@@ -13,6 +14,9 @@ class NewTribe extends StatefulWidget {
 }
 
 class _NewTribeState extends State<NewTribe> {
+  final _formKey = GlobalKey<FormState>();
+  bool loading = false;
+
   String name;
   String desc;
   Color tribeColor;
@@ -27,7 +31,7 @@ class _NewTribeState extends State<NewTribe> {
       Navigator.pop(context);
     }
 
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       appBar: AppBar(
         title: Text('New Tribe'),
         backgroundColor: tribeColor ?? Constants.primaryColor,
@@ -55,73 +59,81 @@ class _NewTribeState extends State<NewTribe> {
       ),
       body: ScrollConfiguration(
         behavior: CustomScrollBehavior(),
-        child: ListView(
-          padding: EdgeInsets.all(16.0),
-          shrinkWrap: true,
-          children: <Widget>[
-            SizedBox(height: Constants.smallSpacing),
-            TextFormField(
-              textCapitalization: TextCapitalization.words,
-              maxLength: Constants.tribeNameMaxLength,
-              decoration:
-                  Decorations.newTribesInput.copyWith(labelText: 'Name'),
-              validator: (val) => val.isEmpty ? 'Enter a name' : null,
-              onChanged: (val) {
-                setState(() => name = val);
-              },
-            ),
-            SizedBox(height: Constants.smallSpacing),
-            TextFormField(
-              textCapitalization: TextCapitalization.sentences,
-              keyboardType: TextInputType.multiline,
-              maxLength: Constants.tribeDescMaxLength,
-              maxLines: null,
-              decoration:
-                  Decorations.newTribesInput.copyWith(labelText: 'Description'),
-              validator: (val) => val.isEmpty ? 'Enter a description' : null,
-              onChanged: (val) {
-                setState(() => desc = val);
-              },
-            ),
-            SizedBox(height: Constants.smallSpacing),
-            ButtonTheme(
-              height: 50.0,
-              minWidth: MediaQuery.of(context).size.width,
-              child: RaisedButton.icon(
-                elevation: 8.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                icon: Icon(Icons.done,
-                    color: DynamicTheme.of(context).data.accentColor),
-                label: Text('Create Tribe'),
-                textColor: Colors.white,
-                onPressed: () async {
-                  dynamic success = await DatabaseService().createNewTribe(
-                    name, 
-                    desc, 
-                    tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
-                    imageURL
-                  );
-
-                  if (success) {
-                    Navigator.pop(context);
-                  } else {
-                    setState(() => error =
-                        'Unable to create new Tribe, please try again!');
-                  }
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.all(16.0),
+            shrinkWrap: true,
+            children: <Widget>[
+              SizedBox(height: Constants.smallSpacing),
+              TextFormField(
+                textCapitalization: TextCapitalization.words,
+                maxLength: Constants.tribeNameMaxLength,
+                decoration:
+                    Decorations.newTribesInput.copyWith(labelText: 'Name'),
+                validator: (val) => val.isEmpty ? 'Enter a name' : null,
+                onChanged: (val) {
+                  setState(() => name = val);
                 },
               ),
-            ),
-            SizedBox(height: Constants.smallSpacing),
-            Text(
-              error,
-              style: TextStyle(
-                  color: Constants.errorColor,
-                  fontSize: Constants.errorFontSize),
-            ),
-          ],
+              SizedBox(height: Constants.smallSpacing),
+              TextFormField(
+                textCapitalization: TextCapitalization.sentences,
+                keyboardType: TextInputType.multiline,
+                maxLength: Constants.tribeDescMaxLength,
+                maxLines: null,
+                decoration:
+                    Decorations.newTribesInput.copyWith(labelText: 'Description'),
+                validator: (val) => val.isEmpty ? 'Enter a description' : null,
+                onChanged: (val) {
+                  setState(() => desc = val);
+                },
+              ),
+              SizedBox(height: Constants.smallSpacing),
+              ButtonTheme(
+                height: 50.0,
+                minWidth: MediaQuery.of(context).size.width,
+                child: RaisedButton.icon(
+                  elevation: 8.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                  icon: Icon(Icons.done,
+                      color: DynamicTheme.of(context).data.accentColor),
+                  label: Text('Create Tribe'),
+                  textColor: Colors.white,
+                  onPressed: () async {
+                    if(_formKey.currentState.validate()) {
+                      setState(() => loading = true);
+                      dynamic success = await DatabaseService().createNewTribe(
+                        name, 
+                        desc, 
+                        tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
+                        imageURL
+                      );
+
+                      if (success) {
+                        Navigator.pop(context);
+                      } else {
+                        setState(() { 
+                          loading = false;
+                          error = 'Unable to create new Tribe, please try again!';
+                        });
+                      }
+                    }
+                  },
+                ),
+              ),
+              SizedBox(height: Constants.smallSpacing),
+              Text(
+                error,
+                style: TextStyle(
+                    color: Constants.errorColor,
+                    fontSize: Constants.errorFontSize),
+              ),
+            ],
+          ),
         ),
       ),
     );

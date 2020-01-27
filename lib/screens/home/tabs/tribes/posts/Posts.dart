@@ -32,7 +32,11 @@ class Posts extends StatelessWidget {
         ) =>
             FadeTransition(
           opacity: animation,
-          child: PostTile(post: Post.fromSnapshot(snapshot), tribeColor: tribe.color),
+          child: PostTile(
+            post: Post.fromSnapshot(snapshot), 
+            tribeColor: tribe.color, 
+            index: index
+          ),
         ),
         emptyChild: Center(
           child: Text('No posts created yet!'),

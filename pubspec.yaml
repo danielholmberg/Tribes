@@ -60,6 +60,9 @@ dependencies:
   # Auto Size Text
   auto_size_text: ^2.1.0
 
+  # Page Transitions
+  page_transition: ^1.1.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -123,28 +124,32 @@ class _TribeRoomState extends State<TribeRoom> {
                             bottom: 16.0,
                             left: 16.0,
                             right: 16.0,
-                            child: ButtonTheme(
-                              height: 50.0,
-                              minWidth: MediaQuery.of(context).size.width,
-                              child: RaisedButton.icon(
-                                elevation: 8.0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                            child: Hero(
+                              tag: 'NewPostButton',
+                              child: ButtonTheme(
+                                height: 50.0,
+                                minWidth: MediaQuery.of(context).size.width,
+                                child: RaisedButton.icon(
+                                  elevation: 8.0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  color: currentTribe.color ??
+                                      DynamicTheme.of(context).data.primaryColor,
+                                  icon: Icon(Icons.library_add,
+                                      color:
+                                          DynamicTheme.of(context).data.accentColor),
+                                  label: Text('Write a post'),
+                                  textColor: Colors.white,
+                                  onPressed: () {
+                                    Navigator.push(context, PageTransition(
+                                      type: PageTransitionType.scale, 
+                                      alignment: Alignment.bottomCenter,
+                                      duration: Duration(milliseconds: Constants.pageTransition600),
+                                      child: NewPost(tribeID: currentTribe.id))
+                                    );
+                                  },
                                 ),
-                                color: currentTribe.color ??
-                                    DynamicTheme.of(context).data.primaryColor,
-                                icon: Icon(Icons.library_add,
-                                    color:
-                                        DynamicTheme.of(context).data.accentColor),
-                                label: Text('Write a post'),
-                                textColor: Colors.white,
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              NewPost(tribeID: currentTribe.id)));
-                                },
                               ),
                             ),
                           ),

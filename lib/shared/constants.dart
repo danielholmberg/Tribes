@@ -17,6 +17,10 @@ const largePadding = 12.0;
 
 const defaultElevation = 4.0;
 
+const pageTransition300 = 300;
+const pageTransition600 = 600;
+const pageTransition800 = 800;
+
 // AppBar
 const appBarElevation = 0.0;
 const appBarColor = primaryColor;

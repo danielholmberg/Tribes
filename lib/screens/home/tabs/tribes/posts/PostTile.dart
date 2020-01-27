@@ -1,17 +1,20 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
   final Color tribeColor;
-  PostTile({this.post, this.tribeColor});
+  final int index;
+  PostTile({this.post, this.tribeColor, this.index});
 
   @override
   _PostTileState createState() => _PostTileState();
@@ -19,10 +22,17 @@ class PostTile extends StatefulWidget {
 
 class _PostTileState extends State<PostTile> {
 
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool loading = false;
+
+  String title;
+  String content;
+
   @override
   Widget build(BuildContext context) {
     _postDetails() {
-      return StreamBuilder<User>(
+      return loading ? Loading() : StreamBuilder<User>(
         stream: AuthService().user,
         builder: (context, snapshot) {
           bool isAuthor = snapshot.data.uid == widget.post.author;
@@ -156,46 +166,83 @@ class _PostTileState extends State<PostTile> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.max,
                           children: <Widget>[
-                            StreamBuilder<UserData>(
-                              stream: DatabaseService().userData(widget.post.author),
-                              builder: (context, snapshot) {
-                                return RichText(
-                                  text: TextSpan(
-                                    text: 'Posted by ',
-                                    style: TextStyle(
-                                        color: Colors.blueGrey,
-                                        fontFamily: 'TribesRounded',
-                                        fontWeight: FontWeight.bold),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                        text: snapshot.hasData ? snapshot.data.name : '',
-                                        style: TextStyle(
-                                          color: Colors.blueGrey,
-                                          fontFamily: 'TribesRounded',
-                                          fontWeight: FontWeight.normal
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Icon(Icons.account_circle, 
+                                      color: Colors.blueGrey,
+                                    ),
+                                    SizedBox(width: Constants.smallPadding),
+                                    StreamBuilder<UserData>(
+                                      stream: DatabaseService().userData(widget.post.author),
+                                      builder: (context, snapshot) {
+                                        return Text(snapshot.hasData ? snapshot.data.name : '',
+                                          style: TextStyle(
+                                            color: Colors.blueGrey,
+                                            fontFamily: 'TribesRounded',
+                                            fontWeight: FontWeight.normal
+                                          ),
+                                        );
+                                      }
+                                    )
+                                  ],
+                                ),
+                                Text('#${widget.index+1}', 
+                                  style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontSize: Constants.timestampFontSize,
+                                  )
+                                ),
+                              ],
                             ),
                             SizedBox(height: Constants.smallSpacing),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Hero(
-                                    tag: 'postTitle-${widget.post.id}',
-                                    child: Text(widget.post.title,
-                                        style: DynamicTheme.of(context).data.textTheme.title),
-                                  ),
-                                  Hero(
-                                    tag: 'postContent-${widget.post.id}',
-                                    child: Text(widget.post.content,
-                                        style: DynamicTheme.of(context).data.textTheme.body1),
-                                  )
-                                ],
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Hero(
+                                      tag: 'postTitle-${widget.post.id}',
+                                      child: TextFormField(
+                                        initialValue: widget.post.title,
+                                        readOnly: !isEditing,
+                                        style: DynamicTheme.of(context).data.textTheme.title,
+                                        cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                        decoration: InputDecoration(border: InputBorder.none),
+                                        validator: (val) => val.isEmpty 
+                                          ? 'Enter a title' 
+                                          : null,
+                                        onChanged: (val) {
+                                          setState(() => title = val);
+                                        },
+                                      ),
+                                    ),
+                                    Hero(
+                                      tag: 'postContent-${widget.post.id}',
+                                      child: TextFormField(
+                                        initialValue: widget.post.content,
+                                        readOnly: !isEditing,
+                                        style: DynamicTheme.of(context).data.textTheme.body1,
+                                        cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
+                                        decoration: InputDecoration(border: InputBorder.none),
+                                        validator: (val) => val.isEmpty 
+                                          ? 'Enter some content' 
+                                          : null,
+                                        onChanged: (val) {
+                                          setState(() => content = val);
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -221,10 +268,27 @@ class _PostTileState extends State<PostTile> {
                         color: Constants.buttonIconColor),
                       label: Text('Save'),
                       textColor: Colors.white,
-                      onPressed: () {
-                        setState(() {
-                          isEditing = false;
-                        });
+                      onPressed: () async {
+                        if(_formKey.currentState.validate()) {
+                          setState(() { 
+                            loading = true;
+                            isEditing = false; 
+                          });
+                          await DatabaseService().updatePostData(
+                            widget.post.id, 
+                            title ?? widget.post.title, 
+                            content ?? widget.post.content
+                          );
+
+                          _scaffoldKey.currentState.showSnackBar(
+                            SnackBar(
+                              content: Text('Post saved'),
+                              duration: Duration(milliseconds: 500),
+                            )
+                          );
+
+                          setState(() => loading = false);  
+                        }
                       },
                     ),
                   ),
@@ -244,8 +308,11 @@ class _PostTileState extends State<PostTile> {
       child: InkWell(
         splashColor: Constants.tribesColor.withAlpha(30),
         onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (_) => _postDetails()));
+          Navigator.push(context, PageTransition(
+            type: PageTransitionType.fade, 
+            duration: Duration(milliseconds: Constants.pageTransition600),
+            child: _postDetails())
+          );
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -253,6 +320,40 @@ class _PostTileState extends State<PostTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(Icons.account_circle, 
+                        color: Colors.blueGrey,
+                      ),
+                      SizedBox(width: Constants.smallPadding),
+                      StreamBuilder<UserData>(
+                        stream: DatabaseService().userData(widget.post.author),
+                        builder: (context, snapshot) {
+                          return Text(snapshot.hasData ? snapshot.data.name : '',
+                            style: TextStyle(
+                              color: Colors.blueGrey,
+                              fontFamily: 'TribesRounded',
+                              fontWeight: FontWeight.normal
+                            ),
+                          );
+                        }
+                      )
+                    ],
+                  ),
+                  Text('#${widget.index+1}', 
+                    style: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: Constants.timestampFontSize,
+                    )
+                  ),
+                ],
+              ),
               Hero(
                 tag: 'postTitle-${widget.post.id}',
                 child: Text(widget.post.title,

@@ -97,6 +97,17 @@ class DatabaseService {
     return await postsRoot.document(id).delete();
   }
 
+  Future updatePostData(String id, String title, String content) async {
+    var data = {
+      'title': title,
+      'content': content,
+      'updated': new DateTime.now().millisecondsSinceEpoch,
+    };
+    print('Updated Post data: $data');
+
+    return await postsRoot.document(id).updateData(data);
+  }
+
   Future createNewTribe(
       String name, String desc, String color, String imageURL) async {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
