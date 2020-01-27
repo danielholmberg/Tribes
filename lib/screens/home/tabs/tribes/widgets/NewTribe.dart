@@ -2,8 +2,10 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 
 class NewTribe extends StatefulWidget {
   @override
@@ -13,8 +15,8 @@ class NewTribe extends StatefulWidget {
 class _NewTribeState extends State<NewTribe> {
   String name;
   String desc;
-  Color tribeColor = Color(0xFF242424);
-  bool hasImage = false;
+  Color tribeColor;
+  String imageURL;
   String error = '';
 
   @override
@@ -28,11 +30,11 @@ class _NewTribeState extends State<NewTribe> {
     return Scaffold(
       appBar: AppBar(
         title: Text('New Tribe'),
-        backgroundColor: Constants.primaryColor,
+        backgroundColor: tribeColor ?? Constants.primaryColor,
         actions: <Widget>[
           IconButton(
             color: DynamicTheme.of(context).data.buttonColor,
-            icon: Icon(Icons.color_lens, color: Constants.buttonIconColor),
+            icon: Icon(Icons.palette, color: Constants.buttonIconColor),
             onPressed: () {
               showDialog(
                 context: context,
@@ -40,7 +42,8 @@ class _NewTribeState extends State<NewTribe> {
                   title: Text('Pick a Tribe color'),
                   content: SingleChildScrollView(
                     child: BlockPicker(
-                      pickerColor: tribeColor,
+                      availableColors: Constants.defaultTribeColors,
+                      pickerColor: tribeColor ?? Constants.primaryColor,
                       onColorChanged: _changeColor,
                     ),
                   ),
@@ -50,15 +53,18 @@ class _NewTribeState extends State<NewTribe> {
           ),
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
+      body: ScrollConfiguration(
+        behavior: CustomScrollBehavior(),
+        child: ListView(
+          padding: EdgeInsets.all(16.0),
+          shrinkWrap: true,
           children: <Widget>[
+            SizedBox(height: Constants.smallSpacing),
             TextFormField(
-              decoration: Decorations.newTribesInput.copyWith(labelText: 'Name'),
+              textCapitalization: TextCapitalization.words,
+              maxLength: Constants.tribeNameMaxLength,
+              decoration:
+                  Decorations.newTribesInput.copyWith(labelText: 'Name'),
               validator: (val) => val.isEmpty ? 'Enter a name' : null,
               onChanged: (val) {
                 setState(() => name = val);
@@ -66,7 +72,9 @@ class _NewTribeState extends State<NewTribe> {
             ),
             SizedBox(height: Constants.smallSpacing),
             TextFormField(
+              textCapitalization: TextCapitalization.sentences,
               keyboardType: TextInputType.multiline,
+              maxLength: Constants.tribeDescMaxLength,
               maxLines: null,
               decoration:
                   Decorations.newTribesInput.copyWith(labelText: 'Description'),
@@ -90,14 +98,18 @@ class _NewTribeState extends State<NewTribe> {
                 label: Text('Create Tribe'),
                 textColor: Colors.white,
                 onPressed: () async {
-                  dynamic result = await DatabaseService().createNewTribe(
-                      name, desc, tribeColor.value.toRadixString(16), hasImage);
+                  dynamic success = await DatabaseService().createNewTribe(
+                    name, 
+                    desc, 
+                    tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
+                    imageURL
+                  );
 
-                  if (result == null) {
-                    setState(() =>
-                        error = 'Unable to create new Tribe, please try again!');
-                  } else {
+                  if (success) {
                     Navigator.pop(context);
+                  } else {
+                    setState(() => error =
+                        'Unable to create new Tribe, please try again!');
                   }
                 },
               ),
@@ -106,7 +118,8 @@ class _NewTribeState extends State<NewTribe> {
             Text(
               error,
               style: TextStyle(
-                  color: Constants.errorColor, fontSize: Constants.errorFontSize),
+                  color: Constants.errorColor,
+                  fontSize: Constants.errorFontSize),
             ),
           ],
         ),

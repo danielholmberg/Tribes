@@ -17,7 +17,7 @@ class Tribes extends StatefulWidget {
 
 class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
   final PageController tribeController = PageController(
-    viewportFraction: 0.8,
+    viewportFraction: 0.7,
   );
 
   var debugList = [Colors.blue, Colors.red];
@@ -52,20 +52,8 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
     print('Building Tribes()...');
     print('Current user ${currentUser.toString()}');
 
-    _showNewTribeDialog() {
-      return showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          contentPadding: EdgeInsets.all(0.0),
-          backgroundColor: Constants.backgroundColor,
-          content: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            alignment: Alignment.topLeft,
-            child: NewTribe(),
-          ),
-        ),
-      );
+    _showNewTribePage() {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => NewTribe()));
     }
 
     return currentUser != null
@@ -90,7 +78,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     GestureDetector(
-                                      onTap: () => _showNewTribeDialog(),
+                                      onTap: () => _showNewTribePage(),
                                       child: Text(
                                         'Create',
                                         style: TextStyle(
@@ -146,8 +134,8 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                 itemBuilder: (context, index) {
                                   return Container(
                                     //color: debugList[index],
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 0),
+                                    padding: EdgeInsets.fromLTRB(
+                                        0, 0, 0, 72),
                                     child: TribeTile(
                                         tribe: joinedTribesList[index],
                                         active: index == currentPage),
@@ -174,7 +162,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                               color: DynamicTheme.of(context).data.accentColor),
                           label: Text('Add new Tribe'),
                           textColor: Colors.white,
-                          onPressed: () => _showNewTribeDialog(),
+                          onPressed: () => _showNewTribePage(),
                         ),
                       ),
                       SizedBox(width: 8.0),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 
@@ -39,29 +40,34 @@ class DatabaseService {
 
     if (currentUser != null) {
       print('Updating current user location in Firebase: [$lat, $lng]');
-      return await usersRoot.document(currentUser.uid).updateData({'lat': lat,'lng': lng});
+      return await usersRoot
+          .document(currentUser.uid)
+          .updateData({'lat': lat, 'lng': lng});
     } else {
       return null;
     }
   }
 
   Stream<List<UserData>> membersData(String tribeID) {
-    return tribesRoot.document(tribeID).snapshots()
-      .map((tribeData) => tribeData.data['members']
-      .map((userID) => usersRoot.document(userID).snapshots()
-      .map((userData) => UserData.fromSnapshot(userData))
-      .toList()));
+    return tribesRoot.document(tribeID).snapshots().map((tribeData) =>
+        tribeData.data['members'].map((userID) => usersRoot
+            .document(userID)
+            .snapshots()
+            .map((userData) => UserData.fromSnapshot(userData))
+            .toList()));
   }
 
   Stream<List<UserData>> get users {
-    return usersRoot.snapshots().map(
-      (list) => list.documents.map((userData) => UserData.fromSnapshot(userData)).toList());
+    return usersRoot.snapshots().map((list) => list.documents
+        .map((userData) => UserData.fromSnapshot(userData))
+        .toList());
   }
 
   // Get joined Tribes Stream
   Stream<List<Tribe>> joinedTribes(String userID) {
     return tribesRoot.where('members', arrayContains: userID).snapshots().map(
-        (list) => list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList());
+        (list) =>
+            list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList());
   }
 
   // Get Posts Stream related to a specific Tribe
@@ -72,11 +78,11 @@ class DatabaseService {
 
   // Add a new Post
   Future addNewPost(
-      String userID, String title, String content, String tribeID) async {
+      String author, String title, String content, String tribeID) async {
     DocumentReference postRef = postsRoot.document();
 
     var data = {
-      'userID': userID,
+      'author': author,
       'title': title,
       'content': content,
       'tribeID': tribeID,
@@ -87,7 +93,12 @@ class DatabaseService {
     return await postRef.setData(data);
   }
 
-  Future createNewTribe(String name, String desc, String color, bool hasImage) async {
+  Future deletePost(String id) async {
+    return await postsRoot.document(id).delete();
+  }
+
+  Future createNewTribe(
+      String name, String desc, String color, String imageURL) async {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
 
     var data = {
@@ -96,18 +107,44 @@ class DatabaseService {
       'members': [currentUser.uid],
       'founder': currentUser.uid,
       'color': color,
-      'image': hasImage,
+      'imageURL': imageURL,
       'updated': new DateTime.now().millisecondsSinceEpoch,
       'created': new DateTime.now().millisecondsSinceEpoch,
     };
 
     try {
       print('Creating new Tribe: $data');
-      return await tribesRoot.document().setData(data);
-    } catch(e) {
+      await tribesRoot.document().setData(data);
+      return true;
+    } catch (e) {
       print('Failed with error: ${e.toString()}');
-      return null;
+      return false;
     }
+  }
+
+  Future updateTribeData(String id, String name, String desc, String color,
+      String imageURL) async {
+    var data = {
+      'name': name,
+      'desc': desc,
+      'color': color,
+      'imageURL': imageURL,
+      'updated': new DateTime.now().millisecondsSinceEpoch,
+    };
+
+    print('New profile data: $data');
+    return await tribesRoot.document(id).updateData(data);
+  }
+
+  Future deleteTribe(String id) async {
+    return await tribesRoot.document(id).delete();
+  }
+
+  Stream<Tribe> tribe(String tribeID) {
+    return tribesRoot
+        .document(tribeID)
+        .snapshots()
+        .map((doc) => Tribe.fromSnapshot(doc));
   }
 
   Stream<UserData> currentUser(String uid) {
@@ -117,4 +154,10 @@ class DatabaseService {
         .map((snapshot) => UserData.fromSnapshot(snapshot));
   }
 
+  Stream<UserData> userData(String uid) {
+    return usersRoot
+        .document(uid)
+        .snapshots()
+        .map((snapshot) => UserData.fromSnapshot(snapshot));
+  }
 }

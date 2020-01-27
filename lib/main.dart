@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
             headline: TextStyle(fontSize: 36.0, fontWeight: FontWeight.bold, letterSpacing: 1.5),
             title: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             subhead: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-            body1: TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal),
+            body1: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
+            body2: TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal),
             button: TextStyle(color: Constants.primaryColor, fontWeight: FontWeight.bold),
         ),
       );

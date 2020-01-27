@@ -1,15 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
-import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/home/tabs/tribes/posts/Posts.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/TribeRoom.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class TribeTile extends StatelessWidget {
-
   final Tribe tribe;
   final bool active;
   TribeTile({this.tribe, this.active});
@@ -20,24 +18,26 @@ class TribeTile extends StatelessWidget {
 
     final double blur = active ? 20.0 : 10.0;
     final double offset = active ? 0.0 : 0.0;
-    final double horizontal = active ? 20.0 : 40.0;
-
-    void _onTribeTap() {
-      print('Tapped tribe: ${tribe.name}');
-      Navigator.push(context, MaterialPageRoute(
-        builder: (_) {
-          return TribeRoom(tribe: tribe);
-        },
-      ));
-    }
+    //final double horizontal = active ? 20.0 : 0.0;
 
     return GestureDetector(
-      onTap: () => _onTribeTap(),
+      onTap: () {
+        print('Tapped tribe: ${tribe.name}');
+        Navigator.push(context, MaterialPageRoute(
+          builder: (_) {
+            return StreamProvider<Tribe>.value(
+              value: DatabaseService().tribe(tribe.id),
+              child: TribeRoom(),
+            );
+          },
+        ));
+      },
       child: AnimatedContainer(
         duration: Duration(milliseconds: 1000),
         curve: Curves.easeOutQuint,
-        margin: EdgeInsets.symmetric(horizontal: horizontal),
+        margin: EdgeInsets.symmetric(horizontal: 20.0),
         child: Container(
+          padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
               color: tribe.color,
               borderRadius: BorderRadius.circular(20.0),
@@ -48,30 +48,79 @@ class TribeTile extends StatelessWidget {
                   offset: Offset(offset, offset),
                 ),
               ]),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  '${tribe.name}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'TribesRounded',
-                  ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              AutoSizeText(
+                tribe.name,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                minFontSize: 12.0,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 28.0,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'TribesRounded',
                 ),
-                Text(
-                  '${tribe.members.length} member(s)',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'TribesRounded',
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                child: StreamBuilder<List<Post>>(
+                  stream: DatabaseService().posts(tribe.id)
+                    .map((list) => list.documents
+                    .map((doc) => Post.fromSnapshot(doc))
+                    .toList()
                   ),
+                  builder: (context, snapshot) {
+                    var postsList = snapshot.hasData ? snapshot.data : []; 
+
+                    return Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.view_list,
+                          color: Constants.buttonIconColor,
+                          size: Constants.defaultIconSize,
+                        ),
+                        SizedBox(width: Constants.tinySpacing),
+                        Text(
+                          '${postsList.length}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'TribesRounded',
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      '${tribe.members.length}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'TribesRounded',
+                      ),
+                    ),
+                    SizedBox(width: Constants.tinySpacing),
+                    Icon(
+                      Icons.group,
+                      color: Constants.buttonIconColor,
+                      size: Constants.defaultIconSize,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

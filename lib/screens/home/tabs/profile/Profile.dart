@@ -39,7 +39,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                             Constants.profileSettingsBackgroundColor,
                         content: Container(
                           width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          height: MediaQuery.of(context).size.height * 0.8,
                           alignment: Alignment.topLeft,
                           child: ProfileSettings(user: currentUser),
                         ),

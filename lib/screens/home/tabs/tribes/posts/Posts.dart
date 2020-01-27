@@ -5,42 +5,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
+import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/screens/home/tabs/tribes/posts/NewPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/posts/PostTile.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class Posts extends StatelessWidget {
-  
-  final String tribeID;
-  Posts({this.tribeID});
+  final Tribe tribe;
+  Posts({this.tribe});
 
   @override
   Widget build(BuildContext context) {
     print('Building Posts()...');
-    print('Tribe id: $tribeID');
+    print('Tribe id: ${tribe.id}');
 
     return Container(
-      child: Stack(
-        children: <Widget>[
-          FirestoreAnimatedList(
-            padding: EdgeInsets.only(bottom: 80.0),
-            query: DatabaseService().posts(tribeID),
-            itemBuilder: (
-              BuildContext context,
-              DocumentSnapshot snapshot,
-              Animation<double> animation,
-              int index,
-            ) =>
-                FadeTransition(
-              opacity: animation,
-              child: PostTile(post: Post.fromSnapshot(snapshot)),
-            ),
-            emptyChild: Center(
-              child: Text('No posts created yet!'),
-            ),
-          ),
-        ],
+      child: FirestoreAnimatedList(
+        padding: EdgeInsets.only(bottom: 80.0),
+        query: DatabaseService().posts(tribe.id),
+        itemBuilder: (
+          BuildContext context,
+          DocumentSnapshot snapshot,
+          Animation<double> animation,
+          int index,
+        ) =>
+            FadeTransition(
+          opacity: animation,
+          child: PostTile(post: Post.fromSnapshot(snapshot), tribeColor: tribe.color),
+        ),
+        emptyChild: Center(
+          child: Text('No posts created yet!'),
+        ),
       ),
     );
   }

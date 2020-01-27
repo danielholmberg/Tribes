@@ -8,6 +8,7 @@ const accentColor = Color(0xFFFEF9EB);
 const backgroundColor = Color(0xFFfefffd);
 const buttonIconColor = Colors.white;
 const buttonColor = primaryColor;
+const timestampFontSize = 11.0;
 
 const defaultPadding = 4.0;
 const smallPadding = 2.0;
@@ -20,8 +21,9 @@ const defaultElevation = 4.0;
 const appBarElevation = 0.0;
 const appBarColor = primaryColor;
 
-const defaultSpacing = 20.0;
-const smallSpacing = 12.0;
+const defaultSpacing = 16.0;
+const smallSpacing = 8.0;
+const tinySpacing = 2.0;
 
 const errorFontSize = 14.0;
 const errorColor = Colors.red;
@@ -45,6 +47,30 @@ const bottomNavBarBackgroundColor = Color(0xFFf7edde);
 
 // -------- TABs -------- //
 // [Tribes]
+const tribeNameMaxLength = 20;
+const tribeDescMaxLength = 100;
+List<Color> defaultTribeColors = [
+  primaryColor,
+  Colors.red,
+  Colors.pink,
+  Colors.purple,
+  Colors.deepPurple,
+  Colors.indigo,
+  Colors.blue,
+  Colors.lightBlue,
+  Colors.cyan,
+  Colors.teal,
+  Colors.green,
+  Colors.lightGreen,
+  Colors.lime,
+  Colors.amber,
+  Colors.orange,
+  Colors.deepOrange,
+  Colors.brown,
+  Colors.grey,
+  Colors.blueGrey,
+  Colors.black,
+];
 // - Post
 const postBackgroundColor = Color(0xFFFAFAFA);
 const postInputFocusColor = tribesColor;
