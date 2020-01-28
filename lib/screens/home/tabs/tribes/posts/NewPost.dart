@@ -397,7 +397,7 @@ class _NewPostState extends State<NewPost> {
   }
 
   Future<String> uploadFile() async {    
-    StorageReference storageReference = StorageService().postImagesRoot.child('${Path.basename(_imageFile.path)}}');    
+    StorageReference storageReference = StorageService().postImagesRoot.child('${Path.basename(_imageFile.path)}');    
     StorageUploadTask uploadTask = storageReference.putFile(_imageFile);    
     await uploadTask.onComplete;    
     print('File Uploaded');    
