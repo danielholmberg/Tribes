@@ -25,9 +25,16 @@ class _PostTileState extends State<PostTile> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
+  FocusNode focusNode;
 
   String title;
   String content;
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +44,7 @@ class _PostTileState extends State<PostTile> {
         builder: (context, snapshot) {
           bool isAuthor = snapshot.data.uid == widget.post.author;
           bool isEditing = false;
+          focusNode = FocusNode();
 
           return StatefulBuilder(
             builder: (context, setState) { 
@@ -141,6 +149,7 @@ class _PostTileState extends State<PostTile> {
                         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
                       ),
                       onPressed: () {
+                        FocusScope.of(context).requestFocus(focusNode);
                         setState(() {
                           isEditing = true;
                         });
@@ -235,6 +244,7 @@ class _PostTileState extends State<PostTile> {
                                     Hero(
                                       tag: 'postTitle-${widget.post.id}',
                                       child: TextFormField(
+                                        focusNode: focusNode,
                                         initialValue: widget.post.title,
                                         readOnly: !isEditing,
                                         style: DynamicTheme.of(context).data.textTheme.title,

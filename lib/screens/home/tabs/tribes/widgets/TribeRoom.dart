@@ -43,13 +43,17 @@ class _TribeRoomState extends State<TribeRoom> {
                         DynamicTheme.of(context).data.primaryColor,
                     expandedHeight: 200.0,
                     floating: false,
-                    pinned: true,
+                    pinned: false,
                     titleSpacing: 8.0,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(20.0),
                       bottomRight: Radius.circular(20.0),
                     )),
+                    leading: IconButton(icon: Icon(Icons.home), 
+                      color: Constants.buttonIconColor,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                     actions: <Widget>[
                       isFounder 
                         ? IconButton(
@@ -105,7 +109,7 @@ class _TribeRoomState extends State<TribeRoom> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Card(
+                    /* Card(
                       margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
                       child: Container(
                         padding: EdgeInsets.all(16),
@@ -114,7 +118,7 @@ class _TribeRoomState extends State<TribeRoom> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
+                    ), */
                     Expanded(
                       child: Stack(
                         alignment: Alignment.center,
@@ -145,7 +149,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                     Navigator.push(context, CustomPageTransition(
                                       type: CustomPageTransitionType.newPost,
                                       duration: Constants.pageTransition800,
-                                      child: NewPost(tribeID: currentTribe.id)
+                                      child: NewPost(tribe: currentTribe)
                                     ));
                                   },
                                 ),

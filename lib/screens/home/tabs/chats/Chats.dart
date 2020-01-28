@@ -48,6 +48,13 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
               decoration: BoxDecoration(
                 color: DynamicTheme.of(context).data.accentColor,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black54,
+                    blurRadius: 5,
+                    offset: Offset(0, 0),
+                  ),
+                ]
               ),
               child: Column(
                 children: <Widget>[

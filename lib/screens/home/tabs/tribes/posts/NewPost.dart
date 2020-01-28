@@ -1,6 +1,7 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
@@ -10,8 +11,8 @@ import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 
 class NewPost extends StatefulWidget {  
 
-  String tribeID;
-  NewPost({this.tribeID});
+  final Tribe tribe;
+  NewPost({this.tribe});
 
   @override
   _NewPostState createState() => _NewPostState();
@@ -21,38 +22,27 @@ class _NewPostState extends State<NewPost> {
   
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool autofocus;
+  FocusNode focusNode;
   
   String title;
   String content;
 
-  Widget _formContainer() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        TextFormField(
-          decoration: Decorations.postTitleInput,
-          validator: (val) => val.isEmpty 
-            ? 'Enter a title' 
-            : null,
-          onChanged: (val) {
-            setState(() => title = val);
-          },
-        ),
-        TextFormField(
-          keyboardType: TextInputType.multiline,
-          maxLines: null,
-          decoration: Decorations.postContentInput,
-          validator: (val) => val.isEmpty 
-            ? 'Enter some content' 
-            : null,
-          onChanged: (val) {
-            setState(() => content = val);
-          },
-        ),
-      ],
-    );
+  @override
+  void initState() {
+    focusNode = FocusNode();
+
+    Future.delayed(Constants.pageTransition800).then((val) {
+      FocusScope.of(context).requestFocus(focusNode);
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -66,7 +56,7 @@ class _NewPostState extends State<NewPost> {
           elevation: 0.0,
           backgroundColor: DynamicTheme.of(context).data.backgroundColor,
           leading: IconButton(icon: Icon(Icons.close), 
-            color: DynamicTheme.of(context).data.primaryColor,
+            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
             onPressed: () {
               showDialog(
                 context: context,
@@ -78,7 +68,7 @@ class _NewPostState extends State<NewPost> {
                   actions: <Widget>[
                     FlatButton(
                       child: Text('No', 
-                        style: TextStyle(color: DynamicTheme.of(context).data.primaryColor),
+                        style: TextStyle(color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor),
                       ),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -86,7 +76,7 @@ class _NewPostState extends State<NewPost> {
                     ),
                     FlatButton(
                       child: Text('Yes',
-                        style: TextStyle(color: DynamicTheme.of(context).data.primaryColor),
+                        style: TextStyle(color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor),
                       ),
                       onPressed: () async {
                         Navigator.of(context).pop(); // Dialog: "Are you sure...?"
@@ -120,9 +110,19 @@ class _NewPostState extends State<NewPost> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             TextFormField(
+                              //autofocus: autofocus,
+                              focusNode: focusNode,
                               style: DynamicTheme.of(context).data.textTheme.title,
-                              cursorColor: DynamicTheme.of(context).data.primaryColor,
-                              decoration: Decorations.postTitleInput,
+                              cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                              decoration: Decorations.postTitleInput.copyWith(
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                  borderSide: BorderSide(
+                                    color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
+                                    width: 2.0
+                                  ),
+                                )
+                              ),
                               validator: (val) => val.isEmpty 
                                 ? 'Enter a title' 
                                 : null,
@@ -133,10 +133,18 @@ class _NewPostState extends State<NewPost> {
                             SizedBox(height: Constants.defaultSpacing),
                             TextFormField(
                               style: DynamicTheme.of(context).data.textTheme.body1,
-                              cursorColor: DynamicTheme.of(context).data.primaryColor,
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
-                              decoration: Decorations.postContentInput,
+                              cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                              decoration: Decorations.postContentInput.copyWith(
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                  borderSide: BorderSide(
+                                    color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
+                                    width: 2.0
+                                  ),
+                                )
+                              ),
                               validator: (val) => val.isEmpty 
                                 ? 'Enter some content' 
                                 : null,
@@ -172,7 +180,7 @@ class _NewPostState extends State<NewPost> {
               textColor: Colors.white,
               onPressed: () async {
                 if(_formKey.currentState.validate()) {
-                  await DatabaseService().addNewPost(user.uid, title, content, widget.tribeID);
+                  await DatabaseService().addNewPost(user.uid, title, content, widget.tribe.id);
                   Navigator.pop(context);
                 }
               }

@@ -14,6 +14,13 @@ class RecentMessages extends StatelessWidget {
             topLeft: Radius.circular(30.0),
             topRight: Radius.circular(30.0),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black54,
+              blurRadius: 5,
+              offset: Offset(0, 0),
+            ),
+          ]
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.only(

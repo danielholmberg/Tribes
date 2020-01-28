@@ -22,7 +22,7 @@ class Posts extends StatelessWidget {
 
     return Container(
       child: FirestoreAnimatedList(
-        padding: EdgeInsets.only(bottom: 80.0),
+        padding: EdgeInsets.only(top: 24.0, bottom: 80.0),
         query: DatabaseService().posts(tribe.id),
         itemBuilder: (
           BuildContext context,
