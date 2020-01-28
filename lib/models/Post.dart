@@ -5,6 +5,7 @@ class Post {
   final String author;
   final String title;
   final String content;
+  final String fileURL;
   final String tribeID;
   final int created;
   final int updated;
@@ -15,6 +16,7 @@ class Post {
       this.author,
       this.title,
       this.content,
+      this.fileURL,
       this.tribeID,
       this.created,
       this.updated});
@@ -26,6 +28,7 @@ class Post {
       title: doc.data['title'] ?? '',
       content: doc.data['content'] ?? '',
       tribeID: doc.data['tribeID'] ?? '',
+      fileURL: doc.data['fileURL'] ?? '',
       created: doc.data['created'] ?? 0,
       updated: doc.data['updated'] ?? 0,
     );

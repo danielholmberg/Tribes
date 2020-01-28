@@ -5,6 +5,10 @@ class StorageService {
   final StorageReference userImagesRoot =
       FirebaseStorage().ref().child('userImages');
 
+  // User Image Ref
+  final StorageReference postImagesRoot =
+      FirebaseStorage().ref().child('postImages');
+
   // Tribe Image Ref
   final StorageReference tribeImagesRoot =
       FirebaseStorage().ref().child('tribeImages');

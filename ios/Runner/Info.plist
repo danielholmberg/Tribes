@@ -4,10 +4,16 @@
 <dict>
 	<key>io.flutter.embedded_views_preview</key>
   <true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photos in order to add a photo to the app.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to your camera in order to take photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to your microphone in order to record videos.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location when in the background.</string>
+	<string>This app needs access to your location when in the background.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open and in the background.</string>
+	<string>This app needs access to your location when open and in the background.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

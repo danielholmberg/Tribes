@@ -355,6 +355,30 @@ class _PostTileState extends State<PostTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: widget.post.fileURL.isEmpty 
+                ? SizedBox.shrink() 
+                : Container(
+                  width: 200,
+                  height: 200,
+                  color: Constants.postBackgroundColor,
+                  child: Image.network(widget.post.fileURL,
+                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
+                      if (loadingProgress == null)
+                        return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(height: Constants.defaultPadding),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,

@@ -78,7 +78,7 @@ class DatabaseService {
 
   // Add a new Post
   Future addNewPost(
-      String author, String title, String content, String tribeID) async {
+      String author, String title, String content, String fileURL, String tribeID) async {
     DocumentReference postRef = postsRoot.document();
 
     var data = {
@@ -86,6 +86,7 @@ class DatabaseService {
       'title': title,
       'content': content,
       'tribeID': tribeID,
+      'fileURL': fileURL,
       'created': new DateTime.now().millisecondsSinceEpoch,
     };
 
