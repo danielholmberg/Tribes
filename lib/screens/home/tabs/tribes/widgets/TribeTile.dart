@@ -6,6 +6,7 @@ import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/TribeRoom.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 
 class TribeTile extends StatelessWidget {
   final Tribe tribe;
@@ -23,13 +24,12 @@ class TribeTile extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         print('Tapped tribe: ${tribe.name}');
-        Navigator.push(context, MaterialPageRoute(
-          builder: (_) {
-            return StreamProvider<Tribe>.value(
-              value: DatabaseService().tribe(tribe.id),
-              child: TribeRoom(),
-            );
-          },
+        Navigator.push(context, CustomPageTransition(
+          type: CustomPageTransitionType.tribeRoom,
+          child: StreamProvider<Tribe>.value(
+            value: DatabaseService().tribe(tribe.id),
+            child: TribeRoom(),
+          ),
         ));
       },
       child: AnimatedContainer(

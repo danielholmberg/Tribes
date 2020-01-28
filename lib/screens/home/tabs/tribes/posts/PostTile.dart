@@ -1,12 +1,12 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
@@ -202,7 +202,7 @@ class _PostTileState extends State<PostTile> {
                                     Icon(Icons.account_circle, 
                                       color: Colors.blueGrey,
                                     ),
-                                    SizedBox(width: Constants.smallPadding),
+                                    SizedBox(width: Constants.defaultPadding),
                                     StreamBuilder<UserData>(
                                       stream: DatabaseService().userData(widget.post.author),
                                       builder: (context, snapshot) {
@@ -333,11 +333,11 @@ class _PostTileState extends State<PostTile> {
       child: InkWell(
         splashColor: Constants.tribesColor.withAlpha(30),
         onTap: () {
-          Navigator.push(context, PageTransition(
-            type: PageTransitionType.fade, 
-            duration: Duration(milliseconds: Constants.pageTransition600),
-            child: _postDetails())
-          );
+          Navigator.push(context, CustomPageTransition(
+            type: CustomPageTransitionType.postDetails, 
+            duration: Constants.pageTransition600, 
+            child: _postDetails()
+          ));
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -356,7 +356,7 @@ class _PostTileState extends State<PostTile> {
                       Icon(Icons.account_circle, 
                         color: Colors.blueGrey,
                       ),
-                      SizedBox(width: Constants.smallPadding),
+                      SizedBox(width: Constants.defaultPadding),
                       StreamBuilder<UserData>(
                         stream: DatabaseService().userData(widget.post.author),
                         builder: (context, snapshot) {

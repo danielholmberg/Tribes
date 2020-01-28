@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -10,6 +9,7 @@ import 'package:tribes/screens/home/tabs/tribes/posts/Posts.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/TribeSettings.dart';
 import 'package:tribes/services/auth.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 
 class TribeRoom extends StatefulWidget {
@@ -142,12 +142,11 @@ class _TribeRoomState extends State<TribeRoom> {
                                   label: Text('Write a post'),
                                   textColor: Colors.white,
                                   onPressed: () {
-                                    Navigator.push(context, PageTransition(
-                                      type: PageTransitionType.scale, 
-                                      alignment: Alignment.bottomCenter,
-                                      duration: Duration(milliseconds: Constants.pageTransition600),
-                                      child: NewPost(tribeID: currentTribe.id))
-                                    );
+                                    Navigator.push(context, CustomPageTransition(
+                                      type: CustomPageTransitionType.newPost,
+                                      duration: Constants.pageTransition800,
+                                      child: NewPost(tribeID: currentTribe.id)
+                                    ));
                                   },
                                 ),
                               ),
