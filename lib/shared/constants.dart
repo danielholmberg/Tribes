@@ -3,7 +3,7 @@ library Constants;
 import 'package:flutter/material.dart';
 
 // Core
-const primaryColor = Color(0xFFB25959);
+const primaryColor = Color(0xFFed217c);
 const accentColor = Color(0xFFFEF9EB);
 const backgroundColor = Color(0xFFfefffd);
 const buttonIconColor = Colors.white;
