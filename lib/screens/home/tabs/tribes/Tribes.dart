@@ -64,65 +64,6 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
 
     return currentUser != null
         ? Scaffold(
-            /* appBar: AppBar(
-              backgroundColor: DynamicTheme.of(context).data.primaryColor,
-              shape: ContinuousRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40.0), bottomRight: Radius.circular(20.0)
-                ),
-              ),
-              centerTitle: true,
-              title: Text('TRIBE',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              actions: <Widget>[
-                PopupMenuButton(
-                  icon: Icon(Icons.more_vert),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      textStyle: TextStyle(color: Colors.black),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Icon(Icons.library_add, color: Colors.black),
-                          SizedBox(width: Constants.mediumPadding),
-                          Text('Add new Tribe'),
-                        ],
-                      ),
-                      value: 1,
-                    ),
-                    PopupMenuItem(
-                      textStyle: TextStyle(color: Colors.black),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Icon(Icons.group_add, color: Colors.black),
-                          SizedBox(width: Constants.mediumPadding),
-                          Text('Join a Tribe'),
-                        ],
-                      ),
-                      value: 2,
-                    )
-                  ],
-                  onSelected: (value) {
-                    switch(value) {
-                      case 1: return _showNewTribePage();
-                      case 2: 
-                    }
-                  },
-                ),
-              ],
-            ), */
             body: NestedScrollView(
               reverse: false,
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -242,9 +183,8 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                               itemCount: joinedTribesList.length,
                               itemBuilder: (context, index) {
                                 return Container(
-                                  //color: debugList[index],
                                   padding: EdgeInsets.fromLTRB(
-                                      0, 0, 0, 32),
+                                      0, 0, 0, 52),
                                   child: TribeTile(
                                       tribe: joinedTribesList[index],
                                       active: index == currentPage),

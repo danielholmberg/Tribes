@@ -51,17 +51,39 @@ class TribeTile extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              AutoSizeText(
-                tribe.name,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                minFontSize: 12.0,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28.0,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'TribesRounded',
-                ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  AutoSizeText(
+                    tribe.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    minFontSize: 16.0,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28.0,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'TribesRounded',
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: AutoSizeText(
+                      tribe.desc,
+                      textAlign: TextAlign.center,
+                      maxLines: null,
+                      minFontSize: 12.0,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'TribesRounded',
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Positioned(
                 bottom: 0,
