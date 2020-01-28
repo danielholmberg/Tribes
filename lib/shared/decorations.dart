@@ -42,8 +42,7 @@ const registerInput = InputDecoration(
 const postTitleInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
-  labelText: 'Title',
-  labelStyle: TextStyle(color: Constants.postInputFocusColor),
+  hintText: 'Title',
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
     borderSide: BorderSide(color: Constants.postBackgroundColor, width: 2.0),
@@ -57,8 +56,7 @@ const postTitleInput = InputDecoration(
 const postContentInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
-  labelText: 'Content',
-  labelStyle: TextStyle(color: Constants.postInputFocusColor),
+  hintText: 'Content',
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
     borderSide: BorderSide(color: Constants.postBackgroundColor, width: 2.0),

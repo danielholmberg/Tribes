@@ -6,6 +6,7 @@ import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
+import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 
 class NewPost extends StatefulWidget {  
 
@@ -61,55 +62,123 @@ class _NewPostState extends State<NewPost> {
     return Hero(
       tag: 'NewPostButton',
       child: Scaffold(
-        body: SafeArea(
-          child: Container(
-            padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Form(
-              key: _formKey,
-              child: _formContainer(),
-            ),
-          )
-        ),
-        bottomNavigationBar: Card(
-          elevation: 4.0,
-          margin: EdgeInsets.all(8.0),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                RaisedButton.icon(
-                  icon: Icon(Icons.cancel, color: Colors.white,),
-                  label: Text('Discard', style: TextStyle(color: Colors.white)),
-                  color: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    side: BorderSide(color: Colors.red)
-                  ),
-                  onPressed: () => Navigator.pop(context),
+        appBar: AppBar(
+          elevation: 0.0,
+          backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+          leading: IconButton(icon: Icon(Icons.close), 
+            color: DynamicTheme.of(context).data.primaryColor,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: Constants
+                      .profileSettingsBackgroundColor,
+                  title: Text(
+                      'Are your sure you want to discard changes?'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('No', 
+                        style: TextStyle(color: DynamicTheme.of(context).data.primaryColor),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    FlatButton(
+                      child: Text('Yes',
+                        style: TextStyle(color: DynamicTheme.of(context).data.primaryColor),
+                      ),
+                      onPressed: () async {
+                        Navigator.of(context).pop(); // Dialog: "Are you sure...?"
+                        Navigator.of(context).pop(); // NewPost
+                      },
+                    ),
+                  ],
                 ),
-                RaisedButton.icon(
-                  icon: Icon(Icons.done, color: Colors.white,),
-                  label: Text('Publish', style: TextStyle(color: Colors.white),),
-                  color: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    side: BorderSide(color: Colors.green)
-                  ),
-                  onPressed: () async {
-                    if(_formKey.currentState.validate()) {
-                      await DatabaseService().addNewPost(user.uid, title, content, widget.tribeID);
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
+        body: ScrollConfiguration(
+          behavior: CustomScrollBehavior(),
+          child: ListView(
+            children: <Widget>[
+              Container(
+                color: DynamicTheme.of(context).data.backgroundColor,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Expanded(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            TextFormField(
+                              style: DynamicTheme.of(context).data.textTheme.title,
+                              cursorColor: DynamicTheme.of(context).data.primaryColor,
+                              decoration: Decorations.postTitleInput,
+                              validator: (val) => val.isEmpty 
+                                ? 'Enter a title' 
+                                : null,
+                              onChanged: (val) {
+                                setState(() => title = val);
+                              },
+                            ),
+                            SizedBox(height: Constants.defaultSpacing),
+                            TextFormField(
+                              style: DynamicTheme.of(context).data.textTheme.body1,
+                              cursorColor: DynamicTheme.of(context).data.primaryColor,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              decoration: Decorations.postContentInput,
+                              validator: (val) => val.isEmpty 
+                                ? 'Enter some content' 
+                                : null,
+                              onChanged: (val) {
+                                setState(() => content = val);
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+          color: DynamicTheme.of(context).data.backgroundColor,
+          child: ButtonTheme(
+            height: 40.0,
+            minWidth: MediaQuery.of(context).size.width,
+            child: RaisedButton.icon(
+              elevation: 8.0,
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(8.0),
+              ),
+              color: Colors.green,
+              icon: Icon(Icons.done, color: Constants.buttonIconColor),
+              label: Text('Publish'),
+              textColor: Colors.white,
+              onPressed: () async {
+                if(_formKey.currentState.validate()) {
+                  await DatabaseService().addNewPost(user.uid, title, content, widget.tribeID);
+                  Navigator.pop(context);
+                }
+              }
+            ),
+          ),
+        )
       ),
     );
   }
