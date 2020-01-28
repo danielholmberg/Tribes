@@ -32,7 +32,7 @@ class _NewPostState extends State<NewPost> {
   void initState() {
     focusNode = FocusNode();
 
-    Future.delayed(Constants.pageTransition800).then((val) {
+    Future.delayed(Duration(milliseconds: 850)).then((val) {
       FocusScope.of(context).requestFocus(focusNode);
     });
 
