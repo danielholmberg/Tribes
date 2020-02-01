@@ -381,7 +381,7 @@ class _PostTileState extends State<PostTile> {
 
     return Container(
       decoration: BoxDecoration(
-        color: widget.tribeColor.withOpacity(0.1) ?? DynamicTheme.of(context).data.accentColor,
+        color: DynamicTheme.of(context).data.backgroundColor,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
