@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tribes/shared/constants.dart' as Constants;
 
 class Post {
   final String id;
@@ -33,8 +32,8 @@ class Post {
       content: doc.data['content'] ?? '',
       tribeID: doc.data['tribeID'] ?? '',
       fileURL: doc.data['fileURL'] ?? '',
-      lat: doc.data['lat'] ?? Constants.initialLat,
-      lng: doc.data['lng'] ?? Constants.initialLng,
+      lat: doc.data['lat'] ?? 0, // value 0 is used for fail-safe check for a location
+      lng: doc.data['lng'] ?? 0, // value 0 is used for fail-safe check for a location
       created: doc.data['created'] ?? 0,
       updated: doc.data['updated'] ?? 0,
     );

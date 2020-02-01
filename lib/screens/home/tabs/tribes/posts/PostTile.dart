@@ -10,6 +10,7 @@ import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
+import 'package:geocoder/geocoder.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -39,7 +40,8 @@ class _PostTileState extends State<PostTile> {
 
   @override
   Widget build(BuildContext context) {
-    _postDetails() {
+
+    _postDetails(String location) {
       return loading ? Loading() : StreamBuilder<User>(
         stream: AuthService().user,
         builder: (context, snapshot) {
@@ -191,7 +193,9 @@ class _PostTileState extends State<PostTile> {
                   behavior: CustomScrollBehavior(),
                   child: ListView(
                     children: <Widget>[
-                      Hero(
+                      widget.post.fileURL.isEmpty 
+                      ? SizedBox.shrink() 
+                      : Hero(
                         tag: 'postImage-${widget.post.id}',
                         child: Container(
                           color: DynamicTheme.of(context).data.backgroundColor,
@@ -229,22 +233,41 @@ class _PostTileState extends State<PostTile> {
                               children: <Widget>[
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     Icon(Icons.account_circle, 
-                                      color: Colors.blueGrey,
+                                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                      size: Constants.mediumIconSize,
                                     ),
                                     SizedBox(width: Constants.defaultPadding),
-                                    StreamBuilder<UserData>(
-                                      stream: DatabaseService().userData(widget.post.author),
-                                      builder: (context, snapshot) {
-                                        return Text(snapshot.hasData ? snapshot.data.name : '',
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        StreamBuilder<UserData>(
+                                          stream: DatabaseService().userData(widget.post.author),
+                                          builder: (context, snapshot) {
+                                            return Text(snapshot.hasData ? snapshot.data.name : '',
+                                              style: TextStyle(
+                                                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                                fontFamily: 'TribesRounded',
+                                                fontWeight: FontWeight.bold
+                                              ),
+                                            );
+                                          }
+                                        ),
+                                        location.isEmpty
+                                        ? SizedBox.shrink() 
+                                        : Text(location,
                                           style: TextStyle(
                                             color: Colors.blueGrey,
                                             fontFamily: 'TribesRounded',
+                                            fontSize: 10,
                                             fontWeight: FontWeight.normal
                                           ),
-                                        );
-                                      }
+                                        ),
+                                       ],
                                     )
                                   ],
                                 ),
@@ -256,7 +279,6 @@ class _PostTileState extends State<PostTile> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: Constants.smallSpacing),
                             Expanded(
                               child: Form(
                                 key: _formKey,
@@ -357,18 +379,36 @@ class _PostTileState extends State<PostTile> {
       );
     }
 
-    return Card(
-      elevation: 4.0,
-      color: Constants.postBackgroundColor,
-      margin: EdgeInsets.fromLTRB(Constants.largePadding,
-          Constants.largePadding, Constants.largePadding, 0.0),
+    return Container(
+      decoration: BoxDecoration(
+        color: widget.tribeColor.withOpacity(0.1) ?? DynamicTheme.of(context).data.accentColor,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: widget.tribeColor.withOpacity(0.1) ?? DynamicTheme.of(context).data.accentColor,
+            blurRadius: 5,
+            offset: Offset(0, 0),
+          ),
+        ]
+      ),
+      margin: EdgeInsets.fromLTRB(0.0, Constants.largePadding, 0.0, 0.0),
       child: InkWell(
         splashColor: Constants.tribesColor.withAlpha(30),
-        onTap: () {
+        onTap: () async {
+          var location = '';
+          if((widget.post.lat != 0 && widget.post.lng != 0)) {
+            var coordinates = new Coordinates(widget.post.lat, widget.post.lng);
+            var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+            var first = addresses.first;
+            location = '${first.addressLine}';
+            print('lat ${widget.post.lat}, lng ${widget.post.lng}');
+            print('location: $location');
+          }
+          
           Navigator.push(context, CustomPageTransition(
             type: CustomPageTransitionType.postDetails, 
             duration: Constants.pageTransition600, 
-            child: _postDetails()
+            child: _postDetails(location)
           ));
         },
         child: Container(
@@ -411,9 +451,11 @@ class _PostTileState extends State<PostTile> {
                       children: <Widget>[
                         Row(
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Icon(Icons.account_circle, 
-                              color: Colors.blueGrey,
+                              color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                              size: Constants.mediumIconSize,
                             ),
                             SizedBox(width: Constants.defaultPadding),
                             StreamBuilder<UserData>(
@@ -421,9 +463,9 @@ class _PostTileState extends State<PostTile> {
                               builder: (context, snapshot) {
                                 return Text(snapshot.hasData ? snapshot.data.name : '',
                                   style: TextStyle(
-                                    color: Colors.blueGrey,
+                                    color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                                     fontFamily: 'TribesRounded',
-                                    fontWeight: FontWeight.normal
+                                    fontWeight: FontWeight.bold
                                   ),
                                 );
                               }
@@ -443,6 +485,7 @@ class _PostTileState extends State<PostTile> {
                       child: Text(widget.post.title,
                           style: DynamicTheme.of(context).data.textTheme.title),
                     ),
+                    SizedBox(height: Constants.smallSpacing),
                     Hero(
                       tag: 'postContent-${widget.post.id}',
                       child: Text(widget.post.content,
