@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 class Post {
   final String id;
@@ -7,9 +8,10 @@ class Post {
   final String content;
   final String fileURL;
   final String tribeID;
+  final double lat;
+  final double lng;
   final int created;
   final int updated;
-  final List<String> attachments = new List<String>();
 
   Post(
       {this.id,
@@ -18,6 +20,8 @@ class Post {
       this.content,
       this.fileURL,
       this.tribeID,
+      this.lat,
+      this.lng,
       this.created,
       this.updated});
 
@@ -29,6 +33,8 @@ class Post {
       content: doc.data['content'] ?? '',
       tribeID: doc.data['tribeID'] ?? '',
       fileURL: doc.data['fileURL'] ?? '',
+      lat: doc.data['lat'] ?? Constants.initialLat,
+      lng: doc.data['lng'] ?? Constants.initialLng,
       created: doc.data['created'] ?? 0,
       updated: doc.data['updated'] ?? 0,
     );

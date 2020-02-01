@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -190,6 +191,27 @@ class _PostTileState extends State<PostTile> {
                   behavior: CustomScrollBehavior(),
                   child: ListView(
                     children: <Widget>[
+                      Hero(
+                        tag: 'postImage-${widget.post.id}',
+                        child: Container(
+                          color: DynamicTheme.of(context).data.backgroundColor,
+                          child: CachedNetworkImage(
+                            imageUrl: widget.post.fileURL,
+                            imageBuilder: (context, imageProvider) => Container(
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              ),
+                            ),
+                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                          ),
+                        ),
+                      ),
                       Container(
                         color: DynamicTheme.of(context).data.backgroundColor,
                         height: MediaQuery.of(context).size.height,
@@ -351,77 +373,83 @@ class _PostTileState extends State<PostTile> {
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Align(
                 alignment: Alignment.center,
                 child: widget.post.fileURL.isEmpty 
                 ? SizedBox.shrink() 
-                : Container(
-                  width: 200,
-                  height: 200,
-                  color: Constants.postBackgroundColor,
-                  child: Image.network(widget.post.fileURL,
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                      if (loadingProgress == null)
-                        return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                              : null,
+                : Hero(
+                    tag: 'postImage-${widget.post.id}',
+                    child: CachedNetworkImage(
+                    imageUrl: widget.post.fileURL,
+                    imageBuilder: (context, imageProvider) => Container(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
                         ),
-                      );
-                    },
+                      ),
+                    ),
+                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                   ),
                 ),
               ),
-              SizedBox(height: Constants.defaultPadding),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(Icons.account_circle, 
-                        color: Colors.blueGrey,
-                      ),
-                      SizedBox(width: Constants.defaultPadding),
-                      StreamBuilder<UserData>(
-                        stream: DatabaseService().userData(widget.post.author),
-                        builder: (context, snapshot) {
-                          return Text(snapshot.hasData ? snapshot.data.name : '',
-                            style: TextStyle(
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.account_circle, 
                               color: Colors.blueGrey,
-                              fontFamily: 'TribesRounded',
-                              fontWeight: FontWeight.normal
                             ),
-                          );
-                        }
-                      )
-                    ],
-                  ),
-                  Text('#${widget.index+1}', 
-                    style: TextStyle(
-                      color: Colors.blueGrey,
-                      fontSize: Constants.timestampFontSize,
-                    )
-                  ),
-                ],
-              ),
-              Hero(
-                tag: 'postTitle-${widget.post.id}',
-                child: Text(widget.post.title,
-                    style: DynamicTheme.of(context).data.textTheme.title),
-              ),
-              Hero(
-                tag: 'postContent-${widget.post.id}',
-                child: Text(widget.post.content,
-                    style: DynamicTheme.of(context).data.textTheme.body2),
+                            SizedBox(width: Constants.defaultPadding),
+                            StreamBuilder<UserData>(
+                              stream: DatabaseService().userData(widget.post.author),
+                              builder: (context, snapshot) {
+                                return Text(snapshot.hasData ? snapshot.data.name : '',
+                                  style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontFamily: 'TribesRounded',
+                                    fontWeight: FontWeight.normal
+                                  ),
+                                );
+                              }
+                            )
+                          ],
+                        ),
+                        Text('#${widget.index+1}', 
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontSize: Constants.timestampFontSize,
+                          )
+                        ),
+                      ],
+                    ),
+                    Hero(
+                      tag: 'postTitle-${widget.post.id}',
+                      child: Text(widget.post.title,
+                          style: DynamicTheme.of(context).data.textTheme.title),
+                    ),
+                    Hero(
+                      tag: 'postContent-${widget.post.id}',
+                      child: Text(widget.post.content,
+                          style: DynamicTheme.of(context).data.textTheme.body2),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

@@ -66,6 +66,9 @@ dependencies:
   # Video Player
   video_player: ^0.10.3
 
+  # Cached Network Images
+  cached_network_image: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

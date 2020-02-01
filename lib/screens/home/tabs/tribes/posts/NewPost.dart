@@ -30,6 +30,7 @@ class _NewPostState extends State<NewPost> {
   
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool loading = false;
   bool autofocus;
   FocusNode focusNode;
   
@@ -37,6 +38,7 @@ class _NewPostState extends State<NewPost> {
   String content;
 
   File _imageFile;
+  String _fileURL;
   dynamic _pickImageError;
   bool isVideo = false;
   VideoPlayerController _controller;
@@ -188,7 +190,10 @@ class _NewPostState extends State<NewPost> {
 
     return Hero(
       tag: 'NewPostButton',
-      child: Scaffold(
+      child: loading ? Container(
+          color: DynamicTheme.of(context).data.backgroundColor,
+          child: Center(child: CircularProgressIndicator())
+        ) : Scaffold(
         extendBody: true,
         appBar: AppBar(
           elevation: 0.0,
@@ -270,6 +275,7 @@ class _NewPostState extends State<NewPost> {
           child: ListView(
             children: <Widget>[
               Container(
+                color: DynamicTheme.of(context).data.backgroundColor,
                 child: Platform.isAndroid
                 ? FutureBuilder<void>(
                     future: retrieveLostData(),
@@ -382,10 +388,19 @@ class _NewPostState extends State<NewPost> {
               icon: Icon(Icons.done, color: Constants.buttonIconColor),
               label: Text('Publish'),
               textColor: Colors.white,
-              onPressed: () async {
+              onPressed: () async {                
                 if(_formKey.currentState.validate()) {
-                  String fileURL = await uploadFile();
-                  await DatabaseService().addNewPost(user.uid, title, content, fileURL, widget.tribe.id);
+                  setState(() => loading = true);
+
+                  if(_imageFile != null) {
+                    _fileURL = await uploadFile();
+                  }
+                  await DatabaseService().addNewPost(
+                    user.uid, 
+                    title, 
+                    content, 
+                    _fileURL ?? null, 
+                    widget.tribe.id);
                   Navigator.pop(context);
                 }
               }

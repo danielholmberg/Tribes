@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -81,12 +82,16 @@ class DatabaseService {
       String author, String title, String content, String fileURL, String tribeID) async {
     DocumentReference postRef = postsRoot.document();
 
+    Position currentPosition = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
     var data = {
       'author': author,
       'title': title,
       'content': content,
       'tribeID': tribeID,
       'fileURL': fileURL,
+      'lat': currentPosition.latitude,
+      'lng': currentPosition.longitude,
       'created': new DateTime.now().millisecondsSinceEpoch,
     };
 

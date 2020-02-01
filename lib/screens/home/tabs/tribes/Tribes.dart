@@ -64,141 +64,131 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
 
     return currentUser != null
         ? Scaffold(
-            body: NestedScrollView(
-              reverse: false,
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverAppBar(
-                    elevation: 8.0,
-                    forceElevated: true,
-                    backgroundColor: DynamicTheme.of(context).data.primaryColor,
-                    floating: false,
-                    pinned: false,
-                    titleSpacing: 8.0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20.0),
-                      bottomRight: Radius.circular(20.0),
-                    )),
-                    iconTheme: IconThemeData(color: Constants.buttonIconColor),
-                    actions: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.group_add),
-                        iconSize: Constants.defaultIconSize,
-                        onPressed: () => print('Join Tribe clicked!'),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.add_to_photos),
-                        iconSize: Constants.defaultIconSize,
-                        onPressed: () => _showNewTribePage(),
-                      ),
-                    ],
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      titlePadding: EdgeInsets.only(bottom: 12),
-                      title: AutoSizeText(
-                        'Tribes',
-                        maxLines: 1,
-                        maxFontSize: 20.0,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'TribesRounded'),
-                      ),
+          body: NestedScrollView(
+            reverse: false,
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                  elevation: 8.0,
+                  forceElevated: true,
+                  backgroundColor: DynamicTheme.of(context).data.primaryColor,
+                  floating: false,
+                  pinned: false,
+                  titleSpacing: 8.0,
+                  iconTheme: IconThemeData(color: Constants.buttonIconColor),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.group_add),
+                      iconSize: Constants.defaultIconSize,
+                      onPressed: () => print('Join Tribe clicked!'),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add_to_photos),
+                      iconSize: Constants.defaultIconSize,
+                      onPressed: () => _showNewTribePage(),
+                    ),
+                  ],
+                  flexibleSpace: FlexibleSpaceBar(
+                    centerTitle: true,
+                    titlePadding: EdgeInsets.only(bottom: 12),
+                    title: AutoSizeText(
+                      'Tribes',
+                      maxLines: 1,
+                      maxFontSize: 20.0,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'TribesRounded'),
                     ),
                   ),
-                ];
-              },
-              body: Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  StreamBuilder<List<Tribe>>(
-                    initialData: [],
-                    stream: DatabaseService().joinedTribes(currentUser.uid),
-                    builder: (context, snapshot) {
-                      print('Tribes snapshot $snapshot');
+                ),
+              ];
+            },
+            body: StreamBuilder<List<Tribe>>(
+              initialData: [],
+              stream: DatabaseService().joinedTribes(currentUser.uid),
+              builder: (context, snapshot) {
+                print('Tribes snapshot $snapshot');
 
-                      if (snapshot.hasData) {
-                        var joinedTribesList = snapshot.data;
-                        print('JoinedTribesList: $joinedTribesList');
+                if (snapshot.hasData) {
+                  var joinedTribesList = snapshot.data;
+                  print('JoinedTribesList: $joinedTribesList');
 
-                        return joinedTribesList.isEmpty
-                          ? Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  GestureDetector(
-                                    onTap: () => _showNewTribePage(),
-                                    child: Text(
-                                      'Create',
-                                      style: TextStyle(
-                                          color: Colors.blueGrey,
-                                          fontSize: 24.0,
-                                          fontFamily: 'TribesRounded',
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  Text(
-                                    ' or ',
-                                    style: TextStyle(
-                                        color: Colors.blueGrey,
-                                        fontSize: 24.0,
-                                        fontFamily: 'TribesRounded',
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => Fluttertoast.showToast(
-                                        msg: 'Pressed "Join" Tribe',
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.BOTTOM,
-                                        timeInSecForIos: 1,
-                                        backgroundColor: Color(0xFF242424)
-                                            .withOpacity(0.9),
-                                        textColor: Colors.white,
-                                        fontSize: 16.0),
-                                    child: Text(
-                                      'Join',
-                                      style: TextStyle(
-                                          color: Colors.blueGrey,
-                                          fontSize: 24.0,
-                                          fontFamily: 'TribesRounded',
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  Text(
-                                    ' a Tribe',
-                                    style: TextStyle(
-                                        color: Colors.blueGrey,
-                                        fontSize: 24.0,
-                                        fontFamily: 'TribesRounded',
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ],
+                  return joinedTribesList.isEmpty
+                    ? Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: () => _showNewTribePage(),
+                              child: Text(
+                                'Create',
+                                style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontSize: 24.0,
+                                    fontFamily: 'TribesRounded',
+                                    fontWeight: FontWeight.bold),
                               ),
-                            )
-                          : PageView.builder(
-                              reverse: true,
-                              scrollDirection: Axis.vertical,
-                              controller: tribeController,
-                              itemCount: joinedTribesList.length,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  padding: EdgeInsets.fromLTRB(
-                                      0, 0, 0, 52),
-                                  child: TribeTile(
-                                      tribe: joinedTribesList[index],
-                                      active: index == currentPage),
-                                );
-                              },
-                            );
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  }),
-                ],
-              ),
-            ),
-          )
+                            ),
+                            Text(
+                              ' or ',
+                              style: TextStyle(
+                                  color: Colors.blueGrey,
+                                  fontSize: 24.0,
+                                  fontFamily: 'TribesRounded',
+                                  fontWeight: FontWeight.normal),
+                            ),
+                            GestureDetector(
+                              onTap: () => Fluttertoast.showToast(
+                                  msg: 'Pressed "Join" Tribe',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIos: 1,
+                                  backgroundColor: Color(0xFF242424)
+                                      .withOpacity(0.9),
+                                  textColor: Colors.white,
+                                  fontSize: 16.0),
+                              child: Text(
+                                'Join',
+                                style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontSize: 24.0,
+                                    fontFamily: 'TribesRounded',
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Text(
+                              ' a Tribe',
+                              style: TextStyle(
+                                  color: Colors.blueGrey,
+                                  fontSize: 24.0,
+                                  fontFamily: 'TribesRounded',
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                      )
+                    : PageView.builder(
+                        reverse: true,
+                        scrollDirection: Axis.vertical,
+                        controller: tribeController,
+                        itemCount: joinedTribesList.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.fromLTRB(
+                                0, 0, 0, 52),
+                            child: TribeTile(
+                                tribe: joinedTribesList[index],
+                                active: index == currentPage),
+                          );
+                        },
+                      );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            }),
+          ),
+        )
         : Loading();
   }
 

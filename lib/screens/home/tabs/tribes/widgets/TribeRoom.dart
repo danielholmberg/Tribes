@@ -43,7 +43,17 @@ class _TribeRoomState extends State<TribeRoom> {
                         DynamicTheme.of(context).data.primaryColor,
                     expandedHeight: 200.0,
                     floating: false,
-                    pinned: false,
+                    pinned: true,
+                    title: AutoSizeText(
+                      currentTribe.name,
+                      maxLines: 1,
+                      maxFontSize: 20.0,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'TribesRounded'),
+                    ),
+                    centerTitle: true,
                     titleSpacing: 8.0,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
@@ -88,75 +98,66 @@ class _TribeRoomState extends State<TribeRoom> {
                         },
                       ),
                     ],
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      titlePadding: EdgeInsets.only(bottom: 12),
-                      title: AutoSizeText(
-                        currentTribe.name,
-                        maxLines: 1,
-                        maxFontSize: 20.0,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'TribesRounded'),
+                    flexibleSpace: Center(
+                      child: Card(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)
+                        ),
+                        margin: EdgeInsets.fromLTRB(16, 142, 16, 16),
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Text(
+                            currentTribe.desc,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'TribesRounded',
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ];
               },
               body: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
+                child: Stack(
+                  alignment: Alignment.center,
                   children: <Widget>[
-                    /* Card(
-                      margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
-                      child: Container(
-                        padding: EdgeInsets.all(16),
-                        child: AutoSizeText(
-                          currentTribe.desc,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ), */
-                    Expanded(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: <Widget>[
-                          Posts(tribe: currentTribe),
-                          Positioned(
-                            bottom: 16.0,
-                            left: 16.0,
-                            right: 16.0,
-                            child: Hero(
-                              tag: 'NewPostButton',
-                              child: ButtonTheme(
-                                height: 50.0,
-                                minWidth: MediaQuery.of(context).size.width,
-                                child: RaisedButton.icon(
-                                  elevation: 8.0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  color: currentTribe.color ??
-                                      DynamicTheme.of(context).data.primaryColor,
-                                  icon: Icon(Icons.library_add,
-                                      color:
-                                          DynamicTheme.of(context).data.accentColor),
-                                  label: Text('Write a post'),
-                                  textColor: Colors.white,
-                                  onPressed: () {
-                                    Navigator.push(context, CustomPageTransition(
-                                      type: CustomPageTransitionType.newPost,
-                                      duration: Constants.pageTransition800,
-                                      child: NewPost(tribe: currentTribe)
-                                    ));
-                                  },
-                                ),
-                              ),
+                    Posts(tribe: currentTribe),
+                    Positioned(
+                      bottom: 16.0,
+                      left: 16.0,
+                      right: 16.0,
+                      child: Hero(
+                        tag: 'NewPostButton',
+                        child: ButtonTheme(
+                          height: 50.0,
+                          minWidth: MediaQuery.of(context).size.width,
+                          child: RaisedButton.icon(
+                            elevation: 8.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
+                            color: currentTribe.color ??
+                                DynamicTheme.of(context).data.primaryColor,
+                            icon: Icon(Icons.library_add,
+                                color:
+                                    DynamicTheme.of(context).data.accentColor),
+                            label: Text('Write a post'),
+                            textColor: Colors.white,
+                            onPressed: () {
+                              Navigator.push(context, CustomPageTransition(
+                                type: CustomPageTransitionType.newPost,
+                                duration: Constants.pageTransition800,
+                                child: NewPost(tribe: currentTribe)
+                              ));
+                            },
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ],
