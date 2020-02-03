@@ -26,8 +26,6 @@ class PostTile extends StatefulWidget {
 class _PostTileState extends State<PostTile> {
 
   final _formKey = GlobalKey<FormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool loading = false;
   FocusNode focusNode;
 
   String title;
@@ -56,16 +54,20 @@ class _PostTileState extends State<PostTile> {
     }
 
     _postDetails(String location) {
-      return loading ? Loading() : StreamBuilder<User>(
+
+      return StreamBuilder<User>(
         stream: AuthService().user,
         builder: (context, snapshot) {
+          final _scaffoldKey = GlobalKey<ScaffoldState>();
           bool isAuthor = snapshot.hasData ? snapshot.data.uid == widget.post.author : '';
           bool isEditing = false;
+          bool loading = false;
           focusNode = FocusNode();
 
           return StatefulBuilder(
             builder: (context, setState) { 
               return Scaffold(
+                key: _scaffoldKey ,
                 appBar: isAuthor ? 
                 AppBar(
                   iconTheme: IconThemeData(
@@ -209,7 +211,7 @@ class _PostTileState extends State<PostTile> {
                     ),                  
                   ]
                 ),
-                body: ScrollConfiguration(
+                body: loading ? Center(child: CircularProgressIndicator()) : ScrollConfiguration(
                   behavior: CustomScrollBehavior(),
                   child: ListView(
                     children: <Widget>[
@@ -375,20 +377,21 @@ class _PostTileState extends State<PostTile> {
                             loading = true;
                             isEditing = false; 
                           });
+
                           await DatabaseService().updatePostData(
                             widget.post.id, 
                             title ?? widget.post.title, 
                             content ?? widget.post.content
-                          );
+                          ).then((val) {
+                            _scaffoldKey.currentState.showSnackBar(
+                              SnackBar(
+                                content: Text('Post saved'),
+                                duration: Duration(milliseconds: 500),
+                              )
+                            );
 
-                          _scaffoldKey.currentState.showSnackBar(
-                            SnackBar(
-                              content: Text('Post saved'),
-                              duration: Duration(milliseconds: 500),
-                            )
-                          );
-
-                          setState(() => loading = false);  
+                            setState(() => loading = false);  
+                          });
                         }
                       },
                     ),
@@ -592,8 +595,16 @@ class _PostTileState extends State<PostTile> {
                         ),
                       ),
                     ),
-                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                    placeholder: (context, url) => Container(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(child: Icon(Icons.error)),
+                    ),
                   ),
                 ),
               ),
