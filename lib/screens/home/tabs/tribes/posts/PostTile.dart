@@ -215,33 +215,14 @@ class _PostTileState extends State<PostTile> {
                 : Container(
                   color: DynamicTheme.of(context).data.backgroundColor,
                   child: Stack(
+                    fit: StackFit.expand,
                     children: <Widget>[
                       ScrollConfiguration(
                         behavior: CustomScrollBehavior(),
                         child: ListView(
-                          padding: EdgeInsets.only(bottom: 48.0),
+                          padding: EdgeInsets.only(bottom: isEditing ? 64.0 : 16.0),
                           shrinkWrap: true,
                           children: <Widget>[
-                            widget.post.fileURL.isEmpty 
-                            ? SizedBox.shrink() 
-                            : Hero(
-                              tag: 'postImage-${widget.post.id}',
-                              child: CachedNetworkImage(
-                                imageUrl: widget.post.fileURL,
-                                imageBuilder: (context, imageProvider) => Container(
-                                  height: MediaQuery.of(context).size.height * 0.6,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.fitHeight,
-                                    ),
-                                  ),
-                                ),
-                                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-                              ),
-                            ),
                             Container(
                               alignment: Alignment.topCenter,
                               padding: EdgeInsets.all(16),
@@ -348,6 +329,29 @@ class _PostTileState extends State<PostTile> {
                                     ),
                                   ),
                                 ],
+                              ),
+                            ),
+                            widget.post.fileURL.isEmpty 
+                            ? SizedBox.shrink() 
+                            : Hero(
+                              tag: 'postImage-${widget.post.id}',
+                              child: CachedNetworkImage(
+                                imageUrl: widget.post.fileURL,
+                                imageBuilder: (context, imageProvider) => Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                    child: Image(
+                                      image: imageProvider, 
+                                      fit: BoxFit.scaleDown,
+                                      frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+                                        return child;
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                               ),
                             ),
                           ],
@@ -534,6 +538,51 @@ class _PostTileState extends State<PostTile> {
                   style: DynamicTheme.of(context).data.textTheme.body2),
             ),
           ),
+          widget.post.fileURL.isEmpty ? SizedBox.shrink() 
+          : Container(
+              padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
+              child: Hero(
+                tag: 'postImage-${widget.post.id}',
+                child: CachedNetworkImage(
+                imageUrl: widget.post.fileURL,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    color: DynamicTheme.of(context).data.accentColor,
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: widget.tribeColor ?? DynamicTheme.of(context).data.accentColor,
+                        blurRadius: 10,
+                        offset: Offset(0, 0),
+                      ),
+                    ]
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    child: Image(
+                      image: imageProvider, 
+                      fit: BoxFit.fitWidth,
+                      frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+                        return child;
+                      },
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => Container(
+                  height: 200,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  height: 200,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(child: Icon(Icons.error)),
+                ),
+              ),
+            ),
+          ),
           Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
@@ -583,37 +632,6 @@ class _PostTileState extends State<PostTile> {
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: <Widget>[
-              Align(
-                alignment: Alignment.center,
-                child: widget.post.fileURL.isEmpty 
-                ? SizedBox.shrink() 
-                : Hero(
-                    tag: 'postImage-${widget.post.id}',
-                    child: CachedNetworkImage(
-                    imageUrl: widget.post.fileURL,
-                    imageBuilder: (context, imageProvider) => Container(
-                      height: MediaQuery.of(context).size.height * 0.6,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    placeholder: (context, url) => Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      child: Center(child: Icon(Icons.error)),
-                    ),
-                  ),
-                ),
-              ),
               _postTileMain(),
             ],
           ),

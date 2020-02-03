@@ -14,7 +14,6 @@ import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as Path;
 
 class NewPost extends StatefulWidget {  
@@ -40,8 +39,6 @@ class _NewPostState extends State<NewPost> {
   File _imageFile;
   String _fileURL;
   dynamic _pickImageError;
-  bool isVideo = false;
-  VideoPlayerController _controller;
   String _retrieveDataError;
 
   final TextEditingController maxWidthController = TextEditingController();
@@ -62,76 +59,17 @@ class _NewPostState extends State<NewPost> {
   @override
   void dispose() {
     focusNode.dispose();
-    _disposeVideoController();
-    maxWidthController.dispose();
-    maxHeightController.dispose();
-    qualityController.dispose();
     super.dispose();
   }
 
-  @override
-  void deactivate() {
-    if (_controller != null) {
-      _controller.setVolume(0.0);
-      _controller.pause();
-    }
-    super.deactivate();
-  }
-
-  Future<void> _playVideo(File file) async {
-    if (file != null && mounted) {
-      await _disposeVideoController();
-      _controller = VideoPlayerController.file(file);
-      await _controller.setVolume(1.0);
-      await _controller.initialize();
-      await _controller.setLooping(true);
-      await _controller.play();
-      setState(() {});
-    }
-  }
-
   void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
-    if (_controller != null) {
-      await _controller.setVolume(0.0);
+    try {
+      _imageFile = await ImagePicker.pickImage(source: source);
+      setState(() {});
+    } catch (e) {
+      print(e.toString());
+      _pickImageError = e;
     }
-    if (isVideo) {
-      final File file = await ImagePicker.pickVideo(source: source);
-      await _playVideo(file);
-    } else {
-      try {
-        _imageFile = await ImagePicker.pickImage(source: source);
-        setState(() {});
-      } catch (e) {
-        _pickImageError = e;
-      }
-    }
-  }
-
-  Future<void> _disposeVideoController() async {
-    if (_controller != null) {
-      await _controller.dispose();
-      _controller = null;
-    }
-  }
-
-  Widget _previewVideo() {
-    final Text retrieveError = _getRetrieveErrorWidget();
-    if (retrieveError != null) {
-      return retrieveError;
-    }
-    if (_controller == null) {
-      return const Text(
-        'You have not yet picked a video',
-        textAlign: TextAlign.center,
-      );
-    }
-    return Container(
-      width: 200,
-      height: 200,
-      color: DynamicTheme.of(context).data.backgroundColor,
-      padding: const EdgeInsets.all(8.0),
-      child: AspectRatioVideo(_controller),
-    );
   }
 
   Widget _previewImage() {
@@ -140,16 +78,14 @@ class _NewPostState extends State<NewPost> {
       return retrieveError;
     }
     if (_imageFile != null) {
-      return Image.file(_imageFile, 
-        width: 200, 
-        height: 200,
-        frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-          return Container(
-            color: DynamicTheme.of(context).data.backgroundColor,
-            padding: EdgeInsets.all(16),
-            child: child,
-          );
-        },
+      return ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        child: Image.file(_imageFile, 
+          fit: BoxFit.scaleDown,
+          frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+            return child;
+          },
+        ),
       );
     } else if (_pickImageError != null) {
       return Text(
@@ -170,15 +106,9 @@ class _NewPostState extends State<NewPost> {
       return;
     }
     if (response.file != null) {
-      if (response.type == RetrieveType.video) {
-        isVideo = true;
-        await _playVideo(response.file);
-      } else {
-        isVideo = false;
-        setState(() {
-          _imageFile = response.file;
-        });
-      }
+      setState(() {
+        _imageFile = response.file;
+      });
     } else {
       _retrieveDataError = response.exception.code;
     }
@@ -237,7 +167,6 @@ class _NewPostState extends State<NewPost> {
               iconSize: Constants.defaultIconSize,
               color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
               onPressed: () {
-                isVideo = false;
                 _onImageButtonPressed(ImageSource.camera, context: context);
               },
             ),
@@ -246,28 +175,9 @@ class _NewPostState extends State<NewPost> {
               iconSize: Constants.defaultIconSize,
               color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
               onPressed: () {
-                isVideo = false;
                 _onImageButtonPressed(ImageSource.gallery, context: context);
               },
-            ),
-            IconButton(
-              icon: Icon(Icons.video_call),
-              iconSize: Constants.defaultIconSize,
-              color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-              onPressed: () {
-                isVideo = true;
-                _onImageButtonPressed(ImageSource.camera);
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.video_library),
-              iconSize: Constants.defaultIconSize,
-              color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-              onPressed: () {
-                isVideo = true;
-                _onImageButtonPressed(ImageSource.gallery);
-              },
-            ),
+            )
           ],
         ),
         body: Container(
@@ -278,44 +188,10 @@ class _NewPostState extends State<NewPost> {
                 child: ScrollConfiguration(
                   behavior: CustomScrollBehavior(),
                   child: ListView(
-                    padding: EdgeInsets.only(bottom: 48.0),
+                    padding: EdgeInsets.only(bottom: 64.0),
                     shrinkWrap: true,
                     children: <Widget>[
                       Container(
-                        color: DynamicTheme.of(context).data.backgroundColor,
-                        child: Platform.isAndroid
-                        ? FutureBuilder<void>(
-                            future: retrieveLostData(),
-                            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.none:
-                                case ConnectionState.waiting:
-                                  return Text(
-                                    'You have not yet picked an image.',
-                                    textAlign: TextAlign.center,
-                                  );
-                                case ConnectionState.done:
-                                  return isVideo ? _previewVideo() : _previewImage();
-                                default:
-                                  if (snapshot.hasError) {
-                                    return Text(
-                                      'Pick image/video error: ${snapshot.error}}',
-                                      textAlign: TextAlign.center,
-                                    );
-                                  } else {
-                                    return Text(
-                                      'You have not yet picked an image.',
-                                      textAlign: TextAlign.center,
-                                    );
-                                  }
-                              }
-                            },
-                          )
-                        : (isVideo ? _previewVideo() : _previewImage()),
-                      ),
-                      Container(
-                        color: DynamicTheme.of(context).data.backgroundColor,
-                        width: MediaQuery.of(context).size.width,
                         alignment: Alignment.topCenter,
                         padding: EdgeInsets.all(16),
                         child: Column(
@@ -375,6 +251,38 @@ class _NewPostState extends State<NewPost> {
                             ),
                           ],
                         ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Platform.isAndroid
+                        ? FutureBuilder<void>(
+                            future: retrieveLostData(),
+                            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.none:
+                                case ConnectionState.waiting:
+                                  return _imageFile != null ? _previewImage() : Text(
+                                    'You have not yet picked an image.',
+                                    textAlign: TextAlign.center,
+                                  );
+                                case ConnectionState.done:
+                                  return _previewImage();
+                                default:
+                                  if (snapshot.hasError) {
+                                    return Text(
+                                      'Pick image/video error: ${snapshot.error}}',
+                                      textAlign: TextAlign.center,
+                                    );
+                                  } else {
+                                    return Text(
+                                      'You have not yet picked an image.',
+                                      textAlign: TextAlign.center,
+                                    );
+                                  }
+                              }
+                            },
+                          )
+                        : _previewImage(),
                       ),
                     ],
                   ),
@@ -445,53 +353,3 @@ class _NewPostState extends State<NewPost> {
 
 typedef void OnPickImageCallback(
     double maxWidth, double maxHeight, int quality);
-
-class AspectRatioVideo extends StatefulWidget {
-  AspectRatioVideo(this.controller);
-
-  final VideoPlayerController controller;
-
-  @override
-  AspectRatioVideoState createState() => AspectRatioVideoState();
-}
-
-class AspectRatioVideoState extends State<AspectRatioVideo> {
-  VideoPlayerController get controller => widget.controller;
-  bool initialized = false;
-
-  void _onVideoControllerUpdate() {
-    if (!mounted) {
-      return;
-    }
-    if (initialized != controller.value.initialized) {
-      initialized = controller.value.initialized;
-      setState(() {});
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    controller.addListener(_onVideoControllerUpdate);
-  }
-
-  @override
-  void dispose() {
-    controller.removeListener(_onVideoControllerUpdate);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (initialized) {
-      return Center(
-        child: AspectRatio(
-          aspectRatio: controller.value?.aspectRatio,
-          child: VideoPlayer(controller),
-        ),
-      );
-    } else {
-      return Container();
-    }
-  }
-}
