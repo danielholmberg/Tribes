@@ -30,7 +30,7 @@ class _TribeRoomState extends State<TribeRoom> {
         child: StreamBuilder<User>(
           stream: AuthService().user,
           builder: (context, snapshot) {
-            bool isFounder = snapshot.data.uid == currentTribe.founder;
+            bool isFounder = snapshot.hasData ? snapshot.data.uid == currentTribe.founder : false;
 
             return ScrollConfiguration(
               behavior: CustomScrollBehavior(),

@@ -59,7 +59,7 @@ class _PostTileState extends State<PostTile> {
       return loading ? Loading() : StreamBuilder<User>(
         stream: AuthService().user,
         builder: (context, snapshot) {
-          bool isAuthor = snapshot.data.uid == widget.post.author;
+          bool isAuthor = snapshot.hasData ? snapshot.data.uid == widget.post.author : '';
           bool isEditing = false;
           focusNode = FocusNode();
 
