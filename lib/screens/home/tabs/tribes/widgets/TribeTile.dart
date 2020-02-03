@@ -10,16 +10,11 @@ import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 
 class TribeTile extends StatelessWidget {
   final Tribe tribe;
-  final bool active;
-  TribeTile({this.tribe, this.active});
+  TribeTile({this.tribe});
 
   @override
   Widget build(BuildContext context) {
     print('TribeTile: ${tribe.id}');
-
-    final double blur = active ? 20.0 : 10.0;
-    final double offset = active ? 0.0 : 0.0;
-    //final double horizontal = active ? 20.0 : 0.0;
 
     return GestureDetector(
       onTap: () {
@@ -44,8 +39,8 @@ class TribeTile extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: tribe.color,
-                  blurRadius: blur,
-                  offset: Offset(offset, offset),
+                  blurRadius: 10,
+                  offset: Offset(0, 0),
                 ),
               ]),
           child: Stack(

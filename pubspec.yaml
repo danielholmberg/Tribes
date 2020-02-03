@@ -72,6 +72,9 @@ dependencies:
   # Geocoder
   geocoder: ^0.2.1
 
+  # Internalization and Localization
+  intl: ^0.16.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

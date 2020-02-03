@@ -72,9 +72,11 @@ class DatabaseService {
   }
 
   // Get Posts Stream related to a specific Tribe
+  // Return QuerySnapshot to make it work with FirebaseAnimatedList.
   Stream<QuerySnapshot> posts(String tribeID) {
-    // Return QuerySnapshot to make it work with FirebaseAnimatedList.
-    return postsRoot.where('tribeID', isEqualTo: tribeID).snapshots();
+    // Chaining .where() and .orderBy() requires a Composite-index in Firebase Firestore setup.
+    // See https://github.com/flutter/flutter/issues/15928#issuecomment-394197426 for more info.
+    return postsRoot.where('tribeID', isEqualTo: tribeID).orderBy('created', descending: true).snapshots();
   }
 
   // Add a new Post

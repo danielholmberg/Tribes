@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/auth.dart';
@@ -41,6 +42,19 @@ class _PostTileState extends State<PostTile> {
   @override
   Widget build(BuildContext context) {
 
+    _postedDateTime() {
+      DateTime created = DateTime.fromMillisecondsSinceEpoch(widget.post.created); 
+      String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(created);
+      
+      return Text(formattedDate,
+        textAlign: TextAlign.center, 
+        style: TextStyle(
+          color: Colors.black54,
+          fontSize: Constants.timestampFontSize,
+        ),
+      );
+    }
+
     _postDetails(String location) {
       return loading ? Loading() : StreamBuilder<User>(
         stream: AuthService().user,
@@ -60,13 +74,7 @@ class _PostTileState extends State<PostTile> {
                   centerTitle: true,
                   title: isEditing ? 
                     Text('Editing', style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)) : 
-                    Text('Posted: ${DateTime.fromMillisecondsSinceEpoch(widget.post.created)}',
-                      textAlign: TextAlign.center, 
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: Constants.timestampFontSize,
-                      ),
-                    ),
+                    _postedDateTime(),
                   backgroundColor: DynamicTheme.of(context).data.backgroundColor,
                   elevation: 0.0,
                   leading: isEditing ? 
@@ -167,13 +175,7 @@ class _PostTileState extends State<PostTile> {
                   ),
                   backgroundColor: DynamicTheme.of(context).data.backgroundColor,
                   centerTitle: true,
-                  title: Text('Posted: ${DateTime.fromMillisecondsSinceEpoch(widget.post.created)}',
-                    textAlign: TextAlign.center, 
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: Constants.timestampFontSize,
-                    ),
-                  ),
+                  title: _postedDateTime(),
                   actions: <Widget>[
                     IconButton(
                       color: DynamicTheme.of(context).data.backgroundColor,
@@ -187,7 +189,8 @@ class _PostTileState extends State<PostTile> {
                           gravity: ToastGravity.BOTTOM,
                         );
                       },
-                    ),                  ]
+                    ),                  
+                  ]
                 ),
                 body: ScrollConfiguration(
                   behavior: CustomScrollBehavior(),
@@ -291,9 +294,10 @@ class _PostTileState extends State<PostTile> {
                                         focusNode: focusNode,
                                         initialValue: widget.post.title,
                                         readOnly: !isEditing,
+                                        textCapitalization: TextCapitalization.sentences,
                                         style: DynamicTheme.of(context).data.textTheme.title,
                                         cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                        decoration: InputDecoration(border: InputBorder.none),
+                                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
                                         validator: (val) => val.isEmpty 
                                           ? 'Enter a title' 
                                           : null,
@@ -307,11 +311,12 @@ class _PostTileState extends State<PostTile> {
                                       child: TextFormField(
                                         initialValue: widget.post.content,
                                         readOnly: !isEditing,
+                                        textCapitalization: TextCapitalization.sentences,
                                         style: DynamicTheme.of(context).data.textTheme.body1,
                                         cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                                         keyboardType: TextInputType.multiline,
                                         maxLines: null,
-                                        decoration: InputDecoration(border: InputBorder.none),
+                                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
                                         validator: (val) => val.isEmpty 
                                           ? 'Enter some content' 
                                           : null,
@@ -379,15 +384,152 @@ class _PostTileState extends State<PostTile> {
       );
     }
 
+    _postTileHeader() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.account_circle, 
+                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                size: Constants.mediumIconSize,
+              ),
+              SizedBox(width: Constants.defaultPadding),
+              StreamBuilder<UserData>(
+                stream: DatabaseService().userData(widget.post.author),
+                builder: (context, snapshot) {
+                  return Text(snapshot.hasData ? snapshot.data.name : '',
+                    style: TextStyle(
+                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                      fontFamily: 'TribesRounded',
+                      fontWeight: FontWeight.bold
+                    ),
+                  );
+                }
+              )
+            ],
+          ),
+          Text('#${widget.index+1}', 
+            style: TextStyle(
+              color: Colors.blueGrey,
+              fontSize: Constants.timestampFontSize,
+            )
+          ),
+        ],
+      );
+    }
+
+    _postTileFooter() {
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              IconButton(
+                splashColor: Colors.transparent,
+                color: DynamicTheme.of(context).data.backgroundColor,
+                icon: Icon(Icons.comment, 
+                  color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
+                ),
+                onPressed: () async {
+                  Fluttertoast.showToast(
+                    msg: 'Coming soon!',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                  );
+                },
+              ),
+            ],
+          ),
+          Spacer(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            child: _postedDateTime()
+          ),
+          Spacer(),   
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              IconButton(
+                splashColor: Colors.transparent,
+                color: DynamicTheme.of(context).data.backgroundColor,
+                icon: Icon(Icons.favorite_border, 
+                  color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
+                ),
+                onPressed: () async {
+                  Fluttertoast.showToast(
+                    msg: 'Coming soon!',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                  );
+                },
+              ),
+            ],
+          ),           
+        ],
+      );
+    }
+
+    _postTileMain() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(8.0, 10.0, 8.0, 0.0),
+            child: _postTileHeader()
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,            
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            child: Hero(
+              tag: 'postTitle-${widget.post.id}',
+              child: Text(widget.post.title,
+                  style: DynamicTheme.of(context).data.textTheme.title),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
+            child: Hero(
+              tag: 'postContent-${widget.post.id}',
+              child: Text(widget.post.content,
+                  style: DynamicTheme.of(context).data.textTheme.body2),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)), 
+              ),
+            ),
+            child: _postTileFooter()
+          ),
+        ],
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: DynamicTheme.of(context).data.backgroundColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(0),
         boxShadow: [
           BoxShadow(
-            color: widget.tribeColor.withOpacity(0.1) ?? DynamicTheme.of(context).data.accentColor,
-            blurRadius: 5,
-            offset: Offset(0, 0),
+            color: widget.tribeColor.withOpacity(0.5) ?? DynamicTheme.of(context).data.accentColor,
+            blurRadius: 1,
+            offset: Offset(0, 1),
           ),
         ]
       ),
@@ -427,7 +569,6 @@ class _PostTileState extends State<PostTile> {
                       height: MediaQuery.of(context).size.height * 0.6,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
                         image: DecorationImage(
                           image: imageProvider,
                           fit: BoxFit.cover,
@@ -439,61 +580,7 @@ class _PostTileState extends State<PostTile> {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(Icons.account_circle, 
-                              color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                              size: Constants.mediumIconSize,
-                            ),
-                            SizedBox(width: Constants.defaultPadding),
-                            StreamBuilder<UserData>(
-                              stream: DatabaseService().userData(widget.post.author),
-                              builder: (context, snapshot) {
-                                return Text(snapshot.hasData ? snapshot.data.name : '',
-                                  style: TextStyle(
-                                    color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                    fontFamily: 'TribesRounded',
-                                    fontWeight: FontWeight.bold
-                                  ),
-                                );
-                              }
-                            )
-                          ],
-                        ),
-                        Text('#${widget.index+1}', 
-                          style: TextStyle(
-                            color: Colors.blueGrey,
-                            fontSize: Constants.timestampFontSize,
-                          )
-                        ),
-                      ],
-                    ),
-                    Hero(
-                      tag: 'postTitle-${widget.post.id}',
-                      child: Text(widget.post.title,
-                          style: DynamicTheme.of(context).data.textTheme.title),
-                    ),
-                    SizedBox(height: Constants.smallSpacing),
-                    Hero(
-                      tag: 'postContent-${widget.post.id}',
-                      child: Text(widget.post.content,
-                          style: DynamicTheme.of(context).data.textTheme.body2),
-                    ),
-                  ],
-                ),
-              ),
+              _postTileMain(),
             ],
           ),
         ),

@@ -175,11 +175,10 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                         itemCount: joinedTribesList.length,
                         itemBuilder: (context, index) {
                           return Container(
-                            padding: EdgeInsets.fromLTRB(
-                                0, 0, 0, 52),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 52),
                             child: TribeTile(
-                                tribe: joinedTribesList[index],
-                                active: index == currentPage),
+                              tribe: joinedTribesList[index]
+                            ),
                           );
                         },
                       );
