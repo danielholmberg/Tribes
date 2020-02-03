@@ -117,6 +117,7 @@ class _PostTileState extends State<PostTile> {
                     ),
                   actions: isEditing ? <Widget>[
                     IconButton(
+                      splashColor: Colors.transparent,
                       color: DynamicTheme.of(context).data.backgroundColor,
                       icon: Icon(Icons.delete, 
                         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
@@ -155,6 +156,7 @@ class _PostTileState extends State<PostTile> {
                     ),
                   ] : <Widget> [
                     IconButton(
+                      splashColor: Colors.transparent,
                       color: DynamicTheme.of(context).data.backgroundColor,
                       icon: Icon(Icons.edit, 
                         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
@@ -166,6 +168,20 @@ class _PostTileState extends State<PostTile> {
                         });
                       },
                     ),
+                    IconButton(
+                      splashColor: Colors.transparent,
+                      color: DynamicTheme.of(context).data.backgroundColor,
+                      icon: Icon(Icons.favorite_border, 
+                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+                      ),
+                      onPressed: () async {
+                        Fluttertoast.showToast(
+                          msg: 'Coming soon!',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                        );
+                      },
+                    ),   
                   ],
                 )
                 : AppBar(
@@ -178,6 +194,7 @@ class _PostTileState extends State<PostTile> {
                   title: _postedDateTime(),
                   actions: <Widget>[
                     IconButton(
+                      splashColor: Colors.transparent,
                       color: DynamicTheme.of(context).data.backgroundColor,
                       icon: Icon(Icons.favorite_border, 
                         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
