@@ -211,192 +211,198 @@ class _PostTileState extends State<PostTile> {
                     ),                  
                   ]
                 ),
-                body: loading ? Center(child: CircularProgressIndicator()) : ScrollConfiguration(
-                  behavior: CustomScrollBehavior(),
-                  child: ListView(
+                body: loading ? Center(child: CircularProgressIndicator()) 
+                : Container(
+                  color: DynamicTheme.of(context).data.backgroundColor,
+                  child: Stack(
                     children: <Widget>[
-                      widget.post.fileURL.isEmpty 
-                      ? SizedBox.shrink() 
-                      : Hero(
-                        tag: 'postImage-${widget.post.id}',
-                        child: Container(
-                          color: DynamicTheme.of(context).data.backgroundColor,
-                          child: CachedNetworkImage(
-                            imageUrl: widget.post.fileURL,
-                            imageBuilder: (context, imageProvider) => Container(
-                              height: MediaQuery.of(context).size.height * 0.6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.fitHeight,
+                      ScrollConfiguration(
+                        behavior: CustomScrollBehavior(),
+                        child: ListView(
+                          padding: EdgeInsets.only(bottom: 48.0),
+                          shrinkWrap: true,
+                          children: <Widget>[
+                            widget.post.fileURL.isEmpty 
+                            ? SizedBox.shrink() 
+                            : Hero(
+                              tag: 'postImage-${widget.post.id}',
+                              child: CachedNetworkImage(
+                                imageUrl: widget.post.fileURL,
+                                imageBuilder: (context, imageProvider) => Container(
+                                  height: MediaQuery.of(context).size.height * 0.6,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                  ),
                                 ),
+                                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                               ),
                             ),
-                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        color: DynamicTheme.of(context).data.backgroundColor,
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(Icons.account_circle, 
-                                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                      size: Constants.mediumIconSize,
-                                    ),
-                                    SizedBox(width: Constants.defaultPadding),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        StreamBuilder<UserData>(
-                                          stream: DatabaseService().userData(widget.post.author),
-                                          builder: (context, snapshot) {
-                                            return Text(snapshot.hasData ? snapshot.data.name : '',
-                                              style: TextStyle(
-                                                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                                fontFamily: 'TribesRounded',
-                                                fontWeight: FontWeight.bold
+                            Container(
+                              alignment: Alignment.topCenter,
+                              padding: EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.account_circle, 
+                                            color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                            size: Constants.mediumIconSize,
+                                          ),
+                                          SizedBox(width: Constants.defaultPadding),
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              StreamBuilder<UserData>(
+                                                stream: DatabaseService().userData(widget.post.author),
+                                                builder: (context, snapshot) {
+                                                  return Text(snapshot.hasData ? snapshot.data.name : '',
+                                                    style: TextStyle(
+                                                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                                      fontFamily: 'TribesRounded',
+                                                      fontWeight: FontWeight.bold
+                                                    ),
+                                                  );
+                                                }
                                               ),
-                                            );
-                                          }
-                                        ),
-                                        location.isEmpty
-                                        ? SizedBox.shrink() 
-                                        : Text(location,
-                                          style: TextStyle(
-                                            color: Colors.blueGrey,
-                                            fontFamily: 'TribesRounded',
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.normal
+                                              location.isEmpty
+                                              ? SizedBox.shrink() 
+                                              : Text(location,
+                                                style: TextStyle(
+                                                  color: Colors.blueGrey,
+                                                  fontFamily: 'TribesRounded',
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.normal
+                                                ),
+                                              ),
+                                             ],
+                                          )
+                                        ],
+                                      ),
+                                      Text('#${widget.index+1}', 
+                                        style: TextStyle(
+                                          color: Colors.blueGrey,
+                                          fontSize: Constants.timestampFontSize,
+                                        )
+                                      ),
+                                    ],
+                                  ),
+                                  Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Hero(
+                                          tag: 'postTitle-${widget.post.id}',
+                                          child: TextFormField(
+                                            focusNode: focusNode,
+                                            initialValue: widget.post.title,
+                                            readOnly: !isEditing,
+                                            textCapitalization: TextCapitalization.sentences,
+                                            style: DynamicTheme.of(context).data.textTheme.title,
+                                            cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                            validator: (val) => val.isEmpty 
+                                              ? 'Enter a title' 
+                                              : null,
+                                            onChanged: (val) {
+                                              setState(() => title = val);
+                                            },
                                           ),
                                         ),
-                                       ],
-                                    )
-                                  ],
-                                ),
-                                Text('#${widget.index+1}', 
-                                  style: TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontSize: Constants.timestampFontSize,
-                                  )
-                                ),
-                              ],
-                            ),
-                            Expanded(
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Hero(
-                                      tag: 'postTitle-${widget.post.id}',
-                                      child: TextFormField(
-                                        focusNode: focusNode,
-                                        initialValue: widget.post.title,
-                                        readOnly: !isEditing,
-                                        textCapitalization: TextCapitalization.sentences,
-                                        style: DynamicTheme.of(context).data.textTheme.title,
-                                        cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
-                                        validator: (val) => val.isEmpty 
-                                          ? 'Enter a title' 
-                                          : null,
-                                        onChanged: (val) {
-                                          setState(() => title = val);
-                                        },
-                                      ),
+                                        Hero(
+                                          tag: 'postContent-${widget.post.id}',
+                                          child: TextFormField(
+                                            initialValue: widget.post.content,
+                                            readOnly: !isEditing,
+                                            textCapitalization: TextCapitalization.sentences,
+                                            style: DynamicTheme.of(context).data.textTheme.body1,
+                                            cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                            keyboardType: TextInputType.multiline,
+                                            maxLines: null,
+                                            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                            validator: (val) => val.isEmpty 
+                                              ? 'Enter some content' 
+                                              : null,
+                                            onChanged: (val) {
+                                              setState(() => content = val);
+                                            },
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                    Hero(
-                                      tag: 'postContent-${widget.post.id}',
-                                      child: TextFormField(
-                                        initialValue: widget.post.content,
-                                        readOnly: !isEditing,
-                                        textCapitalization: TextCapitalization.sentences,
-                                        style: DynamicTheme.of(context).data.textTheme.body1,
-                                        cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                        keyboardType: TextInputType.multiline,
-                                        maxLines: null,
-                                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
-                                        validator: (val) => val.isEmpty 
-                                          ? 'Enter some content' 
-                                          : null,
-                                        onChanged: (val) {
-                                          setState(() => content = val);
-                                        },
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
+                      isEditing ? Positioned(
+                        bottom: 0.0,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          color: Colors.transparent,
+                          child: ButtonTheme(
+                            height: 40.0,
+                            minWidth: MediaQuery.of(context).size.width,
+                            child: RaisedButton.icon(
+                              elevation: 8.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(8.0),
+                              ),
+                              color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                              icon: Icon(Icons.done,
+                                color: Constants.buttonIconColor),
+                              label: Text('Save'),
+                              textColor: Colors.white,
+                              onPressed: () async {
+                                if(_formKey.currentState.validate()) {
+                                  setState(() { 
+                                    loading = true;
+                                    isEditing = false; 
+                                  });
+
+                                  await DatabaseService().updatePostData(
+                                    widget.post.id, 
+                                    title ?? widget.post.title, 
+                                    content ?? widget.post.content
+                                  ).then((val) {
+                                    _scaffoldKey.currentState.showSnackBar(
+                                      SnackBar(
+                                        content: Text('Post saved'),
+                                        duration: Duration(milliseconds: 500),
+                                      )
+                                    );
+
+                                    setState(() => loading = false);  
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ) : SizedBox.shrink(),
                     ],
                   ),
                 ),
-                bottomNavigationBar: isEditing ? Container(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  color: DynamicTheme.of(context).data.backgroundColor,
-                  child: ButtonTheme(
-                    height: 40.0,
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: RaisedButton.icon(
-                      elevation: 8.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(8.0),
-                      ),
-                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                      icon: Icon(Icons.done,
-                        color: Constants.buttonIconColor),
-                      label: Text('Save'),
-                      textColor: Colors.white,
-                      onPressed: () async {
-                        if(_formKey.currentState.validate()) {
-                          setState(() { 
-                            loading = true;
-                            isEditing = false; 
-                          });
-
-                          await DatabaseService().updatePostData(
-                            widget.post.id, 
-                            title ?? widget.post.title, 
-                            content ?? widget.post.content
-                          ).then((val) {
-                            _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(
-                                content: Text('Post saved'),
-                                duration: Duration(milliseconds: 500),
-                              )
-                            );
-
-                            setState(() => loading = false);  
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ) : SizedBox.shrink(),
               );
             }
           );
@@ -548,8 +554,8 @@ class _PostTileState extends State<PostTile> {
         boxShadow: [
           BoxShadow(
             color: widget.tribeColor.withOpacity(0.5) ?? DynamicTheme.of(context).data.accentColor,
-            blurRadius: 1,
-            offset: Offset(0, 1),
+            blurRadius: 2,
+            offset: Offset(0, 0),
           ),
         ]
       ),

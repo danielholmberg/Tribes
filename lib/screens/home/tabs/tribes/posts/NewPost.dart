@@ -270,143 +270,157 @@ class _NewPostState extends State<NewPost> {
             ),
           ],
         ),
-        body: ScrollConfiguration(
-          behavior: CustomScrollBehavior(),
-          child: ListView(
+        body: Container(
+          color: DynamicTheme.of(context).data.backgroundColor,
+          child: Stack(
             children: <Widget>[
-              Container(
-                color: DynamicTheme.of(context).data.backgroundColor,
-                child: Platform.isAndroid
-                ? FutureBuilder<void>(
-                    future: retrieveLostData(),
-                    builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.none:
-                        case ConnectionState.waiting:
-                          return Text(
-                            'You have not yet picked an image.',
-                            textAlign: TextAlign.center,
-                          );
-                        case ConnectionState.done:
-                          return isVideo ? _previewVideo() : _previewImage();
-                        default:
-                          if (snapshot.hasError) {
-                            return Text(
-                              'Pick image/video error: ${snapshot.error}}',
-                              textAlign: TextAlign.center,
-                            );
-                          } else {
-                            return Text(
-                              'You have not yet picked an image.',
-                              textAlign: TextAlign.center,
-                            );
-                          }
-                      }
-                    },
-                  )
-                : (isVideo ? _previewVideo() : _previewImage()),
-              ),
-              Container(
-                color: DynamicTheme.of(context).data.backgroundColor,
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.topCenter,
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          TextFormField(
-                            //autofocus: autofocus,
-                            focusNode: focusNode,
-                            style: DynamicTheme.of(context).data.textTheme.title,
-                            cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                            decoration: Decorations.postTitleInput.copyWith(
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                borderSide: BorderSide(
-                                  color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
-                                  width: 2.0
-                                ),
-                              )
-                            ),
-                            validator: (val) => val.isEmpty 
-                              ? 'Enter a title' 
-                              : null,
-                            onChanged: (val) {
-                              setState(() => title = val);
-                            },
-                          ),
-                          SizedBox(height: Constants.defaultSpacing),
-                          TextFormField(
-                            style: DynamicTheme.of(context).data.textTheme.body1,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                            decoration: Decorations.postContentInput.copyWith(
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                borderSide: BorderSide(
-                                  color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
-                                  width: 2.0
-                                ),
-                              )
-                            ),
-                            validator: (val) => val.isEmpty 
-                              ? 'Enter some content' 
-                              : null,
-                            onChanged: (val) {
-                              setState(() => content = val);
+              Positioned.fill(
+                child: ScrollConfiguration(
+                  behavior: CustomScrollBehavior(),
+                  child: ListView(
+                    padding: EdgeInsets.only(bottom: 48.0),
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      Container(
+                        color: DynamicTheme.of(context).data.backgroundColor,
+                        child: Platform.isAndroid
+                        ? FutureBuilder<void>(
+                            future: retrieveLostData(),
+                            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.none:
+                                case ConnectionState.waiting:
+                                  return Text(
+                                    'You have not yet picked an image.',
+                                    textAlign: TextAlign.center,
+                                  );
+                                case ConnectionState.done:
+                                  return isVideo ? _previewVideo() : _previewImage();
+                                default:
+                                  if (snapshot.hasError) {
+                                    return Text(
+                                      'Pick image/video error: ${snapshot.error}}',
+                                      textAlign: TextAlign.center,
+                                    );
+                                  } else {
+                                    return Text(
+                                      'You have not yet picked an image.',
+                                      textAlign: TextAlign.center,
+                                    );
+                                  }
+                              }
                             },
                           )
-                        ],
+                        : (isVideo ? _previewVideo() : _previewImage()),
                       ),
-                    ),
-                  ],
+                      Container(
+                        color: DynamicTheme.of(context).data.backgroundColor,
+                        width: MediaQuery.of(context).size.width,
+                        alignment: Alignment.topCenter,
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  TextFormField(
+                                    //autofocus: autofocus,
+                                    focusNode: focusNode,
+                                    style: DynamicTheme.of(context).data.textTheme.title,
+                                    cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    decoration: Decorations.postTitleInput.copyWith(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(
+                                          color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
+                                          width: 2.0
+                                        ),
+                                      )
+                                    ),
+                                    validator: (val) => val.isEmpty 
+                                      ? 'Enter a title' 
+                                      : null,
+                                    onChanged: (val) {
+                                      setState(() => title = val);
+                                    },
+                                  ),
+                                  SizedBox(height: Constants.defaultSpacing),
+                                  TextFormField(
+                                    style: DynamicTheme.of(context).data.textTheme.body1,
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: null,
+                                    cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    decoration: Decorations.postContentInput.copyWith(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(
+                                          color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
+                                          width: 2.0
+                                        ),
+                                      )
+                                    ),
+                                    validator: (val) => val.isEmpty 
+                                      ? 'Enter some content' 
+                                      : null,
+                                    onChanged: (val) {
+                                      setState(() => content = val);
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: ButtonTheme(
+                    height: 40.0,
+                    minWidth: MediaQuery.of(context).size.width,
+                    child: RaisedButton.icon(
+                      elevation: 8.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(8.0),
+                      ),
+                      color: Colors.green,
+                      icon: Icon(Icons.done, color: Constants.buttonIconColor),
+                      label: Text('Publish'),
+                      textColor: Colors.white,
+                      onPressed: () async {                
+                        if(_formKey.currentState.validate()) {
+                          setState(() => loading = true);
+
+                          if(_imageFile != null) {
+                            _fileURL = await uploadFile();
+                          }
+                          await DatabaseService().addNewPost(
+                            user.uid, 
+                            title, 
+                            content, 
+                            _fileURL ?? null, 
+                            widget.tribe.id);
+                          Navigator.pop(context);
+                        }
+                      }
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: ButtonTheme(
-            height: 40.0,
-            minWidth: MediaQuery.of(context).size.width,
-            child: RaisedButton.icon(
-              elevation: 8.0,
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(8.0),
-              ),
-              color: Colors.green,
-              icon: Icon(Icons.done, color: Constants.buttonIconColor),
-              label: Text('Publish'),
-              textColor: Colors.white,
-              onPressed: () async {                
-                if(_formKey.currentState.validate()) {
-                  setState(() => loading = true);
-
-                  if(_imageFile != null) {
-                    _fileURL = await uploadFile();
-                  }
-                  await DatabaseService().addNewPost(
-                    user.uid, 
-                    title, 
-                    content, 
-                    _fileURL ?? null, 
-                    widget.tribe.id);
-                  Navigator.pop(context);
-                }
-              }
-            ),
-          ),
-        )
       ),
     );
   }

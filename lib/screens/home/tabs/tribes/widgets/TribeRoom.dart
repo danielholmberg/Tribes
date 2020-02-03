@@ -41,19 +41,18 @@ class _TribeRoomState extends State<TribeRoom> {
                     SliverAppBar(
                       elevation: 8.0,
                       forceElevated: true,
-                      backgroundColor: currentTribe.color ??
-                          DynamicTheme.of(context).data.primaryColor,
+                      backgroundColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                       expandedHeight: 200.0,
                       floating: false,
-                      pinned: true,
+                      pinned: false,
                       title: AutoSizeText(
                         currentTribe.name,
                         maxLines: 1,
                         maxFontSize: 20.0,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'TribesRounded'),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'TribesRounded'),
                       ),
                       centerTitle: true,
                       titleSpacing: 8.0,
@@ -102,19 +101,20 @@ class _TribeRoomState extends State<TribeRoom> {
                       ],
                       flexibleSpace: Center(
                         child: Card(
-                          color: Colors.white.withOpacity(0.2),
+                          elevation: 5.0,
+                          color: DynamicTheme.of(context).data.backgroundColor,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)
+                            borderRadius: BorderRadius.circular(16.0)
                           ),
-                          margin: EdgeInsets.fromLTRB(16, 142, 16, 16),
+                          margin: EdgeInsets.fromLTRB(16.0, 80.0, 16.0, 16.0),
                           child: Container(
-                            padding: EdgeInsets.all(8),
+                            padding: EdgeInsets.all(12.0),
                             child: Text(
                               currentTribe.desc,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                 fontSize: 14.0,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
                                 fontFamily: 'TribesRounded',
                               ),
                               textAlign: TextAlign.center,
