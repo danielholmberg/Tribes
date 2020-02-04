@@ -22,7 +22,10 @@ class _TribeRoomState extends State<TribeRoom> {
   Widget build(BuildContext context) {
     Tribe currentTribe = Provider.of<Tribe>(context);
 
-    return Scaffold(
+    return currentTribe == null ? Container(
+      color: DynamicTheme.of(context).data.backgroundColor, 
+      child: Center(child: CircularProgressIndicator())
+    ) : Scaffold(
       backgroundColor: DynamicTheme.of(context).data.backgroundColor,
       extendBody: true,
       body: Container(

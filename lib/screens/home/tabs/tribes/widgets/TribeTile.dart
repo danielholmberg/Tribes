@@ -22,6 +22,7 @@ class TribeTile extends StatelessWidget {
         Navigator.push(context, CustomPageTransition(
           type: CustomPageTransitionType.tribeRoom,
           child: StreamProvider<Tribe>.value(
+            catchError: (_, __) => null,
             value: DatabaseService().tribe(tribe.id),
             child: TribeRoom(),
           ),

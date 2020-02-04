@@ -173,8 +173,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                       FlatButton(
                                         child: Text('Yes'),
                                         onPressed: () async {
-                                          Navigator.of(context).pop(); // Dialog: "Are you sure...?"
-                                          Navigator.of(context).pop(); // Dialog: ProfileSettings
+                                          Navigator.of(context).popUntil((route) => route.isFirst);
                                           await _auth.signOut();
                                         },
                                       ),

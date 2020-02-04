@@ -37,12 +37,8 @@ class _TribeSettingsState extends State<TribeSettings> {
     _onPressDeleteButton() async {
       setState(() => loading = true);
 
+      Navigator.of(context).popUntil((route) => route.isFirst);
       await DatabaseService().deleteTribe(widget.tribe.id);
-
-      // TODO - Change to:  Navigator.popUntil();
-      Navigator.of(context).pop(); // Dialog: "Please type..."
-      Navigator.of(context).pop(); // Dialog: TribeSettings
-      Navigator.of(context).pop(); // TribeRoom
     }
 
     return Scaffold(
