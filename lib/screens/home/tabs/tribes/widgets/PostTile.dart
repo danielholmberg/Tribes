@@ -98,10 +98,25 @@ class PostTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              likeButton(
-                currentUser, 
-                post.id, 
-                (tribeColor ?? DynamicTheme.of(context).data.primaryColor)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text('${post.likes}',
+                    style: TextStyle(
+                      color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                      fontFamily: 'TribesRounded',
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  likeButton(
+                    currentUser, 
+                    post.id, 
+                    (tribeColor ?? DynamicTheme.of(context).data.primaryColor)
+                  ),
+                ],
               ),
             ],
           ),           

@@ -165,7 +165,11 @@ class _PostRoomState extends State<PostRoom> {
         centerTitle: true,
         title: postedDateTime(widget.post.created),
         actions: <Widget>[
-          //_likeButton,        
+          likeButton(
+            currentUser, 
+            widget.post.id, 
+            (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
+          ),      
         ]
       ),
       body: Container(
