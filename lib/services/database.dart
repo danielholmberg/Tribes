@@ -179,4 +179,14 @@ class DatabaseService {
         .snapshots()
         .map((snapshot) => UserData.fromSnapshot(snapshot));
   }
+
+  Future unlikePost(String userID, String postID) async {
+    await usersRoot.document(userID).updateData({'likedPosts': FieldValue.arrayRemove([postID])});
+    return await postsRoot.document(postID).updateData({'likes': FieldValue.increment(-1)});
+  }
+
+  Future likePost(String userID, String postID) async {
+    await usersRoot.document(userID).updateData({'likedPosts': FieldValue.arrayUnion([postID])});
+    return await postsRoot.document(postID).updateData({'likes': FieldValue.increment(1)});
+  }
 }

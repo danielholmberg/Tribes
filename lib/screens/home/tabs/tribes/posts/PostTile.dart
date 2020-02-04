@@ -3,6 +3,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/auth.dart';
@@ -39,6 +40,26 @@ class _PostTileState extends State<PostTile> {
 
   @override
   Widget build(BuildContext context) {
+    UserData currentUser = Provider.of<UserData>(context);
+    bool likedByUser = currentUser.likedPosts.contains(widget.post.id);
+
+    IconButton _likeButton = IconButton(
+      splashColor: Colors.transparent,
+      color: DynamicTheme.of(context).data.backgroundColor,
+      icon: Icon(likedByUser ? Icons.favorite : Icons.favorite_border, 
+        color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
+          .withOpacity(likedByUser ? 1.0 : 0.6)
+      ),
+      onPressed: () async {
+        if (likedByUser) {
+          print('User ${currentUser.uid} unliked Post ${widget.post.id}');
+          await DatabaseService().unlikePost(currentUser.uid, widget.post.id);
+        } else {
+          print('User ${currentUser.uid} liked Post ${widget.post.id}');
+          await DatabaseService().likePost(currentUser.uid, widget.post.id);
+        }
+      },
+    );
 
     _postedDateTime() {
       DateTime created = DateTime.fromMillisecondsSinceEpoch(widget.post.created); 
@@ -170,20 +191,7 @@ class _PostTileState extends State<PostTile> {
                         });
                       },
                     ),
-                    IconButton(
-                      splashColor: Colors.transparent,
-                      color: DynamicTheme.of(context).data.backgroundColor,
-                      icon: Icon(Icons.favorite_border, 
-                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
-                      ),
-                      onPressed: () async {
-                        Fluttertoast.showToast(
-                          msg: 'Coming soon!',
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                        );
-                      },
-                    ),   
+                    //_likeButton,
                   ],
                 )
                 : AppBar(
@@ -195,20 +203,7 @@ class _PostTileState extends State<PostTile> {
                   centerTitle: true,
                   title: _postedDateTime(),
                   actions: <Widget>[
-                    IconButton(
-                      splashColor: Colors.transparent,
-                      color: DynamicTheme.of(context).data.backgroundColor,
-                      icon: Icon(Icons.favorite_border, 
-                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
-                      ),
-                      onPressed: () async {
-                        Fluttertoast.showToast(
-                          msg: 'Coming soon!',
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                        );
-                      },
-                    ),                  
+                    //_likeButton,        
                   ]
                 ),
                 body: Container(
@@ -491,20 +486,7 @@ class _PostTileState extends State<PostTile> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              IconButton(
-                splashColor: Colors.transparent,
-                color: DynamicTheme.of(context).data.backgroundColor,
-                icon: Icon(Icons.favorite_border, 
-                  color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
-                ),
-                onPressed: () async {
-                  Fluttertoast.showToast(
-                    msg: 'Coming soon!',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                  );
-                },
-              ),
+              _likeButton,
             ],
           ),           
         ],

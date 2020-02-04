@@ -9,6 +9,7 @@ class Post {
   final String tribeID;
   final double lat;
   final double lng;
+  final int likes;
   final int created;
   final int updated;
 
@@ -21,6 +22,7 @@ class Post {
       this.tribeID,
       this.lat,
       this.lng,
+      this.likes,
       this.created,
       this.updated});
 
@@ -34,6 +36,7 @@ class Post {
       fileURL: doc.data['fileURL'] ?? '',
       lat: doc.data['lat'] ?? 0, // value 0 is used for fail-safe check for a location
       lng: doc.data['lng'] ?? 0, // value 0 is used for fail-safe check for a location
+      likes: doc.data['likes'] ?? 0,
       created: doc.data['created'] ?? 0,
       updated: doc.data['updated'] ?? 0,
     );

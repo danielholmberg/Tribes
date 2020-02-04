@@ -8,6 +8,7 @@ import 'package:tribes/screens/home/tabs/tribes/posts/NewPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/posts/Posts.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/TribeSettings.dart';
 import 'package:tribes/services/auth.dart';
+import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
@@ -33,7 +34,8 @@ class _TribeRoomState extends State<TribeRoom> {
         child: StreamBuilder<User>(
           stream: AuthService().user,
           builder: (context, snapshot) {
-            bool isFounder = snapshot.hasData ? snapshot.data.uid == currentTribe.founder : false;
+            User currentUser = snapshot.hasData ? snapshot.data : null;
+            bool isFounder = currentUser != null ? snapshot.data.uid == currentTribe.founder : false;
 
             return ScrollConfiguration(
               behavior: CustomScrollBehavior(),
@@ -132,7 +134,10 @@ class _TribeRoomState extends State<TribeRoom> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: <Widget>[
-                      Posts(tribe: currentTribe),
+                      StreamProvider<UserData>.value(
+                        value: DatabaseService().currentUser(currentUser.uid),
+                        child: Posts(tribe: currentTribe)
+                      ),
                       Positioned(
                         bottom: 16.0,
                         left: 16.0,

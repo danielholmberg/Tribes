@@ -18,8 +18,17 @@ class UserData {
   final String info;
   final double lat;
   final double lng;
+  final List<String> likedPosts;
 
-  UserData({this.uid, this.name, this.username, this.info, this.lat, this.lng});
+  UserData({
+    this.uid, 
+    this.name, 
+    this.username, 
+    this.info, 
+    this.lat, 
+    this.lng, 
+    this.likedPosts
+  });
 
   factory UserData.fromSnapshot(DocumentSnapshot doc) {
     return UserData(
@@ -29,12 +38,13 @@ class UserData {
       info: doc.data['info'] ?? '',
       lat: doc.data['lat'] ?? Constants.initialLat,
       lng: doc.data['lng'] ?? Constants.initialLng,
+      likedPosts: List.from(doc.data['likedPosts'] ?? []),
     );
   }
 
   @override
   String toString() {
-    return '[$uid, $name, $username, $info, $lat, $lng]';
+    return '[$uid, $name, $username, $info, $lat, $lng, $likedPosts]';
   }
 
 }
