@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
-import 'package:tribes/screens/home/tabs/tribes/widgets/TribeRoom.dart';
+import 'package:tribes/screens/home/tabs/tribes/screens/TribeRoom.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';

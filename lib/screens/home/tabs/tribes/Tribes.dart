@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/home/tabs/tribes/widgets/NewTribe.dart';
+import 'package:tribes/screens/home/tabs/tribes/screens/NewTribe.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/TribeTile.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;

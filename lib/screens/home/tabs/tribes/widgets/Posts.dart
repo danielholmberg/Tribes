@@ -1,15 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firestore_ui/animated_firestore_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
-import 'package:tribes/screens/home/tabs/tribes/posts/NewPost.dart';
-import 'package:tribes/screens/home/tabs/tribes/posts/PostTile.dart';
+import 'package:tribes/screens/home/tabs/tribes/widgets/PostTile.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/shared/constants.dart' as Constants;
 
 class Posts extends StatelessWidget {
   final Tribe tribe;

@@ -2,7 +2,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/home/tabs/profile/ProfileSettings.dart';
+import 'package:tribes/screens/home/tabs/profile/dialogs/ProfileSettings.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class Profile extends StatefulWidget {
