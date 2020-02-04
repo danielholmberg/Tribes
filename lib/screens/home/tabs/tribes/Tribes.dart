@@ -58,12 +58,15 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
       Navigator.push(context, CustomPageTransition(
         type: CustomPageTransitionType.newTribe,
         duration: Constants.pageTransition800,
-        child: NewTribe()
+        child: StreamProvider<UserData>.value(
+          value: DatabaseService().currentUser(currentUser.uid), 
+          child: NewTribe()
+        ),
       ));
     }
 
-    return currentUser != null
-        ? Scaffold(
+    return currentUser == null ? Loading()
+        : Scaffold(
           body: NestedScrollView(
             reverse: false,
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -176,19 +179,16 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                         itemBuilder: (context, index) {
                           return Container(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 52),
-                            child: TribeTile(
-                              tribe: joinedTribesList[index]
-                            ),
+                            child: TribeTile(tribe: joinedTribesList[index]),
                           );
                         },
                       );
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Loading();
               }
             }),
           ),
-        )
-        : Loading();
+        );
   }
 
   @override

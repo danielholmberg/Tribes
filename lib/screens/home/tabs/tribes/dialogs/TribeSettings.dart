@@ -6,6 +6,7 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class TribeSettings extends StatefulWidget {
   final Tribe tribe;
@@ -51,7 +52,7 @@ class _TribeSettingsState extends State<TribeSettings> {
 
             return SafeArea(
               child: loading
-                  ? Center(child: CircularProgressIndicator())
+                  ? Loading()
                   : ScrollConfiguration(
                       behavior: CustomScrollBehavior(),
                       child: ListView(

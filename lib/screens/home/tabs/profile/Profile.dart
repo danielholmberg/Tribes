@@ -13,7 +13,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<UserData>(context);
+    final UserData currentUser = Provider.of<UserData>(context);
     print('Building Profile()...');
     print('Current user ${currentUser.uid}');
 

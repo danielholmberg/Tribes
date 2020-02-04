@@ -9,6 +9,7 @@ import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class Map extends StatefulWidget {
   @override
@@ -119,9 +120,7 @@ class _MapState extends State<Map> with AutomaticKeepAliveClientMixin {
                             );
                           });
                     })
-                : Container(
-                    color: DynamicTheme.of(context).data.backgroundColor,
-                    child: Center(child: CircularProgressIndicator())),
+                : Loading(),
           ],
         ),
       ),

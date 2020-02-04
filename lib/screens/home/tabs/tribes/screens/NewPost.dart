@@ -15,6 +15,7 @@ import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as Path;
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class NewPost extends StatefulWidget {  
 
@@ -27,7 +28,6 @@ class NewPost extends StatefulWidget {
 
 class _NewPostState extends State<NewPost> {
   
-  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
   bool autofocus;
@@ -116,14 +116,13 @@ class _NewPostState extends State<NewPost> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final UserData currentUser = Provider.of<UserData>(context);
+    print('Building NewPost()...');
+    print('Current user ${currentUser.toString()}');
 
     return Hero(
       tag: 'NewPostButton',
-      child: loading ? Container(
-          color: DynamicTheme.of(context).data.backgroundColor,
-          child: Center(child: CircularProgressIndicator())
-        ) : Scaffold(
+      child: loading ? Loading() : Scaffold(
         extendBody: true,
         appBar: AppBar(
           elevation: 0.0,
@@ -316,7 +315,7 @@ class _NewPostState extends State<NewPost> {
                             _fileURL = await uploadFile();
                           }
                           await DatabaseService().addNewPost(
-                            user.uid, 
+                            currentUser.uid, 
                             title, 
                             content, 
                             _fileURL ?? null, 

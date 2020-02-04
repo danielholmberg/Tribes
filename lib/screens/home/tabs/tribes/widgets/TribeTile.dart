@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
+import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/TribeRoom.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -14,17 +15,19 @@ class TribeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserData currentUser = Provider.of<UserData>(context);
+    print('Building TribeTile()...');
     print('TribeTile: ${tribe.id}');
+    print('Current user ${currentUser.toString()}');
 
     return GestureDetector(
       onTap: () {
         print('Tapped tribe: ${tribe.name}');
         Navigator.push(context, CustomPageTransition(
           type: CustomPageTransitionType.tribeRoom,
-          child: StreamProvider<Tribe>.value(
-            catchError: (_, __) => null,
-            value: DatabaseService().tribe(tribe.id),
-            child: TribeRoom(),
+          child: StreamProvider<UserData>.value(
+            value: DatabaseService().currentUser(currentUser.uid), 
+            child: TribeRoom(tribeID: tribe.id),
           ),
         ));
       },

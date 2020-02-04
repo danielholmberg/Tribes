@@ -1,8 +1,9 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
@@ -25,6 +26,10 @@ class _NewTribeState extends State<NewTribe> {
 
   @override
   Widget build(BuildContext context) {
+    final UserData currentUser = Provider.of<UserData>(context);
+    print('Building NewTribe()...');
+    print('Current user ${currentUser.toString()}');
+
     _changeColor(Color color) async {
       setState(() => tribeColor = color);
       await Future.delayed(Duration(milliseconds: 300));

@@ -12,8 +12,12 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class TribeRoom extends StatefulWidget {
+  final String tribeID;
+  TribeRoom({this.tribeID});
+
   @override
   _TribeRoomState createState() => _TribeRoomState();
 }
@@ -21,23 +25,24 @@ class TribeRoom extends StatefulWidget {
 class _TribeRoomState extends State<TribeRoom> {
   @override
   Widget build(BuildContext context) {
-    Tribe currentTribe = Provider.of<Tribe>(context);
+    final UserData currentUser = Provider.of<UserData>(context);
+    print('Building TribeRoom()...');
+    print('Current user ${currentUser.toString()}');
 
-    return currentTribe == null ? Container(
-      color: DynamicTheme.of(context).data.backgroundColor, 
-      child: Center(child: CircularProgressIndicator())
-    ) : Scaffold(
+    return currentUser == null ? Loading()
+    : Scaffold(
       backgroundColor: DynamicTheme.of(context).data.backgroundColor,
       extendBody: true,
-      body: Container(
-        color: currentTribe.color.withOpacity(0.2) ?? DynamicTheme.of(context).data.backgroundColor,
-        child: StreamBuilder<User>(
-          stream: AuthService().user,
-          builder: (context, snapshot) {
-            User currentUser = snapshot.hasData ? snapshot.data : null;
-            bool isFounder = currentUser != null ? snapshot.data.uid == currentTribe.founder : false;
+      body: StreamBuilder<Tribe>(
+        stream: DatabaseService().tribe(widget.tribeID),
+        builder: (context, snapshot) {
+          final Tribe currentTribe = snapshot.hasData ? snapshot.data : null;
+          bool isFounder = currentTribe != null ? currentUser.uid == currentTribe.founder : false;
 
-            return ScrollConfiguration(
+          return currentTribe == null ? Loading() 
+          : Container(
+            color: currentTribe.color.withOpacity(0.2) ?? DynamicTheme.of(context).data.backgroundColor,
+            child: ScrollConfiguration(
               behavior: CustomScrollBehavior(),
               child: NestedScrollView(
                 reverse: false,
@@ -163,7 +168,10 @@ class _TribeRoomState extends State<TribeRoom> {
                                 Navigator.push(context, CustomPageTransition(
                                   type: CustomPageTransitionType.newPost,
                                   duration: Constants.pageTransition800,
-                                  child: NewPost(tribe: currentTribe)
+                                  child: StreamProvider<UserData>.value(
+                                    value: DatabaseService().currentUser(currentUser.uid), 
+                                    child: NewPost(tribe: currentTribe),
+                                  ),
                                 ));
                               },
                             ),
@@ -174,9 +182,9 @@ class _TribeRoomState extends State<TribeRoom> {
                   ),
                 ),
               ),
-            );
-          }
-        ),
+            ),
+          );
+        }
       ),
     );
   }
