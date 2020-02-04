@@ -211,10 +211,10 @@ class _PostTileState extends State<PostTile> {
                     ),                  
                   ]
                 ),
-                body: loading ? Center(child: CircularProgressIndicator()) 
-                : Container(
+                body: Container(
                   color: DynamicTheme.of(context).data.backgroundColor,
-                  child: Stack(
+                  child: loading ? Center(child: CircularProgressIndicator()) 
+                  : Stack(
                     fit: StackFit.expand,
                     children: <Widget>[
                       ScrollConfiguration(
@@ -535,7 +535,9 @@ class _PostTileState extends State<PostTile> {
             child: Hero(
               tag: 'postContent-${widget.post.id}',
               child: Text(widget.post.content,
-                  style: DynamicTheme.of(context).data.textTheme.body2),
+                maxLines: Constants.postTileContentMaxLines,
+                overflow: TextOverflow.fade,
+                style: DynamicTheme.of(context).data.textTheme.body2),
             ),
           ),
           widget.post.fileURL.isEmpty ? SizedBox.shrink() 

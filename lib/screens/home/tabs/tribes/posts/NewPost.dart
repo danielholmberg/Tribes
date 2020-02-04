@@ -206,6 +206,7 @@ class _NewPostState extends State<NewPost> {
                                   TextFormField(
                                     //autofocus: autofocus,
                                     focusNode: focusNode,
+                                    textCapitalization: TextCapitalization.sentences,
                                     style: DynamicTheme.of(context).data.textTheme.title,
                                     cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                     decoration: Decorations.postTitleInput.copyWith(
@@ -226,6 +227,7 @@ class _NewPostState extends State<NewPost> {
                                   ),
                                   SizedBox(height: Constants.defaultSpacing),
                                   TextFormField(
+                                    textCapitalization: TextCapitalization.sentences,
                                     style: DynamicTheme.of(context).data.textTheme.body1,
                                     keyboardType: TextInputType.multiline,
                                     maxLines: null,
