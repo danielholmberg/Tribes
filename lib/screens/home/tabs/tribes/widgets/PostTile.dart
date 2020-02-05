@@ -161,11 +161,12 @@ class PostTile extends StatelessWidget {
                 imageUrl: post.fileURL,
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
-                    color: DynamicTheme.of(context).data.accentColor,
+                    color: (tribeColor ?? DynamicTheme.of(context).data.accentColor).withOpacity(0.6),
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    border: Border.all(width: 2.0, color: (tribeColor ?? DynamicTheme.of(context).data.accentColor).withOpacity(0.4)),
                     boxShadow: [
                       BoxShadow(
-                        color: tribeColor ?? DynamicTheme.of(context).data.accentColor,
+                        color: (tribeColor ?? DynamicTheme.of(context).data.accentColor).withOpacity(0.4),
                         blurRadius: 10,
                         offset: Offset(0, 0),
                       ),
@@ -177,7 +178,7 @@ class PostTile extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     child: Image(
                       image: imageProvider, 
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.cover,
                       frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
                         return child;
                       },
