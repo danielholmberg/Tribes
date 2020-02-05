@@ -9,13 +9,13 @@ import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/Loading.dart';
+import 'package:geocoder/geocoder.dart';
 
 class PostRoom extends StatefulWidget {
   final Color tribeColor;
   final Post post;
-  final String location;
   final int index;
-  PostRoom({this.tribeColor, this.post, this.location, this.index});
+  PostRoom({this.tribeColor, this.post, this.index});
 
   @override
   _PostRoomState createState() => _PostRoomState();
@@ -28,6 +28,8 @@ class _PostRoomState extends State<PostRoom> {
   bool isEditing = false;
   bool loading = false;
   FocusNode focusNode = FocusNode();
+  Coordinates coordinates;
+  Future<List<Address>> addressFuture;
 
   String title;
   String content;
@@ -36,6 +38,15 @@ class _PostRoomState extends State<PostRoom> {
   void dispose() {
     focusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    if((widget.post.lat != 0 && widget.post.lng != 0)) {
+      coordinates = Coordinates(widget.post.lat, widget.post.lng);
+      addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
+    }
+    super.initState();
   }
 
   @override
@@ -210,28 +221,40 @@ class _PostRoomState extends State<PostRoom> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    StreamBuilder<UserData>(
-                                      stream: DatabaseService().userData(widget.post.author),
-                                      builder: (context, snapshot) {
-                                        return Text(snapshot.hasData ? snapshot.data.name : '',
-                                          style: TextStyle(
-                                            color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                            fontFamily: 'TribesRounded',
-                                            fontWeight: FontWeight.bold
-                                          ),
-                                        );
-                                      }
-                                    ),
-                                    widget.location.isEmpty
-                                    ? SizedBox.shrink() 
-                                    : Text(widget.location,
+                                    Text(currentUser.name,
                                       style: TextStyle(
-                                        color: Colors.blueGrey,
+                                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                                         fontFamily: 'TribesRounded',
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.normal
+                                        fontWeight: FontWeight.bold
                                       ),
                                     ),
+                                    FutureBuilder(
+                                      future: addressFuture,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          var addresses = snapshot.data;
+                                          var first = addresses.first;
+                                          var location = '${first.addressLine}';
+                                          print('lat ${widget.post.lat}, lng ${widget.post.lng}');
+                                          print('location: $location');
+                                          return Text(location,
+                                            style: TextStyle(
+                                              color: Colors.blueGrey,
+                                              fontFamily: 'TribesRounded',
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.normal
+                                            ),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          print('Error getting address from coordinates: ${snapshot.error}');
+                                          return SizedBox.shrink();
+                                        } else {
+                                          return SizedBox.shrink();
+                                        }
+                                        
+                                      }
+                                    ),
+                                    
                                     ],
                                 )
                               ],

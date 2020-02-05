@@ -159,23 +159,24 @@ class _TribeSettingsState extends State<TribeSettings> {
                                             .data
                                             .textTheme
                                             .button),
-                                    onPressed: () async {
+                                    onPressed: () {
                                       if (_formKey.currentState.validate()) {
                                         print('Updating Tribe information...');
                                         setState(() => loading = true);
 
-                                        await DatabaseService().updateTribeData(
-                                            currentTribe.id,
-                                            name ?? currentTribe.name,
-                                            desc ?? currentTribe.desc,
-                                            tribeColor != null
-                                                ? tribeColor.value
-                                                    .toRadixString(16)
-                                                : currentTribe.color.value
-                                                        .toRadixString(16) ??
-                                                    Constants.primaryColor.value
-                                                        .toRadixString(16),
-                                            imageURL);
+                                        DatabaseService().updateTribeData(
+                                          currentTribe.id,
+                                          name ?? currentTribe.name,
+                                          desc ?? currentTribe.desc,
+                                          tribeColor != null
+                                              ? tribeColor.value
+                                                  .toRadixString(16)
+                                              : currentTribe.color.value
+                                                      .toRadixString(16) ??
+                                                  Constants.primaryColor.value
+                                                      .toRadixString(16),
+                                          imageURL
+                                        );
 
                                         _scaffoldKey.currentState
                                             .showSnackBar(SnackBar(

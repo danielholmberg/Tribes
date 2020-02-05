@@ -11,7 +11,6 @@ import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
-import 'package:geocoder/geocoder.dart';
 
 class PostTile extends StatelessWidget {
   final Post post;
@@ -226,17 +225,7 @@ class PostTile extends StatelessWidget {
       margin: EdgeInsets.fromLTRB(0.0, Constants.largePadding, 0.0, 0.0),
       child: InkWell(
         splashColor: Constants.tribesColor.withAlpha(30),
-        onTap: () async {
-          var location = '';
-          if((post.lat != 0 && post.lng != 0)) {
-            var coordinates = new Coordinates(post.lat, post.lng);
-            var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
-            var first = addresses.first;
-            location = '${first.addressLine}';
-            print('lat ${post.lat}, lng ${post.lng}');
-            print('location: $location');
-          }
-          
+        onTap: () {
           Navigator.push(context, CustomPageTransition(
             type: CustomPageTransitionType.postDetails, 
             duration: Constants.pageTransition600, 
@@ -245,7 +234,6 @@ class PostTile extends StatelessWidget {
               child: PostRoom(
                 tribeColor: tribeColor, 
                 post: post, 
-                location: location,
                 index: index,
               ),
             ),

@@ -117,19 +117,20 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                             .data
                                             .textTheme
                                             .button),
-                                    onPressed: () async {
+                                    onPressed: () {
                                       if (_formKey.currentState.validate()) {
                                         print(
                                             'Updating profile information...');
                                         setState(() => loading = true);
 
-                                        await DatabaseService().updateUserData(
-                                            currentUser.uid,
-                                            name ?? currentUser.name,
-                                            username ?? currentUser.username,
-                                            info ?? currentUser.info,
-                                            currentUser.lat,
-                                            currentUser.lng);
+                                        DatabaseService().updateUserData(
+                                          currentUser.uid,
+                                          name ?? currentUser.name,
+                                          username ?? currentUser.username,
+                                          info ?? currentUser.info,
+                                          currentUser.lat,
+                                          currentUser.lng
+                                        );
 
                                         _scaffoldKey.currentState
                                             .showSnackBar(SnackBar(

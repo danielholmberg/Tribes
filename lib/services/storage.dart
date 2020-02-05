@@ -13,18 +13,18 @@ class StorageService {
   final StorageReference tribeImagesRoot =
       FirebaseStorage().ref().child('tribeImages');
 
-  Future getTribeImageURL(String imageID) async {
+  Future getTribeImageURL(String imageID) {
     try {
-      return await tribeImagesRoot.child(imageID).getDownloadURL();
+      return tribeImagesRoot.child(imageID).getDownloadURL();
     } catch (e) {
       print(e.toString());
       return null;
     }
   }
 
-  Future getUserImageURL(String imageID) async {
+  Future getUserImageURL(String imageID) {
     try {
-      return await userImagesRoot.child(imageID).getDownloadURL();
+      return userImagesRoot.child(imageID).getDownloadURL();
     } catch (e) {
       print(e.toString());
       return null;

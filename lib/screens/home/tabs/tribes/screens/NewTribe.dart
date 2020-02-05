@@ -37,6 +37,7 @@ class _NewTribeState extends State<NewTribe> {
     }
 
     return loading ? Loading() : Scaffold(
+      backgroundColor: DynamicTheme.of(context).data.backgroundColor,
       appBar: AppBar(
         elevation: 0.0,
         title: Text('New Tribe', style: TextStyle(color: Colors.white)),
@@ -65,102 +66,101 @@ class _NewTribeState extends State<NewTribe> {
       ),
       body: ScrollConfiguration(
         behavior: CustomScrollBehavior(),
-        child: Container(
-          color: DynamicTheme.of(context).data.backgroundColor,
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: EdgeInsets.all(16.0),
-              shrinkWrap: true,
-              children: <Widget>[
-                TextFormField(
-                  autofocus: true,
-                  textCapitalization: TextCapitalization.words,
-                  maxLength: Constants.tribeNameMaxLength,
-                  cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                  decoration: Decorations.postContentInput.copyWith(
-                    labelText: 'Name',
-                    labelStyle: TextStyle(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      borderSide: BorderSide(
-                        color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
-                        width: 2.0
-                      ),
-                    )
-                  ),
-                  validator: (val) => val.isEmpty ? 'Enter a name' : null,
-                  onChanged: (val) {
-                    setState(() => name = val);
-                  },
-                ),
-                SizedBox(height: Constants.smallSpacing),
-                TextFormField(
-                  textCapitalization: TextCapitalization.sentences,
-                  keyboardType: TextInputType.multiline,
-                  maxLength: Constants.tribeDescMaxLength,
-                  maxLines: null,
-                  decoration: Decorations.postContentInput.copyWith(
-                    labelText: 'Description',
-                    labelStyle: TextStyle(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                      borderSide: BorderSide(
-                        color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
-                        width: 2.0
-                      ),
-                    )
-                  ),
-                  validator: (val) => val.isEmpty ? 'Enter a description' : null,
-                  onChanged: (val) {
-                    setState(() => desc = val);
-                  },
-                ),
-                SizedBox(height: Constants.smallSpacing),
-                ButtonTheme(
-                  height: 50.0,
-                  minWidth: MediaQuery.of(context).size.width,
-                  child: RaisedButton.icon(
-                    elevation: 8.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.all(16.0),
+            shrinkWrap: true,
+            children: <Widget>[
+              TextFormField(
+                autofocus: true,
+                textCapitalization: TextCapitalization.words,
+                maxLength: Constants.tribeNameMaxLength,
+                cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                decoration: Decorations.postContentInput.copyWith(
+                  labelText: 'Name',
+                  labelStyle: TextStyle(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(
+                      color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
+                      width: 2.0
                     ),
-                    color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                    icon: Icon(Icons.done,
-                        color: DynamicTheme.of(context).data.accentColor),
-                    label: Text('Create Tribe'),
-                    textColor: Colors.white,
-                    onPressed: () async {
-                      if(_formKey.currentState.validate()) {
-                        setState(() => loading = true);
-                        dynamic success = await DatabaseService().createNewTribe(
+                  )
+                ),
+                validator: (val) => val.isEmpty ? 'Enter a name' : null,
+                onChanged: (val) {
+                  setState(() => name = val);
+                },
+              ),
+              SizedBox(height: Constants.smallSpacing),
+              TextFormField(
+                textCapitalization: TextCapitalization.sentences,
+                keyboardType: TextInputType.multiline,
+                maxLength: Constants.tribeDescMaxLength,
+                maxLines: null,
+                decoration: Decorations.postContentInput.copyWith(
+                  labelText: 'Description',
+                  labelStyle: TextStyle(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    borderSide: BorderSide(
+                      color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
+                      width: 2.0
+                    ),
+                  )
+                ),
+                validator: (val) => val.isEmpty ? 'Enter a description' : null,
+                onChanged: (val) {
+                  setState(() => desc = val);
+                },
+              ),
+              SizedBox(height: Constants.smallSpacing),
+              ButtonTheme(
+                height: 50.0,
+                minWidth: MediaQuery.of(context).size.width,
+                child: RaisedButton.icon(
+                  elevation: 8.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                  icon: Icon(Icons.done,
+                      color: DynamicTheme.of(context).data.accentColor),
+                  label: Text('Create Tribe'),
+                  textColor: Colors.white,
+                  onPressed: () {
+                    if(_formKey.currentState.validate()) {
+                      setState(() => loading = true);
+                      try {
+                        DatabaseService().createNewTribe(
                           name, 
                           desc, 
                           tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
                           imageURL
                         );
-
-                        if (success) {
-                          Navigator.pop(context);
-                        } else {
-                          setState(() { 
-                            loading = false;
-                            error = 'Unable to create new Tribe, please try again!';
-                          });
-                        }
+                        Navigator.pop(context);
+                      } catch (e) {
+                        print(e.toString());
+                        setState(() { 
+                          loading = false;
+                          error = 'Unable to create new Tribe';
+                        });
                       }
-                    },
-                  ),
+                    }
+                  },
                 ),
-                SizedBox(height: Constants.smallSpacing),
-                Text(
+              ),
+              SizedBox(height: Constants.smallSpacing),
+              Center(
+                child: Text(
                   error,
                   style: TextStyle(
                       color: Constants.errorColor,
                       fontSize: Constants.errorFontSize),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

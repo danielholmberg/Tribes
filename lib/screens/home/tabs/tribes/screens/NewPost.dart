@@ -314,12 +314,15 @@ class _NewPostState extends State<NewPost> {
                           if(_imageFile != null) {
                             _fileURL = await uploadFile();
                           }
-                          await DatabaseService().addNewPost(
+                          
+                          DatabaseService().addNewPost(
                             currentUser.uid, 
                             title, 
                             content, 
                             _fileURL ?? null, 
-                            widget.tribe.id);
+                            widget.tribe.id
+                          );
+
                           Navigator.pop(context);
                         }
                       }

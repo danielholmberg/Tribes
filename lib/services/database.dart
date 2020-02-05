@@ -16,14 +16,14 @@ class DatabaseService {
   final CollectionReference tribesRoot =
       Firestore.instance.collection('tribes');
 
-  Future createUserDocument(String uid) async {
+  Future createUserDocument(String uid) {
     return usersRoot
         .document(uid)
         .setData({'created': new DateTime.now().millisecondsSinceEpoch});
   }
 
   Future updateUserData(String uid, String name, String username, String info,
-      double lat, double lng) async {
+      double lat, double lng) {
     var data = {
       'name': name,
       'username': username,
@@ -33,7 +33,7 @@ class DatabaseService {
     };
     print('New profile data: $data');
 
-    return await usersRoot.document(uid).updateData(data);
+    return usersRoot.document(uid).updateData(data);
   }
 
   Future updateUserLocation(double lat, double lng) async {
@@ -41,7 +41,7 @@ class DatabaseService {
 
     if (currentUser != null) {
       print('Updating current user location in Firebase: [$lat, $lng]');
-      return await usersRoot
+      return usersRoot
           .document(currentUser.uid)
           .updateData({'lat': lat, 'lng': lng});
     } else {
@@ -98,14 +98,14 @@ class DatabaseService {
     };
 
     print('Publishing post: $data');
-    return await postRef.setData(data);
+    return postRef.setData(data);
   }
 
-  Future deletePost(String id) async {
-    return await postsRoot.document(id).delete();
+  Future deletePost(String id) {
+    return postsRoot.document(id).delete();
   }
 
-  Future updatePostData(String id, String title, String content) async {
+  Future updatePostData(String id, String title, String content) {
     var data = {
       'title': title,
       'content': content,
@@ -113,11 +113,10 @@ class DatabaseService {
     };
     print('Updated Post data: $data');
 
-    return await postsRoot.document(id).updateData(data);
+    return postsRoot.document(id).updateData(data);
   }
 
-  Future createNewTribe(
-      String name, String desc, String color, String imageURL) async {
+  Future createNewTribe(String name, String desc, String color, String imageURL) async {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
 
     var data = {
@@ -131,18 +130,11 @@ class DatabaseService {
       'created': new DateTime.now().millisecondsSinceEpoch,
     };
 
-    try {
-      print('Creating new Tribe: $data');
-      await tribesRoot.document().setData(data);
-      return true;
-    } catch (e) {
-      print('Failed with error: ${e.toString()}');
-      return false;
-    }
+    print('Creating new Tribe: $data');
+    return tribesRoot.document().setData(data);
   }
 
-  Future updateTribeData(String id, String name, String desc, String color,
-      String imageURL) async {
+  Future updateTribeData(String id, String name, String desc, String color, String imageURL) {
     var data = {
       'name': name,
       'desc': desc,
@@ -152,11 +144,11 @@ class DatabaseService {
     };
 
     print('New profile data: $data');
-    return await tribesRoot.document(id).updateData(data);
+    return tribesRoot.document(id).updateData(data);
   }
 
-  Future deleteTribe(String id) async {
-    return await tribesRoot.document(id).delete();
+  Future deleteTribe(String id) {
+    return tribesRoot.document(id).delete();
   }
 
   Stream<Tribe> tribe(String tribeID) {
@@ -180,13 +172,13 @@ class DatabaseService {
         .map((snapshot) => UserData.fromSnapshot(snapshot));
   }
 
-  Future unlikePost(String userID, String postID) async {
-    await usersRoot.document(userID).updateData({'likedPosts': FieldValue.arrayRemove([postID])});
-    return await postsRoot.document(postID).updateData({'likes': FieldValue.increment(-1)});
+  Future unlikePost(String userID, String postID) {
+    usersRoot.document(userID).updateData({'likedPosts': FieldValue.arrayRemove([postID])});
+    return postsRoot.document(postID).updateData({'likes': FieldValue.increment(-1)});
   }
 
-  Future likePost(String userID, String postID) async {
-    await usersRoot.document(userID).updateData({'likedPosts': FieldValue.arrayUnion([postID])});
-    return await postsRoot.document(postID).updateData({'likes': FieldValue.increment(1)});
+  Future likePost(String userID, String postID) {
+    usersRoot.document(userID).updateData({'likedPosts': FieldValue.arrayUnion([postID])});
+    return postsRoot.document(postID).updateData({'likes': FieldValue.increment(1)});
   }
 }
