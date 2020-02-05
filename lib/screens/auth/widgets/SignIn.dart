@@ -1,7 +1,6 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tribes/services/auth.dart';
-import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
@@ -140,7 +139,8 @@ class _SignInState extends State<SignIn> {
                       Text(
                         error,
                         style: TextStyle(
-                          color: Constants.errorColor, 
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
                           fontSize: Constants.errorFontSize
                         ),
                       ),

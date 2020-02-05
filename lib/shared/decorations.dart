@@ -8,17 +8,18 @@ const signInInput = InputDecoration(
   filled: true,
   hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.white, width: 2.0),
+    borderSide: BorderSide(color: Constants.primaryColor, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Constants.accentColor, width: 2.0),
+    borderSide: BorderSide(color: Colors.white, width: 2.0),
   ),
   errorBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Constants.errorColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.primaryColor, width: 2.0),
   ),
   focusedErrorBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Constants.errorColor, width: 2.0),
+    borderSide: BorderSide(color: Colors.white, width: 2.0),
   ),
+  errorStyle: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
 );
 
 const registerInput = InputDecoration(
@@ -26,17 +27,18 @@ const registerInput = InputDecoration(
   filled: true,
   hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.white, width: 2.0),
+    borderSide: BorderSide(color: Constants.primaryColor, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Constants.accentColor, width: 2.0),
+    borderSide: BorderSide(color: Colors.white, width: 2.0),
   ),
   errorBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Constants.errorColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.primaryColor, width: 2.0),
   ),
   focusedErrorBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Constants.errorColor, width: 2.0),
+    borderSide: BorderSide(color: Colors.white, width: 2.0),
   ),
+  errorStyle: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
 );
 
 const postTitleInput = InputDecoration(

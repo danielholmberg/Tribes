@@ -129,7 +129,8 @@ class _RegisterState extends State<Register> {
                       Text(
                         error,
                         style: TextStyle(
-                          color: Constants.errorColor, 
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
                           fontSize: Constants.errorFontSize
                         ),
                       ),
