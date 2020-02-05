@@ -101,8 +101,8 @@ class DatabaseService {
     return postRef.setData(data);
   }
 
-  Future deletePost(String id) {
-    return postsRoot.document(id).delete();
+  Future deletePost(String postID) {
+    return postsRoot.document(postID).delete();
   }
 
   Future updatePostData(String id, String title, String content) {
@@ -180,5 +180,17 @@ class DatabaseService {
   Future likePost(String userID, String postID) {
     usersRoot.document(userID).updateData({'likedPosts': FieldValue.arrayUnion([postID])});
     return postsRoot.document(postID).updateData({'likes': FieldValue.increment(1)});
+  }
+
+  Stream<Post> post(String postID) {
+    return postsRoot.document(postID).snapshots().map((postData) => Post.fromSnapshot(postData));
+  }
+
+
+  // Return QuerySnapshot to make it work with FirebaseAnimatedList.
+  Stream<QuerySnapshot> postsPublishedByUser(String userID) {
+    // Chaining .where() and .orderBy() requires a Composite-index in Firebase Firestore setup.
+    // See https://github.com/flutter/flutter/issues/15928#issuecomment-394197426 for more info.
+    return postsRoot.where('author', isEqualTo: userID).orderBy('created', descending: true).snapshots();
   }
 }
