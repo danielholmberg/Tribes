@@ -111,11 +111,11 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
               initialData: [],
               stream: DatabaseService().joinedTribes(currentUser.uid),
               builder: (context, snapshot) {
-                print('Tribes snapshot $snapshot');
+                //print('Tribes snapshot $snapshot');
 
                 if (snapshot.hasData) {
                   var joinedTribesList = snapshot.data;
-                  print('JoinedTribesList: $joinedTribesList');
+                  //print('JoinedTribesList: $joinedTribesList');
 
                   return joinedTribesList.isEmpty
                     ? Center(
