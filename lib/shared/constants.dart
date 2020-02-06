@@ -79,6 +79,8 @@ List<Color> defaultTribeColors = [
 const postBackgroundColor = Color(0xFFFAFAFA);
 const postInputFocusColor = tribesColor;
 const postTileContentMaxLines = 10;
+const postTileScaleFactor = 0.5;
+const postTileCompactScaleFactor = 1.0;
 
 // [Map]
 // - Chat

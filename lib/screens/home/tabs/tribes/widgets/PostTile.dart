@@ -172,7 +172,7 @@ class PostTile extends StatelessWidget {
                       ),
                     ]
                   ),
-                  height: MediaQuery.of(context).size.height * 0.5,
+                  height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
                   width: MediaQuery.of(context).size.width,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -186,12 +186,12 @@ class PostTile extends StatelessWidget {
                   ),
                 ),
                 placeholder: (context, url) => Container(
-                  height: 200,
+                  height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
                   width: MediaQuery.of(context).size.width,
                   child: Loading(),
                 ),
                 errorWidget: (context, url, error) => Container(
-                  height: 200,
+                  height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
                   width: MediaQuery.of(context).size.width,
                   child: Center(child: Icon(Icons.error)),
                 ),

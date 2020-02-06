@@ -383,21 +383,29 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _createdPosts() {
       return Container(
+        padding: EdgeInsets.all(4.0),
         child: ScrollConfiguration(
           behavior: CustomScrollBehavior(),
-          child: FirestoreAnimatedList(
-          padding: EdgeInsets.only(bottom: 80.0),
-          query: DatabaseService().postsPublishedByUser(currentUser.uid),
-          itemBuilder: (
-            BuildContext context,
-            DocumentSnapshot snapshot,
-            Animation<double> animation,
-            int index,
-          ) =>
-            FadeTransition(
-              opacity: animation,
-              child: PostTileCompact(post: Post.fromSnapshot(snapshot)),
-            ),
+          child: FirestoreAnimatedStaggered(
+            staggeredTileBuilder: (int index, DocumentSnapshot snapshot) => StaggeredTile.fit(1),
+            crossAxisCount: 4,
+            mainAxisSpacing: 4.0,
+            crossAxisSpacing: 4.0,
+            padding: EdgeInsets.only(bottom: 80.0),
+            query: DatabaseService().postsPublishedByUser(currentUser.uid),
+            itemBuilder: (
+              BuildContext context,
+              DocumentSnapshot snapshot,
+              Animation<double> animation,
+              int index,
+            ) =>
+              FadeTransition(
+                opacity: animation,
+                child: Transform.scale(
+                  scale: Constants.postTileCompactScaleFactor,
+                  child: PostTileCompact(post: Post.fromSnapshot(snapshot))
+                ),
+              ),
             emptyChild: Center(
               child: Text('No posts created yet!'),
             ),
@@ -408,30 +416,30 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _likedPosts() {
       return Container(
-        child: ScrollConfiguration(
-          behavior: CustomScrollBehavior(),
-          child: ListView.builder(
-            padding: EdgeInsets.only(bottom: 80.0),
-            itemCount: currentUser.likedPosts.length,
-            itemBuilder: (context, index) {
-              print('index: $index');
-              print('${currentUser.likedPosts[index]}');
+        padding: EdgeInsets.all(4.0),
+        child: StaggeredGridView.countBuilder(
+          itemCount: currentUser.likedPosts.length,
+          staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+          crossAxisCount: 4,
+          padding: EdgeInsets.only(bottom: 80.0),
+          itemBuilder: (context, index) {
+            print('index: $index');
+            print('${currentUser.likedPosts[index]}');
 
-              return StreamBuilder<Post>(
-                stream: DatabaseService().post(currentUser.uid, currentUser.likedPosts[index]),
-                builder: (context, snapshot) {
-                  if(snapshot.hasData) {
-                    Post likedPost = snapshot.data;
-                    return PostTileCompact(post: likedPost);
-                  } else if(snapshot.hasError) {
-                    return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(Icons.error)));
-                  } else {
-                    return Loading();
-                  }
+            return StreamBuilder<Post>(
+              stream: DatabaseService().post(currentUser.uid, currentUser.likedPosts[index]),
+              builder: (context, snapshot) {
+                if(snapshot.hasData) {
+                  Post likedPost = snapshot.data;
+                  return PostTileCompact(post: likedPost);
+                } else if(snapshot.hasError) {
+                  return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(Icons.error)));
+                } else {
+                  return Loading();
                 }
-              );
-            }, 
-          ),
+              }
+            );
+          }, 
         ),
       );
     }
@@ -520,7 +528,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               ];
             },
             body: Container(
-              color: DynamicTheme.of(context).data.backgroundColor,
+              color: DynamicTheme.of(context).data.backgroundColor.withOpacity(0.8),
               child: TabBarView(
                 children: [
                   _createdPosts(),
