@@ -71,13 +71,16 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           shape: BoxShape.circle,
                         ),
                         child: CachedNetworkImage(
-                          imageUrl: 'https://picsum.photos/id/237/200/300',
+                          imageUrl: 'https://picsum.photos/id/29/200/300',
                           imageBuilder: (context, imageProvider) => CircleAvatar(
                             radius: 50.0,
                             backgroundImage: imageProvider,
                             backgroundColor: Colors.transparent,
                           ),
-                          placeholder: (context, url) => Loading(),
+                          placeholder: (context, url) => CircleAvatar(
+                            radius: 50.0,
+                            backgroundColor: Colors.transparent,
+                          ),
                           errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                         ),
                     ),
@@ -92,7 +95,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         ),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(1000.0),
-                          onTap: () => print('new pic'),
                           child: Padding(
                             padding:EdgeInsets.all(4.0),
                             child: Icon(
