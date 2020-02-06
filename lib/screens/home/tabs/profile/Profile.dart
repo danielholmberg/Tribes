@@ -282,7 +282,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               print('${currentUser.likedPosts[index]}');
 
               return StreamBuilder<Post>(
-                stream: DatabaseService().post(currentUser.likedPosts[index]),
+                stream: DatabaseService().post(currentUser.uid, currentUser.likedPosts[index]),
                 builder: (context, snapshot) {
                   if(snapshot.hasData) {
                     Post likedPost = snapshot.data;

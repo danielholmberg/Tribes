@@ -187,8 +187,14 @@ class DatabaseService {
     return postsRoot.document(postID).updateData({'likes': FieldValue.increment(1)});
   }
 
-  Stream<Post> post(String postID) {
-    return postsRoot.document(postID).snapshots().map((postData) => Post.fromSnapshot(postData));
+  Stream<Post> post(String userID, String postID) {
+    return postsRoot.document(postID).snapshots().map((postData) { 
+      if(!postData.exists) {
+        usersRoot.document(userID).updateData({'likedPosts': FieldValue.arrayRemove([postID])});
+      } 
+
+      return Post.fromSnapshot(postData);
+    });
   }
 
 
