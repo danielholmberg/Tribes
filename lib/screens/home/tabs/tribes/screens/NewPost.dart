@@ -315,7 +315,7 @@ class _NewPostState extends State<NewPost> {
                             _fileURL = await uploadFile();
                           }
                           
-                          DatabaseService().addNewPost(
+                          await DatabaseService().addNewPost(
                             currentUser.uid, 
                             title, 
                             content, 
