@@ -41,6 +41,16 @@ class DatabaseService {
     return usersRoot.document(uid).updateData(data);
   }
 
+  Future updateUserPicURL(String picURL) async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+
+    if (currentUser != null) {
+      return usersRoot.document(currentUser.uid).updateData({'picURL': picURL});
+    } else {
+      return null;
+    }    
+  }
+
   Future updateUserLocation(double lat, double lng) async {
     final currentUser = await FirebaseAuth.instance.currentUser();
 

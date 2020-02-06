@@ -72,6 +72,9 @@ dependencies:
   # Internalization and Localization
   intl: ^0.16.1
 
+  # Image Cropper
+  image_cropper: ^1.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -17,6 +17,7 @@ class UserData {
   final String username;
   final String email;
   final String info;
+  final String picURL;
   final double lat;
   final double lng;
   final List<String> likedPosts;
@@ -27,6 +28,7 @@ class UserData {
     this.username, 
     this.email,
     this.info, 
+    this.picURL,
     this.lat, 
     this.lng, 
     this.likedPosts
@@ -39,6 +41,7 @@ class UserData {
       username: doc.data['username'] ?? '',
       email: doc.data['email'] ?? '',
       info: doc.data['info'] ?? '',
+      picURL: doc.data['picURL'] ?? '',
       lat: doc.data['lat'] ?? Constants.initialLat,
       lng: doc.data['lng'] ?? Constants.initialLng,
       likedPosts: List.from(doc.data['likedPosts'] ?? []),

@@ -1,18 +1,25 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/profile/dialogs/ProfileSettings.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/PostTileCompact.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
+import 'package:path/path.dart' as Path;
 
 class Profile extends StatefulWidget {
   @override
@@ -24,6 +31,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   TabController _tabController;
   Coordinates coordinates;
   Future<List<Address>> addressFuture;
+
+  File _imageFile;
+  File _croppedImageFile;
+  String _retrieveDataError;
+  bool loading = false;
 
   @override
   void initState() {
@@ -48,6 +60,103 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
     }
 
+    _chooseNewProfilePic() async {
+      try {
+        _imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+        if(_imageFile != null) {
+          _croppedImageFile = await ImageCropper.cropImage(
+            sourcePath: _imageFile.path,
+            cropStyle: CropStyle.circle,
+            compressQuality: 100,
+            compressFormat: ImageCompressFormat.png,
+            aspectRatioPresets: [CropAspectRatioPreset.square],
+            androidUiSettings: AndroidUiSettings(
+              toolbarTitle: 'Crop picture',
+              toolbarColor: DynamicTheme.of(context).data.primaryColor,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false,
+              activeWidgetColor: DynamicTheme.of(context).data.primaryColor,
+              activeControlsWidgetColor: DynamicTheme.of(context).data.primaryColor,
+              backgroundColor: DynamicTheme.of(context).data.primaryColor,
+              dimmedLayerColor: Colors.black54,
+            ),
+            iosUiSettings: IOSUiSettings(
+              minimumAspectRatio: 1.0,
+            )
+          );
+
+          if(_croppedImageFile != null) {
+            setState(() {
+              loading = true;
+            });
+            await uploadFile();
+            setState(() {
+              loading = false;
+              _croppedImageFile = _croppedImageFile;
+            });
+          }
+        }
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+
+    _placeholderPic() {
+      return CachedNetworkImage(
+        imageUrl: currentUser.picURL.isNotEmpty ? currentUser.picURL : 'https://picsum.photos/id/237/200/300',
+        imageBuilder: (context, imageProvider) => CircleAvatar(
+          radius: 50.0,
+          backgroundImage: imageProvider,
+          backgroundColor: Colors.transparent,
+        ),
+        placeholder: (context, url) => CircleAvatar(
+          radius: 50.0,
+          backgroundColor: Colors.transparent,
+        ),
+        errorWidget: (context, url, error) => CircleAvatar(
+          radius: 50.0,
+          backgroundColor: Colors.transparent,
+          child: Center(child: Icon(Icons.error)),
+        ),
+      );
+    }
+
+    _profilePicture() {
+      if (_retrieveDataError != null) {
+        _retrieveDataError = null;
+        return CircleAvatar(
+          radius: 50.0,
+          backgroundColor: Colors.transparent,
+          child: Center(child: Icon(Icons.error)),
+        );
+      }
+      if (_croppedImageFile != null) {
+        return loading 
+        ? CircleAvatar(
+          radius: 50,
+          child: Center(child: CircularProgressIndicator())
+        ) : _placeholderPic();
+      } else {
+        return _placeholderPic();
+      }
+    }
+
+    Future<void> retrieveLostData() async {
+      final LostDataResponse response = await ImagePicker.retrieveLostData();
+      if (response.isEmpty) {
+        return;
+      }
+      if (response.file != null) {
+        setState(() {
+          _imageFile = response.file;
+        });
+      } else {
+        _retrieveDataError = response.exception.code;
+      }
+    }
+
     _profileHeader() {
       return Container(
         padding: EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 12.0),
@@ -61,52 +170,61 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Stack(
-                  alignment: Alignment.centerLeft,
-                  children: <Widget>[
-                    Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: DynamicTheme.of(context).data.backgroundColor, width: 2.0),
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: 'https://picsum.photos/id/29/200/300',
-                          imageBuilder: (context, imageProvider) => CircleAvatar(
-                            radius: 50.0,
-                            backgroundImage: imageProvider,
-                            backgroundColor: Colors.transparent,
+                GestureDetector(
+                  onTap: () => loading ? null : _chooseNewProfilePic(),
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
+                    children: <Widget>[
+                      Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: DynamicTheme.of(context).data.backgroundColor, width: 2.0),
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
                           ),
-                          placeholder: (context, url) => CircleAvatar(
-                            radius: 50.0,
-                            backgroundColor: Colors.transparent,
+                          child: Platform.isAndroid
+                          ? FutureBuilder<void>(
+                            future: retrieveLostData(),
+                            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.none:
+                                case ConnectionState.waiting:
+                                  return _imageFile != null ? _profilePicture() : _placeholderPic();
+                                case ConnectionState.done:
+                                  return _profilePicture();
+                                default:
+                                  if (snapshot.hasError) {
+                                    return _placeholderPic();
+                                  } else {
+                                    return _placeholderPic();
+                                  }
+                                }
+                              },
+                          ) : _profilePicture(),
+                      ),
+                      Positioned(
+                        bottom: 0, 
+                        right: 0, 
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: DynamicTheme.of(context).data.backgroundColor, width: 2.0),
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
                           ),
-                          errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-                        ),
-                    ),
-                    Positioned(
-                      bottom: 0, 
-                      right: 0, 
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: DynamicTheme.of(context).data.backgroundColor, width: 2.0),
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(1000.0),
-                          child: Padding(
-                            padding:EdgeInsets.all(4.0),
-                            child: Icon(
-                              Icons.add,
-                              size: 14.0,
-                              color: Colors.white,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(1000.0),
+                            child: Padding(
+                              padding:EdgeInsets.all(4.0),
+                              child: Icon(
+                                Icons.add,
+                                size: 14.0,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 Spacer(),
                 Column(
@@ -399,6 +517,17 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       ),
     );
   }
+
+  Future<String> uploadFile() async {    
+    StorageReference storageReference = StorageService().postImagesRoot.child('${Path.basename(_croppedImageFile.path)}');    
+    StorageUploadTask uploadTask = storageReference.putFile(_croppedImageFile);    
+    await uploadTask.onComplete;    
+    print('File Uploaded');    
+    String picURL = await storageReference.getDownloadURL();
+    await DatabaseService().updateUserPicURL(picURL);
+    return picURL;
+  }  
+  
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
