@@ -95,25 +95,41 @@ class DatabaseService {
   }
 
   // Add a new Post
-  Future addNewPost(
-      String author, String title, String content, String fileURL, String tribeID) async {
+  Future addNewPost(String author, String title, String content, String fileURL, String tribeID) async {
     DocumentReference postRef = postsRoot.document();
+    Position currentPosition;
 
-    Position currentPosition = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    if(await Geolocator().isLocationServiceEnabled()) {
+      currentPosition = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
 
-    var data = {
-      'author': author,
-      'title': title,
-      'content': content,
-      'tribeID': tribeID,
-      'fileURL': fileURL,
-      'lat': currentPosition.latitude,
-      'lng': currentPosition.longitude,
-      'created': new DateTime.now().millisecondsSinceEpoch,
-    };
+      var data = {
+        'author': author,
+        'title': title,
+        'content': content,
+        'tribeID': tribeID,
+        'fileURL': fileURL,
+        'lat': currentPosition.latitude,
+        'lng': currentPosition.longitude,
+        'created': new DateTime.now().millisecondsSinceEpoch,
+      };
 
-    print('Publishing post: $data');
-    return postRef.setData(data);
+      print('Publishing post: $data');
+      return postRef.setData(data);
+    } else {
+      var data = {
+        'author': author,
+        'title': title,
+        'content': content,
+        'tribeID': tribeID,
+        'fileURL': fileURL,
+        'created': new DateTime.now().millisecondsSinceEpoch,
+      };
+
+      print('Publishing post: $data');
+      return postRef.setData(data);
+    }
+
+    
   }
 
   Future deletePost(String postID) {
