@@ -2,10 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_ui/animated_firestore_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
+import 'package:tribes/models/User.dart';
+import 'package:tribes/screens/home/tabs/tribes/screens/NewPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/PostTile.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/widgets/CustomPageTransition.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 class Posts extends StatelessWidget {
   final Tribe tribe;
@@ -13,7 +18,9 @@ class Posts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserData currentUser = Provider.of<UserData>(context);
     print('Building Posts()...');
+    print('Current user ${currentUser.toString()}');
     print('Tribe id: ${tribe.id}');
 
     return Container(
@@ -35,7 +42,37 @@ class Posts extends StatelessWidget {
           ),
         ),
         emptyChild: Center(
-          child: Text('No posts created yet!'),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Be the first to',
+                style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 18.0,
+                  fontFamily: 'TribesRounded',
+                  fontWeight: FontWeight.normal
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(context, CustomPageTransition(
+                  type: CustomPageTransitionType.newPost,
+                  duration: Constants.pageTransition800,
+                  child: StreamProvider<UserData>.value(
+                    value: DatabaseService().currentUser(currentUser.uid), 
+                    child: NewPost(tribe: tribe),
+                  ),
+                )),
+                child: Text(' add a post',
+                  style: TextStyle(
+                    color: Colors.blueGrey,
+                    fontSize: 20.0,
+                    fontFamily: 'TribesRounded',
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

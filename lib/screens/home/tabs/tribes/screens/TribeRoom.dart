@@ -162,7 +162,7 @@ class _TribeRoomState extends State<TribeRoom> {
                               icon: Icon(Icons.library_add,
                                   color:
                                       DynamicTheme.of(context).data.accentColor),
-                              label: Text('Write a post'),
+                              label: Text('Add a post'),
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.push(context, CustomPageTransition(
