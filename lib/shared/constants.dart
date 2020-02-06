@@ -81,6 +81,7 @@ const postInputFocusColor = tribesColor;
 const postTileContentMaxLines = 10;
 const postTileScaleFactor = 0.5;
 const postTileCompactScaleFactor = 1.0;
+const postTileCompactImageHeight = 80.0;
 
 // [Map]
 // - Chat

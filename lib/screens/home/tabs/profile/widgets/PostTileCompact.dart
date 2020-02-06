@@ -74,7 +74,7 @@ class PostTileCompact extends StatelessWidget {
                       ),
                     ]
                   ),
-                  height: 80,
+                  height: Constants.postTileCompactImageHeight,
                   width: MediaQuery.of(context).size.width,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -88,13 +88,13 @@ class PostTileCompact extends StatelessWidget {
                   ),
                 ),
                 placeholder: (context, url) => Container(
-                  height: MediaQuery.of(context).size.width * Constants.postTileCompactScaleFactor,
-                  width: MediaQuery.of(context).size.width * Constants.postTileCompactScaleFactor,
+                  height: Constants.postTileCompactImageHeight,
+                  width: MediaQuery.of(context).size.width,
                   child: Loading(),
                 ),
                 errorWidget: (context, url, error) => Container(
-                  height: MediaQuery.of(context).size.width * Constants.postTileCompactScaleFactor,
-                  width: MediaQuery.of(context).size.width * Constants.postTileCompactScaleFactor,
+                  height: Constants.postTileCompactImageHeight,
+                  width: MediaQuery.of(context).size.width,
                   child: Center(child: Icon(Icons.error)),
                 ),
               ),
