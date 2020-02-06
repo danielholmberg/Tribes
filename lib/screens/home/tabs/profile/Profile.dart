@@ -421,6 +421,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           itemCount: currentUser.likedPosts.length,
           staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
           crossAxisCount: 4,
+          mainAxisSpacing: 4.0,
+          crossAxisSpacing: 4.0,
           padding: EdgeInsets.only(bottom: 80.0),
           itemBuilder: (context, index) {
             print('index: $index');
