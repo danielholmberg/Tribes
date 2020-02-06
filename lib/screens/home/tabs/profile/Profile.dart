@@ -50,7 +50,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _profileHeader() {
       return Container(
-        padding: EdgeInsets.all(12.0),
+        padding: EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 12.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -146,10 +146,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _profileInfo() {
       return Card(
-        margin: EdgeInsets.symmetric(horizontal: 12.0),
+        margin: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
         elevation: 8.0,
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 16.0),
           width: MediaQuery.of(context).size.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -165,7 +165,27 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: 'TribesRounded',
+                      fontSize: 16,
                       fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: Constants.defaultPadding),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(Icons.email, 
+                        color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.7),
+                        size: Constants.smallIconSize,
+                      ),
+                      SizedBox(width: Constants.defaultPadding),
+                      Text(currentUser.email,
+                        style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontFamily: 'TribesRounded',
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal),
+                      ),
+                    ],
                   ),
                   SizedBox(height: Constants.defaultPadding),
                   Row(
@@ -227,7 +247,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _createdPosts() {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.0),
         child: ScrollConfiguration(
           behavior: CustomScrollBehavior(),
           child: FirestoreAnimatedList(
@@ -253,11 +272,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _likedPosts() {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.0),
         child: ScrollConfiguration(
           behavior: CustomScrollBehavior(),
           child: ListView.builder(
-            padding: EdgeInsets.only(bottom: 30.0),
+            padding: EdgeInsets.only(bottom: 80.0),
             itemCount: currentUser.likedPosts.length,
             itemBuilder: (context, index) {
               print('index: $index');
@@ -270,7 +288,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     Post likedPost = snapshot.data;
                     return PostTileCompact(post: likedPost);
                   } else if(snapshot.hasError) {
-                    return Center(child: Icon(Icons.error));
+                    return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(Icons.error)));
                   } else {
                     return Loading();
                   }
@@ -292,7 +310,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverAppBar(
-                  expandedHeight: 300.0,
+                  expandedHeight: 330,
                   floating: false,
                   pinned: false,
                   elevation: 4.0,
@@ -356,8 +374,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       indicatorColor: Constants.buttonIconColor,
                       unselectedLabelColor: Constants.buttonIconColor.withOpacity(0.7),
                       tabs: [
-                        Tab(icon: Icon(Icons.create), text: "Published"),
-                        Tab(icon: Icon(Icons.favorite), text: "Liked"),
+                        Tab(icon: Icon(Icons.dashboard)),
+                        Tab(icon: Icon(Icons.favorite)),
                       ],
                     ),
                   ),

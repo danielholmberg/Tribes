@@ -49,12 +49,12 @@ class PostTile extends StatelessWidget {
               ),
             ],
           ),
-          Text('#${index+1}', 
+          index != null ? Text('#${index+1}', 
             style: TextStyle(
               color: Colors.blueGrey,
               fontSize: Constants.timestampFontSize,
             )
-          ),
+          ) : SizedBox.shrink(),
         ],
       );
     }

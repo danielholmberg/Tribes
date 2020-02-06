@@ -49,7 +49,7 @@ class AuthService {
       FirebaseUser user = result.user;
 
       // Create User Document in Database
-      await DatabaseService().createUserDocument(user.uid);
+      await DatabaseService().createUserDocument(user.uid, email);
 
       return _userFromFirebaseUser(user); 
     } catch(e) {

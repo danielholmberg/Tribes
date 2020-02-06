@@ -16,17 +16,22 @@ class DatabaseService {
   final CollectionReference tribesRoot =
       Firestore.instance.collection('tribes');
 
-  Future createUserDocument(String uid) {
+  Future createUserDocument(String uid, String email) {
     return usersRoot
         .document(uid)
-        .setData({'created': new DateTime.now().millisecondsSinceEpoch});
+        .setData({
+          'email': email,
+          'created': new DateTime.now().millisecondsSinceEpoch
+        });
   }
 
-  Future updateUserData(String uid, String name, String username, String info,
-      double lat, double lng) {
+  Future updateUserData(String uid, String name, String username, String email,
+    String info, double lat, double lng) async {
+    
     var data = {
       'name': name,
       'username': username,
+      'email': email,
       'info': info,
       'lat': lat,
       'lng': lng,

@@ -15,6 +15,7 @@ class UserData {
   final String uid;
   final String name;
   final String username;
+  final String email;
   final String info;
   final double lat;
   final double lng;
@@ -24,6 +25,7 @@ class UserData {
     this.uid, 
     this.name, 
     this.username, 
+    this.email,
     this.info, 
     this.lat, 
     this.lng, 
@@ -35,6 +37,7 @@ class UserData {
       uid: doc.documentID,
       name: doc.data['name'] ?? '',
       username: doc.data['username'] ?? '',
+      email: doc.data['email'] ?? '',
       info: doc.data['info'] ?? '',
       lat: doc.data['lat'] ?? Constants.initialLat,
       lng: doc.data['lng'] ?? Constants.initialLng,

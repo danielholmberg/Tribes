@@ -19,7 +19,7 @@ class PostTileCompact extends StatelessWidget {
     return PostTile(
       post: post,
       tribeColor: DynamicTheme.of(context).data.primaryColor,
-      index: 0,
+      index: null,
     );
   }
 }

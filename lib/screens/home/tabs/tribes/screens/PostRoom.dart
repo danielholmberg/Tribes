@@ -259,12 +259,12 @@ class _PostRoomState extends State<PostRoom> {
                                 )
                               ],
                             ),
-                            Text('#${widget.index+1}', 
+                            widget.index != null ? Text('#${widget.index+1}', 
                               style: TextStyle(
                                 color: Colors.blueGrey,
                                 fontSize: Constants.timestampFontSize,
                               )
-                            ),
+                            ) : SizedBox.shrink(),
                           ],
                         ),
                         Form(
