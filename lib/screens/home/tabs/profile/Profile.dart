@@ -11,6 +11,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
+import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/profile/dialogs/ProfileSettings.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/PostTileCompact.dart';
@@ -227,14 +228,21 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 Spacer(),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text('23', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
-                    Text('Published', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
-                  ],
+                StreamBuilder<QuerySnapshot>(
+                  stream: DatabaseService().postsPublishedByUser(currentUser.uid),
+                  builder: (context, snapshot) {
+                    String publishedCount = snapshot.hasData ? '${snapshot.data.documents.length}' : '';
+
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(publishedCount, style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                        Text('Published', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
+                      ],
+                    );
+                  }
                 ),
                 Spacer(),
                 Column(
@@ -242,19 +250,27 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('132', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                    Text('${currentUser.likedPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
                     Text('Liked', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
                   ],
                 ),
                 Spacer(),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text('8', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
-                    Text('Tribes', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
-                  ],
+                StreamBuilder<List<Tribe>>(
+                  stream: DatabaseService().joinedTribes(currentUser.uid),
+                  builder: (context, snapshot) {
+                    List<Tribe> tribesList =
+                        snapshot.hasData ? snapshot.data : [];
+
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('${tribesList.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                        Text('Tribes', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
+                      ],
+                    );
+                  }
                 ),
                 Spacer(),
               ],
