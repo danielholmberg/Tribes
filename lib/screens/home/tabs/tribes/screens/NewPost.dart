@@ -2,19 +2,16 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as Path;
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class NewPost extends StatefulWidget {  
@@ -312,7 +309,7 @@ class _NewPostState extends State<NewPost> {
                           setState(() => loading = true);
 
                           if(_imageFile != null) {
-                            _fileURL = await uploadFile();
+                            _fileURL = await StorageService().uploadFile(_imageFile);
                           }
                           
                           await DatabaseService().addNewPost(
@@ -335,15 +332,7 @@ class _NewPostState extends State<NewPost> {
         ),
       ),
     );
-  }
-
-  Future<String> uploadFile() async {    
-    StorageReference storageReference = StorageService().postImagesRoot.child('${Path.basename(_imageFile.path)}');    
-    StorageUploadTask uploadTask = storageReference.putFile(_imageFile);    
-    await uploadTask.onComplete;    
-    print('File Uploaded');    
-    return await storageReference.getDownloadURL();    
-  }  
+  } 
 
   Text _getRetrieveErrorWidget() {
     if (_retrieveDataError != null) {

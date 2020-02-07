@@ -90,7 +90,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             setState(() {
               loading = true;
             });
-            await StorageService().uploadFile(_croppedImageFile, currentUser.picURL);
+            await StorageService().uploadUserImage(_croppedImageFile, currentUser.picURL);
             setState(() {
               loading = false;
               _croppedImageFile = _croppedImageFile;

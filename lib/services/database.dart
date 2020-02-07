@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
+import 'package:tribes/services/storage.dart';
 
 class DatabaseService {
   // Users Ref
@@ -132,8 +133,9 @@ class DatabaseService {
     
   }
 
-  Future deletePost(String postID) {
-    return postsRoot.document(postID).delete();
+  Future deletePost(Post post) async {
+    if(post.fileURL.isNotEmpty) await StorageService().deleteFile(post.fileURL);
+    return postsRoot.document(post.id).delete();
   }
 
   Future updatePostData(String id, String title, String content) {

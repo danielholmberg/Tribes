@@ -32,10 +32,11 @@ class StorageService {
       return imageRef.delete();
     } else {
       print('Unable to delete old image: $oldImageURL');
+      return null;
     }
   }
 
-  Future<String> uploadFile(File newImageFile, String oldImageURL) async {    
+  Future<String> uploadUserImage(File newImageFile, String oldImageURL) async {    
     StorageReference storageReference = userImagesRoot.child('${Path.basename(newImageFile.path)}');    
     StorageUploadTask uploadTask = storageReference.putFile(newImageFile);    
     await uploadTask.onComplete; 
@@ -48,9 +49,28 @@ class StorageService {
         await deleteOldFile(oldImageURL);
       } catch (e) {
         print('Unable to delete old image: ${e.toString()}');
+        return null;
       }
     }
     await DatabaseService().updateUserPicURL(picURL);
     return picURL;
   }  
+
+  Future<String> uploadFile(File newFile) async {    
+    StorageReference storageReference = StorageService().postImagesRoot.child('${Path.basename(newFile.path)}');    
+    StorageUploadTask uploadTask = storageReference.putFile(newFile);    
+    await uploadTask.onComplete;    
+    print('File Uploaded');    
+    return await storageReference.getDownloadURL();    
+  } 
+
+  Future deleteFile(String fileURL) async {
+    StorageReference fileRef = await getReferenceFromUrl(fileURL);
+    if(fileRef != null) {
+      return fileRef.delete();
+    } else {
+      print('Unable to delete file: $fileURL');
+      return null;
+    }
+  }
 }

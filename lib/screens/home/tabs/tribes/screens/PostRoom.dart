@@ -136,7 +136,7 @@ class _PostRoomState extends State<PostRoom> {
                         style: TextStyle(color: Colors.red),
                       ),
                       onPressed: () async {
-                        await DatabaseService().deletePost(widget.post.id);
+                        await DatabaseService().deletePost(widget.post);
                         Navigator.of(context).pop(); // Dialog: "Are you sure...?"
                         Navigator.of(context).pop(); // PostTile
                       },
