@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
@@ -20,7 +19,6 @@ import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
-import 'package:path/path.dart' as Path;
 
 class Profile extends StatefulWidget {
   @override
@@ -92,7 +90,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             setState(() {
               loading = true;
             });
-            await uploadFile();
+            await StorageService().uploadFile(_croppedImageFile, currentUser.picURL);
             setState(() {
               loading = false;
               _croppedImageFile = _croppedImageFile;
@@ -108,16 +106,16 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       return CachedNetworkImage(
         imageUrl: currentUser.picURL.isNotEmpty ? currentUser.picURL : 'https://picsum.photos/id/237/200/300',
         imageBuilder: (context, imageProvider) => CircleAvatar(
-          radius: 50.0,
+          radius: Constants.profilePagePicRadius,
           backgroundImage: imageProvider,
           backgroundColor: Colors.transparent,
         ),
         placeholder: (context, url) => CircleAvatar(
-          radius: 50.0,
+          radius: Constants.profilePagePicRadius,
           backgroundColor: Colors.transparent,
         ),
         errorWidget: (context, url, error) => CircleAvatar(
-          radius: 50.0,
+          radius: Constants.profilePagePicRadius,
           backgroundColor: Colors.transparent,
           child: Center(child: Icon(Icons.error)),
         ),
@@ -128,7 +126,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       if (_retrieveDataError != null) {
         _retrieveDataError = null;
         return CircleAvatar(
-          radius: 50.0,
+          radius: Constants.profilePagePicRadius,
           backgroundColor: Colors.transparent,
           child: Center(child: Icon(Icons.error)),
         );
@@ -136,7 +134,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       if (_croppedImageFile != null) {
         return loading 
         ? CircleAvatar(
-          radius: 50,
+          radius: Constants.profilePagePicRadius,
           child: Center(child: CircularProgressIndicator())
         ) : _placeholderPic();
       } else {
@@ -186,20 +184,19 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ? FutureBuilder<void>(
                             future: retrieveLostData(),
                             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                              switch (snapshot.connectionState) {
+                              // TODO:
+                              /* switch (snapshot.connectionState) {
                                 case ConnectionState.none:
                                 case ConnectionState.waiting:
                                   return _imageFile != null ? _profilePicture() : _placeholderPic();
                                 case ConnectionState.done:
                                   return _profilePicture();
                                 default:
-                                  if (snapshot.hasError) {
-                                    return _placeholderPic();
-                                  } else {
-                                    return _placeholderPic();
-                                  }
-                                }
-                              },
+                                  if(snapshot.hasError) print(snapshot.error.toString());
+                                  return _profilePicture();
+                              } */
+                              return _profilePicture();
+                            },
                           ) : _profilePicture(),
                       ),
                       Positioned(
@@ -543,16 +540,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       ),
     );
   }
-
-  Future<String> uploadFile() async {    
-    StorageReference storageReference = StorageService().postImagesRoot.child('${Path.basename(_croppedImageFile.path)}');    
-    StorageUploadTask uploadTask = storageReference.putFile(_croppedImageFile);    
-    await uploadTask.onComplete;    
-    print('File Uploaded');    
-    String picURL = await storageReference.getDownloadURL();
-    await DatabaseService().updateUserPicURL(picURL);
-    return picURL;
-  }  
   
 }
 

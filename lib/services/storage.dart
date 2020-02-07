@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Path;
+import 'package:tribes/services/database.dart';
 
 class StorageService {
   // User Image Ref
@@ -13,21 +17,40 @@ class StorageService {
   final StorageReference tribeImagesRoot =
       FirebaseStorage().ref().child('tribeImages');
 
-  Future getTribeImageURL(String imageID) {
-    try {
-      return tribeImagesRoot.child(imageID).getDownloadURL();
-    } catch (e) {
-      print(e.toString());
+  Future<StorageReference> getReferenceFromUrl(String fullUrl) async {
+    final StorageReference ref = await FirebaseStorage.instance.getReferenceFromUrl(fullUrl);
+    if (ref != null) {
+      return ref;
+    } else {
       return null;
     }
   }
 
-  Future getUserImageURL(String imageID) {
-    try {
-      return userImagesRoot.child(imageID).getDownloadURL();
-    } catch (e) {
-      print(e.toString());
-      return null;
+  Future deleteOldFile(String oldImageURL) async {
+    StorageReference imageRef = await getReferenceFromUrl(oldImageURL);
+    if(imageRef != null) {
+      return imageRef.delete();
+    } else {
+      print('Unable to delete old image: $oldImageURL');
     }
   }
+
+  Future<String> uploadFile(File newImageFile, String oldImageURL) async {    
+    StorageReference storageReference = userImagesRoot.child('${Path.basename(newImageFile.path)}');    
+    StorageUploadTask uploadTask = storageReference.putFile(newImageFile);    
+    await uploadTask.onComplete; 
+
+    print('File Uploaded');    
+
+    String picURL = await storageReference.getDownloadURL();
+    if(oldImageURL.isNotEmpty) {
+      try {
+        await deleteOldFile(oldImageURL);
+      } catch (e) {
+        print('Unable to delete old image: ${e.toString()}');
+      }
+    }
+    await DatabaseService().updateUserPicURL(picURL);
+    return picURL;
+  }  
 }
