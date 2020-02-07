@@ -485,13 +485,17 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                                       contentPadding: EdgeInsets.all(0.0),
                                       backgroundColor: Constants.profileSettingsBackgroundColor,
-                                      content: Container(
-                                        width: MediaQuery.of(context).size.width,
-                                        height: MediaQuery.of(context).size.height * 0.8,
-                                        alignment: Alignment.topLeft,
-                                        child: ProfileSettings(user: currentUser),
+                                      content: ClipRRect(
+                                        borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius)),
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context).size.height * 0.8,
+                                          alignment: Alignment.topLeft,
+                                          child: ProfileSettings(user: currentUser),
+                                        ),
                                       ),
                                     ),
                                   );

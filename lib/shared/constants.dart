@@ -21,6 +21,8 @@ const pageTransition300 = Duration(milliseconds: 300);
 const pageTransition600 = Duration(milliseconds: 600);
 const pageTransition800 = Duration(milliseconds: 800);
 
+const dialogCornerRadius = 20.0;
+
 // AppBar
 const appBarElevation = 0.0;
 const appBarColor = primaryColor;

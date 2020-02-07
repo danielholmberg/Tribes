@@ -50,6 +50,7 @@ class _NewTribeState extends State<NewTribe> {
               showDialog(
                 context: context,
                 child: AlertDialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                   title: Text('Pick a Tribe color'),
                   content: SingleChildScrollView(
                     child: BlockPicker(

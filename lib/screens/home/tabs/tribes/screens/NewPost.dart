@@ -130,6 +130,7 @@ class _NewPostState extends State<NewPost> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                   backgroundColor: Constants
                       .profileSettingsBackgroundColor,
                   title: Text(

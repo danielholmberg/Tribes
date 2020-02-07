@@ -134,6 +134,7 @@ class _TribeSettingsState extends State<TribeSettings> {
                                         showDialog(
                                           context: context,
                                           child: AlertDialog(
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                                             title: Text('Pick a Tribe color'),
                                             content: SingleChildScrollView(
                                               child: BlockPicker(
@@ -215,6 +216,7 @@ class _TribeSettingsState extends State<TribeSettings> {
                                       return StatefulBuilder(
                                           builder: (context, setState) {
                                         return AlertDialog(
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                                           backgroundColor: Constants
                                               .profileSettingsBackgroundColor,
                                           title: RichText(

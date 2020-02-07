@@ -162,6 +162,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                                     backgroundColor: Constants
                                         .profileSettingsBackgroundColor,
                                     title: Text(

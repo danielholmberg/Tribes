@@ -76,6 +76,7 @@ class _PostRoomState extends State<PostRoom> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                   backgroundColor: Constants
                       .profileSettingsBackgroundColor,
                   title: Text(
@@ -118,6 +119,7 @@ class _PostRoomState extends State<PostRoom> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                   backgroundColor: Constants
                       .profileSettingsBackgroundColor,
                   title: Text(

@@ -85,15 +85,19 @@ class _TribeRoomState extends State<TribeRoom> {
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                                   contentPadding: EdgeInsets.all(0.0),
                                   backgroundColor:
                                       Constants.profileSettingsBackgroundColor,
-                                  content: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.8,
-                                    alignment: Alignment.topLeft,
-                                    child: TribeSettings(tribe: currentTribe),
+                                  content: ClipRRect(
+                                    borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius)),
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height * 0.8,
+                                      alignment: Alignment.topLeft,
+                                      child: TribeSettings(tribe: currentTribe),
+                                    ),
                                   ),
                                 ),
                               );
