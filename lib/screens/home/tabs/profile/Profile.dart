@@ -396,15 +396,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               Animation<double> animation,
               int index,
             ) =>
-              FadeTransition(
-                opacity: animation,
-                child: Transform.scale(
-                  scale: Constants.postTileCompactScaleFactor,
-                  child: PostTileCompact(post: Post.fromSnapshot(snapshot))
-                ),
+            FadeTransition(
+              opacity: animation,
+              child: Transform.scale(
+                scale: Constants.postTileCompactScaleFactor,
+                child: PostTileCompact(post: Post.fromSnapshot(snapshot))
               ),
-            emptyChild: Center(
-              child: Text('No posts created yet!'),
             ),
           ),
         ),
