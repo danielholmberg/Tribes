@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "905764618540-evm831tp1asbbqrq4mvcqh6ip5u8lihp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.danielholmberg.tribes",
+            "certificate_hash": "63a16815af66f9ae0a865c246ab6b9900ad385bd"
+          }
+        },
+        {
           "client_id": "905764618540-6fn595438rn0a36m5umkuvvnlu12m0kg.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +38,13 @@
             {
               "client_id": "905764618540-6fn595438rn0a36m5umkuvvnlu12m0kg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "905764618540-tcha461d1rsd6fd7hicmfqkurm60up0f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dev.danielholmberg.tribes"
+              }
             }
           ]
         }
