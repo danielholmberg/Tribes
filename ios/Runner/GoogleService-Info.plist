@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>905764618540-tcha461d1rsd6fd7hicmfqkurm60up0f.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.905764618540-tcha461d1rsd6fd7hicmfqkurm60up0f</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>905764618540-evm831tp1asbbqrq4mvcqh6ip5u8lihp.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA8P89rqIw9QbEP4Fdc1t_9rZyPKtrR-5U</string>
+	<key>GCM_SENDER_ID</key>
+	<string>905764618540</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>dev.danielholmberg.tribes</string>
+	<key>PROJECT_ID</key>
+	<string>tribes-fe811</string>
+	<key>STORAGE_BUCKET</key>
+	<string>tribes-fe811.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:905764618540:ios:ca94383369f9d26c7aec89</string>
+	<key>DATABASE_URL</key>
+	<string>https://tribes-fe811.firebaseio.com</string>
+</dict>
+</plist>
