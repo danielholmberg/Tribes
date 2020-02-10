@@ -49,23 +49,22 @@ class _TribeRoomState extends State<TribeRoom> {
                 headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                   return <Widget>[
                     SliverAppBar(
-                      elevation: 8.0,
+                      elevation: 4.0,
                       forceElevated: true,
                       backgroundColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                       expandedHeight: 200.0,
                       floating: false,
                       pinned: false,
-                      title: AutoSizeText(
+                      centerTitle: true,
+                      title: Text(
                         currentTribe.name,
-                        maxLines: 1,
-                        maxFontSize: 20.0,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'TribesRounded'),
+                          fontFamily: 'TribesRounded',
+                          fontSize: 20,
+                        ),
                       ),
-                      centerTitle: true,
-                      titleSpacing: 8.0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20.0),
@@ -113,25 +112,28 @@ class _TribeRoomState extends State<TribeRoom> {
                           },
                         ),
                       ],
-                      flexibleSpace: Center(
-                        child: Card(
-                          elevation: 5.0,
-                          color: DynamicTheme.of(context).data.backgroundColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0)
-                          ),
-                          margin: EdgeInsets.fromLTRB(16.0, 80.0, 16.0, 16.0),
-                          child: Container(
-                            padding: EdgeInsets.all(12.0),
-                            child: Text(
-                              currentTribe.desc,
-                              style: TextStyle(
-                                color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'TribesRounded',
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Card(
+                            elevation: 5.0,
+                            color: DynamicTheme.of(context).data.backgroundColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0)
+                            ),
+                            margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+                            child: Container(
+                              padding: EdgeInsets.all(12.0),
+                              child: Text(
+                                currentTribe.desc,
+                                style: TextStyle(
+                                  color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'TribesRounded',
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),

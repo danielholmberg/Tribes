@@ -81,7 +81,17 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                     backgroundColor: DynamicTheme.of(context).data.primaryColor,
                     floating: false,
                     pinned: false,
-                    titleSpacing: 8.0,
+                    centerTitle: true,
+                    title: Text(
+                      'TRIBES',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'TribesRounded',
+                        fontSize: 24,
+                        letterSpacing: 8.0,
+                      ),
+                    ),
                     iconTheme: IconThemeData(color: Constants.buttonIconColor),
                     actions: <Widget>[
                       IconButton(
@@ -95,25 +105,12 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                         onPressed: () => _showNewTribePage(),
                       ),
                     ],
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      titlePadding: EdgeInsets.only(bottom: 12),
-                      title: AutoSizeText(
-                        'Tribes',
-                        maxLines: 1,
-                        maxFontSize: 20.0,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'TribesRounded'),
-                      ),
-                    ),
                   ),
                 ];
               },
               body: Container(
                 decoration: BoxDecoration(
-                  color: DynamicTheme.of(context).data.accentColor,
+                  color: DynamicTheme.of(context).data.backgroundColor,
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                 ),
                 child: StreamBuilder<List<Tribe>>(
