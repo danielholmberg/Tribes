@@ -209,7 +209,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             shape: BoxShape.circle,
                           ),
                           child: InkWell(
-                            borderRadius: BorderRadius.circular(1000.0),
+                            borderRadius: BorderRadius.circular(Constants.maxCornerRadius),
                             child: Padding(
                               padding:EdgeInsets.all(4.0),
                               child: Icon(

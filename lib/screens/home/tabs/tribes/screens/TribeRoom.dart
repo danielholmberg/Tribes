@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,8 @@ import 'package:tribes/shared/widgets/Loading.dart';
 
 class TribeRoom extends StatefulWidget {
   final String tribeID;
-  TribeRoom({this.tribeID});
+  final String founderID;
+  TribeRoom({this.tribeID, this.founderID});
 
   @override
   _TribeRoomState createState() => _TribeRoomState();
@@ -79,6 +81,7 @@ class _TribeRoomState extends State<TribeRoom> {
                           ? IconButton(
                             icon: Icon(Icons.settings),
                             iconSize: Constants.defaultIconSize,
+                            splashColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                             color: Colors.white,
                             onPressed: () {
                               showDialog(
@@ -104,40 +107,153 @@ class _TribeRoomState extends State<TribeRoom> {
                           ) 
                           : SizedBox.shrink(),
                         IconButton(
-                          icon: Icon(Icons.sort),
+                          icon: Icon(Icons.info, color: Constants.buttonIconColor), 
                           iconSize: Constants.defaultIconSize,
-                          color: Colors.white,
+                          splashColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                           onPressed: () {
-                            print('Clicked on Sort button');
-                          },
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                                contentPadding: EdgeInsets.all(0.0),
+                                backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+                                content: ScrollConfiguration(
+                                  behavior: CustomScrollBehavior(),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius)),
+                                    child: Container(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'Tribe Details',
+                                              style:
+                                                  DynamicTheme.of(context).data.textTheme.title,
+                                            ),
+                                          ),
+                                          SizedBox(height: Constants.defaultSpacing),
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: <Widget>[
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Expanded(child: Divider(thickness: 2.0,)),
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Text('Description', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Expanded(child: Divider(thickness: 2.0,)),
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                ],
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context).size.width,
+                                                padding: EdgeInsets.all(12.0),
+                                                child: Text(
+                                                  currentTribe.desc,
+                                                  style: TextStyle(
+                                                    color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: 'TribesRounded',
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: <Widget>[
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Expanded(child: Divider(thickness: 2.0,)),
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Text('Chief', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Expanded(child: Divider(thickness: 2.0,)),
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: <Widget>[
+                                                  Container(
+                                                    padding: EdgeInsets.all(4.0),
+                                                    child: StreamBuilder<UserData>(
+                                                      stream: DatabaseService().userData(currentTribe.founder),
+                                                      builder: (context, snapshot) {
+
+                                                        if(snapshot.hasData) {
+                                                          UserData founderData = snapshot.data;
+                                                          print('founderData: $founderData'); 
+                                                          return Row(
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: <Widget>[
+                                                              CachedNetworkImage(
+                                                                imageUrl: founderData.picURL.isNotEmpty ? founderData.picURL : 'https://picsum.photos/id/237/200/300',
+                                                                imageBuilder: (context, imageProvider) => CircleAvatar(
+                                                                  radius: Constants.defaultProfilePicRadius,
+                                                                  backgroundImage: imageProvider,
+                                                                  backgroundColor: Colors.transparent,
+                                                                ),
+                                                                placeholder: (context, url) => CircleAvatar(
+                                                                  radius: Constants.defaultProfilePicRadius,
+                                                                  backgroundColor: Colors.transparent,
+                                                                ),
+                                                                errorWidget: (context, url, error) => CircleAvatar(
+                                                                  radius: Constants.defaultProfilePicRadius,
+                                                                  backgroundColor: Colors.transparent,
+                                                                  child: Center(child: Icon(Icons.error)),
+                                                                ),
+                                                              ),
+                                                              SizedBox(width: Constants.defaultPadding),
+                                                              Text(founderData.username,
+                                                                style: TextStyle(
+                                                                  color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                                                  fontFamily: 'TribesRounded',
+                                                                  fontWeight: FontWeight.bold
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        } else if(snapshot.hasError) {
+                                                          print('Error getting founder user data: ${snapshot.error.toString()}');
+                                                          return SizedBox.shrink();
+                                                        } else {
+                                                          return SizedBox.shrink();
+                                                        }
+                                                        
+                                                      }
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
                         ),
                       ],
-                      flexibleSpace: FlexibleSpaceBar(
-                        background: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Card(
-                            elevation: 5.0,
-                            color: DynamicTheme.of(context).data.backgroundColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0)
-                            ),
-                            margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
-                            child: Container(
-                              padding: EdgeInsets.all(12.0),
-                              child: Text(
-                                currentTribe.desc,
-                                style: TextStyle(
-                                  color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'TribesRounded',
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      flexibleSpace: FlexibleSpaceBar(),
                     ),
                   ];
                 },

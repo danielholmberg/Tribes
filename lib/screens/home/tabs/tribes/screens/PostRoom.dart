@@ -213,9 +213,22 @@ class _PostRoomState extends State<PostRoom> {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Icon(Icons.account_circle, 
-                                  color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                  size: Constants.mediumIconSize,
+                                CachedNetworkImage(
+                                  imageUrl: currentUser.picURL.isNotEmpty ? currentUser.picURL : 'https://picsum.photos/id/237/200/300',
+                                  imageBuilder: (context, imageProvider) => CircleAvatar(
+                                    radius: Constants.defaultProfilePicRadius,
+                                    backgroundImage: imageProvider,
+                                    backgroundColor: Colors.transparent,
+                                  ),
+                                  placeholder: (context, url) => CircleAvatar(
+                                    radius: Constants.defaultProfilePicRadius,
+                                    backgroundColor: Colors.transparent,
+                                  ),
+                                  errorWidget: (context, url, error) => CircleAvatar(
+                                    radius: Constants.defaultProfilePicRadius,
+                                    backgroundColor: Colors.transparent,
+                                    child: Center(child: Icon(Icons.error)),
+                                  ),
                                 ),
                                 SizedBox(width: Constants.defaultPadding),
                                 Column(
@@ -223,7 +236,7 @@ class _PostRoomState extends State<PostRoom> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    Text(currentUser.name,
+                                    Text(currentUser.username,
                                       style: TextStyle(
                                         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                                         fontFamily: 'TribesRounded',
