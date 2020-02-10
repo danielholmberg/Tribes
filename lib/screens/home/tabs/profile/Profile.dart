@@ -228,7 +228,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 StreamBuilder<QuerySnapshot>(
                   stream: DatabaseService().postsPublishedByUser(currentUser.uid),
                   builder: (context, snapshot) {
-                    String publishedCount = snapshot.hasData ? '${snapshot.data.documents.length}' : '';
+                    String publishedCount = snapshot.hasData ? '${snapshot.data.documents.length}' : '0';
 
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
