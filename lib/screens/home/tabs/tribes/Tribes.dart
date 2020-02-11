@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -83,13 +84,11 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                     pinned: false,
                     centerTitle: true,
                     title: Text(
-                      'TRIBES',
+                      'Tribes',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.oleoScriptSwashCaps(
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'TribesRounded',
-                        fontSize: 24,
-                        letterSpacing: 8.0,
+                        fontSize: 30,
                       ),
                     ),
                     iconTheme: IconThemeData(color: Constants.buttonIconColor),
