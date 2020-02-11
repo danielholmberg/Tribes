@@ -17,13 +17,18 @@ class DatabaseService {
   final CollectionReference tribesRoot =
       Firestore.instance.collection('tribes');
 
-  Future createUserDocument(String uid, String email) {
+  Future createUserDocument(String uid, String name, String username, String email) {
+    var data = {
+      'name': name,
+      'username': username,
+      'email': email,
+      'created': new DateTime.now().millisecondsSinceEpoch
+    };
+    print('Creating user with info: $data');
+
     return usersRoot
         .document(uid)
-        .setData({
-          'email': email,
-          'created': new DateTime.now().millisecondsSinceEpoch
-        });
+        .setData(data);
   }
 
   Future updateUserData(String uid, String name, String username, String email,

@@ -43,19 +43,33 @@ class AuthService {
   }
 
   // Register with Email & Password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future registerWithEmailAndPassword(String email, String password, String name, String username) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
 
+
       // Create User Document in Database
-      await DatabaseService().createUserDocument(user.uid, email);
+      await DatabaseService().createUserDocument(user.uid, name, username, email);
+      await _setUserLocation();
 
       return _userFromFirebaseUser(user); 
     } catch(e) {
       print(e);
       return null;
     }
+  }
+
+  Future _setUserLocation() async {
+    Position location = await Geolocator().getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best, 
+        locationPermissionLevel: GeolocationPermission.locationAlways
+      );
+      
+    return await DatabaseService().updateUserLocation(
+      location != null ? location.latitude : Constants.initialLat, 
+      location != null ? location.longitude : Constants.initialLng,
+    );
   }
 
   // Sign out

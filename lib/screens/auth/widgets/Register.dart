@@ -22,6 +22,8 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
+  String name = '';
+  String username = '';
   String email = '';
   String password = '';
   String error = '';
@@ -56,11 +58,37 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
                         decoration: Decorations.registerInput.copyWith(
+                          hintText: 'Name', 
+                          prefixIcon: Icon(Icons.face, color: Constants.primaryColor)
+                        ),
+                        validator: (val) => val.isEmpty 
+                          ? 'Enter your name' 
+                          : null,
+                        onChanged: (val) {
+                          setState(() => name = val);
+                        },
+                      ),
+                      SizedBox(height: Constants.defaultSpacing),
+                      TextFormField(
+                        decoration: Decorations.registerInput.copyWith(
+                          hintText: 'Username', 
+                          prefixIcon: Icon(Icons.person, color: Constants.primaryColor)
+                        ),
+                        validator: (val) => val.isEmpty 
+                          ? 'Enter a username' 
+                          : null,
+                        onChanged: (val) {
+                          setState(() => username = val);
+                        },
+                      ),
+                      SizedBox(height: Constants.defaultSpacing),
+                      TextFormField(
+                        decoration: Decorations.registerInput.copyWith(
                           hintText: 'Email', 
                           prefixIcon: Icon(Icons.email, color: Constants.primaryColor)
                         ),
                         validator: (val) => val.isEmpty 
-                          ? 'Enter an email' 
+                          ? 'Enter your email' 
                           : null,
                         onChanged: (val) {
                           setState(() => email = val);
@@ -114,7 +142,7 @@ class _RegisterState extends State<Register> {
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               setState(() => loading = true);
-                              dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                              dynamic result = await _auth.registerWithEmailAndPassword(email, password, name, username);
                               if (result == null) {
                                 setState(() { 
                                   error = 'Please enter a valid email';
