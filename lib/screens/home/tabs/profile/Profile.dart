@@ -361,16 +361,21 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 ],
               ),
               Divider(),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: Text(currentUser.info,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.blueGrey,
-                    fontFamily: 'TribesRounded',
-                    fontWeight: FontWeight.normal
+              Visibility(
+                visible: currentUser.info.isNotEmpty,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Text(currentUser.info,
+                    maxLines: 2,
+                    overflow: TextOverflow.fade,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.blueGrey,
+                      fontFamily: 'TribesRounded',
+                      fontWeight: FontWeight.normal
+                    ),
                   ),
-                ),
+                )
               ),
             ],
           ),
@@ -443,7 +448,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     return Scaffold(
       backgroundColor: DynamicTheme.of(context).data.primaryColor,
       body: Container(
-        padding: const EdgeInsets.only(top: 24.0),
         child: DefaultTabController(
           length: 2,
           child: NestedScrollView(
@@ -456,58 +460,63 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   elevation: 4.0,
                   backgroundColor: DynamicTheme.of(context).data.primaryColor,
                   flexibleSpace: FlexibleSpaceBar(
-                    background: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Stack(
-                          alignment: Alignment.center,
+                    background: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
+                            Stack(
+                              alignment: Alignment.center,
                               children: <Widget>[
-                                Text(currentUser.username,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'TribesRounded',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0,
-                                  )
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Text(currentUser.username,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'TribesRounded',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0,
+                                      )
+                                    ),
+                                  ],
+                                ),
+                                Positioned(right: 0, 
+                                  child: IconButton(
+                                    color: DynamicTheme.of(context).data.buttonColor,
+                                    icon: Icon(Icons.settings, color: Constants.buttonIconColor),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                                          contentPadding: EdgeInsets.all(0.0),
+                                          backgroundColor: Constants.profileSettingsBackgroundColor,
+                                          content: ClipRRect(
+                                            borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius)),
+                                            child: Container(
+                                              width: MediaQuery.of(context).size.width,
+                                              height: MediaQuery.of(context).size.height * 0.8,
+                                              alignment: Alignment.topLeft,
+                                              child: ProfileSettings(user: currentUser),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
-                            Positioned(right: 0, 
-                              child: IconButton(
-                                color: DynamicTheme.of(context).data.buttonColor,
-                                icon: Icon(Icons.settings, color: Constants.buttonIconColor),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                                      contentPadding: EdgeInsets.all(0.0),
-                                      backgroundColor: Constants.profileSettingsBackgroundColor,
-                                      content: ClipRRect(
-                                        borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius)),
-                                        child: Container(
-                                          width: MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context).size.height * 0.8,
-                                          alignment: Alignment.topLeft,
-                                          child: ProfileSettings(user: currentUser),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
+                            _profileHeader(),
+                            SizedBox(height: Constants.defaultPadding),
+                            _profileInfo(),
                           ],
                         ),
-                        _profileHeader(),
-                        SizedBox(height: Constants.defaultPadding),
-                        _profileInfo(),
-                      ],
+                      ),
                     ),
                   ),
                 ),
