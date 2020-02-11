@@ -74,6 +74,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     validator: (val) => val.isEmpty
                                         ? 'Please add your name'
                                         : null,
+                                    autovalidate: true,
                                     onChanged: (val) {
                                       setState(() => name = val);
                                     },
@@ -81,6 +82,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                   SizedBox(height: Constants.defaultSpacing),
                                   TextFormField(
                                     initialValue: currentUser.username,
+                                    maxLength: Constants.profileUsernameMaxLength,
                                     decoration: Decorations.profileSettingsInput
                                         .copyWith(
                                       labelText: 'Username',
@@ -88,6 +90,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     validator: (val) => val.isEmpty
                                         ? 'Your username cannot be empty'
                                         : null,
+                                    autovalidate: true,
                                     onChanged: (val) {
                                       setState(() => username = val);
                                     },
@@ -98,6 +101,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     textCapitalization:
                                         TextCapitalization.sentences,
                                     keyboardType: TextInputType.multiline,
+                                    maxLength: Constants.profileInfoMaxLength,
                                     maxLines: null,
                                     decoration: Decorations.profileSettingsInput
                                         .copyWith(

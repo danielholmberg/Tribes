@@ -280,7 +280,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     _profileInfo() {
       return Card(
         margin: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
-        elevation: 8.0,
+        elevation: 0.0,
         child: Container(
           padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 16.0),
           width: MediaQuery.of(context).size.width,

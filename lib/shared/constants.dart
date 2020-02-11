@@ -98,3 +98,5 @@ const initialLng = 18.071869;
 // [Profile]
 const profilePagePicRadius = 50.0;
 const profileSettingsBackgroundColor = Color(0xFFFAFAFA);
+const profileUsernameMaxLength = 20;
+const profileInfoMaxLength = 100;
