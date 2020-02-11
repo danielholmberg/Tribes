@@ -209,70 +209,18 @@ class _PostRoomState extends State<PostRoom> {
                           mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                CachedNetworkImage(
-                                  imageUrl: currentUser.picURL.isNotEmpty ? currentUser.picURL : 'https://picsum.photos/id/237/200/300',
-                                  imageBuilder: (context, imageProvider) => CircleAvatar(
-                                    radius: Constants.defaultProfilePicRadius,
-                                    backgroundImage: imageProvider,
-                                    backgroundColor: Colors.transparent,
-                                  ),
-                                  placeholder: (context, url) => CircleAvatar(
-                                    radius: Constants.defaultProfilePicRadius,
-                                    backgroundColor: Colors.transparent,
-                                  ),
-                                  errorWidget: (context, url, error) => CircleAvatar(
-                                    radius: Constants.defaultProfilePicRadius,
-                                    backgroundColor: Colors.transparent,
-                                    child: Center(child: Icon(Icons.error)),
-                                  ),
-                                ),
-                                SizedBox(width: Constants.defaultPadding),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(currentUser.username,
-                                      style: TextStyle(
-                                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                        fontFamily: 'TribesRounded',
-                                        fontWeight: FontWeight.bold
-                                      ),
-                                    ),
-                                    FutureBuilder(
-                                      future: addressFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          var addresses = snapshot.data;
-                                          var first = addresses.first;
-                                          var location = '${first.addressLine}';
-                                          print('lat ${widget.post.lat}, lng ${widget.post.lng}');
-                                          print('location: $location');
-                                          return Text(location,
-                                            style: TextStyle(
-                                              color: Colors.blueGrey,
-                                              fontFamily: 'TribesRounded',
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal
-                                            ),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          print('Error getting address from coordinates: ${snapshot.error}');
-                                          return SizedBox.shrink();
-                                        } else {
-                                          return SizedBox.shrink();
-                                        }
-                                        
-                                      }
-                                    ),
-                                    
-                                    ],
-                                )
-                              ],
+                            StreamBuilder<Object>(
+                              stream: DatabaseService().userData(widget.post.author),
+                              builder: (context, snapshot) {
+                                if(snapshot.hasData) {
+                                  return userAvatar(snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
+                                } else if(snapshot.hasError) {
+                                  print('Error retrieving author data: ${snapshot.error.toString()}');
+                                  return SizedBox.shrink();
+                                } else {
+                                  return SizedBox.shrink();
+                                }
+                              }
                             ),
                             widget.index != null ? Text('#${widget.index+1}', 
                               style: TextStyle(

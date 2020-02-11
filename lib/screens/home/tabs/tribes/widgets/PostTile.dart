@@ -31,36 +31,18 @@ class PostTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              CachedNetworkImage(
-                imageUrl: currentUser.picURL.isNotEmpty ? currentUser.picURL : 'https://picsum.photos/id/237/200/300',
-                imageBuilder: (context, imageProvider) => CircleAvatar(
-                  radius: Constants.defaultProfilePicRadius,
-                  backgroundImage: imageProvider,
-                  backgroundColor: Colors.transparent,
-                ),
-                placeholder: (context, url) => CircleAvatar(
-                  radius: Constants.defaultProfilePicRadius,
-                  backgroundColor: Colors.transparent,
-                ),
-                errorWidget: (context, url, error) => CircleAvatar(
-                  radius: Constants.defaultProfilePicRadius,
-                  backgroundColor: Colors.transparent,
-                  child: Center(child: Icon(Icons.error)),
-                ),
-              ),
-              SizedBox(width: Constants.defaultPadding),
-              Text(currentUser.username,
-                style: TextStyle(
-                  color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                  fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-            ],
+          StreamBuilder<UserData>(
+            stream: DatabaseService().userData(post.author),
+            builder: (context, snapshot) {
+              if(snapshot.hasData) {
+                return userAvatar(snapshot.data, color: tribeColor);
+              } else if(snapshot.hasError) {
+                print('Error retrieving author data: ${snapshot.error.toString()}');
+                return SizedBox.shrink();
+              } else {
+                return SizedBox.shrink();
+              }
+            }
           ),
           index != null ? Text('#${index+1}', 
             style: TextStyle(

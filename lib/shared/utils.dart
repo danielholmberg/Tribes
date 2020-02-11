@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tribes/models/User.dart';
@@ -35,4 +36,74 @@ IconButton likeButton(UserData user, String postID, Color color) {
         }
       },
     );
+}
+
+Widget userAvatar(UserData user, {Color color: Constants.primaryColor, Future addressFuture}) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: <Widget>[
+      CachedNetworkImage(
+        imageUrl: user.picURL.isNotEmpty ? user.picURL : 'https://picsum.photos/id/237/200/300',
+        imageBuilder: (context, imageProvider) => CircleAvatar(
+          radius: Constants.defaultProfilePicRadius,
+          backgroundImage: imageProvider,
+          backgroundColor: Colors.transparent,
+        ),
+        placeholder: (context, url) => CircleAvatar(
+          radius: Constants.defaultProfilePicRadius,
+          backgroundColor: Colors.transparent,
+        ),
+        errorWidget: (context, url, error) => CircleAvatar(
+          radius: Constants.defaultProfilePicRadius,
+          backgroundColor: Colors.transparent,
+          child: Center(child: Icon(Icons.error)),
+        ),
+      ),
+      SizedBox(width: Constants.mediumPadding),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(user.username,
+            style: TextStyle(
+              color: color,
+              fontFamily: 'TribesRounded',
+              fontWeight: FontWeight.bold,
+              fontSize: Constants.defaultUsernameFontSize,
+            ),
+          ),
+          Visibility(
+            visible: addressFuture != null,
+            child: FutureBuilder(
+              future: addressFuture,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  var addresses = snapshot.data;
+                  var first = addresses.first;
+                  var location = '${first.addressLine}';
+                  return Text(location,
+                    style: TextStyle(
+                      color: Colors.blueGrey,
+                      fontFamily: 'TribesRounded',
+                      fontSize: 10,
+                      fontWeight: FontWeight.normal
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  print('Error getting address from coordinates: ${snapshot.error}');
+                  return SizedBox.shrink();
+                } else {
+                  return SizedBox.shrink();
+                }
+                
+              }
+            ),
+          ),
+          
+          ],
+      )
+    ],
+  );
 }
