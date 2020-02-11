@@ -27,78 +27,69 @@ class PostTileCompact extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Container(
-            child: Hero(
-              tag: 'postTitle-${post.id}',
-              child: Text(post.title,
-                style: TextStyle(
-                  fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
+            child: Text(post.title,
+              style: TextStyle(
+                fontFamily: 'TribesRounded',
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
               ),
             ),
           ),
           Container(
             width: MediaQuery.of(context).size.width * Constants.postTileCompactScaleFactor,
             padding: EdgeInsets.only(top: 0.0),
-            child: Hero(
-              tag: 'postContent-${post.id}',
-              child: Text(post.content,
-                maxLines: 2,
-                overflow: TextOverflow.fade,
-                style: TextStyle(
-                  fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.normal,
-                  fontSize: 10,
-                ),
+            child: Text(post.content,
+              maxLines: 2,
+              overflow: TextOverflow.fade,
+              style: TextStyle(
+                fontFamily: 'TribesRounded',
+                fontWeight: FontWeight.normal,
+                fontSize: 10,
               ),
             ),
           ),
           post.fileURL.isEmpty ? SizedBox.shrink() 
           : Container(
               padding: EdgeInsets.only(top: 4.0),
-              child: Hero(
-                tag: 'postImage-${post.id}',
-                child: CachedNetworkImage(
-                imageUrl: post.fileURL,
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    border: Border.all(width: 1.0, color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4),
-                        blurRadius: 5,
-                        offset: Offset(0, 0),
-                      ),
-                    ]
-                  ),
-                  height: Constants.postTileCompactImageHeight,
-                  width: MediaQuery.of(context).size.width,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    child: Image(
-                      image: imageProvider, 
-                      fit: BoxFit.cover,
-                      frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-                        return child;
-                      },
+              child: CachedNetworkImage(
+              imageUrl: post.fileURL,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  border: Border.all(width: 1.0, color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4),
+                      blurRadius: 5,
+                      offset: Offset(0, 0),
                     ),
+                  ]
+                ),
+                height: Constants.postTileCompactImageHeight,
+                width: MediaQuery.of(context).size.width,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  child: Image(
+                    image: imageProvider, 
+                    fit: BoxFit.cover,
+                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+                      return child;
+                    },
                   ),
-                ),
-                placeholder: (context, url) => Container(
-                  height: Constants.postTileCompactImageHeight,
-                  width: MediaQuery.of(context).size.width,
-                  child: Loading(),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  height: Constants.postTileCompactImageHeight,
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(child: Icon(Icons.error)),
                 ),
               ),
-            ),
+              placeholder: (context, url) => Container(
+                height: Constants.postTileCompactImageHeight,
+                width: MediaQuery.of(context).size.width,
+                child: Loading(),
+              ),
+              errorWidget: (context, url, error) => Container(
+                height: Constants.postTileCompactImageHeight,
+                width: MediaQuery.of(context).size.width,
+                child: Center(child: Icon(Icons.error)),
+              ),
+              ),
           ),
         ],
       );
@@ -112,11 +103,7 @@ class PostTileCompact extends StatelessWidget {
             duration: Constants.pageTransition600, 
             child: StreamProvider<UserData>.value(
               value: DatabaseService().currentUser(currentUser.uid), 
-              child: PostRoom(
-                tribeColor: DynamicTheme.of(context).data.primaryColor, 
-                post: post, 
-                index: null,
-              ),
+              child: PostRoom(post, DynamicTheme.of(context).data.primaryColor),
             ),
           ));
         },

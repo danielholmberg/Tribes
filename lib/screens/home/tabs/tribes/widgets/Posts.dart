@@ -35,11 +35,7 @@ class Posts extends StatelessWidget {
         ) =>
             FadeTransition(
           opacity: animation,
-          child: PostTile(
-            post: Post.fromSnapshot(snapshot), 
-            tribeColor: tribe.color, 
-            index: index
-          ),
+          child: PostTile(Post.fromSnapshot(snapshot), tribe.color),
         ),
         emptyChild: Center(
           child: Row(

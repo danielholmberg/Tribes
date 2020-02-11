@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
@@ -12,18 +13,38 @@ import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
-class PostTile extends StatelessWidget {
+class PostTile extends StatefulWidget {
   final Post post;
   final Color tribeColor;
-  final int index;
-  PostTile({this.post, this.tribeColor, this.index});
+  PostTile(this.post, this.tribeColor);
+
+  @override
+  _PostTileState createState() => _PostTileState();
+}
+
+class _PostTileState extends State<PostTile> {
+
+  Coordinates coordinates;
+  Future<List<Address>> addressFuture;
+  bool expanded = false;
+
+  @override
+  void initState() { 
+    if((widget.post.lat != 0 && widget.post.lng != 0)) {
+      coordinates = Coordinates(widget.post.lat, widget.post.lng);
+      addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building PostTile()...');
-    print('TribeTile: ${post.id}');
+    print('TribeTile: ${widget.post.id}');
     print('Current user ${currentUser.toString()}');
+
+    bool isAuthor = currentUser.uid == widget.post.author;
 
     _postTileHeader() {
       return Row(
@@ -32,10 +53,10 @@ class PostTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           StreamBuilder<UserData>(
-            stream: DatabaseService().userData(post.author),
+            stream: DatabaseService().userData(widget.post.author),
             builder: (context, snapshot) {
               if(snapshot.hasData) {
-                return userAvatar(snapshot.data, color: tribeColor);
+                return userAvatar(snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
               } else if(snapshot.hasError) {
                 print('Error retrieving author data: ${snapshot.error.toString()}');
                 return SizedBox.shrink();
@@ -44,11 +65,22 @@ class PostTile extends StatelessWidget {
               }
             }
           ),
-          index != null ? Text('#${index+1}', 
-            style: TextStyle(
-              color: Colors.blueGrey,
-              fontSize: Constants.timestampFontSize,
-            )
+          isAuthor ? IconButton(
+            splashColor: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withAlpha(30),
+            icon: Icon(Icons.edit, 
+              color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+            ),
+            onPressed: () async {
+              Navigator.push(context, CustomPageTransition(
+                type: CustomPageTransitionType.postDetails, 
+                  duration: Constants.pageTransition600, 
+                  child: StreamProvider<UserData>.value(
+                    value: DatabaseService().currentUser(currentUser.uid), 
+                    child: PostRoom(widget.post, widget.tribeColor),
+                  ),
+                )
+              );
+            },
           ) : SizedBox.shrink(),
         ],
       );
@@ -69,7 +101,7 @@ class PostTile extends StatelessWidget {
                 splashColor: Colors.transparent,
                 color: DynamicTheme.of(context).data.backgroundColor,
                 icon: Icon(Icons.comment, 
-                  color: (tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
+                  color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
                 ),
                 onPressed: () async {
                   Fluttertoast.showToast(
@@ -84,7 +116,7 @@ class PostTile extends StatelessWidget {
           Spacer(),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: postedDateTime(post.created)
+            child: postedDateTime(widget.post.created)
           ),
           Spacer(),   
           Row(
@@ -97,9 +129,9 @@ class PostTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text('${post.likes}',
+                  Text('${widget.post.likes}',
                     style: TextStyle(
-                      color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                       fontFamily: 'TribesRounded',
                       fontSize: 10,
                       fontWeight: FontWeight.bold
@@ -107,8 +139,8 @@ class PostTile extends StatelessWidget {
                   ),
                   likeButton(
                     currentUser, 
-                    post.id, 
-                    (tribeColor ?? DynamicTheme.of(context).data.primaryColor)
+                    widget.post.id, 
+                    (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
                   ),
                 ],
               ),
@@ -124,80 +156,71 @@ class PostTile extends StatelessWidget {
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.fromLTRB(8.0, 10.0, 8.0, 0.0),
+            padding: EdgeInsets.fromLTRB(8.0, 4.0, 0.0, 0.0),
             child: _postTileHeader()
           ),
           Container(
             width: MediaQuery.of(context).size.width,            
             padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: Hero(
-              tag: 'postTitle-${post.id}',
-              child: Text(post.title,
-                  style: DynamicTheme.of(context).data.textTheme.title),
-            ),
+            child: Text(widget.post.title,
+                style: DynamicTheme.of(context).data.textTheme.title),
           ),
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
-            child: Hero(
-              tag: 'postContent-${post.id}',
-              child: Text(post.content,
-                maxLines: Constants.postTileContentMaxLines,
-                overflow: TextOverflow.fade,
-                style: DynamicTheme.of(context).data.textTheme.body2),
-            ),
+            child: Text(widget.post.content,
+              maxLines: expanded ? null : Constants.postTileContentMaxLines,
+              overflow: TextOverflow.fade,
+              style: DynamicTheme.of(context).data.textTheme.body2),
           ),
-          post.fileURL.isEmpty ? SizedBox.shrink() 
+          widget.post.fileURL.isEmpty ? SizedBox.shrink() 
           : Container(
               padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
-              child: Hero(
-                tag: 'postImage-${post.id}',
-                child: CachedNetworkImage(
-                imageUrl: post.fileURL,
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    color: (tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    border: Border.all(width: 2.0, color: (tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: (tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4),
-                        blurRadius: 10,
-                        offset: Offset(0, 0),
-                      ),
-                    ]
-                  ),
-                  height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                  width: MediaQuery.of(context).size.width,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    child: Image(
-                      image: imageProvider, 
-                      fit: BoxFit.cover,
-                      frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-                        return child;
-                      },
+              child: CachedNetworkImage(
+              imageUrl: widget.post.fileURL,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  border: Border.all(width: 2.0, color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4),
+                      blurRadius: 10,
+                      offset: Offset(0, 0),
                     ),
+                  ]
+                ),
+                height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
+                width: MediaQuery.of(context).size.width,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  child: Image(
+                    image: imageProvider, 
+                    fit: BoxFit.cover,
+                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+                      return child;
+                    },
                   ),
-                ),
-                placeholder: (context, url) => Container(
-                  height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                  width: MediaQuery.of(context).size.width,
-                  child: Loading(),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(child: Icon(Icons.error)),
                 ),
               ),
-            ),
+              placeholder: (context, url) => Container(
+                height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
+                width: MediaQuery.of(context).size.width,
+                child: Loading(),
+              ),
+              errorWidget: (context, url, error) => Container(
+                height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
+                width: MediaQuery.of(context).size.width,
+                child: Center(child: Icon(Icons.error)),
+              ),
+              ),
           ),
           Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               border: Border(
-                top: BorderSide(color: (tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)), 
+                top: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)), 
               ),
             ),
             child: _postTileFooter()
@@ -212,7 +235,7 @@ class PostTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(0),
         boxShadow: [
           BoxShadow(
-            color: tribeColor.withOpacity(0.5) ?? DynamicTheme.of(context).data.accentColor,
+            color: widget.tribeColor.withOpacity(0.5) ?? DynamicTheme.of(context).data.accentColor,
             blurRadius: 2,
             offset: Offset(0, 0),
           ),
@@ -222,18 +245,9 @@ class PostTile extends StatelessWidget {
       child: InkWell(
         splashColor: Constants.tribesColor.withAlpha(30),
         onTap: () {
-          Navigator.push(context, CustomPageTransition(
-            type: CustomPageTransitionType.postDetails, 
-            duration: Constants.pageTransition600, 
-            child: StreamProvider<UserData>.value(
-              value: DatabaseService().currentUser(currentUser.uid), 
-              child: PostRoom(
-                tribeColor: tribeColor, 
-                post: post, 
-                index: index,
-              ),
-            ),
-          ));
+          setState(() {
+            expanded = !expanded;
+          });
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
