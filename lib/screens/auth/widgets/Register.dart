@@ -57,6 +57,7 @@ class _RegisterState extends State<Register> {
                     children: <Widget>[
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        textCapitalization: TextCapitalization.words,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Name', 
                           prefixIcon: Icon(Icons.face, color: Constants.primaryColor)
@@ -70,6 +71,7 @@ class _RegisterState extends State<Register> {
                       ),
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        maxLength: Constants.profileUsernameMaxLength,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Username', 
                           prefixIcon: Icon(Icons.person, color: Constants.primaryColor)
@@ -83,6 +85,7 @@ class _RegisterState extends State<Register> {
                       ),
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        keyboardType: TextInputType.emailAddress,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Email', 
                           prefixIcon: Icon(Icons.email, color: Constants.primaryColor)

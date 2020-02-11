@@ -55,6 +55,7 @@ class _SignInState extends State<SignIn> {
                     children: <Widget>[
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        keyboardType: TextInputType.emailAddress,
                         decoration: Decorations.signInInput.copyWith(
                           hintText: 'Email', 
                           prefixIcon: Icon(Icons.email, color: Constants.primaryColor)
