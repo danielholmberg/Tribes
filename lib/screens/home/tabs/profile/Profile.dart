@@ -456,7 +456,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
-                    expandedHeight: 330,
+                    expandedHeight: 350,
                     floating: false,
                     pinned: false,
                     elevation: 4.0,
