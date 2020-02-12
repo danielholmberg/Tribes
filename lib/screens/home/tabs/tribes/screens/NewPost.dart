@@ -185,7 +185,7 @@ class _NewPostState extends State<NewPost> {
                 child: ScrollConfiguration(
                   behavior: CustomScrollBehavior(),
                   child: ListView(
-                    padding: EdgeInsets.only(bottom: 64.0),
+                    padding: EdgeInsets.only(bottom: 92.0),
                     shrinkWrap: true,
                     children: <Widget>[
                       Container(
@@ -288,43 +288,41 @@ class _NewPostState extends State<NewPost> {
                 ),
               ),
               Positioned(
-                bottom: 0,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  child: ButtonTheme(
-                    height: 40.0,
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: RaisedButton.icon(
-                      elevation: 8.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(8.0),
-                      ),
-                      color: Colors.green,
-                      icon: Icon(Icons.done, color: Constants.buttonIconColor),
-                      label: Text('Publish'),
-                      textColor: Colors.white,
-                      onPressed: () async {                
-                        if(_formKey.currentState.validate()) {
-                          setState(() => loading = true);
-
-                          if(_imageFile != null) {
-                            _fileURL = await StorageService().uploadFile(_imageFile);
-                          }
-                          
-                          await DatabaseService().addNewPost(
-                            currentUser.uid, 
-                            title, 
-                            content, 
-                            _fileURL ?? null, 
-                            widget.tribe.id
-                          );
-
-                          Navigator.pop(context);
-                        }
-                      }
+                bottom: 0.0,
+                left: 0.0,
+                right: 0.0,
+                child: ButtonTheme(
+                  height: 60.0,
+                  minWidth: MediaQuery.of(context).size.width,
+                  child: RaisedButton.icon(
+                    elevation: 8.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                     ),
+                    color: Colors.green,
+                    icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                    label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                    textColor: Colors.white,
+                    onPressed: () async {                
+                      if(_formKey.currentState.validate()) {
+                        setState(() => loading = true);
+
+                        if(_imageFile != null) {
+                          _fileURL = await StorageService().uploadFile(_imageFile);
+                        }
+                        
+                        await DatabaseService().addNewPost(
+                          currentUser.uid, 
+                          title, 
+                          content, 
+                          _fileURL ?? null, 
+                          widget.tribe.id
+                        );
+
+                        Navigator.pop(context);
+                      }
+                    }
                   ),
                 ),
               )

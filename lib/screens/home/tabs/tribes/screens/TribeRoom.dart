@@ -266,25 +266,22 @@ class _TribeRoomState extends State<TribeRoom> {
                         child: Posts(tribe: currentTribe)
                       ),
                       Positioned(
-                        bottom: 16.0,
-                        left: 16.0,
-                        right: 16.0,
+                        bottom: 0.0,
+                        left: 0.0,
+                        right: 0.0,
                         child: Hero(
                           tag: 'NewPostButton',
                           child: ButtonTheme(
-                            height: 50.0,
-                            minWidth: MediaQuery.of(context).size.width,
+                            height: 60.0,
                             child: RaisedButton.icon(
                               elevation: 8.0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                               ),
                               color: currentTribe.color ??
                                   DynamicTheme.of(context).data.primaryColor,
-                              icon: Icon(Icons.library_add,
-                                  color:
-                                      DynamicTheme.of(context).data.accentColor),
-                              label: Text('Add a post'),
+                              icon: Icon(Icons.library_add, color: DynamicTheme.of(context).data.accentColor, size: Constants.defaultIconSize),
+                              label: Text('Add a post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                               textColor: Colors.white,
                               onPressed: () {
                                 Navigator.push(context, CustomPageTransition(

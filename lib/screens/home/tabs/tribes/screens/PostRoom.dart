@@ -28,6 +28,8 @@ class _PostRoomState extends State<PostRoom> {
 
   String title;
   String content;
+  String originalTitle;
+  String originalContent;
 
   @override
   void dispose() {
@@ -37,6 +39,11 @@ class _PostRoomState extends State<PostRoom> {
 
   @override
   void initState() {
+    originalTitle = widget.post.title;
+    originalContent = widget.post.content;
+    title = originalTitle;
+    content = originalContent;
+
     Future.delayed(Duration(milliseconds: 650)).then((val) {
       FocusScope.of(context).requestFocus(focusNode);
     });
@@ -85,7 +92,7 @@ class _PostRoomState extends State<PostRoom> {
     return WillPopScope(
       onWillPop: () => edited ? _showDiscardDialog() : Future(() => true),
       child: Scaffold(
-        key: _scaffoldKey ,
+        key: _scaffoldKey,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
@@ -106,10 +113,10 @@ class _PostRoomState extends State<PostRoom> {
               SizedBox(width: Constants.defaultPadding),
               Visibility(
                 visible: edited,
-                child: Text('(changed)', 
+                child: Text('| edited', 
                   style: TextStyle(
                     fontFamily: 'TribesRounded',
-                    fontStyle: FontStyle.italic,
+                    fontStyle: FontStyle.normal,
                     fontSize: 12,
                     color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
                   ),
@@ -176,7 +183,7 @@ class _PostRoomState extends State<PostRoom> {
               ScrollConfiguration(
                 behavior: CustomScrollBehavior(),
                 child: ListView(
-                  padding: EdgeInsets.only(bottom: 64.0),
+                  padding: EdgeInsets.only(bottom: 68.0),
                   shrinkWrap: true,
                   children: <Widget>[
                     Container(
@@ -200,7 +207,7 @@ class _PostRoomState extends State<PostRoom> {
                               onChanged: (val) {
                                 setState(() {
                                   title = val;
-                                  edited = true;
+                                  edited = originalTitle != val || originalContent != content;
                                 });
                               },
                             ),
@@ -218,7 +225,7 @@ class _PostRoomState extends State<PostRoom> {
                               onChanged: (val) {
                                 setState((){
                                   content = val;
-                                  edited = true;
+                                  edited = originalContent != val || originalTitle != title;
                                 });
                               },
                             )
@@ -251,25 +258,24 @@ class _PostRoomState extends State<PostRoom> {
               ),
               Positioned(
                 bottom: 0.0,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  color: Colors.transparent,
+                left: 0.0,
+                right: 0.0,
+                child: AnimatedOpacity(
+                duration: Duration(milliseconds: 500),
+                opacity: edited ? 1.0 : 0.0,
                   child: ButtonTheme(
-                    height: 40.0,
+                    height: 60.0,
                     minWidth: MediaQuery.of(context).size.width,
                     child: RaisedButton.icon(
                       elevation: 8.0,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                       ),
                       color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                      icon: Icon(Icons.done,
-                        color: Constants.buttonIconColor),
-                      label: Text('Save'),
+                      icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                      label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                       textColor: Colors.white,
-                      onPressed: () async {
+                      onPressed: edited ? () async {
                         if(_formKey.currentState.validate()) {
                           setState(() { 
                             loading = true;
@@ -290,10 +296,12 @@ class _PostRoomState extends State<PostRoom> {
                             setState(() {
                               loading = false;
                               edited = false;
+                              originalTitle = title;
+                              originalContent = content;
                             });
                           });
                         }
-                      },
+                      } : null,
                     ),
                   ),
                 ),
