@@ -70,6 +70,7 @@ class _PostTileState extends State<PostTile> {
             icon: Icon(Icons.edit, 
               color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
             ),
+            iconSize: 20,
             onPressed: () async {
               Navigator.push(context, CustomPageTransition(
                 type: CustomPageTransitionType.postDetails, 
@@ -156,7 +157,7 @@ class _PostTileState extends State<PostTile> {
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.fromLTRB(8.0, 4.0, 0.0, 0.0),
+            padding: EdgeInsets.fromLTRB(8.0, isAuthor ? 4.0 : 10.0, 0.0, isAuthor ? 0.0 : 4.0),
             child: _postTileHeader()
           ),
           Container(

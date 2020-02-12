@@ -24,7 +24,7 @@ IconButton likeButton(UserData user, String postID, Color color) {
       splashColor: Colors.transparent,
       color: Constants.backgroundColor,
       icon: Icon(likedByUser ? Icons.favorite : Icons.favorite_border, 
-        color: color.withOpacity(likedByUser ? 1.0 : 0.6),
+        color: color,
       ),
       onPressed: () async {
         if (likedByUser) {
