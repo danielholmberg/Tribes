@@ -78,9 +78,6 @@ dependencies:
   # Launcher icons
   flutter_launcher_icons: ^0.7.4
 
-  # Google fonts
-  google_fonts: ^0.3.8
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -118,10 +115,14 @@ flutter:
   fonts:
     - family: TribesRounded
       fonts:
-        - asset: assets/fonts/Tribes-Regular.ttf
-        - asset: assets/fonts/Tribes-Thin.ttf
+        - asset: assets/fonts/TribesRounded/Tribes-Regular.ttf
+        - asset: assets/fonts/TribesRounded/Tribes-Thin.ttf
           style: italic
-        - asset: assets/fonts/Tribes-Bold.ttf
+        - asset: assets/fonts/TribesRounded/Tribes-Bold.ttf
+    - family: OleoScriptSwashCaps
+      fonts:
+        - asset: assets/fonts/OleoScriptSwashCaps/OleoScriptSwashCaps-Regular.ttf
+        - asset: assets/fonts/OleoScriptSwashCaps/OleoScriptSwashCaps-Bold.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
