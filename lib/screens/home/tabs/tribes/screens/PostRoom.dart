@@ -91,13 +91,32 @@ class _PostRoomState extends State<PostRoom> {
             color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
           ),
           centerTitle: true,
-          title: Text('Editing', 
-            style: TextStyle(
-                fontFamily: 'TribesRounded',
-                fontWeight: FontWeight.bold,
-                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Text('Editing', 
+                style: TextStyle(
+                  fontFamily: 'TribesRounded',
+                  fontWeight: FontWeight.bold,
+                  color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+                ),
               ),
-            ),
+              SizedBox(width: Constants.defaultPadding),
+              Visibility(
+                visible: edited,
+                child: Text('(changed)', 
+                  style: TextStyle(
+                    fontFamily: 'TribesRounded',
+                    fontStyle: FontStyle.italic,
+                    fontSize: 12,
+                    color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+                  ),
+                ),
+              ),
+            ],
+          ),
           backgroundColor: DynamicTheme.of(context).data.backgroundColor,
           elevation: 0.0,
           leading: IconButton(icon: Icon(Icons.arrow_back), 
