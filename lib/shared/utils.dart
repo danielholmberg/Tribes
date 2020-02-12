@@ -5,14 +5,17 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
-Widget postedDateTime(int timestamp, {double fontSize = Constants.timestampFontSize}) {
+Widget postedDateTime(int timestamp, 
+{double fontSize = Constants.timestampFontSize,
+Color color = Constants.primaryColor}) {
   DateTime created = DateTime.fromMillisecondsSinceEpoch(timestamp); 
   String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(created);
   
   return Text(formattedDate,
     textAlign: TextAlign.center, 
     style: TextStyle(
-      color: Colors.black54,
+      color: color.withOpacity(0.8),
+      fontFamily: 'TribesRounded',
       fontSize: fontSize,
     ),
   );

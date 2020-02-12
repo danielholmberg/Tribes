@@ -117,7 +117,7 @@ class _PostTileState extends State<PostTile> {
           Spacer(),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: postedDateTime(widget.post.created)
+            child: postedDateTime(widget.post.created, color: widget.tribeColor)
           ),
           Spacer(),   
           Row(
