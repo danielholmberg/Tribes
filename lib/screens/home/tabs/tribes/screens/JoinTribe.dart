@@ -38,6 +38,12 @@ class _JoinTribeState extends State<JoinTribe> {
           final _passwordFormKey = GlobalKey<FormState>();
           String one, two, three, four, five, six;
           bool loadingDialog = false;
+          FocusNode oneNode = new FocusNode();
+          FocusNode twoNode = new FocusNode();
+          FocusNode threeNode = new FocusNode();
+          FocusNode fourNode = new FocusNode();
+          FocusNode fiveNode = new FocusNode();
+          FocusNode sixNode = new FocusNode();
 
           return StatefulBuilder(
             builder: (context, setState) { 
@@ -80,6 +86,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   width: 30,
                                   height: 60,
                                   child: TextFormField(
+                                    focusNode: oneNode,
                                     textInputAction: TextInputAction.next,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -97,7 +104,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                         Navigator.of(context).pop();
                                       } else {
                                         setState(() => one = val);
+                                        FocusScope.of(context).requestFocus(twoNode);
                                       }
+                                    },
+                                    onFieldSubmitted: (String value) {
+                                      FocusScope.of(context).requestFocus(twoNode);
                                     },
                                   ),
                                 ),
@@ -106,6 +117,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   width: 30,
                                   height: 60,
                                   child: TextFormField(
+                                    focusNode: twoNode,
                                     textInputAction: TextInputAction.next,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -123,7 +135,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                         Navigator.of(context).pop();
                                       } else {
                                         setState(() => two = val);
+                                        FocusScope.of(context).requestFocus(val.isEmpty ? oneNode : threeNode);
                                       }
+                                    },
+                                    onFieldSubmitted: (String value) {
+                                      FocusScope.of(context).requestFocus(threeNode);
                                     },
                                   ),
                                 ),
@@ -132,6 +148,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   width: 30,
                                   height: 60,
                                   child: TextFormField(
+                                    focusNode: threeNode,
                                     textInputAction: TextInputAction.next,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -149,7 +166,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                         Navigator.of(context).pop();
                                       } else {
                                         setState(() => three = val);
+                                        FocusScope.of(context).requestFocus(val.isEmpty ? twoNode : fourNode);
                                       }
+                                    },
+                                    onFieldSubmitted: (String value) {
+                                      FocusScope.of(context).requestFocus(fourNode);
                                     },
                                   ),
                                 ),
@@ -158,6 +179,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   width: 30,
                                   height: 60,
                                   child: TextFormField(
+                                    focusNode: fourNode,
                                     textInputAction: TextInputAction.next,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -175,7 +197,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                         Navigator.of(context).pop();
                                       } else {
                                         setState(() => four = val);
+                                        FocusScope.of(context).requestFocus(val.isEmpty ? threeNode : fiveNode);
                                       }
+                                    },
+                                    onFieldSubmitted: (String value) {
+                                      FocusScope.of(context).requestFocus(fiveNode);
                                     },
                                   ),
                                 ),
@@ -184,6 +210,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   width: 30,
                                   height: 60,
                                   child: TextFormField(
+                                    focusNode: fiveNode,
                                     textInputAction: TextInputAction.next,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -201,7 +228,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                         Navigator.of(context).pop();
                                       } else {
                                         setState(() => five = val);
+                                        FocusScope.of(context).requestFocus(val.isEmpty ? fourNode : sixNode);
                                       }
+                                    },
+                                    onFieldSubmitted: (String value) {
+                                      FocusScope.of(context).requestFocus(sixNode);
                                     },
                                   ),
                                 ),
@@ -210,6 +241,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   width: 30,
                                   height: 60,
                                   child: TextFormField(
+                                    focusNode: sixNode,
                                     textInputAction: TextInputAction.done,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -227,6 +259,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                         Navigator.of(context).pop();
                                       } else {
                                         setState(() => six = val);
+                                        FocusScope.of(context).requestFocus(val.isEmpty ? fiveNode : sixNode);
                                       }
                                     },
                                   ),
