@@ -269,8 +269,8 @@ class _TribeRoomState extends State<TribeRoom> {
                                               Container(
                                                 padding: EdgeInsets.all(12.0),
                                                 child: GestureDetector(
-                                                  onTap: () async {
-                                                    await DatabaseService().leaveTribe(currentUser.uid, currentTribe.id);
+                                                  onTap: () {
+                                                    DatabaseService().leaveTribe(currentUser.uid, currentTribe.id);
                                                     Navigator.of(context).popUntil((route) => route.isFirst);
                                                   } ,
                                                   child: Text('Leave Tribe', 

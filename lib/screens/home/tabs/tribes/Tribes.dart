@@ -66,16 +66,13 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
       ));
     }
 
-    _showJoinTribePage(List<Tribe> joinedTribes) {
-      List<String> joinedTribesIDs = [];
-      joinedTribes.forEach((tribe) => joinedTribesIDs.add(tribe.id));
-      
+    _showJoinTribePage() {
       Navigator.push(context, CustomPageTransition(
         type: CustomPageTransitionType.joinTribe,
         duration: Constants.pageTransition300,
         child: StreamProvider<UserData>.value(
           value: DatabaseService().currentUser(currentUser.uid), 
-          child: JoinTribe(joinedTribesIDs),
+          child: JoinTribe(),
         ),
       ));
     }
@@ -89,7 +86,6 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
               initialData: [],
               stream: DatabaseService().joinedTribes(currentUser.uid),
               builder: (context, snapshot) {
-
                 if (snapshot.hasData) {
                   List<Tribe> joinedTribesList = snapshot.data;
 
@@ -120,7 +116,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                               IconButton(
                                 icon: Icon(Icons.group_add),
                                 iconSize: Constants.defaultIconSize,
-                                onPressed: () => _showJoinTribePage(joinedTribesList),
+                                onPressed: () => _showJoinTribePage(),
                               ),
                               IconButton(
                                 icon: Icon(Icons.add_to_photos),
@@ -161,7 +157,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                         fontWeight: FontWeight.normal),
                                   ),
                                   GestureDetector(
-                                    onTap: () => _showJoinTribePage(joinedTribesList),
+                                    onTap: () => _showJoinTribePage(),
                                     child: Text(
                                       'Join',
                                       style: TextStyle(

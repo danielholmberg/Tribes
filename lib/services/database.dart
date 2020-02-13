@@ -89,9 +89,15 @@ class DatabaseService {
 
   // Get joined Tribes Stream
   Stream<List<Tribe>> joinedTribes(String userID) {
-    return tribesRoot.where('members', arrayContains: userID).snapshots().map(
+    return tribesRoot.where('members', arrayContains: userID).orderBy('created', descending: true).snapshots().map(
         (list) =>
             list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList());
+  }
+
+  // Get not yet joined Tribes Stream
+  Stream<List<Tribe>> notYetJoinedTribes(String userID) {
+    return tribesRoot.snapshots().map((list) => list.documents.map((doc) => Tribe.fromSnapshot(doc))
+    .where((tribe) => !tribe.members.contains(userID)).toList());
   }
 
   // Get Posts Stream related to a specific Tribe
@@ -156,8 +162,7 @@ class DatabaseService {
     return postsRoot.document(id).updateData(data);
   }
 
-  Future createNewTribe(String name, String desc, String color, String imageURL) async {
-    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+  Future createNewTribe(String userID, String name, String desc, String color, String imageURL) {
 
     var rng = new Random();
     var password = rng.nextInt(900000) + 100000;
@@ -165,9 +170,9 @@ class DatabaseService {
     var data = {
       'name': name,
       'desc': desc,
-      'members': [currentUser.uid],
-      'founder': currentUser.uid,
-      'password': password,
+      'members': [userID],
+      'founder': userID,
+      'password': '$password',
       'color': color,
       'imageURL': imageURL,
       'updated': new DateTime.now().millisecondsSinceEpoch,

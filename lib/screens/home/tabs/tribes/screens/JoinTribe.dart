@@ -11,8 +11,8 @@ import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 
 class JoinTribe extends StatefulWidget {
-  final List<String> joinedTribesIDs;
-  JoinTribe(this.joinedTribesIDs);
+  /* final List<String> joinedTribesIDs;
+  JoinTribe(this.joinedTribesIDs); */
 
   @override
   _JoinTribeState createState() => _JoinTribeState();
@@ -22,25 +22,8 @@ class _JoinTribeState extends State<JoinTribe> {
 
   List<Tribe> _tribesList = [];
   List<Tribe> _searchResult = [];
-  bool loading = true;
+  bool loading = false;
   TextEditingController controller = new TextEditingController();
-
-  void getTribes() {
-    DatabaseService().tribesRoot.orderBy('name').getDocuments().then((list) => list.documents
-      .map((tribeData) => Tribe.fromSnapshot(tribeData))
-      .toList()).then((list) {
-        setState(() {
-          _tribesList = list.where((tribe) => !widget.joinedTribesIDs.contains(tribe.id)).toList();
-          loading = false;
-        });
-      });
-  }
-
-  @override
-  void initState() {
-    getTribes();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,13 +86,13 @@ class _JoinTribeState extends State<JoinTribe> {
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     decoration: Decorations.tribePasswordInput,
-                                    onChanged: (val) async {
+                                    onChanged: (val) {
                                       if(activeTribe.password == '$val$two$three$four$five$six') {
                                         setState(() {
                                           loadingDialog = true;
                                         });
 
-                                        await DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -129,13 +112,13 @@ class _JoinTribeState extends State<JoinTribe> {
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     decoration: Decorations.tribePasswordInput,
-                                    onChanged: (val) async {
+                                    onChanged: (val) {
                                       if(activeTribe.password == '$one$val$three$four$five$six') {
                                         setState(() {
                                           loadingDialog = true;
                                         });
 
-                                        await DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -155,13 +138,13 @@ class _JoinTribeState extends State<JoinTribe> {
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     decoration: Decorations.tribePasswordInput,
-                                    onChanged: (val) async {
+                                    onChanged: (val) {
                                       if(activeTribe.password == '$one$two$val$four$five$six') {
                                         setState(() {
                                           loadingDialog = true;
                                         });
 
-                                        await DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -181,13 +164,13 @@ class _JoinTribeState extends State<JoinTribe> {
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     decoration: Decorations.tribePasswordInput,
-                                    onChanged: (val) async {
+                                    onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$val$five$six') {
                                         setState(() {
                                           loadingDialog = true;
                                         });
 
-                                        await DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -207,13 +190,13 @@ class _JoinTribeState extends State<JoinTribe> {
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     decoration: Decorations.tribePasswordInput,
-                                    onChanged: (val) async {
+                                    onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$four$val$six') {
                                         setState(() {
                                           loadingDialog = true;
                                         });
 
-                                        await DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -233,13 +216,13 @@ class _JoinTribeState extends State<JoinTribe> {
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     decoration: Decorations.tribePasswordInput,
-                                    onChanged: (val) async {
+                                    onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$four$five$val') {
                                         setState(() {
                                           loadingDialog = true;
                                         });
 
-                                        await DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -270,78 +253,93 @@ class _JoinTribeState extends State<JoinTribe> {
           child: Stack(
             children: <Widget>[
               Positioned.fill(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.0),
-                  child: ScrollConfiguration(
-                    behavior: CustomScrollBehavior(), 
-                    child: _searchResult.length != 0 || controller.text.isNotEmpty
-                    ? GridView.builder(
-                      padding: EdgeInsets.only(top: 80, bottom: 12.0),
-                      itemCount: _searchResult.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2
-                      ),
-                      itemBuilder: (context, i) {
-                        Tribe tribe = _searchResult[i];
-                        return GestureDetector(
-                          onTap: () => _showPasswordDialog(tribe),
-                          child: Card(
-                            color: tribe.color,
-                            child: Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: Center(
-                                child: AutoSizeText(
-                                  tribe.name,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  minFontSize: 10.0,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'TribesRounded',
+                child: StreamBuilder<List<Tribe>>(
+                  stream: DatabaseService().notYetJoinedTribes(currentUser.uid),
+                  builder: (context, snapshot) {
+
+                    if(snapshot.hasData) {
+                      _tribesList = snapshot.data;
+
+                      return Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12.0),
+                        child: ScrollConfiguration(
+                          behavior: CustomScrollBehavior(), 
+                          child: _searchResult.length != 0 || controller.text.isNotEmpty
+                          ? GridView.builder(
+                            padding: EdgeInsets.only(top: 80, bottom: 12.0),
+                            itemCount: _searchResult.length,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2
+                            ),
+                            itemBuilder: (context, i) {
+                              Tribe tribe = _searchResult[i];
+                              return GestureDetector(
+                                onTap: () => _showPasswordDialog(tribe),
+                                child: Card(
+                                  color: tribe.color,
+                                  child: Container(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Center(
+                                      child: AutoSizeText(
+                                        tribe.name,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        minFontSize: 10.0,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'TribesRounded',
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              );
+                            },
+                          )
+                          : GridView.builder(
+                            padding: EdgeInsets.only(top: 80, bottom: 12.0),
+                            itemCount: _tribesList.length,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
                             ),
-                          ),
-                        );
-                      },
-                    )
-                    : GridView.builder(
-                      padding: EdgeInsets.only(top: 80, bottom: 12.0),
-                      itemCount: _tribesList.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                      ),
-                      itemBuilder: (context, i) {
-                        Tribe tribe = _tribesList[i];
-                        return GestureDetector(
-                          onTap: () => _showPasswordDialog(tribe),
-                          child: Card(
-                            color: tribe.color,
-                            child: Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: Center(
-                                child: AutoSizeText(
-                                  tribe.name,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  minFontSize: 10.0,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'TribesRounded',
+                            itemBuilder: (context, i) {
+                              Tribe tribe = _tribesList[i];
+                              return GestureDetector(
+                                onTap: () => _showPasswordDialog(tribe),
+                                child: Card(
+                                  color: tribe.color,
+                                  child: Container(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Center(
+                                      child: AutoSizeText(
+                                        tribe.name,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        minFontSize: 10.0,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'TribesRounded',
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ),
+                        ),
+                      );
+                    } else if(snapshot.hasError){
+                      print('Error retrieving not yet joined Tribes: ${snapshot.error.toString()}');
+                      return Center(child: Text('Unable to retrieve Tribes'));
+                    } else {
+                      return Center(child: Text('Unable to retrieve Tribes'));
+                    }
+                  }
                 )
               ),
               Align(

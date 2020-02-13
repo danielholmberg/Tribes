@@ -130,11 +130,12 @@ class _NewTribeState extends State<NewTribe> {
                       color: DynamicTheme.of(context).data.accentColor),
                   label: Text('Create Tribe'),
                   textColor: Colors.white,
-                  onPressed: () async {
+                  onPressed: () {
                     if(_formKey.currentState.validate()) {
                       setState(() => loading = true);
                       try {
-                        await DatabaseService().createNewTribe(
+                        DatabaseService().createNewTribe(
+                          currentUser.uid,
                           name, 
                           desc, 
                           tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
