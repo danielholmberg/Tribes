@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
@@ -157,11 +159,15 @@ class DatabaseService {
   Future createNewTribe(String name, String desc, String color, String imageURL) async {
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
 
+    var rng = new Random();
+    var password = rng.nextInt(900000) + 100000;
+
     var data = {
       'name': name,
       'desc': desc,
       'members': [currentUser.uid],
       'founder': currentUser.uid,
+      'password': password,
       'color': color,
       'imageURL': imageURL,
       'updated': new DateTime.now().millisecondsSinceEpoch,
@@ -230,11 +236,18 @@ class DatabaseService {
     });
   }
 
-
   // Return QuerySnapshot to make it work with FirebaseAnimatedList.
   Stream<QuerySnapshot> postsPublishedByUser(String userID) {
     // Chaining .where() and .orderBy() requires a Composite-index in Firebase Firestore setup.
     // See https://github.com/flutter/flutter/issues/15928#issuecomment-394197426 for more info.
     return postsRoot.where('author', isEqualTo: userID).orderBy('created', descending: true).snapshots();
+  }
+
+  Future addUserToTribe(String userID, String tribeID) {
+    return tribesRoot.document(tribeID).updateData({'members': FieldValue.arrayUnion([userID])});
+  }
+
+  Future leaveTribe(String userID, String tribeID) {
+    return tribesRoot.document(tribeID).updateData({'members': FieldValue.arrayRemove([userID])});
   }
 }

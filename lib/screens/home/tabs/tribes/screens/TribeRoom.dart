@@ -138,8 +138,8 @@ class _TribeRoomState extends State<TribeRoom> {
                                           ),
                                           SizedBox(height: Constants.defaultSpacing),
                                           Column(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
                                               Row(
@@ -184,14 +184,14 @@ class _TribeRoomState extends State<TribeRoom> {
                                                   SizedBox(width: Constants.defaultSpacing),
                                                 ],
                                               ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: <Widget>[
-                                                  Container(
-                                                    padding: EdgeInsets.all(4.0),
-                                                    child: StreamBuilder<UserData>(
+                                              Container(
+                                                padding: EdgeInsets.all(12.0),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  children: <Widget>[
+                                                    StreamBuilder<UserData>(
                                                       stream: DatabaseService().userData(currentTribe.founder),
                                                       builder: (context, snapshot) {
 
@@ -238,8 +238,50 @@ class _TribeRoomState extends State<TribeRoom> {
                                                         
                                                       }
                                                     ),
-                                                  ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: <Widget>[
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Expanded(child: Divider(thickness: 2.0,)),
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Text('Password', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                  SizedBox(width: Constants.defaultSpacing),
+                                                  Expanded(child: Divider(thickness: 2.0,)),
+                                                  SizedBox(width: Constants.defaultSpacing),
                                                 ],
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(12.0),
+                                                child: Text(currentTribe.password, 
+                                                  style: TextStyle(
+                                                    fontFamily: 'TribesRounded',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 24,
+                                                    letterSpacing: 6.0,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(12.0),
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    await DatabaseService().leaveTribe(currentUser.uid, currentTribe.id);
+                                                    Navigator.of(context).popUntil((route) => route.isFirst);
+                                                  } ,
+                                                  child: Text('Leave Tribe', 
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontFamily: 'TribesRounded',
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ],
                                           ),

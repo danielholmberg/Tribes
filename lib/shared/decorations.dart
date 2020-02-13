@@ -96,3 +96,23 @@ const newTribesInput = InputDecoration(
     borderSide: BorderSide(color: Constants.tribesColor, width: 2.0),
   )
 );
+
+const tribePasswordInput = InputDecoration(
+  fillColor: Constants.backgroundColor,
+  filled: true,
+  hintStyle: TextStyle(color: Constants.tribesColor),
+  hintText: '0',
+  contentPadding: EdgeInsets.zero,
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Colors.black26, width: 2.0),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.tribesColor, width: 2.0),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Colors.red, width: 2.0),
+  )
+);
