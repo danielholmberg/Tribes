@@ -1,5 +1,4 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +9,8 @@ import 'package:tribes/screens/home/tabs/tribes/Tribes.dart';
 import 'package:tribes/screens/home/tabs/map/Map.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomBottomNavBar.dart';
+import 'package:tribes/shared/widgets/CustomNavBarItem.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -62,16 +63,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
         ),
         extendBody: true, // In order to show screen behind navigation bar
         bottomNavigationBar: Container(
-          child: FloatingNavbar(
+          child: CustomBottomNavBar(
             currentIndex: _currentIndex,
             backgroundColor: DynamicTheme.of(context).data.primaryColor,
             selectedItemColor: DynamicTheme.of(context).data.primaryColor,
             fontSize: 12.0,
             items: [
-              FloatingNavbarItem(icon: Icons.home, title: 'Tribes'),
-              FloatingNavbarItem(icon: Icons.map, title: 'Map'),
-              FloatingNavbarItem(icon: Icons.chat, title: 'Chat'),
-              FloatingNavbarItem(icon: Icons.person, title: 'Profile'),
+              CustomNavBarItem(icon: Icons.home, title: 'Tribes'),
+              CustomNavBarItem(icon: Icons.map, title: 'Map'),
+              CustomNavBarItem(icon: Icons.chat, title: 'Chat'),
+              CustomNavBarItem(icon: Icons.person, title: 'Profile'),
             ],
             onTap: (index) {
               _onTabTap(index);
