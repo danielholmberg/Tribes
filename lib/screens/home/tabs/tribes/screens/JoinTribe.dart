@@ -93,11 +93,17 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
+                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
-                                      )
+                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
                                     ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$val$two$three$four$five$six') {
@@ -110,7 +116,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                         Navigator.of(context).pop();
                                       } else {
                                         setState(() => one = val);
-                                        FocusScope.of(context).requestFocus(twoNode);
+                                        FocusScope.of(context).requestFocus(val.isEmpty ? oneNode : twoNode);
                                       }
                                     },
                                     onFieldSubmitted: (String value) {
@@ -129,11 +135,18 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
+                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
+                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: two.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
-                                      )
+                                        borderSide: BorderSide(color: two.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
                                     ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$val$three$four$five$six') {
@@ -165,11 +178,18 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
+                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
+                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: three.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
-                                      )
+                                        borderSide: BorderSide(color: three.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
                                     ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$two$val$four$five$six') {
@@ -201,11 +221,18 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
+                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
+                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: four.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
-                                      )
+                                        borderSide: BorderSide(color: four.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
                                     ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$val$five$six') {
@@ -237,11 +264,18 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
+                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
+                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: five.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
-                                      )
+                                        borderSide: BorderSide(color: five.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
                                     ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$four$val$six') {
@@ -273,11 +307,18 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
+                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
+                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: six.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
-                                      )
+                                        borderSide: BorderSide(color: six.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                      ),
                                     ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$four$five$val') {

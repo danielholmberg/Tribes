@@ -109,7 +109,7 @@ const tribePasswordInput = InputDecoration(
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.tribesColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.primaryColor, width: 2.0),
   ),
   errorBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
