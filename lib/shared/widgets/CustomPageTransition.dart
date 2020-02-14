@@ -65,7 +65,7 @@ class CustomPageTransition<T> extends PageRouteBuilder<T> {
             );
           case CustomPageTransitionType.newTribe:
             return ScaleTransition(
-              alignment: Alignment.topRight,
+              alignment: Alignment.topLeft,
               scale: CurvedAnimation(
                 parent: animation,
                 curve: Interval(

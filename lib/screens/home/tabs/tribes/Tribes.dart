@@ -19,7 +19,7 @@ class Tribes extends StatefulWidget {
 
 class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
   final PageController tribeController = PageController(
-    viewportFraction: 0.75,
+    viewportFraction: 0.8,
   );
 
   var debugList = [Colors.blue, Colors.red];
@@ -144,15 +144,15 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                           ),
                         )
                       : Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
+                        padding: const EdgeInsets.only(bottom: 16.0),
                         child: PageView.builder(
-                            reverse: true,
-                            scrollDirection: Axis.vertical,
+                            reverse: false,
+                            scrollDirection: Axis.horizontal,
                             controller: tribeController,
                             itemCount: joinedTribesList.length,
                             itemBuilder: (context, index) {
                               return Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
+                                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
                                 child: TribeTile(tribe: joinedTribesList[index]),
                               );
                             },
