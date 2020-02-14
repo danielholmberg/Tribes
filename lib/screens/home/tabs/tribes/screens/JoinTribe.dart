@@ -21,6 +21,7 @@ class JoinTribe extends StatefulWidget {
 
 class _JoinTribeState extends State<JoinTribe> {
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Tribe> _tribesList = [];
   List<Tribe> _searchResult = [];
   bool loading = false;
@@ -32,6 +33,31 @@ class _JoinTribeState extends State<JoinTribe> {
     print('Building JoinTribe()...');
     print('Current user ${currentUser.toString()}');
     
+    _showJoinedSnackbar(Tribe joinedTribe) {
+      Future.delayed(Duration(milliseconds: 300), () => 
+        _scaffoldKey.currentState.showSnackBar(
+          SnackBar(
+            content: RichText(
+              text: TextSpan(
+                text: 'Successfully joined Tribe ',
+                style: TextStyle(fontFamily: 'TribesRounded', fontWeight: FontWeight.normal),
+                children: <TextSpan>[
+                  TextSpan(text: joinedTribe.name, 
+                    style: TextStyle(
+                      fontFamily: 'TribesRounded', 
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            duration: Duration(milliseconds: 1000),
+          )
+        )
+      );
+      
+    }
+
     _showPasswordDialog(Tribe activeTribe) {
       return showDialog(
         context: context,
@@ -112,6 +138,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                         });
 
                                         DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        _showJoinedSnackbar(activeTribe);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -155,6 +182,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                         });
 
                                         DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        _showJoinedSnackbar(activeTribe);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -198,6 +226,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                         });
 
                                         DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        _showJoinedSnackbar(activeTribe);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -241,6 +270,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                         });
 
                                         DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        _showJoinedSnackbar(activeTribe);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -284,6 +314,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                         });
 
                                         DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        _showJoinedSnackbar(activeTribe);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -327,6 +358,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                         });
 
                                         DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        _showJoinedSnackbar(activeTribe);
 
                                         Navigator.of(context).pop();
                                       } else {
@@ -446,6 +478,7 @@ class _JoinTribeState extends State<JoinTribe> {
     }
 
     return loading ? Loading() : Scaffold(
+      key: _scaffoldKey,
       backgroundColor: DynamicTheme.of(context).data.primaryColor,
       body: SafeArea(
         child: Container(
