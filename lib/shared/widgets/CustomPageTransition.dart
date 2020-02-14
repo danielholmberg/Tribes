@@ -64,20 +64,9 @@ class CustomPageTransition<T> extends PageRouteBuilder<T> {
               child: child
             );
           case CustomPageTransitionType.newTribe:
-            return ScaleTransition(
-              alignment: Alignment.topLeft,
-              scale: CurvedAnimation(
-                parent: animation,
-                curve: Interval(
-                  0.00,
-                  0.50,
-                  curve: Curves.easeOutQuad,
-                ),
-              ),
-              child: FadeTransition(opacity: animation, child: child)
-            );
+            return child;
           case CustomPageTransitionType.joinTribe:
-            return FadeTransition(opacity: animation, child: child);
+            return child;
           default:
             return FadeTransition(opacity: animation, child: child);
         }

@@ -57,7 +57,6 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
     _showNewTribePage() {
       Navigator.push(context, CustomPageTransition(
         type: CustomPageTransitionType.newTribe,
-        duration: Constants.pageTransition800,
         child: StreamProvider<UserData>.value(
           value: DatabaseService().currentUser(currentUser.uid), 
           child: NewTribe()
@@ -68,7 +67,6 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
     _showJoinTribePage() {
       Navigator.push(context, CustomPageTransition(
         type: CustomPageTransitionType.joinTribe,
-        duration: Constants.pageTransition300,
         child: StreamProvider<UserData>.value(
           value: DatabaseService().currentUser(currentUser.uid), 
           child: JoinTribe(),

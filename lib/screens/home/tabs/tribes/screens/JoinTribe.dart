@@ -446,6 +446,7 @@ class _JoinTribeState extends State<JoinTribe> {
     }
 
     return loading ? Loading() : Scaffold(
+      backgroundColor: DynamicTheme.of(context).data.primaryColor,
       body: SafeArea(
         child: Container(
           color: DynamicTheme.of(context).data.backgroundColor,
@@ -500,7 +501,17 @@ class _JoinTribeState extends State<JoinTribe> {
                   margin: EdgeInsets.all(12.0),
                   elevation: 8.0,
                   child: ListTile(
-                    leading: Icon(Icons.search, color: DynamicTheme.of(context).data.primaryColor),
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Icon(Icons.arrow_back, color: DynamicTheme.of(context).data.primaryColor),
+                        ),
+                        SizedBox(width: Constants.defaultSpacing),
+                        Icon(Icons.search, color: Colors.black54),
+                      ],
+                    ),
                     title: TextField(
                       controller: controller,
                       autofocus: false,
