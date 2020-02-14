@@ -100,7 +100,7 @@ const newTribesInput = InputDecoration(
 const tribePasswordInput = InputDecoration(
   fillColor: Constants.backgroundColor,
   filled: true,
-  hintStyle: TextStyle(color: Constants.tribesColor),
+  hintStyle: TextStyle(color: Colors.black26),
   hintText: '0',
   contentPadding: EdgeInsets.zero,
   enabledBorder: OutlineInputBorder(

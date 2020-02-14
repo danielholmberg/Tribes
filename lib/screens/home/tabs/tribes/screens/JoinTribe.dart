@@ -36,7 +36,7 @@ class _JoinTribeState extends State<JoinTribe> {
         context: context,
         builder: (context) {
           final _passwordFormKey = GlobalKey<FormState>();
-          String one, two, three, four, five, six;
+          String one = '', two = '', three = '', four = '', five = '', six = '';
           bool loadingDialog = false;
           FocusNode oneNode = new FocusNode();
           FocusNode twoNode = new FocusNode();
@@ -92,7 +92,12 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    decoration: Decorations.tribePasswordInput,
+                                    decoration: Decorations.tribePasswordInput.copyWith(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
+                                      )
+                                    ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$val$two$three$four$five$six') {
                                         setState(() {
@@ -123,7 +128,12 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    decoration: Decorations.tribePasswordInput,
+                                    decoration: Decorations.tribePasswordInput.copyWith(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: two.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
+                                      )
+                                    ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$val$three$four$five$six') {
                                         setState(() {
@@ -154,7 +164,12 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    decoration: Decorations.tribePasswordInput,
+                                    decoration: Decorations.tribePasswordInput.copyWith(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: three.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
+                                      )
+                                    ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$two$val$four$five$six') {
                                         setState(() {
@@ -185,7 +200,12 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    decoration: Decorations.tribePasswordInput,
+                                    decoration: Decorations.tribePasswordInput.copyWith(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: four.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
+                                      )
+                                    ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$val$five$six') {
                                         setState(() {
@@ -216,7 +236,12 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    decoration: Decorations.tribePasswordInput,
+                                    decoration: Decorations.tribePasswordInput.copyWith(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: five.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
+                                      )
+                                    ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$four$val$six') {
                                         setState(() {
@@ -247,7 +272,12 @@ class _JoinTribeState extends State<JoinTribe> {
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    decoration: Decorations.tribePasswordInput,
+                                    decoration: Decorations.tribePasswordInput.copyWith(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                        borderSide: BorderSide(color: six.isEmpty ? Colors.black26 : Colors.black, width: 2.0),
+                                      )
+                                    ),
                                     onChanged: (val) {
                                       if(activeTribe.password == '$one$two$three$four$five$val') {
                                         setState(() {
