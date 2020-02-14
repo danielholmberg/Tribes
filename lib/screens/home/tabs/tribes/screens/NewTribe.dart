@@ -90,7 +90,6 @@ class _NewTribeState extends State<NewTribe> {
                   shrinkWrap: true,
                   children: <Widget>[
                     TextFormField(
-                      autofocus: true,
                       textCapitalization: TextCapitalization.words,
                       maxLength: Constants.tribeNameMaxLength,
                       cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
