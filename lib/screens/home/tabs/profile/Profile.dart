@@ -13,11 +13,12 @@ import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/profile/dialogs/ProfileSettings.dart';
+import 'package:tribes/screens/home/tabs/profile/widgets/CreatedPosts.dart';
+import 'package:tribes/screens/home/tabs/profile/widgets/LikedPosts.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/PostTileCompact.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
-import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class Profile extends StatefulWidget {
@@ -383,68 +384,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       );
     }
 
-    _createdPosts() {
-      return Container(
-        padding: EdgeInsets.all(4.0),
-        child: ScrollConfiguration(
-          behavior: CustomScrollBehavior(),
-          child: FirestoreAnimatedStaggered(
-            staggeredTileBuilder: (int index, DocumentSnapshot snapshot) => StaggeredTile.fit(1),
-            crossAxisCount: 4,
-            mainAxisSpacing: 4.0,
-            crossAxisSpacing: 4.0,
-            padding: EdgeInsets.only(bottom: 80.0),
-            query: DatabaseService().postsPublishedByUser(currentUser.uid),
-            itemBuilder: (
-              BuildContext context,
-              DocumentSnapshot snapshot,
-              Animation<double> animation,
-              int index,
-            ) =>
-            FadeTransition(
-              opacity: animation,
-              child: Transform.scale(
-                scale: Constants.postTileCompactScaleFactor,
-                child: PostTileCompact(post: Post.fromSnapshot(snapshot))
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    _likedPosts() {
-      return Container(
-        padding: EdgeInsets.all(4.0),
-        child: StaggeredGridView.countBuilder(
-          itemCount: currentUser.likedPosts.length,
-          staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-          crossAxisCount: 4,
-          mainAxisSpacing: 4.0,
-          crossAxisSpacing: 4.0,
-          padding: EdgeInsets.only(bottom: 80.0),
-          itemBuilder: (context, index) {
-            print('index: $index');
-            print('${currentUser.likedPosts[index]}');
-
-            return StreamBuilder<Post>(
-              stream: DatabaseService().post(currentUser.uid, currentUser.likedPosts[index]),
-              builder: (context, snapshot) {
-                if(snapshot.hasData) {
-                  Post likedPost = snapshot.data;
-                  return PostTileCompact(post: likedPost);
-                } else if(snapshot.hasError) {
-                  return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(Icons.error)));
-                } else {
-                  return Loading();
-                }
-              }
-            );
-          }, 
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: DynamicTheme.of(context).data.primaryColor,
       body: SafeArea(
@@ -542,8 +481,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 color: DynamicTheme.of(context).data.backgroundColor.withOpacity(0.8),
                 child: TabBarView(
                   children: [
-                    _createdPosts(),
-                    _likedPosts(),
+                    CreatedPosts(),
+                    LikedPosts(),
                   ],
                 ),
               ),
