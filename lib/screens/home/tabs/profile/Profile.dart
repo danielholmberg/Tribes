@@ -429,6 +429,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                     child: IconButton(
                                       color: DynamicTheme.of(context).data.buttonColor,
                                       icon: Icon(Icons.settings, color: Constants.buttonIconColor),
+                                      splashColor: Colors.transparent,
                                       onPressed: () {
                                         showDialog(
                                           context: context,

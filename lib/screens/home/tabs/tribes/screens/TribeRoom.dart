@@ -87,6 +87,7 @@ class _TribeRoomState extends State<TribeRoom> {
                               children: <Widget> [
                                 IconButton(icon: Icon(Icons.home), 
                                   color: Constants.buttonIconColor,
+                                  splashColor: Colors.transparent,
                                   onPressed: () => Navigator.of(context).pop(),
                                 ),
                                 Visibility(
@@ -94,7 +95,8 @@ class _TribeRoomState extends State<TribeRoom> {
                                   child: IconButton(
                                     icon: Icon(Icons.settings),
                                     iconSize: Constants.defaultIconSize,
-                                    splashColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    enableFeedback: false,
+                                    splashColor: Colors.transparent,
                                     color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                     onPressed: () => null,
                                   ),
@@ -125,7 +127,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                   child: IconButton(
                                     icon: Icon(Icons.settings),
                                     iconSize: Constants.defaultIconSize,
-                                    splashColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                    splashColor: Colors.transparent,
                                     color: Colors.white,
                                     onPressed: () {
                                       showDialog(
@@ -153,7 +155,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                 IconButton(
                                   icon: Icon(Icons.info, color: Constants.buttonIconColor), 
                                   iconSize: Constants.defaultIconSize,
-                                  splashColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                  splashColor: Colors.transparent,
                                   onPressed: () {
                                     showDialog(
                                       context: context,

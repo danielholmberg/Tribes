@@ -198,6 +198,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                   IconButton(
                                     icon: Icon(Icons.add_to_photos, color: Colors.white),
                                     iconSize: Constants.defaultIconSize,
+                                    splashColor: Colors.transparent,
                                     onPressed: () => _showNewTribePage(),
                                   ),
                                 ],
@@ -213,6 +214,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                   IconButton(
                                     icon: Icon(Icons.group_add, color: Colors.white),
                                     iconSize: Constants.defaultIconSize,
+                                    splashColor: Colors.transparent,
                                     onPressed: () => _showJoinTribePage(),
                                   ),
                                 ],
