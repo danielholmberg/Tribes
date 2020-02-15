@@ -25,6 +25,7 @@ class _JoinTribeState extends State<JoinTribe> {
   List<Tribe> _tribesList = [];
   List<Tribe> _searchResult = [];
   bool loading = false;
+  String error = '';
   TextEditingController controller = new TextEditingController();
 
   @override
@@ -59,6 +60,7 @@ class _JoinTribeState extends State<JoinTribe> {
     }
 
     _showPasswordDialog(Tribe activeTribe) {
+      setState(() => error = '');
       return showDialog(
         context: context,
         builder: (context) {
@@ -114,6 +116,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   height: 60,
                                   child: TextFormField(
                                     focusNode: oneNode,
+                                    autofocus: true,
                                     textInputAction: TextInputAction.next,
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
@@ -366,10 +369,31 @@ class _JoinTribeState extends State<JoinTribe> {
                                         FocusScope.of(context).requestFocus(val.isEmpty ? fiveNode : sixNode);
                                       }
                                     },
+                                    onFieldSubmitted: (val) {
+                                      if(activeTribe.password == '$one$two$three$four$five$val') {
+                                        setState(() {
+                                          loadingDialog = true;
+                                        });
+
+                                        DatabaseService().addUserToTribe(currentUser.uid, activeTribe.id);
+                                        _showJoinedSnackbar(activeTribe);
+
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        setState(() => error = 'Wrong passord');
+                                      }
+                                    },
                                   ),
                                 ),
                               ],
                             ),
+                          ),
+                        ),
+                        Text(error, 
+                          style: TextStyle(
+                            color: Constants.errorColor, 
+                            fontSize: 12, 
+                            fontFamily: 'TribesRounded',
                           ),
                         ),
                       ],
