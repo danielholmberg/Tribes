@@ -48,10 +48,17 @@ Widget userAvatar(UserData user, {Color color: Constants.primaryColor, Future ad
     children: <Widget>[
       CachedNetworkImage(
         imageUrl: user.picURL.isNotEmpty ? user.picURL : 'https://picsum.photos/id/237/200/300',
-        imageBuilder: (context, imageProvider) => CircleAvatar(
-          radius: Constants.defaultProfilePicRadius,
-          backgroundImage: imageProvider,
-          backgroundColor: Colors.transparent,
+        imageBuilder: (context, imageProvider) => Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: color, width: 2.0),
+            color: color,
+            shape: BoxShape.circle,
+          ),
+          child: CircleAvatar(
+            radius: Constants.defaultProfilePicRadius,
+            backgroundImage: imageProvider,
+            backgroundColor: Colors.transparent,
+          ),
         ),
         placeholder: (context, url) => CircleAvatar(
           radius: Constants.defaultProfilePicRadius,

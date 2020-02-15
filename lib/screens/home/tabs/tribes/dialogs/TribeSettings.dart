@@ -35,11 +35,11 @@ class _TribeSettingsState extends State<TribeSettings> {
       Navigator.pop(context);
     }
 
-    _onPressDeleteButton() async {
+    _onPressDeleteButton() {
       setState(() => loading = true);
 
       Navigator.of(context).popUntil((route) => route.isFirst);
-      await DatabaseService().deleteTribe(widget.tribe.id);
+      DatabaseService().deleteTribe(widget.tribe.id);
     }
 
     return Scaffold(
@@ -209,97 +209,79 @@ class _TribeSettingsState extends State<TribeSettings> {
                             child: GestureDetector(
                               onTap: () {
                                 showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      bool isDeleteButtonDisabled = true;
+                                  context: context,
+                                  builder: (context) {
+                                    bool isDeleteButtonDisabled = true;
 
-                                      return StatefulBuilder(
-                                          builder: (context, setState) {
+                                    return StatefulBuilder(
+                                      builder: (context, setState) {
                                         return AlertDialog(
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                                          backgroundColor: Constants
-                                              .profileSettingsBackgroundColor,
+                                          backgroundColor: Constants.profileSettingsBackgroundColor,
                                           title: RichText(
                                             text: TextSpan(
                                               text: 'Please type ',
                                               style: TextStyle(
-                                                  color: Colors.blueGrey,
-                                                  fontFamily: 'TribesRounded',
-                                                  fontWeight:
-                                                      FontWeight.normal),
+                                                color: Colors.black,
+                                                fontFamily: 'TribesRounded',
+                                                fontWeight: FontWeight.normal
+                                              ),
                                               children: <TextSpan>[
                                                 TextSpan(
                                                   text: currentTribe.name,
                                                   style: TextStyle(
-                                                      color: Colors.blueGrey,
-                                                      fontFamily:
-                                                          'TribesRounded',
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                    fontFamily: 'TribesRounded',
+                                                    fontWeight: FontWeight.bold
+                                                  ),
                                                 ),
                                                 TextSpan(
                                                   text: ' to delete the Tribe.',
                                                   style: TextStyle(
-                                                      color: Colors.blueGrey,
-                                                      fontFamily:
-                                                          'TribesRounded',
-                                                      fontWeight:
-                                                          FontWeight.normal),
+                                                    fontFamily: 'TribesRounded',
+                                                    fontWeight: FontWeight.normal
+                                                  ),
                                                 ),
                                               ],
                                             ),
                                           ),
                                           content: Container(
                                             child: TextFormField(
-                                              textCapitalization:
-                                                  TextCapitalization.words,
-                                              decoration: Decorations
-                                                  .profileSettingsInput
-                                                  .copyWith(
-                                                hintText: 'Tribe name',
+                                              textCapitalization: TextCapitalization.words,
+                                              decoration: Decorations.profileSettingsInput.copyWith(
+                                                hintText: currentTribe.name,
                                               ),
                                               onChanged: (val) {
-                                                print(val);
-                                                print(currentTribe.name);
-                                                print(val == currentTribe.name);
                                                 if (val == currentTribe.name) {
-                                                  setState(() =>
-                                                      isDeleteButtonDisabled =
-                                                          false);
+                                                  setState(() => isDeleteButtonDisabled = false);
                                                 } else {
-                                                  setState(() =>
-                                                      isDeleteButtonDisabled =
-                                                          true);
+                                                  setState(() => isDeleteButtonDisabled = true);
                                                 }
                                               },
                                             ),
                                           ),
                                           actions: <Widget>[
                                             FlatButton(
-                                              child: Text('Cancel'),
+                                              child: Text('Cancel', style: TextStyle(color: currentTribe.color)),
                                               onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(); // Dialog: "Please type..."
+                                                Navigator.of(context).pop(); // Dialog: "Please type..."
                                               },
                                             ),
                                             FlatButton(
                                               child: Text(
                                                 'Delete',
                                                 style: TextStyle(
-                                                  color: isDeleteButtonDisabled
-                                                      ? Colors.black54
-                                                      : Colors.red,
+                                                  color: isDeleteButtonDisabled ? Colors.black54 : Colors.red,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              onPressed: isDeleteButtonDisabled
-                                                  ? null
-                                                  : _onPressDeleteButton,
+                                              onPressed: isDeleteButtonDisabled ? null : _onPressDeleteButton,
                                             ),
                                           ],
                                         );
-                                      });
-                                    });
+                                      }
+                                    );
+                                  }
+                                );
                               },
                               child: Text(
                                 'Delete Tribe',

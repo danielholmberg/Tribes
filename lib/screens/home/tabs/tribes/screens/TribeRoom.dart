@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +7,10 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/NewPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/Posts.dart';
 import 'package:tribes/screens/home/tabs/tribes/dialogs/TribeSettings.dart';
-import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/decorations.dart' as Decorations;
+import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -242,39 +242,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                                               builder: (context, snapshot) {
 
                                                                 if(snapshot.hasData) {
-                                                                  UserData founderData = snapshot.data;
-                                                                  print('founderData: $founderData'); 
-                                                                  return Row(
-                                                                    mainAxisSize: MainAxisSize.min,
-                                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                                    children: <Widget>[
-                                                                      CachedNetworkImage(
-                                                                        imageUrl: founderData.picURL.isNotEmpty ? founderData.picURL : 'https://picsum.photos/id/237/200/300',
-                                                                        imageBuilder: (context, imageProvider) => CircleAvatar(
-                                                                          radius: Constants.defaultProfilePicRadius,
-                                                                          backgroundImage: imageProvider,
-                                                                          backgroundColor: Colors.transparent,
-                                                                        ),
-                                                                        placeholder: (context, url) => CircleAvatar(
-                                                                          radius: Constants.defaultProfilePicRadius,
-                                                                          backgroundColor: Colors.transparent,
-                                                                        ),
-                                                                        errorWidget: (context, url, error) => CircleAvatar(
-                                                                          radius: Constants.defaultProfilePicRadius,
-                                                                          backgroundColor: Colors.transparent,
-                                                                          child: Center(child: Icon(Icons.error)),
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(width: Constants.defaultPadding),
-                                                                      Text(founderData.username,
-                                                                        style: TextStyle(
-                                                                          color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                                                          fontFamily: 'TribesRounded',
-                                                                          fontWeight: FontWeight.bold
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  );
+                                                                  return userAvatar(snapshot.data, color: currentTribe.color);
                                                                 } else if(snapshot.hasError) {
                                                                   print('Error getting founder user data: ${snapshot.error.toString()}');
                                                                   return SizedBox.shrink();
@@ -316,8 +284,140 @@ class _TribeRoomState extends State<TribeRoom> {
                                                         padding: EdgeInsets.all(12.0),
                                                         child: GestureDetector(
                                                           onTap: () {
-                                                            DatabaseService().leaveTribe(currentUser.uid, currentTribe.id);
-                                                            Navigator.of(context).popUntil((route) => route.isFirst);
+                                                            if(isFounder) {
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (context) {
+                                                                  bool isDeleteButtonDisabled = true;
+
+                                                                  return StatefulBuilder(
+                                                                    builder: (context, setState) {
+                                                                      return AlertDialog(
+                                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                                                                        backgroundColor: Constants.profileSettingsBackgroundColor,
+                                                                        title: Text('Leaving Tribe', style: TextStyle(fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                                                                        content: Container(
+                                                                          child: Column(
+                                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            mainAxisSize: MainAxisSize.min,
+                                                                            children: <Widget>[
+                                                                              RichText(
+                                                                                text: TextSpan(
+                                                                                  text: 'As you are the founder of this Tribe, this action will permanently ',
+                                                                                  style: TextStyle(color: Colors.black, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal),
+                                                                                  children: <TextSpan>[
+                                                                                    TextSpan(text: 'DELETE', 
+                                                                                      style: TextStyle(
+                                                                                        color: Colors.red,
+                                                                                        fontFamily: 'TribesRounded', 
+                                                                                        fontWeight: FontWeight.bold
+                                                                                      ),
+                                                                                    ),
+                                                                                    TextSpan(text: ' this Tribe and all its content. ', 
+                                                                                      style: TextStyle(
+                                                                                        fontFamily: 'TribesRounded', 
+                                                                                        fontWeight: FontWeight.normal
+                                                                                      ),
+                                                                                    ),
+                                                                                    TextSpan(
+                                                                                      text: 'Please type ',
+                                                                                      style: TextStyle(
+                                                                                        fontFamily: 'TribesRounded',
+                                                                                        fontWeight: FontWeight.normal
+                                                                                      ),
+                                                                                    ),
+                                                                                    TextSpan(
+                                                                                      text: currentTribe.name,
+                                                                                      style: TextStyle(
+                                                                                        fontFamily: 'TribesRounded',
+                                                                                        fontWeight:FontWeight.bold
+                                                                                      ),
+                                                                                    ),
+                                                                                    TextSpan(
+                                                                                      text: ' to delete the Tribe.',
+                                                                                      style: TextStyle(
+                                                                                        fontFamily: 'TribesRounded',
+                                                                                        fontWeight: FontWeight.normal
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                              TextFormField(
+                                                                                textCapitalization: TextCapitalization.words,
+                                                                                decoration: Decorations.profileSettingsInput.copyWith(
+                                                                                  hintText: currentTribe.name,
+                                                                                ),
+                                                                                onChanged: (val) {
+                                                                                  if (val == currentTribe.name) {
+                                                                                    setState(() => isDeleteButtonDisabled = false);
+                                                                                  } else {
+                                                                                    setState(() => isDeleteButtonDisabled = true);
+                                                                                  }
+                                                                                },
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        actions: <Widget>[
+                                                                          FlatButton(
+                                                                            child: Text('Cancel', style: TextStyle(color: currentTribe.color)),
+                                                                            onPressed: () {
+                                                                              Navigator.of(context).pop(); // Dialog: "Please type..."
+                                                                            },
+                                                                          ),
+                                                                          FlatButton(
+                                                                            child: Text(
+                                                                              'Delete',
+                                                                              style: TextStyle(
+                                                                                color: isDeleteButtonDisabled ? Colors.black54 : Colors.red,
+                                                                                fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                            ),
+                                                                            onPressed: isDeleteButtonDisabled ? null
+                                                                            : () {
+                                                                              DatabaseService().deleteTribe(currentTribe.id);
+                                                                              Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                            },
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    }
+                                                                  );
+                                                                }
+                                                              );
+                                                            } else {
+                                                              showDialog(
+                                                                context: context,
+                                                                builder: (context) => AlertDialog(
+                                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                                                                  backgroundColor: Constants
+                                                                      .profileSettingsBackgroundColor,
+                                                                  title: Text(
+                                                                      'Are your sure you want to leave this Tribe?'),
+                                                                  actions: <Widget>[
+                                                                    FlatButton(
+                                                                      child: Text('No', 
+                                                                        style: TextStyle(color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                                                      ),
+                                                                      onPressed: () {
+                                                                        Navigator.of(context).pop();
+                                                                      },
+                                                                    ),
+                                                                    FlatButton(
+                                                                      child: Text('Yes',
+                                                                        style: TextStyle(color: Colors.red),
+                                                                      ),
+                                                                      onPressed: () {
+                                                                        DatabaseService().leaveTribe(currentUser.uid, currentTribe.id);
+                                                                        Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            }
                                                           } ,
                                                           child: Text('Leave Tribe', 
                                                             style: TextStyle(
