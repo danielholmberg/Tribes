@@ -196,7 +196,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                                           SizedBox(width: Constants.defaultSpacing),
                                                           Expanded(child: Divider(thickness: 2.0,)),
                                                           SizedBox(width: Constants.defaultSpacing),
-                                                          Text('Description', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                          Text('Description', style: TextStyle(fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
                                                           SizedBox(width: Constants.defaultSpacing),
                                                           Expanded(child: Divider(thickness: 2.0,)),
                                                           SizedBox(width: Constants.defaultSpacing),
@@ -224,7 +224,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                                           SizedBox(width: Constants.defaultSpacing),
                                                           Expanded(child: Divider(thickness: 2.0,)),
                                                           SizedBox(width: Constants.defaultSpacing),
-                                                          Text('Chief', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                          Text('Chief', style: TextStyle(fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
                                                           SizedBox(width: Constants.defaultSpacing),
                                                           Expanded(child: Divider(thickness: 2.0,)),
                                                           SizedBox(width: Constants.defaultSpacing),
@@ -263,7 +263,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                                           SizedBox(width: Constants.defaultSpacing),
                                                           Expanded(child: Divider(thickness: 2.0,)),
                                                           SizedBox(width: Constants.defaultSpacing),
-                                                          Text('Password', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                          Text('Password', style: TextStyle(fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
                                                           SizedBox(width: Constants.defaultSpacing),
                                                           Expanded(child: Divider(thickness: 2.0,)),
                                                           SizedBox(width: Constants.defaultSpacing),
@@ -281,7 +281,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                                         ),
                                                       ),
                                                       Container(
-                                                        padding: EdgeInsets.all(12.0),
+                                                        padding: EdgeInsets.all(8.0),
                                                         child: GestureDetector(
                                                           onTap: () {
                                                             if(isFounder) {
@@ -295,7 +295,13 @@ class _TribeRoomState extends State<TribeRoom> {
                                                                       return AlertDialog(
                                                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                                                                         backgroundColor: Constants.profileSettingsBackgroundColor,
-                                                                        title: Text('Leaving Tribe', style: TextStyle(fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                                                                        title: Text('Leaving Tribe', 
+                                                                          style: TextStyle(
+                                                                            fontFamily: 'TribesRounded', 
+                                                                            fontWeight: Constants.defaultDialogTitleFontWeight,
+                                                                            fontSize: Constants.defaultDialogTitleFontSize,
+                                                                          ),
+                                                                        ),
                                                                         content: Container(
                                                                           child: Column(
                                                                             mainAxisAlignment: MainAxisAlignment.start,
@@ -304,8 +310,12 @@ class _TribeRoomState extends State<TribeRoom> {
                                                                             children: <Widget>[
                                                                               RichText(
                                                                                 text: TextSpan(
-                                                                                  text: 'As you are the founder of this Tribe, this action will permanently ',
-                                                                                  style: TextStyle(color: Colors.black, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal),
+                                                                                  text: 'As you are the Chief of this Tribe, this action will permanently ',
+                                                                                  style: TextStyle(
+                                                                                    color: Colors.black, 
+                                                                                    fontFamily: 'TribesRounded', 
+                                                                                    fontWeight: FontWeight.normal
+                                                                                  ),
                                                                                   children: <TextSpan>[
                                                                                     TextSpan(text: 'DELETE', 
                                                                                       style: TextStyle(
@@ -321,7 +331,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                                                                       ),
                                                                                     ),
                                                                                     TextSpan(
-                                                                                      text: 'Please type ',
+                                                                                      text: '\n\nPlease type ',
                                                                                       style: TextStyle(
                                                                                         fontFamily: 'TribesRounded',
                                                                                         fontWeight: FontWeight.normal
@@ -335,7 +345,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                                                                       ),
                                                                                     ),
                                                                                     TextSpan(
-                                                                                      text: ' to delete the Tribe.',
+                                                                                      text: ' to delete this Tribe.',
                                                                                       style: TextStyle(
                                                                                         fontFamily: 'TribesRounded',
                                                                                         fontWeight: FontWeight.normal
@@ -362,15 +372,20 @@ class _TribeRoomState extends State<TribeRoom> {
                                                                         ),
                                                                         actions: <Widget>[
                                                                           FlatButton(
-                                                                            child: Text('Cancel', style: TextStyle(color: currentTribe.color)),
+                                                                            child: Text('Cancel', 
+                                                                              style: TextStyle(
+                                                                                fontFamily: 'TribesRounded', 
+                                                                                color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                                                              ),
+                                                                            ),
                                                                             onPressed: () {
                                                                               Navigator.of(context).pop(); // Dialog: "Please type..."
                                                                             },
                                                                           ),
                                                                           FlatButton(
-                                                                            child: Text(
-                                                                              'Delete',
+                                                                            child: Text('Delete',
                                                                               style: TextStyle(
+                                                                                fontFamily: 'TribesRounded', 
                                                                                 color: isDeleteButtonDisabled ? Colors.black54 : Colors.red,
                                                                                 fontWeight: FontWeight.bold,
                                                                               ),
@@ -394,12 +409,20 @@ class _TribeRoomState extends State<TribeRoom> {
                                                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                                                                   backgroundColor: Constants
                                                                       .profileSettingsBackgroundColor,
-                                                                  title: Text(
-                                                                      'Are your sure you want to leave this Tribe?'),
+                                                                  title: Text('Are your sure you want to leave this Tribe?', 
+                                                                    style: TextStyle(
+                                                                      fontFamily: 'TribesRounded', 
+                                                                      fontWeight: Constants.defaultDialogTitleFontWeight,
+                                                                      fontSize: Constants.defaultDialogTitleFontSize
+                                                                    ),
+                                                                  ),
                                                                   actions: <Widget>[
                                                                     FlatButton(
                                                                       child: Text('No', 
-                                                                        style: TextStyle(color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                                                        style: TextStyle(
+                                                                          fontFamily: 'TribesRounded', 
+                                                                          color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor
+                                                                        ),
                                                                       ),
                                                                       onPressed: () {
                                                                         Navigator.of(context).pop();
@@ -407,7 +430,11 @@ class _TribeRoomState extends State<TribeRoom> {
                                                                     ),
                                                                     FlatButton(
                                                                       child: Text('Yes',
-                                                                        style: TextStyle(color: Colors.red),
+                                                                        style: TextStyle(
+                                                                          fontFamily: 'TribesRounded', 
+                                                                          color: Colors.red,
+                                                                          fontWeight: FontWeight.bold,
+                                                                        ),
                                                                       ),
                                                                       onPressed: () {
                                                                         DatabaseService().leaveTribe(currentUser.uid, currentTribe.id);

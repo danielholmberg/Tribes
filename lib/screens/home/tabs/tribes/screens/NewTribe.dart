@@ -67,7 +67,13 @@ class _NewTribeState extends State<NewTribe> {
                       context: context,
                       child: AlertDialog(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                        title: Text('Pick a Tribe color'),
+                        title: Text('Pick a Tribe color',
+                          style: TextStyle(
+                            fontFamily: 'TribesRounded',
+                            fontWeight: Constants.defaultDialogTitleFontWeight,
+                            fontSize: Constants.defaultDialogTitleFontSize,
+                          ),
+                        ),
                         content: SingleChildScrollView(
                           child: BlockPicker(
                             availableColors: Constants.defaultTribeColors,
@@ -95,7 +101,11 @@ class _NewTribeState extends State<NewTribe> {
                       cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                       decoration: Decorations.postContentInput.copyWith(
                         labelText: 'Name',
-                        labelStyle: TextStyle(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                        labelStyle: TextStyle(
+                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                          fontFamily: 'TribesRounded',
+                          fontWeight: FontWeight.bold,
+                        ),
                         hintText: '',
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -118,7 +128,11 @@ class _NewTribeState extends State<NewTribe> {
                       maxLines: null,
                       decoration: Decorations.postContentInput.copyWith(
                         labelText: 'Description',
-                        labelStyle: TextStyle(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                        labelStyle: TextStyle(
+                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                          fontFamily: 'TribesRounded',
+                          fontWeight: FontWeight.bold,
+                        ),
                         hintText: '',
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -145,7 +159,12 @@ class _NewTribeState extends State<NewTribe> {
                         color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                         icon: Icon(Icons.done,
                             color: DynamicTheme.of(context).data.accentColor),
-                        label: Text('Create Tribe'),
+                        label: Text('Create Tribe', 
+                          style: TextStyle(
+                            fontFamily: 'TribesRounded',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         textColor: Colors.white,
                         onPressed: () {
                           if(_formKey.currentState.validate()) {
@@ -175,8 +194,10 @@ class _NewTribeState extends State<NewTribe> {
                       child: Text(
                         error,
                         style: TextStyle(
-                            color: Constants.errorColor,
-                            fontSize: Constants.errorFontSize),
+                          color: Constants.errorColor,
+                          fontSize: Constants.errorFontSize,
+                          fontFamily: 'TribesRounded',
+                        ),
                       ),
                     ),
                   ],

@@ -133,12 +133,20 @@ class _NewPostState extends State<NewPost> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                   backgroundColor: Constants
                       .profileSettingsBackgroundColor,
-                  title: Text(
-                      'Are your sure you want to discard changes?'),
+                  title: Text('Are your sure you want to discard changes?',
+                    style: TextStyle(
+                      fontFamily: 'TribesRounded',
+                      fontWeight: Constants.defaultDialogTitleFontWeight,
+                      fontSize: Constants.defaultDialogTitleFontSize,
+                    ),
+                  ),
                   actions: <Widget>[
                     FlatButton(
                       child: Text('No', 
-                        style: TextStyle(color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                        style: TextStyle(
+                          color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                          fontFamily: 'TribesRounded',
+                        ),
                       ),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -146,9 +154,13 @@ class _NewPostState extends State<NewPost> {
                     ),
                     FlatButton(
                       child: Text('Yes',
-                        style: TextStyle(color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                        style: TextStyle(
+                          color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                          fontFamily: 'TribesRounded',
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      onPressed: () async {
+                      onPressed: () {
                         Navigator.of(context).pop(); // Dialog: "Are you sure...?"
                         Navigator.of(context).pop(); // NewPost
                       },

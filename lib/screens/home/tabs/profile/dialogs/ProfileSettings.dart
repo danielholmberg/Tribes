@@ -139,7 +139,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
                                         _scaffoldKey.currentState
                                             .showSnackBar(SnackBar(
-                                          content: Text('Profile info saved!'),
+                                          content: Text('Profile info saved'),
                                           duration: Duration(milliseconds: 500),
                                         ));
 
@@ -169,20 +169,36 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                                     backgroundColor: Constants
                                         .profileSettingsBackgroundColor,
-                                    title: Text(
-                                        'Are your sure you want to sign out?'),
+                                    title: Text('Are your sure you want to sign out?',
+                                      style: TextStyle(
+                                        fontFamily: 'TribesRounded',
+                                        fontSize: Constants.defaultDialogTitleFontSize,
+                                        fontWeight: Constants.defaultDialogTitleFontWeight,
+                                      ),
+                                    ),
                                     actions: <Widget>[
                                       FlatButton(
-                                        child: Text('No'),
+                                        child: Text('No',
+                                          style: TextStyle(
+                                            color: DynamicTheme.of(context).data.primaryColor,
+                                            fontFamily: 'TribesRounded',
+                                          ),
+                                        ),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
                                       ),
                                       FlatButton(
-                                        child: Text('Yes'),
-                                        onPressed: () async {
+                                        child: Text('Yes',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'TribesRounded',
+                                          ),
+                                        ),
+                                        onPressed: () {
                                           Navigator.of(context).popUntil((route) => route.isFirst);
-                                          await _auth.signOut();
+                                          _auth.signOut();
                                         },
                                       ),
                                     ],
@@ -192,8 +208,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                               child: Text(
                                 'Sign out',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red),
+                                  fontFamily: 'TribesRounded',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red),
                               ),
                             ),
                           ),

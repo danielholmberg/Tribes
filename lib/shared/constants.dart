@@ -21,6 +21,8 @@ const pageTransition300 = Duration(milliseconds: 300);
 const pageTransition600 = Duration(milliseconds: 600);
 const pageTransition800 = Duration(milliseconds: 800);
 
+const defaultDialogTitleFontSize = 20.0;
+const defaultDialogTitleFontWeight = FontWeight.w600;
 const dialogCornerRadius = 20.0;
 const maxCornerRadius = 1000.0;
 const defaultProfilePicRadius = 16.0;

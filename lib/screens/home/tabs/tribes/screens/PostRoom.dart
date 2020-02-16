@@ -64,12 +64,20 @@ class _PostRoomState extends State<PostRoom> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
           backgroundColor: Constants
               .profileSettingsBackgroundColor,
-          title: Text(
-              'Are your sure you want to discard changes?'),
+          title: Text('Are your sure you want to discard changes?',
+            style: TextStyle(
+              fontFamily: 'TribesRounded',
+              fontWeight: Constants.defaultDialogTitleFontWeight,
+              fontSize: Constants.defaultDialogTitleFontSize,
+            ),
+          ),
           actions: <Widget>[
             FlatButton(
               child: Text('No', 
-                style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                style: TextStyle(
+                  color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                  fontFamily: 'TribesRounded',
+                ),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -77,9 +85,13 @@ class _PostRoomState extends State<PostRoom> {
             ),
             FlatButton(
               child: Text('Yes',
-                style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                style: TextStyle(
+                  color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                  fontFamily: 'TribesRounded',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              onPressed: () async {
+              onPressed: () {
                 Navigator.of(context).pop(); // Dialog: "Are you sure...?"
                 Navigator.of(context).pop();
               },
@@ -146,12 +158,20 @@ class _PostRoomState extends State<PostRoom> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
                     backgroundColor: Constants
                         .profileSettingsBackgroundColor,
-                    title: Text(
-                        'Are your sure you want to delete this post?'),
+                    title: Text('Are your sure you want to delete this post?',
+                      style: TextStyle(
+                        fontFamily: 'TribesRounded',
+                        fontWeight: Constants.defaultDialogTitleFontWeight,
+                        fontSize: Constants.defaultDialogTitleFontSize,
+                      ),
+                    ),
                     actions: <Widget>[
                       FlatButton(
                         child: Text('No', 
-                          style: TextStyle(color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+                          style: TextStyle(
+                            color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                            fontFamily: 'TribesRounded',
+                          ),
                         ),
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -159,7 +179,11 @@ class _PostRoomState extends State<PostRoom> {
                       ),
                       FlatButton(
                         child: Text('Yes',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontFamily: 'TribesRounded',
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         onPressed: () async {
                           await DatabaseService().deletePost(widget.post);
@@ -288,7 +312,11 @@ class _PostRoomState extends State<PostRoom> {
                           ).then((val) {
                             _scaffoldKey.currentState.showSnackBar(
                               SnackBar(
-                                content: Text('Post saved'),
+                                content: Text('Post saved', 
+                                  style: TextStyle(
+                                    fontFamily: 'TribesRounded'
+                                  ),
+                                ),
                                 duration: Duration(milliseconds: 500),
                               )
                             );

@@ -128,14 +128,25 @@ class _TribeSettingsState extends State<TribeSettings> {
                                           color: DynamicTheme.of(context)
                                               .data
                                               .accentColor),
-                                      label: Text('Change color'),
+                                      label: Text('Change color',
+                                        style: TextStyle(
+                                          fontFamily: 'TribesRounded',
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                       textColor: Colors.white,
                                       onPressed: () {
                                         showDialog(
                                           context: context,
                                           child: AlertDialog(
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                                            title: Text('Pick a Tribe color'),
+                                            title: Text('Pick a Tribe color',
+                                              style: TextStyle(
+                                                fontFamily: 'TribesRounded',
+                                                fontWeight: Constants.defaultDialogTitleFontWeight,
+                                                fontSize: Constants.defaultDialogTitleFontSize,
+                                              ),
+                                            ),
                                             content: SingleChildScrollView(
                                               child: BlockPicker(
                                                 availableColors: Constants
@@ -181,7 +192,11 @@ class _TribeSettingsState extends State<TribeSettings> {
 
                                         _scaffoldKey.currentState
                                             .showSnackBar(SnackBar(
-                                          content: Text('Tribe info saved!'),
+                                          content: Text('Tribe info saved',
+                                            style: TextStyle(
+                                              fontFamily: 'TribesRounded',
+                                            ),
+                                          ),
                                           duration: Duration(milliseconds: 500),
                                         ));
 
@@ -235,7 +250,7 @@ class _TribeSettingsState extends State<TribeSettings> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text: ' to delete the Tribe.',
+                                                  text: ' to delete this Tribe.',
                                                   style: TextStyle(
                                                     fontFamily: 'TribesRounded',
                                                     fontWeight: FontWeight.normal
@@ -261,7 +276,12 @@ class _TribeSettingsState extends State<TribeSettings> {
                                           ),
                                           actions: <Widget>[
                                             FlatButton(
-                                              child: Text('Cancel', style: TextStyle(color: currentTribe.color)),
+                                              child: Text('Cancel', 
+                                                style: TextStyle(
+                                                  color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                                  fontFamily: 'TribesRounded',
+                                                ),
+                                              ),
                                               onPressed: () {
                                                 Navigator.of(context).pop(); // Dialog: "Please type..."
                                               },
@@ -271,6 +291,7 @@ class _TribeSettingsState extends State<TribeSettings> {
                                                 'Delete',
                                                 style: TextStyle(
                                                   color: isDeleteButtonDisabled ? Colors.black54 : Colors.red,
+                                                  fontFamily: 'TribesRounded',
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -287,6 +308,7 @@ class _TribeSettingsState extends State<TribeSettings> {
                                 'Delete Tribe',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
+                                    fontFamily: 'TribesRounded',
                                     color: Colors.red),
                               ),
                             ),

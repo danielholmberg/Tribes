@@ -97,8 +97,8 @@ class _JoinTribeState extends State<JoinTribe> {
                             'Enter Tribe Password',
                             style: TextStyle(
                               fontFamily: 'TribesRounded',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontSize: Constants.defaultDialogTitleFontSize,
+                              fontWeight: Constants.defaultDialogTitleFontWeight,
                             ),
                           ),
                         ),
