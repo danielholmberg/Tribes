@@ -80,8 +80,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
       child: SafeArea(
         bottom: false,
         child: Scaffold(
-          backgroundColor: DynamicTheme.of(context).data.backgroundColor,
-          extendBody: true,
+          backgroundColor: DynamicTheme.of(context).data.primaryColor,
           body: StreamBuilder<List<Tribe>>(
             initialData: [],
             stream: DatabaseService().joinedTribes(currentUser.uid),
@@ -89,138 +88,141 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
               if (snapshot.hasData) {
                 List<Tribe> joinedTribesList = snapshot.data;
 
-                return Stack(
-                  alignment: Alignment.center,
+                return Column(
                   children: <Widget>[
-                    Positioned.fill(
-                      child: ScrollConfiguration(
-                        behavior: CustomScrollBehavior(),
-                        child: joinedTribesList.isEmpty
-                        ? Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () => _showNewTribePage(),
-                                child: Text(
-                                  'Create',
-                                  style: TextStyle(
-                                      color: Colors.blueGrey,
-                                      fontSize: 24.0,
-                                      fontFamily: 'TribesRounded',
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Text(
-                                ' or ',
-                                style: TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontSize: 24.0,
-                                    fontFamily: 'TribesRounded',
-                                    fontWeight: FontWeight.normal),
-                              ),
-                              GestureDetector(
-                                onTap: () => _showJoinTribePage(),
-                                child: Text(
-                                  'Join',
-                                  style: TextStyle(
-                                      color: Colors.blueGrey,
-                                      fontSize: 24.0,
-                                      fontFamily: 'TribesRounded',
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Text(
-                                ' a Tribe',
-                                style: TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontSize: 24.0,
-                                    fontFamily: 'TribesRounded',
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ],
+                    Container(
+                      padding: const EdgeInsets.all(4.0),
+                      color: DynamicTheme.of(context).data.primaryColor,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget> [
+                          Text(
+                            'Tribes',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'OleoScriptSwashCaps',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
+                            ),
                           ),
-                        )
-                      : Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: PageView.builder(
-                            reverse: false,
-                            scrollDirection: Axis.horizontal,
-                            controller: tribeController,
-                            itemCount: joinedTribesList.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
-                                child: TribeTile(tribe: joinedTribesList[index]),
-                              );
-                            },
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget> [
+                                IconButton(
+                                  icon: Icon(Icons.add_to_photos, color: Colors.white),
+                                  iconSize: Constants.defaultIconSize,
+                                  splashColor: Colors.transparent,
+                                  onPressed: () => _showNewTribePage(),
+                                ),
+                              ],
+                            ),
                           ),
-                      ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget> [
+                                IconButton(
+                                  icon: Icon(Icons.group_add, color: Colors.white),
+                                  iconSize: Constants.defaultIconSize,
+                                  splashColor: Colors.transparent,
+                                  onPressed: () => _showJoinTribePage(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
+                    Expanded(
                       child: Container(
-                        padding: const EdgeInsets.all(4.0),
                         decoration: BoxDecoration(
-                          color: DynamicTheme.of(context).data.primaryColor,
-                          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
+                          color: DynamicTheme.of(context).data.backgroundColor,
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black54,
-                              blurRadius: 4,
-                              offset: Offset(0, 5),
+                              blurRadius: 5,
+                              offset: Offset(0, 0),
                             ),
                           ]
                         ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: <Widget> [
-                            Text(
-                              'Tribes',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'OleoScriptSwashCaps',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                          child: ScrollConfiguration(
+                            behavior: CustomScrollBehavior(),
+                            child: joinedTribesList.isEmpty
+                            ? Center(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget> [
-                                  IconButton(
-                                    icon: Icon(Icons.add_to_photos, color: Colors.white),
-                                    iconSize: Constants.defaultIconSize,
-                                    splashColor: Colors.transparent,
-                                    onPressed: () => _showNewTribePage(),
+                                children: <Widget>[
+                                  GestureDetector(
+                                    onTap: () => _showNewTribePage(),
+                                    child: Text(
+                                      'Create',
+                                      style: TextStyle(
+                                          color: Colors.blueGrey,
+                                          fontSize: 24.0,
+                                          fontFamily: 'TribesRounded',
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Text(
+                                    ' or ',
+                                    style: TextStyle(
+                                        color: Colors.blueGrey,
+                                        fontSize: 24.0,
+                                        fontFamily: 'TribesRounded',
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => _showJoinTribePage(),
+                                    child: Text(
+                                      'Join',
+                                      style: TextStyle(
+                                          color: Colors.blueGrey,
+                                          fontSize: 24.0,
+                                          fontFamily: 'TribesRounded',
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Text(
+                                    ' a Tribe',
+                                    style: TextStyle(
+                                        color: Colors.blueGrey,
+                                        fontSize: 24.0,
+                                        fontFamily: 'TribesRounded',
+                                        fontWeight: FontWeight.normal),
                                   ),
                                 ],
                               ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget> [
-                                  IconButton(
-                                    icon: Icon(Icons.group_add, color: Colors.white),
-                                    iconSize: Constants.defaultIconSize,
-                                    splashColor: Colors.transparent,
-                                    onPressed: () => _showJoinTribePage(),
-                                  ),
-                                ],
+                            )
+                          : Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: PageView.builder(
+                                reverse: false,
+                                scrollDirection: Axis.horizontal,
+                                controller: tribeController,
+                                itemCount: joinedTribesList.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
+                                    child: TribeTile(tribe: joinedTribesList[index]),
+                                  );
+                                },
                               ),
-                            ),
-                          ],
+                          ),
+                          ),
                         ),
                       ),
                     ),

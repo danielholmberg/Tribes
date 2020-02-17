@@ -230,32 +230,36 @@ class _PostTileState extends State<PostTile> {
       );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: DynamicTheme.of(context).data.backgroundColor,
-        borderRadius: BorderRadius.circular(0),
-        boxShadow: [
-          BoxShadow(
-            color: widget.tribeColor.withOpacity(0.5) ?? DynamicTheme.of(context).data.accentColor,
-            blurRadius: 2,
-            offset: Offset(0, 0),
-          ),
-        ]
-      ),
-      margin: EdgeInsets.fromLTRB(0.0, Constants.largePadding, 0.0, 0.0),
-      child: InkWell(
-        splashColor: Constants.tribesColor.withAlpha(30),
-        onTap: () {
-          setState(() {
-            expanded = !expanded;
-          });
-        },
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: <Widget>[
-              _postTileMain(),
-            ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: DynamicTheme.of(context).data.backgroundColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6), width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: widget.tribeColor.withOpacity(0.5) ?? DynamicTheme.of(context).data.accentColor,
+              blurRadius: 2,
+              offset: Offset(0, 0),
+            ),
+          ]
+        ),
+        margin: EdgeInsets.fromLTRB(6.0, Constants.largePadding, 6.0, 0.0),
+        child: InkWell(
+          splashColor: Constants.tribesColor.withAlpha(30),
+          onTap: () {
+            setState(() {
+              expanded = !expanded;
+            });
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: <Widget>[
+                _postTileMain(),
+              ],
+            ),
           ),
         ),
       ),
