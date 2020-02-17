@@ -96,6 +96,7 @@ const newMessageFormPadding = 16.0;
 const sendButtonColor = chatsColor;
 const initialLat = 59.325695;
 const initialLng = 18.071869;
+const chatMessageAvatarSize = 24.0;
 
 // [Profile]
 const profilePagePicRadius = 50.0;

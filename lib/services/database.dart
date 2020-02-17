@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:tribes/models/Message.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -16,8 +17,10 @@ class DatabaseService {
   final CollectionReference postsRoot = Firestore.instance.collection('posts');
 
   // Tribes Ref
-  final CollectionReference tribesRoot =
-      Firestore.instance.collection('tribes');
+  final CollectionReference tribesRoot = Firestore.instance.collection('tribes');
+
+  // Chats Ref
+  final CollectionReference chatsRoot = Firestore.instance.collection('chats');
 
   Future createUserDocument(String uid, String name, String username, String email) {
     var data = {
@@ -254,5 +257,35 @@ class DatabaseService {
 
   Future leaveTribe(String userID, String tribeID) {
     return tribesRoot.document(tribeID).updateData({'members': FieldValue.arrayRemove([userID])});
+  }
+
+  Stream<Message> mostRecentMessage(String roomID) {
+    return chatsRoot.document(roomID).collection('messages').limit(1).orderBy('created', descending: true).snapshots()
+    .map((list) => list.documents.map((messageDoc) => Message.fromSnapshot(messageDoc)).first);
+  }
+
+  Stream<QuerySnapshot> fiveLatestMessages(String tribeID) {
+    return chatsRoot.document(tribeID).collection('messages').limit(5).orderBy('created', descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> allMessages(String roomID) {
+    return chatsRoot.document(roomID).collection('messages').orderBy('created', descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> chatRooms(String userID) {
+    return chatsRoot.where('members', arrayContains: userID).snapshots();
+  }
+
+  Future sendMessage(String roomID, String userID, String message) {
+    var data = {
+      'message': message,
+      'senderID': userID,
+      'created': new DateTime.now().millisecondsSinceEpoch,
+    };
+    print('Sending message data: $data');
+
+    DocumentReference messageRef = chatsRoot.document(roomID).collection('messages').document();
+
+    return Firestore.instance.runTransaction((transaction) => transaction.set(messageRef, data));
   }
 }
