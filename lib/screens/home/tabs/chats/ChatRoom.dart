@@ -36,8 +36,6 @@ class _ChatRoomState extends State<ChatRoom> {
     print('Building TribeMessages()...');
     print('Current user ${currentUser.toString()}');
 
-    final String recieverID = widget.members.where((memberID) => memberID != currentUser.uid).toList()[0];
-
     _buildMessage(Message message) {
       bool isMe = message.senderID == currentUser.uid;
 
@@ -180,7 +178,7 @@ class _ChatRoomState extends State<ChatRoom> {
             backgroundColor: Colors.transparent,
             elevation: 0.0,
             title: widget.members != null ? StreamBuilder<UserData>(
-              stream: DatabaseService().userData(recieverID),
+              stream: DatabaseService().userData(widget.members.where((memberID) => memberID != currentUser.uid).toList()[0]),
               builder: (context, snapshot) {                
                 return AutoSizeText(snapshot.hasData ? snapshot.data.name : 'No name',
                   textAlign: TextAlign.center,

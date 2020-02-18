@@ -10,6 +10,7 @@ import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/chats/ChatRoom.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -28,100 +29,88 @@ class TribeMessages extends StatelessWidget {
       DateTime created = DateTime.fromMillisecondsSinceEpoch(message.created); 
       String formattedTime = DateFormat('kk:mm').format(created);
 
-      return GestureDetector(
-        onTap: () => Navigator.push(context, CustomPageTransition(
-            type: CustomPageTransitionType.chatRoom, 
-            duration: Constants.pageTransition600, 
-            child: StreamProvider<UserData>.value(
-              value: DatabaseService().currentUser(currentUser.uid), 
-              child: ChatRoom(roomID: currentTribe.id, currentTribe: currentTribe),
-            ),
-          )
-        ),
-        child: Container(
-          margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          decoration: BoxDecoration(
-            color: DynamicTheme.of(context).data.backgroundColor,
-            borderRadius: BorderRadius.circular(20.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black54,
-                blurRadius: 4,
-                offset: Offset(1, 2),
-              ),
-            ]
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  CircleAvatar(
-                    radius: 35.0,
-                    backgroundColor: Colors.red,
+      return StreamBuilder<Object>(
+        stream: DatabaseService().userData(message.senderID),
+        builder: (context, snapshot) {
+          if(snapshot.hasData) {
+            UserData sender = snapshot.data;
+
+            return GestureDetector(
+              onTap: () => Navigator.push(context, CustomPageTransition(
+                  type: CustomPageTransitionType.chatRoom, 
+                  duration: Constants.pageTransition600, 
+                  child: StreamProvider<UserData>.value(
+                    value: DatabaseService().currentUser(currentUser.uid), 
+                    child: ChatRoom(roomID: currentTribe.id, currentTribe: currentTribe),
                   ),
-                  SizedBox(width: 10.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text('Daniel',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 6.0),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        child: Text(message.message,
-                          style: TextStyle(
-                            color: Colors.blueGrey,
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                )
               ),
-              Column(
-                children: <Widget>[
-                  Text(formattedTime,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: DynamicTheme.of(context).data.backgroundColor,
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 4,
+                      offset: Offset(1, 2),
+                    ),
+                  ]
+                ),
+                margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                child: ListTile(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
+                  leading: userAvatar(sender, size: Constants.chatMessageAvatarSize, onlyAvatar: true),
+                  title: Text(sender.name,
                     style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
+                      fontFamily: 'TribesRounded',
+                      fontWeight: FontWeight.bold
                     ),
                   ),
-                  SizedBox(height: 5.0),
-                  Visibility(
-                    visible: !isMe,
-                    child: Container(
-                      width: 40.0,
-                      height: 20.0,
-                      decoration: BoxDecoration(
-                        color: DynamicTheme.of(context).data.primaryColor,
-                        borderRadius: BorderRadius.circular(30.0),
+                  subtitle: RichText(
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
+                    softWrap: false,
+                    text: TextSpan(
+                      text: formattedTime.isNotEmpty ? formattedTime : 'No message',
+                      style: TextStyle(
+                        color: formattedTime.isNotEmpty ? Colors.black : Colors.black26,
+                        fontFamily: 'TribesRounded',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
                       ),
-                      alignment: Alignment.center,
-                      child: Text('New',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.bold,
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: '${isMe ? ' You: ' : '  '}',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontFamily: 'TribesRounded',
+                            fontWeight: FontWeight.normal,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
+                        TextSpan(
+                          text: message.message,
+                          style: TextStyle(
+                            fontFamily: 'TribesRounded',
+                            fontWeight: FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              )
-            ],
-          ),
-        ),
+                  trailing: SizedBox(width: Constants.defaultSpacing),
+                ),
+              ),
+            );
+          } else if(snapshot.hasError) {
+            print('Error retrieving user data: ${snapshot.error.toString()}');
+            return Center(child: CircularProgressIndicator());
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        }
       );
     }
     
@@ -167,15 +156,14 @@ class TribeMessages extends StatelessWidget {
 
                       return Container(
                         margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
-                            color: (currentTribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.3),
+                            color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                             borderRadius: BorderRadius.circular(20.0),
-                            border: Border.all(color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2),
                             boxShadow: [
                               BoxShadow(
-                                color: (currentTribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.3),
-                                blurRadius: 10,
+                                color: (currentTribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.8),
+                                blurRadius: 5,
                                 offset: Offset(0, 0),
                               ),
                             ]),
@@ -200,66 +188,73 @@ class TribeMessages extends StatelessWidget {
                             Expanded(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20.0),
-                                child: Stack(
-                                  alignment: Alignment.topCenter,
-                                  children: <Widget>[
-                                    FirestoreAnimatedList(
-                                      reverse: false,
-                                      shrinkWrap: true,
-                                      padding: EdgeInsets.symmetric(horizontal: 6.0),
-                                      query: DatabaseService().fiveLatestMessages(currentTribe.id),
-                                      itemBuilder: (
-                                        BuildContext context,
-                                        DocumentSnapshot snapshot,
-                                        Animation<double> animation,
-                                        int index,
-                                      ) => FadeTransition(
-                                        opacity: animation,
-                                        child: _messageListItem(Message.fromSnapshot(snapshot), currentTribe),
-                                      ),
-                                      emptyChild: Center(
-                                        child: Text('No messages',
-                                          style: TextStyle(
-                                            fontFamily: 'TribesRounded',
-                                            color: Colors.black26,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: DynamicTheme.of(context).data.backgroundColor,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    border: Border.all(color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0)
+                                  ),
+                                  child: Stack(
+                                    alignment: Alignment.topCenter,
+                                    children: <Widget>[
+                                      FirestoreAnimatedList(
+                                        reverse: false,
+                                        shrinkWrap: true,
+                                        padding: EdgeInsets.symmetric(vertical: 6.0),
+                                        query: DatabaseService().fiveLatestMessages(currentTribe.id),
+                                        itemBuilder: (
+                                          BuildContext context,
+                                          DocumentSnapshot snapshot,
+                                          Animation<double> animation,
+                                          int index,
+                                        ) => FadeTransition(
+                                          opacity: animation,
+                                          child: _messageListItem(Message.fromSnapshot(snapshot), currentTribe),
                                         ),
-                                      ),
-                                    ),
-                                    SizedBox(height: Constants.smallSpacing),
-                                    Positioned(
-                                      bottom: 6,
-                                      right: 6,
-                                      child: GestureDetector(
-                                        onTap: () => Navigator.push(context, 
-                                          CustomPageTransition(
-                                            type: CustomPageTransitionType.chatRoom, 
-                                            duration: Constants.pageTransition600, 
-                                            child: StreamProvider<UserData>.value(
-                                              value: DatabaseService().currentUser(currentUser.uid), 
-                                              child: ChatRoom(roomID: currentTribe.id, currentTribe: currentTribe),
-                                            ),
-                                          )
-                                        ),
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                                          decoration: BoxDecoration(
-                                            color: currentTribe.color.withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(20.0),
-                                            border: Border.all(color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0)
-                                          ),
-                                          child: Text('See all', 
+                                        emptyChild: Center(
+                                          child: Text('No messages',
                                             style: TextStyle(
                                               fontFamily: 'TribesRounded',
-                                              color: Colors.white,
+                                              color: Colors.black26,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(height: Constants.smallSpacing),
+                                      Positioned(
+                                        bottom: 6,
+                                        right: 6,
+                                        child: GestureDetector(
+                                          onTap: () => Navigator.push(context, 
+                                            CustomPageTransition(
+                                              type: CustomPageTransitionType.chatRoom, 
+                                              duration: Constants.pageTransition600, 
+                                              child: StreamProvider<UserData>.value(
+                                                value: DatabaseService().currentUser(currentUser.uid), 
+                                                child: ChatRoom(roomID: currentTribe.id, currentTribe: currentTribe),
+                                              ),
+                                            )
+                                          ),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                            decoration: BoxDecoration(
+                                              color: currentTribe.color.withOpacity(0.8),
+                                              borderRadius: BorderRadius.circular(20.0),
+                                              border: Border.all(color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0)
+                                            ),
+                                            child: Text('See all', 
+                                              style: TextStyle(
+                                                fontFamily: 'TribesRounded',
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
