@@ -239,13 +239,13 @@ class _PostTileState extends State<PostTile> {
           border: Border.all(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6), width: 2),
           boxShadow: [
             BoxShadow(
-              color: widget.tribeColor.withOpacity(0.5) ?? DynamicTheme.of(context).data.accentColor,
+              color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
               blurRadius: 2,
               offset: Offset(0, 0),
             ),
           ]
         ),
-        margin: EdgeInsets.fromLTRB(6.0, Constants.largePadding, 6.0, 0.0),
+        margin: EdgeInsets.fromLTRB(6.0, Constants.largePadding, 6.0, 4.0),
         child: InkWell(
           splashColor: Constants.tribesColor.withAlpha(30),
           onTap: () {

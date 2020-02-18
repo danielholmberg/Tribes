@@ -110,8 +110,16 @@ class PostTileCompact extends StatelessWidget {
           child: Container(
         padding: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: Constants.postBackgroundColor,
-          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+          color: DynamicTheme.of(context).data.backgroundColor,
+          borderRadius: BorderRadius.circular(20.0),
+          border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6), width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
+              blurRadius: 2,
+              offset: Offset(0, 0),
+            ),
+          ]
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
