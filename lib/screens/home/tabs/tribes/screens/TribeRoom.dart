@@ -513,7 +513,7 @@ class _TribeRoomState extends State<TribeRoom> {
                               onPressed: () {
                                 Navigator.push(context, CustomPageTransition(
                                   type: CustomPageTransitionType.newPost,
-                                  duration: Constants.pageTransition800,
+                                  duration: Duration(seconds: 1),
                                   child: StreamProvider<UserData>.value(
                                     value: DatabaseService().currentUser(currentUser.uid), 
                                     child: NewPost(tribe: currentTribe),

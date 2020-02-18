@@ -27,8 +27,6 @@ class _NewPostState extends State<NewPost> {
   
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
-  bool autofocus;
-  FocusNode focusNode;
   
   String title = '';
   String content = '';
@@ -41,23 +39,6 @@ class _NewPostState extends State<NewPost> {
   final TextEditingController maxWidthController = TextEditingController();
   final TextEditingController maxHeightController = TextEditingController();
   final TextEditingController qualityController = TextEditingController();
-
-  @override
-  void initState() {
-    focusNode = FocusNode();
-
-    Future.delayed(Duration(milliseconds: 850)).then((val) {
-      FocusScope.of(context).requestFocus(focusNode);
-    });
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
-  }
 
   void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
     try {
@@ -217,8 +198,6 @@ class _NewPostState extends State<NewPost> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   TextFormField(
-                                    //autofocus: autofocus,
-                                    focusNode: focusNode,
                                     textCapitalization: TextCapitalization.sentences,
                                     style: DynamicTheme.of(context).data.textTheme.title,
                                     cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
@@ -307,38 +286,42 @@ class _NewPostState extends State<NewPost> {
                 bottom: 0.0,
                 left: 0.0,
                 right: 0.0,
-                child: ButtonTheme(
-                  height: 60.0,
-                  minWidth: MediaQuery.of(context).size.width,
-                  child: RaisedButton.icon(
-                    elevation: 8.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                    ),
-                    color: Colors.green,
-                    icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
-                    label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                    textColor: Colors.white,
-                    onPressed: () async {                
-                      if(_formKey.currentState.validate()) {
-                        setState(() => loading = true);
+                child: AnimatedOpacity(
+                  duration: Duration(milliseconds: 500),
+                  opacity: (title.isNotEmpty || content.isNotEmpty || _imageFile != null) ? 1.0 : 0.0,
+                    child: ButtonTheme(
+                    height: 60.0,
+                    minWidth: MediaQuery.of(context).size.width,
+                    child: RaisedButton.icon(
+                      elevation: 8.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                      ),
+                      color: Colors.green,
+                      icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                      label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                      textColor: Colors.white,
+                      onPressed: () async {                
+                        if(_formKey.currentState.validate()) {
+                          setState(() => loading = true);
 
-                        if(_imageFile != null) {
-                          _fileURL = await StorageService().uploadFile(_imageFile);
+                          if(_imageFile != null) {
+                            _fileURL = await StorageService().uploadFile(_imageFile);
+                          }
+                          
+                          DatabaseService().addNewPost(
+                            currentUser.uid, 
+                            title, 
+                            content, 
+                            _fileURL ?? null, 
+                            widget.tribe.id
+                          );
+
+                          Navigator.pop(context);
                         }
-                        
-                        await DatabaseService().addNewPost(
-                          currentUser.uid, 
-                          title, 
-                          content, 
-                          _fileURL ?? null, 
-                          widget.tribe.id
-                        );
-
-                        Navigator.pop(context);
                       }
-                    }
+                    ),
                   ),
                 ),
               )
