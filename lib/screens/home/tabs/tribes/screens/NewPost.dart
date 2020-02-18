@@ -30,8 +30,8 @@ class _NewPostState extends State<NewPost> {
   bool autofocus;
   FocusNode focusNode;
   
-  String title;
-  String content;
+  String title = '';
+  String content = '';
 
   File _imageFile;
   String _fileURL;
@@ -127,47 +127,51 @@ class _NewPostState extends State<NewPost> {
           leading: IconButton(icon: Icon(Icons.close), 
             color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                  backgroundColor: Constants
-                      .profileSettingsBackgroundColor,
-                  title: Text('Are your sure you want to discard changes?',
-                    style: TextStyle(
-                      fontFamily: 'TribesRounded',
-                      fontWeight: Constants.defaultDialogTitleFontWeight,
-                      fontSize: Constants.defaultDialogTitleFontSize,
+              if(title.isNotEmpty || content.isNotEmpty || _imageFile != null) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                    backgroundColor: Constants
+                        .profileSettingsBackgroundColor,
+                    title: Text('Are your sure you want to discard changes?',
+                      style: TextStyle(
+                        fontFamily: 'TribesRounded',
+                        fontWeight: Constants.defaultDialogTitleFontWeight,
+                        fontSize: Constants.defaultDialogTitleFontSize,
+                      ),
                     ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('No', 
+                          style: TextStyle(
+                            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                            fontFamily: 'TribesRounded',
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Yes',
+                          style: TextStyle(
+                            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                            fontFamily: 'TribesRounded',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Dialog: "Are you sure...?"
+                          Navigator.of(context).pop(); // NewPost
+                        },
+                      ),
+                    ],
                   ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('No', 
-                        style: TextStyle(
-                          color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                          fontFamily: 'TribesRounded',
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    FlatButton(
-                      child: Text('Yes',
-                        style: TextStyle(
-                          color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                          fontFamily: 'TribesRounded',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Dialog: "Are you sure...?"
-                        Navigator.of(context).pop(); // NewPost
-                      },
-                    ),
-                  ],
-                ),
-              );
+                );
+              } else {
+                Navigator.of(context).pop();
+              }
             },
           ),
           actions: <Widget>[
