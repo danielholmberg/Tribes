@@ -171,50 +171,32 @@ class PrivateMessages extends StatelessWidget {
       );
     }
 
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(20.0),
+        topRight: Radius.circular(20.0),
+      ),
+      child: ScrollConfiguration(
+        behavior: CustomScrollBehavior(),
+        child: FirestoreAnimatedList(
+          reverse: false,
+          shrinkWrap: true,
+          query: DatabaseService().chatRooms(currentUser.uid),
+          itemBuilder: (
+            BuildContext context,
+            DocumentSnapshot snapshot,
+            Animation<double> animation,
+            int index,
+          ) => FadeTransition(
+            opacity: animation,
+            child: _chatRoomListItem(ChatData.fromSnapshot(snapshot)),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black54,
-              blurRadius: 5,
-              offset: Offset(0, 0),
-            ),
-          ]
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-          child: ScrollConfiguration(
-            behavior: CustomScrollBehavior(),
-            child: FirestoreAnimatedList(
-              reverse: false,
-              shrinkWrap: true,
-              query: DatabaseService().chatRooms(currentUser.uid),
-              itemBuilder: (
-                BuildContext context,
-                DocumentSnapshot snapshot,
-                Animation<double> animation,
-                int index,
-              ) => FadeTransition(
-                opacity: animation,
-                child: _chatRoomListItem(ChatData.fromSnapshot(snapshot)),
-              ),
-              emptyChild: Center(
-                child: Text('No messages',
-                  style: TextStyle(
-                    fontFamily: 'TribesRounded',
-                    color: Colors.black26,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+          emptyChild: Center(
+            child: Text('No messages',
+              style: TextStyle(
+                fontFamily: 'TribesRounded',
+                color: Colors.black26,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

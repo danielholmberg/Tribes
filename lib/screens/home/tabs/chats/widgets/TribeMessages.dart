@@ -244,67 +244,49 @@ class TribeMessages extends StatelessWidget {
       );
     }
     
-    return Expanded(
-      child: StreamBuilder<List<Tribe>>(
-        stream: DatabaseService().joinedTribes(currentUser.uid),
-        builder: (context, snapshot) {
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(20.0),
+        topRight: Radius.circular(20.0),
+      ),
+      child: ScrollConfiguration(
+        behavior: CustomScrollBehavior(),
+        child: StreamBuilder<List<Tribe>>(
+          stream: DatabaseService().joinedTribes(currentUser.uid),
+          builder: (context, snapshot) {
 
-          if(snapshot.hasData) {
-            List<Tribe> joinedTribes = snapshot.data;
-
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
+            if(snapshot.hasData) {
+              List<Tribe> joinedTribes = snapshot.data;
+              
+              return GridView.builder(
+                padding: EdgeInsets.only(top: 4.0, bottom: 80.0),
+                itemCount: joinedTribes.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 1.5
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black54,
-                    blurRadius: 5,
-                    offset: Offset(0, 0),
-                  ),
-                ]
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-                child: ScrollConfiguration(
-                  behavior: CustomScrollBehavior(),
-                  child: GridView.builder(
-                    padding: EdgeInsets.only(top: 4.0, bottom: 80.0),
-                    itemCount: joinedTribes.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      childAspectRatio: 1.5
-                    ),
-                    itemBuilder: (context, index) {
-                      Tribe currentTribe = joinedTribes[index];
+                itemBuilder: (context, index) {
+                  Tribe currentTribe = joinedTribes[index];
 
-                      return _buildTribeTile(currentTribe);
-                    },
+                  return _buildTribeTile(currentTribe);
+                },
+              );
+            } else if(snapshot.hasError){
+              print('Error retrieving joined Tribes: ${snapshot.error.toString()}');
+              return Center(child: Text('Unable to retrieve Tribes'));
+            } else {
+              return Center(
+                child: Text('No joined Tribes',
+                  style: TextStyle(
+                    fontFamily: 'TribesRounded',
+                    color: Colors.black26,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ),
-            );
-          } else if(snapshot.hasError){
-            print('Error retrieving joined Tribes: ${snapshot.error.toString()}');
-            return Center(child: Text('Unable to retrieve Tribes'));
-          } else {
-            return Center(
-              child: Text('No joined Tribes',
-                style: TextStyle(
-                  fontFamily: 'TribesRounded',
-                  color: Colors.black26,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            );
+              );
+            }
           }
-        }
+        ),
       ),
     );
   }

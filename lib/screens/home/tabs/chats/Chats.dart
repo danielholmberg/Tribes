@@ -75,22 +75,6 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
       );
     }
 
-    _privateMessages() {
-      return Column(
-        children: <Widget>[
-          PrivateMessages(),
-        ],
-      );
-    }
-
-    _tribeMessages() {
-      return Column(
-        children: <Widget>[
-          TribeMessages(),
-        ],
-      );
-    }
-
     return Container(
       color: DynamicTheme.of(context).data.primaryColor,
       child: SafeArea(
@@ -113,7 +97,7 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
                       ),
                     ]
                   ),
-                  child: _currentTab == 0 ? _privateMessages() : _tribeMessages(), 
+                  child: _currentTab == 0 ? PrivateMessages() : TribeMessages(), 
                 ),
               ),
             ],
