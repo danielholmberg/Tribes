@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:tribes/models/Message.dart';
 import 'package:tribes/models/Post.dart';
@@ -22,6 +24,9 @@ class DatabaseService {
   // Chats Ref
   final CollectionReference chatsRoot = Firestore.instance.collection('chats');
 
+  // Firebase Cloud Messaging
+  final FirebaseMessaging fcm = FirebaseMessaging();
+
   Future createUserDocument(String uid, String name, String username, String email) {
     var data = {
       'name': name,
@@ -34,6 +39,28 @@ class DatabaseService {
     return usersRoot
         .document(uid)
         .setData(data);
+  }
+
+  Future saveFCMToken() async {
+    final currentUser = await FirebaseAuth.instance.currentUser();
+
+    // Get the token for this device
+    String fcmToken = await fcm.getToken();
+
+    // Save it to Firestore
+    if (fcmToken != null) {
+      var tokens = Firestore.instance
+          .collection('users')
+          .document(currentUser.uid)
+          .collection('tokens')
+          .document(fcmToken);
+
+      await tokens.setData({
+        'token': fcmToken,
+        'createdAt': FieldValue.serverTimestamp(), // optional
+        'platform': Platform.operatingSystem // optional
+      });
+    }
   }
 
   Future updateUserData(String uid, String name, String username, String email,
@@ -252,10 +279,12 @@ class DatabaseService {
   }
 
   Future addUserToTribe(String userID, String tribeID) {
+    fcm.subscribeToTopic(tribeID);
     return tribesRoot.document(tribeID).updateData({'members': FieldValue.arrayUnion([userID])});
   }
 
   Future leaveTribe(String userID, String tribeID) {
+    fcm.unsubscribeFromTopic(tribeID);
     return tribesRoot.document(tribeID).updateData({'members': FieldValue.arrayRemove([userID])});
   }
 

@@ -11,6 +11,7 @@ import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/utils.dart';
 
 class ChatRoom extends StatefulWidget {
 
@@ -43,26 +44,14 @@ class _ChatRoomState extends State<ChatRoom> {
       String formattedTime = DateFormat('kk:mm').format(created);
 
       final Container msg = Container(
-        width: MediaQuery.of(context).size.width * 0.6,
-        margin: isMe 
-          ? EdgeInsets.only(top: 8.0, bottom: 8.0, left: MediaQuery.of(context).size.width * 0.4, right: 6.0) 
-          : EdgeInsets.only(top: 8.0, bottom: 8.0, left: 6.0),
-        padding: EdgeInsets.all(12.0),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
+        margin: EdgeInsets.all(6.0),
+        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
         decoration: BoxDecoration(
           color: isMe 
-          ? DynamicTheme.of(context).data.primaryColor.withOpacity(0.8)
-          : (widget.currentTribe != null ? widget.currentTribe.color : Colors.grey).withOpacity(0.8),
-          borderRadius: isMe 
-            ? BorderRadius.only(
-              topRight: Radius.circular(20.0),
-              topLeft: Radius.circular(20.0),
-              bottomLeft: Radius.circular(20.0),
-            )
-            : BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-              bottomRight: Radius.circular(20.0),
-            ),
+          ? DynamicTheme.of(context).data.primaryColor.withOpacity(0.7)
+          : (widget.currentTribe != null ? widget.currentTribe.color : Colors.grey).withOpacity(0.7),
+          borderRadius: BorderRadius.circular(20.0)
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,42 +64,86 @@ class _ChatRoomState extends State<ChatRoom> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Row(
-              mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Text(formattedTime,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontFamily: 'TribesRounded',
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ]
-            )
           ],
         ),
       );
 
       if(isMe) {
-        return msg;
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Text(formattedTime,
+              style: TextStyle(
+                color: Colors.black26,
+                fontFamily: 'TribesRounded',
+                fontSize: 12.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                msg,
+                StreamBuilder<UserData>(
+                  stream: DatabaseService().userData(message.senderID),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData 
+                    ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      child: userAvatar(
+                        snapshot.data, 
+                        color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, 
+                        size: 14, 
+                        onlyAvatar: true
+                      ),
+                    ) : SizedBox.shrink();
+                  }
+                ),
+              ],
+            ),
+            SizedBox(width: Constants.defaultPadding)
+          ],
+        );
       }
 
       return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          msg, 
-          IconButton(
-            icon: Icon(Icons.favorite_border), //TODO: message.isLiked ? Icon(Icons.favorite) : Icon(Icons.favorite_border),
-            iconSize: 30.0,
-            color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, //TODO: message.isLiked ? DynamicTheme.of(context).data.primaryColor : Colors.blueGrey,
-            onPressed: () {
-              Fluttertoast.showToast(
-                msg: 'Coming soon!',
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-              );
-            },
+          SizedBox(width: Constants.defaultPadding),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              StreamBuilder<UserData>(
+                stream: DatabaseService().userData(message.senderID),
+                builder: (context, snapshot) {
+                  return snapshot.hasData 
+                  ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: userAvatar(
+                      snapshot.data, 
+                      color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, 
+                      size: 14, 
+                      onlyAvatar: true
+                    ),
+                  ) : SizedBox.shrink();
+                }
+              ),
+              msg, 
+            ],
+          ),
+          Text(formattedTime,
+            style: TextStyle(
+              color: Colors.black26,
+              fontFamily: 'TribesRounded',
+              fontSize: 12.0,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       );
@@ -118,8 +151,8 @@ class _ChatRoomState extends State<ChatRoom> {
 
     _buildMessageComposer() {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.0),
-        height: 70.0,
+        constraints: BoxConstraints(minHeight: 70),
+        padding: EdgeInsets.symmetric(vertical: 8.0),
         color: Colors.white,
         child: Row(
           children: <Widget>[
@@ -135,9 +168,11 @@ class _ChatRoomState extends State<ChatRoom> {
                 controller: controller,
                 autofocus: widget.reply != null ? widget.reply : false,
                 textCapitalization: TextCapitalization.sentences,
+                minLines: 1,
+                maxLines: 10,
                 cursorColor: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
+                  contentPadding: EdgeInsets.all(12.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide: BorderSide(color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, width: 2.0),

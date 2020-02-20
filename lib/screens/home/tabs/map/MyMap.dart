@@ -11,12 +11,14 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/Loading.dart';
 
-class Map extends StatefulWidget {
+class MyMap extends StatefulWidget {
+  static const routeName = '/home/myMap';
+
   @override
-  _MapState createState() => _MapState();
+  _MyMapState createState() => _MyMapState();
 }
 
-class _MapState extends State<Map> with AutomaticKeepAliveClientMixin {
+class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
   // Old Town @ Stockholm,Sweden
   LatLng _initialPosition = LatLng(Constants.initialLat, Constants.initialLng);
 

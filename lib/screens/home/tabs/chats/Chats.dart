@@ -1,19 +1,23 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribes/models/NotificationData.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/chats/widgets/PrivateMessages.dart';
 import 'package:tribes/screens/home/tabs/chats/widgets/TribeMessages.dart';
 
 class Chats extends StatefulWidget {
+  static const routeName = '/home/chats';
+
   @override
   _ChatsState createState() => _ChatsState();
 }
 
 class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
 
-  int _currentCategory = 0;
-  final List<String> categories = ['Private', 'Tribes'];
+  int _currentTab = 0;
+  final List<String> tabs = ['Private', 'Tribes'];
+  bool firstBuild = true;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +26,23 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
     print('Building Chats()...');
     print('Current user ${currentUser.toString()}');
 
+    final NotificationData notificationData = firstBuild ? ModalRoute.of(context).settings.arguments : null;
+    if(firstBuild) firstBuild = false;
+
+    if(notificationData != null) {
+      print(notificationData.toString());
+      switch (notificationData.tab) {
+        case 'Private':
+          _currentTab = 0;
+          break;
+        case 'Tribes':
+          _currentTab = 1;
+          break;
+        default:
+          _currentTab = _currentTab;
+      }
+    }
+
     _categorySelector() {
       return Container(
         height: 80.0,
@@ -29,17 +50,17 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
         child: Center(
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
+            itemCount: tabs.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
               return GestureDetector(
-                onTap: () => setState(() => _currentCategory = index),
+                onTap: () => setState(() => _currentTab = index),
                 child: Container(
                   margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
                   child: Text(
-                    categories[index],
+                    tabs[index],
                     style: TextStyle(
-                      color: index == _currentCategory ? Colors.white : Colors.white60,
+                      color: index == _currentTab ? Colors.white : Colors.white60,
                       fontFamily: 'TribesRounded',
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
@@ -92,7 +113,7 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
                       ),
                     ]
                   ),
-                  child: _currentCategory == 0 ? _privateMessages() : _tribeMessages(), 
+                  child: _currentTab == 0 ? _privateMessages() : _tribeMessages(), 
                 ),
               ),
             ],

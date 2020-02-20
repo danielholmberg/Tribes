@@ -8,6 +8,7 @@ import 'package:tribes/models/Chat.dart';
 import 'package:tribes/models/Message.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/chats/ChatRoom.dart';
+import 'package:tribes/screens/home/tabs/chats/Chats.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
@@ -15,6 +16,8 @@ import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class PrivateMessages extends StatelessWidget {
+  static const routeName = Chats.routeName + '/privateMessages';
+
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
@@ -80,6 +83,7 @@ class PrivateMessages extends StatelessWidget {
                             ]
                           ),
                           margin: EdgeInsets.only(left: 12.0, right: 20.0),
+                          padding: EdgeInsets.only(right: 20.0),
                           child: ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
                             leading: userAvatar(reciever, size: Constants.chatMessageAvatarSize, onlyAvatar: true),
@@ -94,35 +98,41 @@ class PrivateMessages extends StatelessWidget {
                               maxLines: 1,
                               softWrap: false,
                               text: TextSpan(
-                                text: formattedTime.isNotEmpty ? formattedTime : 'No messages',
+                                text: '${isMe ? 'You: ' : ''}',
                                 style: TextStyle(
-                                  color: formattedTime.isNotEmpty ? Colors.black : Colors.black26,
+                                  color: Colors.black54,
                                   fontFamily: 'TribesRounded',
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 12,
                                 ),
                                 children: <TextSpan>[
                                   TextSpan(
-                                    text: '${isMe ? ' You: ' : '  '}',
-                                    style: TextStyle(
-                                      color: Colors.black54,
-                                      fontFamily: 'TribesRounded',
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  TextSpan(
                                     text: message,
                                     style: TextStyle(
+                                      color: Colors.black,
                                       fontFamily: 'TribesRounded',
-                                      fontWeight: FontWeight.normal,
+                                      fontWeight: FontWeight.w500,
                                       fontSize: 14,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            trailing: SizedBox(width: Constants.defaultSpacing),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(formattedTime ?? '',
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                    fontFamily: 'TribesRounded',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

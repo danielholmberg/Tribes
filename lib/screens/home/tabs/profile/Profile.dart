@@ -22,6 +22,8 @@ import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class Profile extends StatefulWidget {
+  static const routeName = '/home/profile';
+
   @override
   _ProfileState createState() => _ProfileState();
 }

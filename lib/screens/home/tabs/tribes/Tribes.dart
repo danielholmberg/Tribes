@@ -13,6 +13,8 @@ import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class Tribes extends StatefulWidget {
+  static const routeName = '/home/tribes';
+
   @override
   _TribesState createState() => _TribesState();
 }
@@ -216,7 +218,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                 itemCount: joinedTribesList.length,
                                 itemBuilder: (context, index) {
                                   return Container(
-                                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
+                                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.08, bottom: MediaQuery.of(context).size.height * 0.15),
                                     child: TribeTile(tribe: joinedTribesList[index]),
                                   );
                                 },
