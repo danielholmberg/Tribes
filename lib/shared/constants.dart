@@ -27,6 +27,7 @@ const dialogCornerRadius = 20.0;
 const maxCornerRadius = 1000.0;
 const defaultProfilePicRadius = 16.0;
 const defaultUsernameFontSize = 16.0;
+const defaultNameFontSize = 14.0;
 
 // AppBar
 const appBarElevation = 0.0;

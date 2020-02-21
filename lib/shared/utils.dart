@@ -41,7 +41,13 @@ IconButton likeButton(UserData user, String postID, Color color) {
     );
 }
 
-Widget userAvatar(UserData user, {Color color: Constants.primaryColor, Future addressFuture, bool onlyAvatar = false, double size = Constants.defaultProfilePicRadius}) {
+Widget userAvatar(UserData user, {
+  Color color: Constants.primaryColor, 
+  Future addressFuture, 
+  bool onlyAvatar = false, 
+  bool withName = false, 
+  double size = Constants.defaultProfilePicRadius
+}) {
   return Row(
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,22 +77,36 @@ Widget userAvatar(UserData user, {Color color: Constants.primaryColor, Future ad
         ),
       ),
       Visibility(
-        visible: !onlyAvatar,
+        visible: !onlyAvatar || withName,
         child: SizedBox(width: Constants.mediumPadding)
       ),
       Visibility(
-        visible: !onlyAvatar,
+        visible: !onlyAvatar || withName,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(user.username,
-              style: TextStyle(
-                color: color,
-                fontFamily: 'TribesRounded',
-                fontWeight: FontWeight.bold,
-                fontSize: Constants.defaultUsernameFontSize,
+            Visibility(
+              visible: withName,
+              child: Text(user.name,
+                style: TextStyle(
+                  color: color,
+                  fontFamily: 'TribesRounded',
+                  fontWeight: FontWeight.w600,
+                  fontSize: Constants.defaultNameFontSize,
+                ),
+              ),
+            ),
+            Visibility(
+              visible: !onlyAvatar,
+              child: Text(user.username,
+                style: TextStyle(
+                  color: color.withOpacity(withName ? 0.6 : 1.0),
+                  fontFamily: 'TribesRounded',
+                  fontWeight: withName ? FontWeight.w500 : FontWeight.bold,
+                  fontSize: withName ? 12 : Constants.defaultUsernameFontSize,
+                ),
               ),
             ),
             Visibility(

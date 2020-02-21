@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/NotificationData.dart';
 import 'package:tribes/models/User.dart';
+import 'package:tribes/screens/home/tabs/chats/screens/NewChat.dart';
 import 'package:tribes/screens/home/tabs/chats/widgets/PrivateMessages.dart';
 import 'package:tribes/screens/home/tabs/chats/widgets/TribeMessages.dart';
+import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 
 class Chats extends StatefulWidget {
   static const routeName = '/home/chats';
@@ -83,7 +87,37 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
           backgroundColor: DynamicTheme.of(context).data.primaryColor,
           body: Column(
             children: <Widget>[
-              _categorySelector(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.search),
+                    iconSize: Constants.defaultIconSize,
+                    color: Colors.white,
+                    onPressed: () => print('Pressed search')
+                  ),
+                  Spacer(),
+                  _categorySelector(),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    iconSize: Constants.defaultIconSize,
+                    color: Colors.white,
+                    onPressed: () => Navigator.push(context, 
+                      CustomPageTransition(
+                        type: CustomPageTransitionType.newMessage, 
+                        duration: Constants.pageTransition600, 
+                        child: StreamProvider<UserData>.value(
+                          value: DatabaseService().currentUser(currentUser.uid), 
+                          child: NewChat(currentUserID: currentUser.uid),
+                        ),
+                      )
+                    ),
+                  ),
+                ],
+              ),
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(

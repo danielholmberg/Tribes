@@ -605,7 +605,7 @@ class _JoinTribeState extends State<JoinTribe> {
     }
 
     _tribesList.forEach((tribe) {
-      if (tribe.name.contains(text))
+      if (tribe.name.toLowerCase().contains(text.toLowerCase()))
         _searchResult.add(tribe);
     });
 

@@ -305,6 +305,19 @@ class DatabaseService {
     return chatsRoot.where('members', arrayContains: userID).snapshots();
   }
 
+  Future<String> createNewChatRoom(String userID, String friendID) {
+    String roomID = userID.hashCode <= friendID.hashCode ? '$userID-$friendID' : '$friendID-$userID';
+
+    var data = {
+      'members': [userID, friendID],
+    };
+
+    print('Creating new chat room data: $data');
+    chatsRoot.document(roomID).setData(data);
+    
+    return Future.value(roomID);
+  }
+
   Future sendMessage(String roomID, String userID, String message) {
     var data = {
       'message': message,
@@ -317,4 +330,35 @@ class DatabaseService {
 
     return Firestore.instance.runTransaction((transaction) => transaction.set(messageRef, data));
   }
+
+  Future<List<Tribe>> joinedTribesFuture(String userID) async {
+    return tribesRoot.where('members', arrayContains: userID).getDocuments().then((list) =>
+      list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList()
+    );
+  }
+
+  Future<List<UserData>> friendsList(String userID) async {
+    List<UserData> _friends = [];
+    List<String> _alreadyAddedFriendIDs = [];
+    List<Tribe> _joinedTribes = await joinedTribesFuture(userID);
+
+    for(final tribe in _joinedTribes) {
+      print('Looking at tribe: ${tribe.name}');
+      for(final memberID in tribe.members) {
+        if(memberID != userID) {
+          if(!_alreadyAddedFriendIDs.contains(memberID)) {
+            print('Adding friend: $memberID');
+            UserData friend = await usersRoot.document(memberID).get().then((doc) => UserData.fromSnapshot(doc));
+            _friends.add(friend);
+            _alreadyAddedFriendIDs.add(memberID);
+          }
+        }
+      }
+    }
+
+    print('friends: $_friends');
+    return _friends;
+
+  }
+
 }
