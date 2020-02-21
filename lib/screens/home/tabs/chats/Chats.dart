@@ -1,5 +1,6 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/NotificationData.dart';
 import 'package:tribes/models/User.dart';
@@ -96,7 +97,11 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
                     icon: Icon(Icons.search),
                     iconSize: Constants.defaultIconSize,
                     color: Colors.white,
-                    onPressed: () => print('Pressed search')
+                    onPressed: () => Fluttertoast.showToast(
+                      msg: 'Coming soon!',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                    ),
                   ),
                   Spacer(),
                   _categorySelector(),

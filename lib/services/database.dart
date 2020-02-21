@@ -315,6 +315,8 @@ class DatabaseService {
     print('Creating new chat room data: $data');
     chatsRoot.document(roomID).setData(data);
     
+    fcm.subscribeToTopic(roomID);
+
     return Future.value(roomID);
   }
 

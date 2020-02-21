@@ -160,7 +160,11 @@ class _ChatRoomState extends State<ChatRoom> {
               icon: Icon(Icons.photo),
               iconSize: 25.0,
               color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
-              onPressed: () {print('Picking image to attach...');},
+              onPressed: () => Fluttertoast.showToast(
+                msg: 'Coming soon!',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+              ),
             ),
             SizedBox(width: Constants.defaultPadding),
             Expanded(
@@ -247,7 +251,11 @@ class _ChatRoomState extends State<ChatRoom> {
                 icon: Icon(Icons.more_horiz),
                 iconSize: 30.0,
                 color: Colors.white,
-                onPressed: () {print('Clicked on More button');},
+                onPressed: () => Fluttertoast.showToast(
+                  msg: 'Coming soon!',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                ),
               ),
             ],
           ),
