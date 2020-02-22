@@ -497,13 +497,12 @@ class _TribeRoomState extends State<TribeRoom> {
                               ),
                             ]
                           ),
-                          margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/4, vertical: 12.0),
                           child: ButtonTheme(
                             height: 60.0,
                             child: RaisedButton.icon(
                               elevation: 0.0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                               ),
                               color: currentTribe.color ??
                                   DynamicTheme.of(context).data.primaryColor,
