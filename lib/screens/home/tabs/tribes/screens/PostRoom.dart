@@ -208,80 +208,96 @@ class _PostRoomState extends State<PostRoom> {
             body: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                ScrollConfiguration(
-                  behavior: CustomScrollBehavior(),
-                  child: ListView(
-                    padding: EdgeInsets.only(bottom: 68.0),
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topCenter,
-                        padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              TextFormField(
-                                focusNode: focusNode,
-                                initialValue: title ?? widget.post.title,
-                                textCapitalization: TextCapitalization.sentences,
-                                style: DynamicTheme.of(context).data.textTheme.title,
-                                cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
-                                validator: (val) => val.isEmpty 
-                                  ? 'Enter a title' 
-                                  : null,
-                                onChanged: (val) {
-                                  setState(() {
-                                    title = val;
-                                    edited = originalTitle != val || originalContent != content;
-                                  });
-                                },
-                              ),
-                              TextFormField(
-                                initialValue: content ?? widget.post.content,
-                                textCapitalization: TextCapitalization.sentences,
-                                style: DynamicTheme.of(context).data.textTheme.body1,
-                                cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
-                                validator: (val) => val.isEmpty 
-                                  ? 'Enter some content' 
-                                  : null,
-                                onChanged: (val) {
-                                  setState((){
-                                    content = val;
-                                    edited = originalContent != val || originalTitle != title;
-                                  });
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      widget.post.fileURL.isEmpty 
-                      ? SizedBox.shrink() 
-                      : CachedNetworkImage(
-                        imageUrl: widget.post.fileURL,
-                        imageBuilder: (context, imageProvider) => Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                            child: Image(
-                              image: imageProvider, 
-                              fit: BoxFit.scaleDown,
-                              frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-                                return child;
-                              },
+                Positioned.fill(
+                  child: ScrollConfiguration(
+                    behavior: CustomScrollBehavior(),
+                    child: ListView(
+                      padding: EdgeInsets.only(bottom: 76.0),
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.topCenter,
+                          padding: EdgeInsets.all(16.0),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                TextFormField(
+                                  focusNode: focusNode,
+                                  initialValue: title ?? widget.post.title,
+                                  textCapitalization: TextCapitalization.sentences,
+                                  style: DynamicTheme.of(context).data.textTheme.title,
+                                  cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                  validator: (val) => val.isEmpty 
+                                    ? 'Enter a title' 
+                                    : null,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      title = val;
+                                      edited = originalTitle != val || originalContent != content;
+                                    });
+                                  },
+                                ),
+                                TextFormField(
+                                  initialValue: content ?? widget.post.content,
+                                  textCapitalization: TextCapitalization.sentences,
+                                  style: DynamicTheme.of(context).data.textTheme.body1,
+                                  cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: null,
+                                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                  validator: (val) => val.isEmpty 
+                                    ? 'Enter some content' 
+                                    : null,
+                                  onChanged: (val) {
+                                    setState((){
+                                      content = val;
+                                      edited = originalContent != val || originalTitle != title;
+                                    });
+                                  },
+                                )
+                              ],
                             ),
                           ),
                         ),
-                        placeholder: (context, url) => Loading(),
-                        errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-                      ),
-                    ],
+                        widget.post.fileURL.isEmpty 
+                        ? SizedBox.shrink() 
+                        : Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: CachedNetworkImage(
+                            imageUrl: widget.post.fileURL,
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
+                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                border: Border.all(width: 2.0, color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4),
+                                    blurRadius: 10,
+                                    offset: Offset(0, 0),
+                                  ),
+                                ]
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                child: Image(
+                                  image: imageProvider, 
+                                  fit: BoxFit.scaleDown,
+                                  frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+                                    return child;
+                                  },
+                                ),
+                              ),
+                            ),
+                            placeholder: (context, url) => Loading(),
+                            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -303,34 +319,34 @@ class _PostRoomState extends State<PostRoom> {
                         icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
                         label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                         textColor: Colors.white,
-                        onPressed: edited ? () async {
+                        onPressed: edited ? () {
                           if(_formKey.currentState.validate()) {
                             setState(() { 
                               loading = true;
                             });
 
-                            await DatabaseService().updatePostData(
+                            DatabaseService().updatePostData(
                               widget.post.id, 
                               title ?? widget.post.title, 
                               content ?? widget.post.content
-                            ).then((val) {
-                              _scaffoldKey.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text('Post saved', 
-                                    style: TextStyle(
-                                      fontFamily: 'TribesRounded'
-                                    ),
-                                  ),
-                                  duration: Duration(milliseconds: 500),
-                                )
-                              );
+                            );
 
-                              setState(() {
-                                loading = false;
-                                edited = false;
-                                originalTitle = title;
-                                originalContent = content;
-                              });
+                            _scaffoldKey.currentState.showSnackBar(
+                            SnackBar(
+                                content: Text('Post saved', 
+                                  style: TextStyle(
+                                    fontFamily: 'TribesRounded'
+                                  ),
+                                ),
+                                duration: Duration(milliseconds: 500),
+                              )
+                            );
+
+                            setState(() {
+                              loading = false;
+                              edited = false;
+                              originalTitle = title;
+                              originalContent = content;
                             });
                           }
                         } : null,
