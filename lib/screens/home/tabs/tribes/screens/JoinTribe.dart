@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
@@ -564,7 +566,10 @@ class _JoinTribeState extends State<JoinTribe> {
                       children: <Widget>[
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
-                          child: Icon(Icons.arrow_back, color: DynamicTheme.of(context).data.primaryColor),
+                          child: Icon(
+                            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back, 
+                            color: DynamicTheme.of(context).data.primaryColor
+                          ),
                         ),
                         SizedBox(width: Constants.defaultSpacing),
                         Icon(Icons.search, color: Colors.black54),

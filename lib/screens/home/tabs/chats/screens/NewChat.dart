@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -120,7 +122,10 @@ class _NewChatState extends State<NewChat> {
                       children: <Widget>[
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
-                          child: Icon(Icons.arrow_back, color: DynamicTheme.of(context).data.primaryColor),
+                          child: Icon(
+                            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back, 
+                            color: DynamicTheme.of(context).data.primaryColor
+                          ),
                         ),
                         SizedBox(width: Constants.defaultSpacing),
                         Icon(Icons.search, color: Colors.black54),

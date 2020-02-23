@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
@@ -59,7 +61,7 @@ class _NewTribeState extends State<NewTribe> {
               ),
               backgroundColor: DynamicTheme.of(context).data.backgroundColor,
               iconTheme: IconThemeData(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
-              leading: IconButton(icon: Icon(Icons.arrow_back), 
+              leading: IconButton(icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back), 
                 color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                 onPressed: () {
                   if(name.isNotEmpty || desc.isNotEmpty) {

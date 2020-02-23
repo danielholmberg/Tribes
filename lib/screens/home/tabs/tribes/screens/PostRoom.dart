@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +145,7 @@ class _PostRoomState extends State<PostRoom> {
                   ),
                 ],
               ),
-              leading: IconButton(icon: Icon(Icons.arrow_back), 
+              leading: IconButton(icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back), 
                 color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                 onPressed: () {
                   edited ? _showDiscardDialog() : Navigator.of(context).pop();
