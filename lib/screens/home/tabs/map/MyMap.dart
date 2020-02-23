@@ -77,27 +77,28 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
           builder: (context, snapshot) {
             List<Tribe> tribesList = snapshot.hasData ? snapshot.data : [];
             
+            // TO-DO: Change to only listen to a stream of relevant users instead of ALL users. 
             return StreamBuilder<List<UserData>>(
               stream: DatabaseService().users,
               builder: (context, snapshot) {
                 if(snapshot.hasData) {
-                  List<UserData> membersList = snapshot.data;
+                  List<UserData> usersList = snapshot.data;
+                  List<String> friendsList = [];
+                  List<UserData> friendsDataList = [];
                   Set<Marker> markers = Set<Marker>();
+
+                  tribesList.forEach((tribe) => friendsList.addAll(tribe.members.where((memberID) => (!friendsList.contains(memberID) && currentUser.uid != memberID))));
                   
-                  membersList.forEach((user) {
-                    tribesList.forEach((Tribe tribe) {
-                      if (tribe.members.contains(user.uid)) {
-                        markers.add(Marker(
-                          markerId: MarkerId(user.uid),
-                          position: LatLng(user.lat, user.lng),
-                          icon: markerIcon,
-                          infoWindow: InfoWindow(
-                            title: user.username,
-                          ),
-                        ));
-                      }
-                    });
-                  });
+                  friendsList.forEach((friendID) => friendsDataList.add(usersList.singleWhere((user) => user.uid == friendID)));
+                  friendsDataList.forEach((friendData) => markers.add(Marker(
+                      markerId: MarkerId(friendData.uid),
+                      position: LatLng(friendData.lat, friendData.lng),
+                      icon: markerIcon,
+                      infoWindow: InfoWindow(
+                        title: friendData.username,
+                      ),
+                    ))
+                  );
                   
                   return Stack(
                     children: <Widget>[
@@ -144,14 +145,14 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                                     shrinkWrap: false,
                                     padding: EdgeInsets.all(6.0),
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: membersList.length,
+                                    itemCount: friendsList.length,
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
                                         onTap: () async => await mapController.future.then((controller) =>
                                           controller.animateCamera(
                                             CameraUpdate.newCameraPosition(
                                               CameraPosition(
-                                                target: LatLng(membersList[index].lat, membersList[index].lng),
+                                                target: LatLng(friendsDataList[index].lat, friendsDataList[index].lng),
                                                 zoom: 15.0
                                               )
                                             )
@@ -175,7 +176,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                            child: userAvatar(membersList[index]),
+                                            child: userAvatar(friendsDataList[index]),
                                           ),
                                         ),
                                       );
