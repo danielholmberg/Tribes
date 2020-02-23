@@ -18,10 +18,9 @@ class _NewTribeState extends State<NewTribe> {
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
-  String name;
-  String desc;
+  String name = '';
+  String desc = '';
   Color tribeColor;
-  String imageURL;
   String error = '';
 
   @override
@@ -60,6 +59,56 @@ class _NewTribeState extends State<NewTribe> {
               ),
               backgroundColor: DynamicTheme.of(context).data.backgroundColor,
               iconTheme: IconThemeData(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
+              leading: IconButton(icon: Icon(Icons.arrow_back), 
+                color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                onPressed: () {
+                  if(name.isNotEmpty || desc.isNotEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                        backgroundColor: Constants
+                            .profileSettingsBackgroundColor,
+                        title: Text('Are your sure you want to discard changes?',
+                          style: TextStyle(
+                            fontFamily: 'TribesRounded',
+                            fontWeight: Constants.defaultDialogTitleFontWeight,
+                            fontSize: Constants.defaultDialogTitleFontSize,
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('No', 
+                              style: TextStyle(
+                                color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                fontFamily: 'TribesRounded',
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text('Yes',
+                              style: TextStyle(
+                                color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                fontFamily: 'TribesRounded',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Dialog: "Are you sure...?"
+                              Navigator.of(context).pop(); // NewPost
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.palette),
@@ -88,86 +137,121 @@ class _NewTribeState extends State<NewTribe> {
                 ),
               ],
             ),
-            body: ScrollConfiguration(
-              behavior: CustomScrollBehavior(),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  padding: EdgeInsets.all(16.0),
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    TextFormField(
-                      textCapitalization: TextCapitalization.words,
-                      maxLength: Constants.tribeNameMaxLength,
-                      cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                      decoration: Decorations.postContentInput.copyWith(
-                        labelText: 'Name',
-                        labelStyle: TextStyle(
-                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                          fontFamily: 'TribesRounded',
-                          fontWeight: FontWeight.bold,
-                        ),
-                        hintText: '',
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          borderSide: BorderSide(
-                            color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
-                            width: 2.0
+            body: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: ScrollConfiguration(
+                    behavior: CustomScrollBehavior(),
+                    child: ListView(
+                      padding: EdgeInsets.only(bottom: 20.0),
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.topCenter,
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    TextFormField(
+                                      textCapitalization: TextCapitalization.words,
+                                      maxLength: Constants.tribeNameMaxLength,
+                                      cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                      decoration: Decorations.postContentInput.copyWith(
+                                        labelText: 'Name',
+                                        labelStyle: TextStyle(
+                                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                          fontFamily: 'TribesRounded',
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        hintText: '',
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                            color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
+                                            width: 2.0
+                                          ),
+                                        )
+                                      ),
+                                      validator: (val) => val.isEmpty ? 'Enter a name' : null,
+                                      onChanged: (val) {
+                                        setState(() => name = val);
+                                      },
+                                    ),
+                                    SizedBox(height: Constants.smallSpacing),
+                                    TextFormField(
+                                      textCapitalization: TextCapitalization.sentences,
+                                      keyboardType: TextInputType.multiline,
+                                      maxLength: Constants.tribeDescMaxLength,
+                                      maxLines: null,
+                                      decoration: Decorations.postContentInput.copyWith(
+                                        labelText: 'Description',
+                                        labelStyle: TextStyle(
+                                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                          fontFamily: 'TribesRounded',
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                        hintText: '',
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                            color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
+                                            width: 2.0
+                                          ),
+                                        )
+                                      ),
+                                      validator: (val) => val.isEmpty ? 'Enter a description' : null,
+                                      onChanged: (val) {
+                                        setState(() => desc = val);
+                                      },
+                                    ),
+                                    SizedBox(height: Constants.smallSpacing),
+                                    Center(
+                                      child: Text(
+                                        error,
+                                        style: TextStyle(
+                                          color: Constants.errorColor,
+                                          fontSize: Constants.errorFontSize,
+                                          fontFamily: 'TribesRounded',
+                                        ),
+                                      ),
+                                    ),
+                                  ]
+                                )
+                              ),
+                            ],
                           ),
-                        )
-                      ),
-                      validator: (val) => val.isEmpty ? 'Enter a name' : null,
-                      onChanged: (val) {
-                        setState(() => name = val);
-                      },
-                    ),
-                    SizedBox(height: Constants.smallSpacing),
-                    TextFormField(
-                      textCapitalization: TextCapitalization.sentences,
-                      keyboardType: TextInputType.multiline,
-                      maxLength: Constants.tribeDescMaxLength,
-                      maxLines: null,
-                      decoration: Decorations.postContentInput.copyWith(
-                        labelText: 'Description',
-                        labelStyle: TextStyle(
-                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                          fontFamily: 'TribesRounded',
-                          fontWeight: FontWeight.bold,
                         ),
-                        hintText: '',
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          borderSide: BorderSide(
-                            color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
-                            width: 2.0
-                          ),
-                        )
-                      ),
-                      validator: (val) => val.isEmpty ? 'Enter a description' : null,
-                      onChanged: (val) {
-                        setState(() => desc = val);
-                      },
+                      ],
                     ),
-                    SizedBox(height: Constants.smallSpacing),
-                    ButtonTheme(
-                      height: 50.0,
+                  ),
+                ),
+                Positioned(
+                  bottom: 0.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: AnimatedOpacity(
+                    duration: Duration(milliseconds: 500),
+                    opacity: (name.isNotEmpty || desc.isNotEmpty) ? 1.0 : 0.0,
+                      child: ButtonTheme(
+                      height: 60.0,
                       minWidth: MediaQuery.of(context).size.width,
                       child: RaisedButton.icon(
                         elevation: 8.0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius:
+                              BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                         ),
-                        color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                        icon: Icon(Icons.done,
-                            color: DynamicTheme.of(context).data.accentColor),
-                        label: Text('Create Tribe', 
-                          style: TextStyle(
-                            fontFamily: 'TribesRounded',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        color: Colors.green,
+                        icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                        label: Text('Create', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                         textColor: Colors.white,
-                        onPressed: () {
+                        onPressed: () async {                
                           if(_formKey.currentState.validate()) {
                             setState(() => loading = true);
                             try {
@@ -176,7 +260,7 @@ class _NewTribeState extends State<NewTribe> {
                                 name, 
                                 desc, 
                                 tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
-                                imageURL
+                                null
                               );
                               Navigator.pop(context);
                             } catch (e) {
@@ -187,23 +271,12 @@ class _NewTribeState extends State<NewTribe> {
                               });
                             }
                           }
-                        },
+                        }
                       ),
                     ),
-                    SizedBox(height: Constants.smallSpacing),
-                    Center(
-                      child: Text(
-                        error,
-                        style: TextStyle(
-                          color: Constants.errorColor,
-                          fontSize: Constants.errorFontSize,
-                          fontFamily: 'TribesRounded',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                )
+              ],
             ),
           ),
         ),

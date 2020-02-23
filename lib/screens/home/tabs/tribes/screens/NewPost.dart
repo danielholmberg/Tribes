@@ -56,13 +56,27 @@ class _NewPostState extends State<NewPost> {
       return retrieveError;
     }
     if (_imageFile != null) {
-      return ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        child: Image.file(_imageFile, 
-          fit: BoxFit.scaleDown,
-          frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-            return child;
-          },
+      return Container(
+        decoration: BoxDecoration(
+          color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          border: Border.all(width: 2.0, color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4)),
+          boxShadow: [
+            BoxShadow(
+              color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4),
+              blurRadius: 10,
+              offset: Offset(0, 0),
+            ),
+          ]
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          child: Image.file(_imageFile, 
+            fit: BoxFit.scaleDown,
+            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+              return child;
+            },
+          ),
         ),
       );
     } else if (_pickImageError != null) {
@@ -185,7 +199,7 @@ class _NewPostState extends State<NewPost> {
                   child: ScrollConfiguration(
                     behavior: CustomScrollBehavior(),
                     child: ListView(
-                      padding: EdgeInsets.only(bottom: 92.0),
+                      padding: EdgeInsets.only(bottom: 76.0),
                       shrinkWrap: true,
                       children: <Widget>[
                         Container(
@@ -345,6 +359,3 @@ class _NewPostState extends State<NewPost> {
     return null;
   }
 }
-
-typedef void OnPickImageCallback(
-    double maxWidth, double maxHeight, int quality);
