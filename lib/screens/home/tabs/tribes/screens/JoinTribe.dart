@@ -505,6 +505,7 @@ class _JoinTribeState extends State<JoinTribe> {
       key: _scaffoldKey,
       backgroundColor: DynamicTheme.of(context).data.primaryColor,
       body: SafeArea(
+        bottom: false,
         child: Container(
           color: DynamicTheme.of(context).data.backgroundColor,
           child: Stack(

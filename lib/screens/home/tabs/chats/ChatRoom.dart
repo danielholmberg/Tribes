@@ -211,6 +211,7 @@ class _ChatRoomState extends State<ChatRoom> {
     return Container(
       color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           backgroundColor: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
           appBar: AppBar(

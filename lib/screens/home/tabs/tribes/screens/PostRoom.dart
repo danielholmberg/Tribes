@@ -103,238 +103,241 @@ class _PostRoomState extends State<PostRoom> {
 
     return WillPopScope(
       onWillPop: () => edited ? _showDiscardDialog() : Future(() => true),
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          iconTheme: IconThemeData(
-            color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-          ),
-          centerTitle: true,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Text('Editing', 
-                style: TextStyle(
-                  fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.bold,
-                  color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
-                ),
+      child: Container(
+        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+        child: SafeArea(
+          bottom: false,
+          child: loading ? Loading() : Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+            appBar: AppBar(
+              backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+              elevation: 0.0,
+              iconTheme: IconThemeData(
+                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
               ),
-              SizedBox(width: Constants.defaultPadding),
-              Visibility(
-                visible: edited,
-                child: Text('| edited', 
-                  style: TextStyle(
-                    fontFamily: 'TribesRounded',
-                    fontStyle: FontStyle.normal,
-                    fontSize: 12,
-                    color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+              centerTitle: true,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Text('Editing', 
+                    style: TextStyle(
+                      fontFamily: 'TribesRounded',
+                      fontWeight: FontWeight.bold,
+                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+                    ),
                   ),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: DynamicTheme.of(context).data.backgroundColor,
-          elevation: 0.0,
-          leading: IconButton(icon: Icon(Icons.arrow_back), 
-            color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-            onPressed: () {
-              edited ? _showDiscardDialog() : Navigator.of(context).pop();
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
-              splashColor: Colors.transparent,
-              color: DynamicTheme.of(context).data.backgroundColor,
-              icon: Icon(Icons.delete, 
-                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
-              ),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                    backgroundColor: Constants
-                        .profileSettingsBackgroundColor,
-                    title: Text('Are your sure you want to delete this post?',
+                  SizedBox(width: Constants.defaultPadding),
+                  Visibility(
+                    visible: edited,
+                    child: Text('| edited', 
                       style: TextStyle(
                         fontFamily: 'TribesRounded',
-                        fontWeight: Constants.defaultDialogTitleFontWeight,
-                        fontSize: Constants.defaultDialogTitleFontSize,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 12,
+                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
                       ),
                     ),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('No', 
+                  ),
+                ],
+              ),
+              leading: IconButton(icon: Icon(Icons.arrow_back), 
+                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                onPressed: () {
+                  edited ? _showDiscardDialog() : Navigator.of(context).pop();
+                },
+              ),
+              actions: <Widget>[
+                IconButton(
+                  splashColor: Colors.transparent,
+                  color: DynamicTheme.of(context).data.backgroundColor,
+                  icon: Icon(Icons.delete, 
+                    color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                        backgroundColor: Constants
+                            .profileSettingsBackgroundColor,
+                        title: Text('Are your sure you want to delete this post?',
                           style: TextStyle(
-                            color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                             fontFamily: 'TribesRounded',
+                            fontWeight: Constants.defaultDialogTitleFontWeight,
+                            fontSize: Constants.defaultDialogTitleFontSize,
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('No', 
+                              style: TextStyle(
+                                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                fontFamily: 'TribesRounded',
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text('Yes',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontFamily: 'TribesRounded',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () async {
+                              await DatabaseService().deletePost(widget.post);
+                              Navigator.of(context).pop(); // Dialog: "Are you sure...?"
+                              Navigator.of(context).pop(); // PostTile
+                            },
+                          ),
+                        ],
                       ),
-                      FlatButton(
-                        child: Text('Yes',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontFamily: 'TribesRounded',
-                            fontWeight: FontWeight.bold,
+                    );
+                  },
+                ),
+              ]
+            ),
+            body: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                ScrollConfiguration(
+                  behavior: CustomScrollBehavior(),
+                  child: ListView(
+                    padding: EdgeInsets.only(bottom: 68.0),
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.topCenter,
+                        padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              TextFormField(
+                                focusNode: focusNode,
+                                initialValue: title ?? widget.post.title,
+                                textCapitalization: TextCapitalization.sentences,
+                                style: DynamicTheme.of(context).data.textTheme.title,
+                                cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                validator: (val) => val.isEmpty 
+                                  ? 'Enter a title' 
+                                  : null,
+                                onChanged: (val) {
+                                  setState(() {
+                                    title = val;
+                                    edited = originalTitle != val || originalContent != content;
+                                  });
+                                },
+                              ),
+                              TextFormField(
+                                initialValue: content ?? widget.post.content,
+                                textCapitalization: TextCapitalization.sentences,
+                                style: DynamicTheme.of(context).data.textTheme.body1,
+                                cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: null,
+                                decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                validator: (val) => val.isEmpty 
+                                  ? 'Enter some content' 
+                                  : null,
+                                onChanged: (val) {
+                                  setState((){
+                                    content = val;
+                                    edited = originalContent != val || originalTitle != title;
+                                  });
+                                },
+                              )
+                            ],
                           ),
                         ),
-                        onPressed: () async {
-                          await DatabaseService().deletePost(widget.post);
-                          Navigator.of(context).pop(); // Dialog: "Are you sure...?"
-                          Navigator.of(context).pop(); // PostTile
-                        },
+                      ),
+                      widget.post.fileURL.isEmpty 
+                      ? SizedBox.shrink() 
+                      : CachedNetworkImage(
+                        imageUrl: widget.post.fileURL,
+                        imageBuilder: (context, imageProvider) => Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                            child: Image(
+                              image: imageProvider, 
+                              fit: BoxFit.scaleDown,
+                              frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
+                                return child;
+                              },
+                            ),
+                          ),
+                        ),
+                        placeholder: (context, url) => Loading(),
+                        errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                       ),
                     ],
                   ),
-                );
-              },
-            ),
-          ]
-        ),
-        body: Container(
-          color: DynamicTheme.of(context).data.backgroundColor,
-          child: loading ? Loading()
-          : Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              ScrollConfiguration(
-                behavior: CustomScrollBehavior(),
-                child: ListView(
-                  padding: EdgeInsets.only(bottom: 68.0),
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.topCenter,
-                      padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            TextFormField(
-                              focusNode: focusNode,
-                              initialValue: title ?? widget.post.title,
-                              textCapitalization: TextCapitalization.sentences,
-                              style: DynamicTheme.of(context).data.textTheme.title,
-                              cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                              decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
-                              validator: (val) => val.isEmpty 
-                                ? 'Enter a title' 
-                                : null,
-                              onChanged: (val) {
-                                setState(() {
-                                  title = val;
-                                  edited = originalTitle != val || originalContent != content;
-                                });
-                              },
-                            ),
-                            TextFormField(
-                              initialValue: content ?? widget.post.content,
-                              textCapitalization: TextCapitalization.sentences,
-                              style: DynamicTheme.of(context).data.textTheme.body1,
-                              cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
-                              validator: (val) => val.isEmpty 
-                                ? 'Enter some content' 
-                                : null,
-                              onChanged: (val) {
-                                setState((){
-                                  content = val;
-                                  edited = originalContent != val || originalTitle != title;
-                                });
-                              },
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    widget.post.fileURL.isEmpty 
-                    ? SizedBox.shrink() 
-                    : CachedNetworkImage(
-                      imageUrl: widget.post.fileURL,
-                      imageBuilder: (context, imageProvider) => Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          child: Image(
-                            image: imageProvider, 
-                            fit: BoxFit.scaleDown,
-                            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-                              return child;
-                            },
-                          ),
-                        ),
-                      ),
-                      placeholder: (context, url) => Loading(),
-                      errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-                    ),
-                  ],
                 ),
-              ),
-              Positioned(
-                bottom: 0.0,
-                left: 0.0,
-                right: 0.0,
-                child: AnimatedOpacity(
-                duration: Duration(milliseconds: 500),
-                opacity: edited ? 1.0 : 0.0,
-                  child: ButtonTheme(
-                    height: 60.0,
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: RaisedButton.icon(
-                      elevation: 8.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                      ),
-                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                      icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
-                      label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                      textColor: Colors.white,
-                      onPressed: edited ? () async {
-                        if(_formKey.currentState.validate()) {
-                          setState(() { 
-                            loading = true;
-                          });
-
-                          await DatabaseService().updatePostData(
-                            widget.post.id, 
-                            title ?? widget.post.title, 
-                            content ?? widget.post.content
-                          ).then((val) {
-                            _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(
-                                content: Text('Post saved', 
-                                  style: TextStyle(
-                                    fontFamily: 'TribesRounded'
-                                  ),
-                                ),
-                                duration: Duration(milliseconds: 500),
-                              )
-                            );
-
-                            setState(() {
-                              loading = false;
-                              edited = false;
-                              originalTitle = title;
-                              originalContent = content;
+                Positioned(
+                  bottom: 0.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: AnimatedOpacity(
+                  duration: Duration(milliseconds: 500),
+                  opacity: edited ? 1.0 : 0.0,
+                    child: ButtonTheme(
+                      height: 60.0,
+                      minWidth: MediaQuery.of(context).size.width,
+                      child: RaisedButton.icon(
+                        elevation: 8.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                        ),
+                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                        icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                        label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                        textColor: Colors.white,
+                        onPressed: edited ? () async {
+                          if(_formKey.currentState.validate()) {
+                            setState(() { 
+                              loading = true;
                             });
-                          });
-                        }
-                      } : null,
+
+                            await DatabaseService().updatePostData(
+                              widget.post.id, 
+                              title ?? widget.post.title, 
+                              content ?? widget.post.content
+                            ).then((val) {
+                              _scaffoldKey.currentState.showSnackBar(
+                                SnackBar(
+                                  content: Text('Post saved', 
+                                    style: TextStyle(
+                                      fontFamily: 'TribesRounded'
+                                    ),
+                                  ),
+                                  duration: Duration(milliseconds: 500),
+                                )
+                              );
+
+                              setState(() {
+                                loading = false;
+                                edited = false;
+                                originalTitle = title;
+                                originalContent = content;
+                              });
+                            });
+                          }
+                        } : null,
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),

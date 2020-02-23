@@ -45,6 +45,7 @@ class _NewTribeState extends State<NewTribe> {
         child: Container(
         color: DynamicTheme.of(context).data.primaryColor,
         child: SafeArea(
+          bottom: false,
           child: loading ? Loading() : Scaffold(
             backgroundColor: DynamicTheme.of(context).data.backgroundColor,
             appBar: AppBar(
@@ -52,7 +53,7 @@ class _NewTribeState extends State<NewTribe> {
               centerTitle: true,
               title: Text('New Tribe', 
                 style: TextStyle(
-                  color: DynamicTheme.of(context).data.primaryColor,
+                  color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                   fontFamily: 'TribesRounded',
                   fontWeight: FontWeight.bold,
                 ),

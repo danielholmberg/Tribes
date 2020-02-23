@@ -100,232 +100,236 @@ class _NewPostState extends State<NewPost> {
 
     return Hero(
       tag: 'NewPostButton',
-      child: loading ? Loading() : Scaffold(
-        extendBody: true,
-        appBar: AppBar(
-          elevation: 0.0,
-          backgroundColor: DynamicTheme.of(context).data.backgroundColor,
-          leading: IconButton(icon: Icon(Icons.close), 
-            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-            onPressed: () {
-              if(title.isNotEmpty || content.isNotEmpty || _imageFile != null) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                    backgroundColor: Constants
-                        .profileSettingsBackgroundColor,
-                    title: Text('Are your sure you want to discard changes?',
-                      style: TextStyle(
-                        fontFamily: 'TribesRounded',
-                        fontWeight: Constants.defaultDialogTitleFontWeight,
-                        fontSize: Constants.defaultDialogTitleFontSize,
-                      ),
-                    ),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('No', 
+      child: Container(
+        color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+        child: SafeArea(
+          bottom: false,
+          child: loading ? Loading() : Scaffold(
+            backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+            extendBody: true,
+            appBar: AppBar(
+              elevation: 0.0,
+              backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+              leading: IconButton(icon: Icon(Icons.close), 
+                color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                onPressed: () {
+                  if(title.isNotEmpty || content.isNotEmpty || _imageFile != null) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                        backgroundColor: Constants
+                            .profileSettingsBackgroundColor,
+                        title: Text('Are your sure you want to discard changes?',
                           style: TextStyle(
-                            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
                             fontFamily: 'TribesRounded',
+                            fontWeight: Constants.defaultDialogTitleFontWeight,
+                            fontSize: Constants.defaultDialogTitleFontSize,
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      FlatButton(
-                        child: Text('Yes',
-                          style: TextStyle(
-                            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                            fontFamily: 'TribesRounded',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Dialog: "Are you sure...?"
-                          Navigator.of(context).pop(); // NewPost
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add_a_photo),
-              iconSize: Constants.defaultIconSize,
-              color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-              onPressed: () {
-                _onImageButtonPressed(ImageSource.camera, context: context);
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.add_photo_alternate),
-              iconSize: Constants.defaultIconSize,
-              color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-              onPressed: () {
-                _onImageButtonPressed(ImageSource.gallery, context: context);
-              },
-            )
-          ],
-        ),
-        body: Container(
-          color: DynamicTheme.of(context).data.backgroundColor,
-          child: Stack(
-            children: <Widget>[
-              Positioned.fill(
-                child: ScrollConfiguration(
-                  behavior: CustomScrollBehavior(),
-                  child: ListView(
-                    padding: EdgeInsets.only(bottom: 92.0),
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topCenter,
-                        padding: EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  TextFormField(
-                                    textCapitalization: TextCapitalization.sentences,
-                                    style: DynamicTheme.of(context).data.textTheme.title,
-                                    cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                    decoration: Decorations.postTitleInput.copyWith(
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(
-                                          color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
-                                          width: 2.0
-                                        ),
-                                      )
-                                    ),
-                                    validator: (val) => val.isEmpty 
-                                      ? 'Enter a title' 
-                                      : null,
-                                    onChanged: (val) {
-                                      setState(() => title = val);
-                                    },
-                                  ),
-                                  SizedBox(height: Constants.defaultSpacing),
-                                  TextFormField(
-                                    textCapitalization: TextCapitalization.sentences,
-                                    style: DynamicTheme.of(context).data.textTheme.body1,
-                                    keyboardType: TextInputType.multiline,
-                                    maxLines: null,
-                                    cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                    decoration: Decorations.postContentInput.copyWith(
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(
-                                          color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
-                                          width: 2.0
-                                        ),
-                                      )
-                                    ),
-                                    validator: (val) => val.isEmpty 
-                                      ? 'Enter some content' 
-                                      : null,
-                                    onChanged: (val) {
-                                      setState(() => content = val);
-                                    },
-                                  )
-                                ],
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('No', 
+                              style: TextStyle(
+                                color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                fontFamily: 'TribesRounded',
                               ),
                             ),
-                          ],
-                        ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text('Yes',
+                              style: TextStyle(
+                                color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                fontFamily: 'TribesRounded',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Dialog: "Are you sure...?"
+                              Navigator.of(context).pop(); // NewPost
+                            },
+                          ),
+                        ],
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Platform.isAndroid
-                        ? FutureBuilder<void>(
-                            future: retrieveLostData(),
-                            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                              switch (snapshot.connectionState) {
-                                case ConnectionState.none:
-                                case ConnectionState.waiting:
-                                  return _imageFile != null ? _previewImage() : Text(
-                                    'You have not yet picked an image.',
-                                    textAlign: TextAlign.center,
-                                  );
-                                case ConnectionState.done:
-                                  return _previewImage();
-                                default:
-                                  if (snapshot.hasError) {
-                                    return Text(
-                                      'Pick image/video error: ${snapshot.error}}',
-                                      textAlign: TextAlign.center,
-                                    );
-                                  } else {
-                                    return Text(
+                    );
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.add_a_photo),
+                  iconSize: Constants.defaultIconSize,
+                  color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                  onPressed: () {
+                    _onImageButtonPressed(ImageSource.camera, context: context);
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.add_photo_alternate),
+                  iconSize: Constants.defaultIconSize,
+                  color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                  onPressed: () {
+                    _onImageButtonPressed(ImageSource.gallery, context: context);
+                  },
+                )
+              ],
+            ),
+            body: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: ScrollConfiguration(
+                    behavior: CustomScrollBehavior(),
+                    child: ListView(
+                      padding: EdgeInsets.only(bottom: 92.0),
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.topCenter,
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    TextFormField(
+                                      textCapitalization: TextCapitalization.sentences,
+                                      style: DynamicTheme.of(context).data.textTheme.title,
+                                      cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                      decoration: Decorations.postTitleInput.copyWith(
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
+                                            width: 2.0
+                                          ),
+                                        )
+                                      ),
+                                      validator: (val) => val.isEmpty 
+                                        ? 'Enter a title' 
+                                        : null,
+                                      onChanged: (val) {
+                                        setState(() => title = val);
+                                      },
+                                    ),
+                                    SizedBox(height: Constants.defaultSpacing),
+                                    TextFormField(
+                                      textCapitalization: TextCapitalization.sentences,
+                                      style: DynamicTheme.of(context).data.textTheme.body1,
+                                      keyboardType: TextInputType.multiline,
+                                      maxLines: null,
+                                      cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                      decoration: Decorations.postContentInput.copyWith(
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
+                                            width: 2.0
+                                          ),
+                                        )
+                                      ),
+                                      validator: (val) => val.isEmpty 
+                                        ? 'Enter some content' 
+                                        : null,
+                                      onChanged: (val) {
+                                        setState(() => content = val);
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Platform.isAndroid
+                          ? FutureBuilder<void>(
+                              future: retrieveLostData(),
+                              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.none:
+                                  case ConnectionState.waiting:
+                                    return _imageFile != null ? _previewImage() : Text(
                                       'You have not yet picked an image.',
                                       textAlign: TextAlign.center,
                                     );
-                                  }
-                              }
-                            },
-                          )
-                        : _previewImage(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0.0,
-                left: 0.0,
-                right: 0.0,
-                child: AnimatedOpacity(
-                  duration: Duration(milliseconds: 500),
-                  opacity: (title.isNotEmpty || content.isNotEmpty || _imageFile != null) ? 1.0 : 0.0,
-                    child: ButtonTheme(
-                    height: 60.0,
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: RaisedButton.icon(
-                      elevation: 8.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                      ),
-                      color: Colors.green,
-                      icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
-                      label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                      textColor: Colors.white,
-                      onPressed: () async {                
-                        if(_formKey.currentState.validate()) {
-                          setState(() => loading = true);
-
-                          if(_imageFile != null) {
-                            _fileURL = await StorageService().uploadFile(_imageFile);
-                          }
-                          
-                          DatabaseService().addNewPost(
-                            currentUser.uid, 
-                            title, 
-                            content, 
-                            _fileURL ?? null, 
-                            widget.tribe.id
-                          );
-
-                          Navigator.pop(context);
-                        }
-                      }
+                                  case ConnectionState.done:
+                                    return _previewImage();
+                                  default:
+                                    if (snapshot.hasError) {
+                                      return Text(
+                                        'Pick image/video error: ${snapshot.error}}',
+                                        textAlign: TextAlign.center,
+                                      );
+                                    } else {
+                                      return Text(
+                                        'You have not yet picked an image.',
+                                        textAlign: TextAlign.center,
+                                      );
+                                    }
+                                }
+                              },
+                            )
+                          : _previewImage(),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              )
-            ],
+                Positioned(
+                  bottom: 0.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: AnimatedOpacity(
+                    duration: Duration(milliseconds: 500),
+                    opacity: (title.isNotEmpty || content.isNotEmpty || _imageFile != null) ? 1.0 : 0.0,
+                      child: ButtonTheme(
+                      height: 60.0,
+                      minWidth: MediaQuery.of(context).size.width,
+                      child: RaisedButton.icon(
+                        elevation: 8.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                        ),
+                        color: Colors.green,
+                        icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                        label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                        textColor: Colors.white,
+                        onPressed: () async {                
+                          if(_formKey.currentState.validate()) {
+                            setState(() => loading = true);
+
+                            if(_imageFile != null) {
+                              _fileURL = await StorageService().uploadFile(_imageFile);
+                            }
+                            
+                            DatabaseService().addNewPost(
+                              currentUser.uid, 
+                              title, 
+                              content, 
+                              _fileURL ?? null, 
+                              widget.tribe.id
+                            );
+
+                            Navigator.pop(context);
+                          }
+                        }
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
