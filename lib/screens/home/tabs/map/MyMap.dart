@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/utils.dart';
+import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class MyMap extends StatefulWidget {
@@ -68,61 +71,136 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
     print('Current user ${currentUser.toString()}');
 
     return Container(
-      child: Scaffold(
-        body: Stack(
-          children: <Widget>[
-
-            // Google Map Widget
-            AnimatedOpacity(
-              duration: Duration(milliseconds: 500),
-              opacity: _isMapLoading ? 0.0 : 1.0,
-              child: StreamBuilder<List<Tribe>>(
-                stream: DatabaseService().joinedTribes(currentUser.uid),
-                builder: (context, snapshot) {
-                  List<Tribe> tribesList = snapshot.hasData ? snapshot.data : [];
-
-                  return StreamBuilder<List<UserData>>(
-                    stream: DatabaseService().users,
-                    builder: (context, snapshot) {
-                      List<UserData> membersList = snapshot.hasData ? snapshot.data : [];
-                      Set<Marker> markers = Set<Marker>();
-
-                      for (int i = 0; i < membersList.length; i++) {
-                        UserData user = membersList[i];
-
-                        tribesList.forEach((Tribe tribe) {
-                          if (tribe.members.contains(user.uid)) {
-                            markers.add(Marker(
-                              markerId: MarkerId(user.uid),
-                              position: LatLng(user.lat, user.lng),
-                              icon: markerIcon,
-                              infoWindow: InfoWindow(
-                                title: user.username,
-                              ),
-                            ));
-                          }
-                        });
+      child: currentUser == null ? Loading() : Scaffold(
+        body: StreamBuilder<List<Tribe>>(
+          stream: DatabaseService().joinedTribes(currentUser.uid),
+          builder: (context, snapshot) {
+            List<Tribe> tribesList = snapshot.hasData ? snapshot.data : [];
+            
+            return StreamBuilder<List<UserData>>(
+              stream: DatabaseService().users,
+              builder: (context, snapshot) {
+                if(snapshot.hasData) {
+                  List<UserData> membersList = snapshot.data;
+                  Set<Marker> markers = Set<Marker>();
+                  
+                  membersList.forEach((user) {
+                    tribesList.forEach((Tribe tribe) {
+                      if (tribe.members.contains(user.uid)) {
+                        markers.add(Marker(
+                          markerId: MarkerId(user.uid),
+                          position: LatLng(user.lat, user.lng),
+                          icon: markerIcon,
+                          infoWindow: InfoWindow(
+                            title: user.username,
+                          ),
+                        ));
                       }
+                    });
+                  });
+                  
+                  return Stack(
+                    children: <Widget>[
 
-                      return GoogleMap(
-                        padding: EdgeInsets.fromLTRB(8.0, 32.0, 8.0, 0.0),
-                        onMapCreated: _onMapCreated,
-                        myLocationButtonEnabled: true,
-                        myLocationEnabled: true,
-                        initialCameraPosition: CameraPosition(
-                          target: _initialPosition,
-                          zoom: 5.0,
+                      // Google Map Stack Widget
+                      AnimatedOpacity(
+                        duration: Duration(milliseconds: 500),
+                        opacity: _isMapLoading ? 0.0 : 1.0,
+                        child: GoogleMap(
+                          padding: EdgeInsets.fromLTRB(6.0, 106.0, 6.0, Platform.isIOS ? 80 : 0.0),
+                          onMapCreated: _onMapCreated,
+                          myLocationButtonEnabled: true,
+                          myLocationEnabled: true,
+                          initialCameraPosition: CameraPosition(
+                            target: _initialPosition,
+                            zoom: 5.0,
+                          ),
+                          markers: markers.toSet(),
                         ),
-                        markers: markers,
-                      );
-                    }
-                  );
-                }),
-            ),
+                      ),
 
-            // Map Loading indicator
-            Opacity(opacity: _isMapLoading ? 1.0 : 0.0, child: Center(child: CircularProgressIndicator()))   
-          ],
+                      // Statusbar background
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.5),
+                          height: MediaQuery.of(context).padding.top,
+                        ),
+                      ),
+
+                      // Users List Widget
+                      Padding(
+                        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                height: 90,
+                                child: ScrollConfiguration(
+                                  behavior: CustomScrollBehavior(),
+                                  child: ListView.builder(
+                                    shrinkWrap: false,
+                                    padding: EdgeInsets.all(6.0),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: membersList.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () async => await mapController.future.then((controller) =>
+                                          controller.animateCamera(
+                                            CameraUpdate.newCameraPosition(
+                                              CameraPosition(
+                                                target: LatLng(membersList[index].lat, membersList[index].lng),
+                                                zoom: 15.0
+                                              )
+                                            )
+                                          )
+                                        ),
+                                        child: Container(
+                                          height: 56,
+                                          margin: EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
+                                            color: DynamicTheme.of(context).data.backgroundColor,
+                                            borderRadius: BorderRadius.circular(20.0),
+                                            border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4), width: 2.0),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.5),
+                                                blurRadius: 4.0,
+                                                spreadRadius: 0.0,
+                                                offset: Offset(0, 1),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                            child: userAvatar(membersList[index]),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Map Loading indicator
+                      Opacity(opacity: _isMapLoading ? 1.0 : 0.0, child: Center(child: CircularProgressIndicator()))   
+                    ],
+                  );
+                } else if(snapshot.hasError){
+                  print('Error retrieving users for Map: ${snapshot.error.toString()}');
+                  return Center(child: Text('Unable to retrieve users'));
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }
+            );
+          }
         ),
       ),
     );
