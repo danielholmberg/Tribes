@@ -5,7 +5,9 @@ import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/PostTileCompact.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 class LikedPosts extends StatefulWidget {
   @override
@@ -21,15 +23,20 @@ class _LikedPostsState extends State<LikedPosts> with AutomaticKeepAliveClientMi
     print('Building LikedPosts()...');
     print('Current user ${currentUser.uid}');
 
-    return Container(
-      padding: EdgeInsets.all(4.0),
+    return ScrollConfiguration(
+      behavior: CustomScrollBehavior(),
       child: StaggeredGridView.countBuilder(
         itemCount: currentUser.likedPosts.length,
         staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
         crossAxisCount: 4,
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
-        padding: EdgeInsets.only(bottom: 80.0),
+        padding: EdgeInsets.fromLTRB(
+          Constants.smallPadding, 
+          Constants.defaultPadding, 
+          Constants.smallPadding, 
+          80.0
+        ),
         itemBuilder: (context, index) {
           return StreamBuilder<Post>(
             stream: DatabaseService().post(currentUser.uid, currentUser.likedPosts[index]),

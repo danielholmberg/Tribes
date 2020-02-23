@@ -24,29 +24,31 @@ class _CreatedPostsState extends State<CreatedPosts> with AutomaticKeepAliveClie
     print('Building CreatedPosts()...');
     print('Current user ${currentUser.uid}');
 
-    return Container(
-      padding: EdgeInsets.all(4.0),
-      child: ScrollConfiguration(
-        behavior: CustomScrollBehavior(),
-        child: FirestoreAnimatedStaggered(
-          staggeredTileBuilder: (int index, DocumentSnapshot snapshot) => StaggeredTile.fit(1),
-          crossAxisCount: 4,
-          mainAxisSpacing: 4.0,
-          crossAxisSpacing: 4.0,
-          padding: EdgeInsets.only(bottom: 80.0),
-          query: DatabaseService().postsPublishedByUser(currentUser.uid),
-          itemBuilder: (
-            BuildContext context,
-            DocumentSnapshot snapshot,
-            Animation<double> animation,
-            int index,
-          ) =>
-          FadeTransition(
-            opacity: animation,
-            child: Transform.scale(
-              scale: Constants.postTileCompactScaleFactor,
-              child: PostTileCompact(post: Post.fromSnapshot(snapshot))
-            ),
+    return ScrollConfiguration(
+      behavior: CustomScrollBehavior(),
+      child: FirestoreAnimatedStaggered(
+        staggeredTileBuilder: (int index, DocumentSnapshot snapshot) => StaggeredTile.fit(1),
+        crossAxisCount: 4,
+        mainAxisSpacing: 4.0,
+        crossAxisSpacing: 4.0,
+        padding: EdgeInsets.fromLTRB(
+          Constants.smallPadding, 
+          Constants.defaultPadding, 
+          Constants.smallPadding, 
+          80.0
+        ),
+        query: DatabaseService().postsPublishedByUser(currentUser.uid),
+        itemBuilder: (
+          BuildContext context,
+          DocumentSnapshot snapshot,
+          Animation<double> animation,
+          int index,
+        ) =>
+        FadeTransition(
+          opacity: animation,
+          child: Transform.scale(
+            scale: Constants.postTileCompactScaleFactor,
+            child: PostTileCompact(post: Post.fromSnapshot(snapshot))
           ),
         ),
       ),

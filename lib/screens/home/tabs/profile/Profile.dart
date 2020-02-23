@@ -3,23 +3,19 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/profile/dialogs/ProfileSettings.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/CreatedPosts.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/LikedPosts.dart';
-import 'package:tribes/screens/home/tabs/profile/widgets/PostTileCompact.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
-import 'package:tribes/shared/widgets/Loading.dart';
 
 class Profile extends StatefulWidget {
   static const routeName = '/home/profile';
@@ -464,9 +460,15 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  SliverPersistentHeader(
-                    delegate: _SliverAppBarDelegate(
-                      TabBar(
+                ];
+              },
+              body: Container(
+                color: DynamicTheme.of(context).data.backgroundColor.withOpacity(0.8),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      color: DynamicTheme.of(context).data.primaryColor,
+                      child: TabBar(
                         labelColor: Constants.buttonIconColor,
                         indicatorColor: Constants.buttonIconColor,
                         unselectedLabelColor: Constants.buttonIconColor.withOpacity(0.7),
@@ -476,16 +478,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    pinned: true,
-                  ),
-                ];
-              },
-              body: Container(
-                color: DynamicTheme.of(context).data.backgroundColor.withOpacity(0.8),
-                child: TabBarView(
-                  children: [
-                    CreatedPosts(),
-                    LikedPosts(),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          CreatedPosts(),
+                          LikedPosts(),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -494,31 +494,5 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         ),
       ),
     );
-  }
-  
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar);
-
-  final TabBar _tabBar;
-
-  @override
-  double get minExtent => _tabBar.preferredSize.height;
-  @override
-  double get maxExtent => _tabBar.preferredSize.height;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return new Container(
-      color: DynamicTheme.of(context).data.primaryColor,
-      child: _tabBar,
-    );
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
-  }
+  } 
 }
