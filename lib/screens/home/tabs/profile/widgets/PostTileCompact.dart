@@ -111,13 +111,13 @@ class PostTileCompact extends StatelessWidget {
         padding: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: DynamicTheme.of(context).data.backgroundColor,
-          borderRadius: BorderRadius.circular(20.0),
-          border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6), width: 2),
+          borderRadius: BorderRadius.circular(2.0),
+          //border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6), width: 2),
           boxShadow: [
             BoxShadow(
-              color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
-              blurRadius: 2,
-              offset: Offset(0, 0),
+              color: Colors.black54, //DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
+              blurRadius: 1,
+              offset: Offset(0, 1),
             ),
           ]
         ),
