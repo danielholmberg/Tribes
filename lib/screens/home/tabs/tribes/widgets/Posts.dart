@@ -16,6 +16,8 @@ class Posts extends StatelessWidget {
   final Tribe tribe;
   Posts({this.tribe});
 
+  final ScrollController controller = new ScrollController();
+
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
@@ -25,8 +27,10 @@ class Posts extends StatelessWidget {
 
     return Container(
       child: FirestoreAnimatedList(
+        controller: controller,
         padding: EdgeInsets.only(bottom: 70.0),
         query: DatabaseService().posts(tribe.id),
+        onLoaded: (snapshot) => controller.animateTo(0, duration: Duration(milliseconds: 1000), curve: Curves.easeIn),
         itemBuilder: (
           BuildContext context,
           DocumentSnapshot snapshot,

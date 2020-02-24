@@ -342,6 +342,8 @@ class _PostRoomState extends State<PostRoom> {
                               )
                             );
 
+                            FocusScope.of(context).unfocus();
+
                             setState(() {
                               loading = false;
                               edited = false;
