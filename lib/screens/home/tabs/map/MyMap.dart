@@ -108,7 +108,12 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                         duration: Duration(milliseconds: 500),
                         opacity: _isMapLoading ? 0.0 : 1.0,
                         child: GoogleMap(
-                          padding: EdgeInsets.fromLTRB(6.0, 106.0, 6.0, Platform.isIOS ? 80 : 0.0),
+                          padding: EdgeInsets.fromLTRB(
+                            6.0, 
+                            friendsList.isEmpty ? MediaQuery.of(context).padding.top : 146.0, 
+                            6.0, 
+                            Platform.isIOS ? 80 : 0.0
+                          ),
                           onMapCreated: _onMapCreated,
                           myLocationButtonEnabled: true,
                           myLocationEnabled: true,
@@ -137,51 +142,43 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                         child: Row(
                           children: <Widget>[
                             Expanded(
-                              child: Container(
-                                height: 90,
-                                child: ScrollConfiguration(
-                                  behavior: CustomScrollBehavior(),
-                                  child: ListView.builder(
-                                    shrinkWrap: false,
-                                    padding: EdgeInsets.all(6.0),
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: friendsList.length,
-                                    itemBuilder: (context, index) {
-                                      return GestureDetector(
-                                        onTap: () async => await mapController.future.then((controller) =>
-                                          controller.animateCamera(
-                                            CameraUpdate.newCameraPosition(
-                                              CameraPosition(
-                                                target: LatLng(friendsDataList[index].lat, friendsDataList[index].lng),
-                                                zoom: 15.0
-                                              )
+                              child: ScrollConfiguration(
+                                behavior: CustomScrollBehavior(),
+                                child: ListView.builder(
+                                  shrinkWrap: false,
+                                  padding: EdgeInsets.all(6.0),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: friendsList.length,
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                      onTap: () async => await mapController.future.then((controller) =>
+                                        controller.animateCamera(
+                                          CameraUpdate.newCameraPosition(
+                                            CameraPosition(
+                                              target: LatLng(friendsDataList[index].lat, friendsDataList[index].lng),
+                                              zoom: 15.0
                                             )
                                           )
-                                        ),
-                                        child: Container(
-                                          height: 56,
-                                          margin: EdgeInsets.all(8.0),
-                                          decoration: BoxDecoration(
-                                            color: DynamicTheme.of(context).data.backgroundColor,
-                                            borderRadius: BorderRadius.circular(20.0),
-                                            border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4), width: 2.0),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.5),
-                                                blurRadius: 4.0,
-                                                spreadRadius: 0.0,
-                                                offset: Offset(0, 1),
-                                              ),
-                                            ],
+                                        )
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Container(
+                                            margin: EdgeInsets.all(8.0),
+                                            child: userAvatar(
+                                              user: friendsDataList[index], 
+                                              padding: const EdgeInsets.all(8.0),
+                                              radius: 30, 
+                                              nameFontSize: 10, 
+                                              direction: UserAvatarDirections.vertical,
+                                              withTextDecoration: true,
+                                            ),
                                           ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                            child: userAvatar(friendsDataList[index]),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  ),
+                                        ],
+                                      ),
+                                    );
+                                  }
                                 ),
                               ),
                             ),

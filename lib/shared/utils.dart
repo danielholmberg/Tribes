@@ -41,17 +41,26 @@ IconButton likeButton(UserData user, String postID, Color color) {
     );
 }
 
-Widget userAvatar(UserData user, {
+enum UserAvatarDirections {
+  vertical,
+  horizontal
+}
+
+Widget userAvatar({
+  @required UserData user,
   Color color: Constants.primaryColor, 
   Future addressFuture, 
   bool onlyAvatar = false, 
   bool withName = false, 
-  double size = Constants.defaultProfilePicRadius
+  bool withTextDecoration = false,
+  double radius = Constants.defaultProfilePicRadius,
+  double nameFontSize = Constants.defaultNameFontSize,
+  UserAvatarDirections direction = UserAvatarDirections.horizontal,
+  EdgeInsets padding = EdgeInsets.zero,
 }) {
-  return Row(
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: <Widget>[
+
+  _layout() {
+    return [
       CachedNetworkImage(
         imageUrl: user.picURL.isNotEmpty ? user.picURL : 'https://picsum.photos/id/237/200/300',
         imageBuilder: (context, imageProvider) => Container(
@@ -61,24 +70,26 @@ Widget userAvatar(UserData user, {
             shape: BoxShape.circle,
           ),
           child: CircleAvatar(
-            radius: size,
+            radius: radius,
             backgroundImage: imageProvider,
             backgroundColor: Colors.transparent,
           ),
         ),
         placeholder: (context, url) => CircleAvatar(
-          radius: size,
+          radius: radius,
           backgroundColor: Colors.transparent,
         ),
         errorWidget: (context, url, error) => CircleAvatar(
-          radius: size,
+          radius: radius,
           backgroundColor: Colors.transparent,
           child: Center(child: Icon(Icons.error)),
         ),
       ),
       Visibility(
         visible: !onlyAvatar || withName,
-        child: SizedBox(width: Constants.mediumPadding)
+        child: direction == UserAvatarDirections.horizontal 
+          ? SizedBox(width: Constants.mediumPadding) 
+          : SizedBox(height: Constants.mediumPadding)
       ),
       Visibility(
         visible: !onlyAvatar || withName,
@@ -88,24 +99,13 @@ Widget userAvatar(UserData user, {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Visibility(
-              visible: withName,
-              child: Text(user.name,
+              visible: withName || !onlyAvatar,
+              child: Text(withName ? user.name : user.username,
                 style: TextStyle(
                   color: color,
                   fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.w600,
-                  fontSize: Constants.defaultNameFontSize,
-                ),
-              ),
-            ),
-            Visibility(
-              visible: !onlyAvatar,
-              child: Text(user.username,
-                style: TextStyle(
-                  color: color.withOpacity(withName ? 0.6 : 1.0),
-                  fontFamily: 'TribesRounded',
-                  fontWeight: withName ? FontWeight.w500 : FontWeight.bold,
-                  fontSize: withName ? 12 : Constants.defaultUsernameFontSize,
+                  fontWeight: FontWeight.bold,
+                  fontSize: nameFontSize,
                 ),
               ),
             ),
@@ -140,6 +140,31 @@ Widget userAvatar(UserData user, {
             ],
         ),
       )
-    ],
+    ];
+  }
+
+  return Container(
+    padding: padding,
+    decoration: withTextDecoration ? BoxDecoration(
+      color: Constants.backgroundColor,
+      borderRadius: BorderRadius.circular(20.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black54,
+          blurRadius: 4.0,
+          spreadRadius: 0.0,
+          offset: Offset(0, 1),
+        ),
+      ],
+    ) : null,
+    child: direction == UserAvatarDirections.horizontal 
+    ? Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: _layout()) 
+    :  Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: _layout()),
   );
 }

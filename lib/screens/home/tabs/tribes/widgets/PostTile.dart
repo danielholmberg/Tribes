@@ -56,7 +56,7 @@ class _PostTileState extends State<PostTile> {
             stream: DatabaseService().userData(widget.post.author),
             builder: (context, snapshot) {
               if(snapshot.hasData) {
-                return userAvatar(snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
+                return userAvatar(user: snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
               } else if(snapshot.hasError) {
                 print('Error retrieving author data: ${snapshot.error.toString()}');
                 return SizedBox.shrink();

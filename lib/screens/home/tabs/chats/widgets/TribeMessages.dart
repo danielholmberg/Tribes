@@ -79,14 +79,12 @@ class TribeMessages extends StatelessWidget {
                   stream: DatabaseService().userData(message.senderID),
                   builder: (context, snapshot) {
                     return snapshot.hasData 
-                    ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6.0),
-                      child: userAvatar(
-                        snapshot.data, 
-                        color: currentTribe.color, 
-                        size: 14, 
-                        onlyAvatar: true
-                      ),
+                    ? userAvatar(
+                      user: snapshot.data, 
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      color: currentTribe.color, 
+                      radius: 14, 
+                      onlyAvatar: true
                     ) : SizedBox.shrink();
                   }
                 ),
@@ -111,14 +109,12 @@ class TribeMessages extends StatelessWidget {
                 stream: DatabaseService().userData(message.senderID),
                 builder: (context, snapshot) {
                   return snapshot.hasData 
-                  ? Padding(
+                  ? userAvatar(
+                    user: snapshot.data, 
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: userAvatar(
-                      snapshot.data, 
-                      color: currentTribe.color, 
-                      size: 14, 
-                      onlyAvatar: true
-                    ),
+                    color: currentTribe.color, 
+                    radius: 14, 
+                    onlyAvatar: true
                   ) : SizedBox.shrink();
                 }
               ),

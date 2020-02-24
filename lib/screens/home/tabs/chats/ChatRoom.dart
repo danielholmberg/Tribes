@@ -91,14 +91,12 @@ class _ChatRoomState extends State<ChatRoom> {
                   stream: DatabaseService().userData(message.senderID),
                   builder: (context, snapshot) {
                     return snapshot.hasData 
-                    ? Padding(
+                    ? userAvatar(
+                      user: snapshot.data, 
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
-                      child: userAvatar(
-                        snapshot.data, 
-                        color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, 
-                        size: 14, 
-                        onlyAvatar: true
-                      ),
+                      color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, 
+                      radius: 14, 
+                      onlyAvatar: true
                     ) : SizedBox.shrink();
                   }
                 ),
@@ -123,14 +121,12 @@ class _ChatRoomState extends State<ChatRoom> {
                 stream: DatabaseService().userData(message.senderID),
                 builder: (context, snapshot) {
                   return snapshot.hasData 
-                  ? Padding(
+                  ? userAvatar(
+                    user: snapshot.data, 
                     padding: const EdgeInsets.symmetric(vertical: 6.0),
-                    child: userAvatar(
-                      snapshot.data, 
-                      color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, 
-                      size: 14, 
-                      onlyAvatar: true
-                    ),
+                    color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, 
+                    radius: 14, 
+                    onlyAvatar: true
                   ) : SizedBox.shrink();
                 }
               ),

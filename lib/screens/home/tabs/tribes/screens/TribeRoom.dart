@@ -220,7 +220,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                                                 builder: (context, snapshot) {
 
                                                                   if(snapshot.hasData) {
-                                                                    return userAvatar(snapshot.data, color: currentTribe.color);
+                                                                    return userAvatar(user: snapshot.data, color: currentTribe.color);
                                                                   } else if(snapshot.hasError) {
                                                                     print('Error getting founder user data: ${snapshot.error.toString()}');
                                                                     return SizedBox.shrink();
