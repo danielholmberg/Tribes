@@ -103,7 +103,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _placeholderPic() {
       return CachedNetworkImage(
-        imageUrl: currentUser.picURL.isNotEmpty ? currentUser.picURL : 'https://picsum.photos/id/237/200/300',
+        imageUrl: currentUser.picURL,
         imageBuilder: (context, imageProvider) => CircleAvatar(
           radius: Constants.profilePagePicRadius,
           backgroundImage: imageProvider,

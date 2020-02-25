@@ -10,6 +10,7 @@ import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/storage.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 class DatabaseService {
   // Users Ref
@@ -32,6 +33,7 @@ class DatabaseService {
       'name': name,
       'username': username,
       'email': email,
+      'picURL': Constants.placeholderPicURL,
       'created': new DateTime.now().millisecondsSinceEpoch
     };
     print('Creating user with info: $data');

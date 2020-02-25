@@ -62,7 +62,7 @@ Widget userAvatar({
   _layout() {
     return [
       CachedNetworkImage(
-        imageUrl: user.picURL.isNotEmpty ? user.picURL : 'https://picsum.photos/id/237/200/300',
+        imageUrl: user.picURL,
         imageBuilder: (context, imageProvider) => Container(
           decoration: BoxDecoration(
             border: Border.all(color: color, width: 2.0),

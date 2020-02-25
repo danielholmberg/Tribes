@@ -104,3 +104,5 @@ const profilePagePicRadius = 50.0;
 const profileSettingsBackgroundColor = Color(0xFFFAFAFA);
 const profileUsernameMaxLength = 20;
 const profileInfoMaxLength = 100;
+
+const placeholderPicURL = 'https://picsum.photos/id/237/200/300';

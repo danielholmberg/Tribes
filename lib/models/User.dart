@@ -41,7 +41,7 @@ class UserData {
       username: doc.data['username'] ?? '',
       email: doc.data['email'] ?? '',
       info: doc.data['info'] ?? '',
-      picURL: doc.data['picURL'] ?? '',
+      picURL: doc.data['picURL'] ?? Constants.placeholderPicURL,
       lat: doc.data['lat'] ?? Constants.initialLat,
       lng: doc.data['lng'] ?? Constants.initialLng,
       likedPosts: List.from(doc.data['likedPosts'] ?? []),
