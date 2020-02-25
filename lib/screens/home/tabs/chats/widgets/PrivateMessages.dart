@@ -194,7 +194,7 @@ class PrivateMessages extends StatelessWidget {
           padding: EdgeInsets.only(top: 12.0, bottom: 80.0),
           reverse: false,
           shrinkWrap: true,
-          query: DatabaseService().chatRooms(currentUser.uid),
+          query: DatabaseService().privateChatRooms(currentUser.uid),
           itemBuilder: (
             BuildContext context,
             DocumentSnapshot snapshot,

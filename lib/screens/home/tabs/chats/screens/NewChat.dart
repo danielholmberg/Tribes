@@ -49,7 +49,7 @@ class _NewChatState extends State<NewChat> {
           child: Icon(Icons.edit, color: Constants.buttonIconColor, size: 20),
           backgroundColor: DynamicTheme.of(context).data.primaryColor,
           onPressed: () async {
-           String roomID = await DatabaseService().createNewChatRoom(widget.currentUserID, friend.uid);
+           String roomID = await DatabaseService().createNewPrivateChatRoom(widget.currentUserID, friend.uid);
 
             Navigator.push(context, 
               CustomPageTransition(

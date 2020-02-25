@@ -301,20 +301,25 @@ class DatabaseService {
     return chatsRoot.document(roomID).collection('messages').orderBy('created', descending: true).snapshots();
   }
 
-  Stream<QuerySnapshot> chatRooms(String userID) {
-    return chatsRoot.where('members', arrayContains: userID).snapshots();
+  Stream<QuerySnapshot> privateChatRooms(String userID) {
+    return chatsRoot.where('members', arrayContains: userID).where('hasMessages', isEqualTo: true).snapshots();
   }
 
-  Future<String> createNewChatRoom(String userID, String friendID) {
+  Future<String> createNewPrivateChatRoom(String userID, String friendID) async {
     String roomID = userID.hashCode <= friendID.hashCode ? '$userID-$friendID' : '$friendID-$userID';
 
-    var data = {
-      'members': [userID, friendID],
-    };
+    bool roomAlreadyExists = false;
+    await chatsRoot.document(roomID).get().then((onValue) => roomAlreadyExists = onValue.exists);
 
-    print('Creating new chat room data: $data');
-    chatsRoot.document(roomID).setData(data);
-    
+    if(!roomAlreadyExists) {
+      var data = {
+        'members': [userID, friendID],
+      };
+
+      print('Creating new chat room data: $data');
+      chatsRoot.document(roomID).setData(data);
+    }
+
     fcm.subscribeToTopic(roomID);
 
     return Future.value(roomID);
@@ -329,6 +334,7 @@ class DatabaseService {
     print('Sending message data: $data');
 
     DocumentReference messageRef = chatsRoot.document(roomID).collection('messages').document();
+    chatsRoot.document(roomID).updateData({'hasMessages': true});
 
     return Firestore.instance.runTransaction((transaction) => transaction.set(messageRef, data));
   }
