@@ -11,7 +11,8 @@ import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 
 class TribeTile extends StatelessWidget {
   final Tribe tribe;
-  TribeTile({this.tribe});
+  final bool active;
+  TribeTile({this.tribe, this.active});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,8 @@ class TribeTile extends StatelessWidget {
     print('Building TribeTile()...');
     print('TribeTile: ${tribe.id}');
     print('Current user ${currentUser.toString()}');
+
+    final double verticalMargin = active ? 0.0 : 20.0;
 
     return GestureDetector(
       onTap: () {
@@ -34,7 +37,7 @@ class TribeTile extends StatelessWidget {
       child: AnimatedContainer(
         duration: Duration(milliseconds: 1000),
         curve: Curves.easeOutQuint,
-        margin: EdgeInsets.symmetric(horizontal: 20.0),
+        margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: verticalMargin),
         child: Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
