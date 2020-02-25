@@ -139,50 +139,53 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                       // Users List Widget
                       Padding(
                         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: ScrollConfiguration(
-                                behavior: CustomScrollBehavior(),
-                                child: ListView.builder(
-                                  shrinkWrap: false,
-                                  padding: EdgeInsets.all(6.0),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: friendsList.length,
-                                  itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                      onTap: () async => await mapController.future.then((controller) =>
-                                        controller.animateCamera(
-                                          CameraUpdate.newCameraPosition(
-                                            CameraPosition(
-                                              target: LatLng(friendsDataList[index].lat, friendsDataList[index].lng),
-                                              zoom: 15.0
+                        child: Container(
+                          height: 130,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: ScrollConfiguration(
+                                  behavior: CustomScrollBehavior(),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.all(6.0),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: friendsList.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () async => await mapController.future.then((controller) =>
+                                          controller.animateCamera(
+                                            CameraUpdate.newCameraPosition(
+                                              CameraPosition(
+                                                target: LatLng(friendsDataList[index].lat, friendsDataList[index].lng),
+                                                zoom: 15.0
+                                              )
                                             )
                                           )
-                                        )
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.all(8.0),
-                                            child: userAvatar(
-                                              user: friendsDataList[index], 
-                                              padding: const EdgeInsets.all(8.0),
-                                              radius: 30, 
-                                              nameFontSize: 10, 
-                                              direction: UserAvatarDirections.vertical,
-                                              withTextDecoration: true,
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Container(
+                                              margin: EdgeInsets.all(8.0),
+                                              child: userAvatar(
+                                                user: friendsDataList[index], 
+                                                padding: const EdgeInsets.all(8.0),
+                                                radius: 30, 
+                                                nameFontSize: 10, 
+                                                direction: UserAvatarDirections.vertical,
+                                                withTextDecoration: true,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
 
