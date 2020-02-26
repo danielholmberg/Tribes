@@ -100,6 +100,7 @@ class DatabaseService {
           .document(currentUser.uid)
           .updateData({'lat': lat, 'lng': lng});
     } else {
+      print('Failed to update user location!');
       return null;
     }
   }

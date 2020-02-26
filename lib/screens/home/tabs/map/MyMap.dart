@@ -27,34 +27,26 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
 
   Completer<GoogleMapController> mapController = Completer<GoogleMapController>();
   bool _isMapLoading = true;
+  bool _showMap = false;
   BitmapDescriptor markerIcon;
 
-  StreamSubscription<Position> positionStream = Geolocator().getPositionStream(
-    LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10)).listen((Position position) async {
-      print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
-      if (position != null) {
-        dynamic result = await DatabaseService().updateUserLocation(position.latitude, position.longitude);
-        if (result == null) print('Failed to update user location!');
+  StreamSubscription<Position> positionStream;
+
+  @override
+  void initState() {
+    positionStream = Geolocator().getPositionStream(
+      LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10)).listen((Position position) async {
+        print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
+        if (position != null) {
+          await DatabaseService().updateUserLocation(position.latitude, position.longitude);
+        }
       }
-    }
-  ); 
+    ); 
 
-  void _onMapCreated(GoogleMapController controller) async {
-    mapController.complete(controller);
+    // Wait to initialize Google Map until Widget-tree has had the time to initialize.
+    Future.delayed(Duration(milliseconds: 300), () => setState(() => _showMap = true));
 
-    Position currentPosition = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(currentPosition.latitude, currentPosition.longitude),
-          zoom: 15.0
-        )
-      )
-    );
-
-    setState(() {
-      _isMapLoading = false;
-    });
+    super.initState();
   }
 
   @override
@@ -102,9 +94,9 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                   
                   return Stack(
                     children: <Widget>[
-
+                      
                       // Google Map Stack Widget
-                      AnimatedOpacity(
+                      _showMap ? AnimatedOpacity(
                         duration: Duration(milliseconds: 500),
                         opacity: _isMapLoading ? 0.0 : 1.0,
                         child: GoogleMap(
@@ -123,7 +115,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                           ),
                           markers: markers.toSet(),
                         ),
-                      ),
+                      ) : Center(child: CircularProgressIndicator()),
 
                       // Statusbar background
                       Positioned(
@@ -205,6 +197,24 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
         ),
       ),
     );
+  }
+
+  void _onMapCreated(GoogleMapController controller) async {
+    mapController.complete(controller);
+
+    Position currentPosition = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(currentPosition.latitude, currentPosition.longitude),
+          zoom: 15.0
+        )
+      )
+    );
+
+    setState(() {
+      _isMapLoading = false;
+    });
   }
 
   @override
