@@ -30,7 +30,9 @@ class Posts extends StatelessWidget {
         controller: controller,
         padding: EdgeInsets.only(top: Constants.defaultPadding, bottom: 66.0),
         query: DatabaseService().posts(tribe.id),
-        onLoaded: (snapshot) => controller.animateTo(0, duration: Duration(milliseconds: 1000), curve: Curves.easeIn),
+        onLoaded: (snapshot) => (snapshot.documentChanges.first.type == DocumentChangeType.added && snapshot.documents.first.data['author'] == currentUser.uid) 
+          ? controller.animateTo(0, duration: Duration(milliseconds: 1000), curve: Curves.easeIn) 
+          : null,
         itemBuilder: (
           BuildContext context,
           DocumentSnapshot snapshot,
