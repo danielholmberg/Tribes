@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/chats/ChatRoom.dart';
@@ -123,7 +124,7 @@ class _NewChatState extends State<NewChat> {
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
                           child: Icon(
-                            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back, 
+                            Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft, 
                             color: DynamicTheme.of(context).data.primaryColor
                           ),
                         ),

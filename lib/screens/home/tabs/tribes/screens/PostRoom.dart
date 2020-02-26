@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class PostRoom extends StatefulWidget {
@@ -64,44 +66,7 @@ class _PostRoomState extends State<PostRoom> {
     _showDiscardDialog() {
       return showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-          backgroundColor: Constants
-              .profileSettingsBackgroundColor,
-          title: Text('Are your sure you want to discard changes?',
-            style: TextStyle(
-              fontFamily: 'TribesRounded',
-              fontWeight: Constants.defaultDialogTitleFontWeight,
-              fontSize: Constants.defaultDialogTitleFontSize,
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('No', 
-                style: TextStyle(
-                  color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                  fontFamily: 'TribesRounded',
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Yes',
-                style: TextStyle(
-                  color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                  fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dialog: "Are you sure...?"
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
+        builder: (context) => DiscardChangesDialog(color: widget.tribeColor)
       );
     }
 
@@ -147,7 +112,7 @@ class _PostRoomState extends State<PostRoom> {
                   ),
                 ],
               ),
-              leading: IconButton(icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back), 
+              leading: IconButton(icon: Icon(Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft), 
                 color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                 onPressed: () {
                   edited ? _showDiscardDialog() : Navigator.of(context).pop();

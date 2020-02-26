@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
+import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class NewTribe extends StatefulWidget {
@@ -24,7 +26,7 @@ class _NewTribeState extends State<NewTribe> {
 
   String name = '';
   String desc = '';
-  Color tribeColor;
+  Color tribeColor = Constants.primaryColor;
   String error = '';
 
   @override
@@ -70,50 +72,13 @@ class _NewTribeState extends State<NewTribe> {
               ),
               backgroundColor: DynamicTheme.of(context).data.backgroundColor,
               iconTheme: IconThemeData(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
-              leading: IconButton(icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back), 
+              leading: IconButton(icon: Icon(Platform.isIOS ? FontAwesomeIcons.chevronCircleLeft : FontAwesomeIcons.arrowLeft), 
                 color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                 onPressed: () {
-                  if(name.isNotEmpty || desc.isNotEmpty) {
+                  if(name.isNotEmpty || desc.isNotEmpty || tribeColor != null) {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                        backgroundColor: Constants
-                            .profileSettingsBackgroundColor,
-                        title: Text('Are your sure you want to discard changes?',
-                          style: TextStyle(
-                            fontFamily: 'TribesRounded',
-                            fontWeight: Constants.defaultDialogTitleFontWeight,
-                            fontSize: Constants.defaultDialogTitleFontSize,
-                          ),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('No', 
-                              style: TextStyle(
-                                color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                fontFamily: 'TribesRounded',
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          FlatButton(
-                            child: Text('Yes',
-                              style: TextStyle(
-                                color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                fontFamily: 'TribesRounded',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Dialog: "Are you sure...?"
-                              Navigator.of(context).pop(); // NewPost
-                            },
-                          ),
-                        ],
-                      ),
+                      builder: (context) => DiscardChangesDialog(color: tribeColor)
                     );
                   } else {
                     Navigator.of(context).pop();
@@ -174,18 +139,26 @@ class _NewTribeState extends State<NewTribe> {
                                       textCapitalization: TextCapitalization.words,
                                       maxLength: Constants.tribeNameMaxLength,
                                       cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                      decoration: Decorations.postContentInput.copyWith(
+                                      decoration: Decorations.newTribeInput.copyWith(
                                         labelText: 'Name',
                                         labelStyle: TextStyle(
-                                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                          color: tribeColor ?? Constants.inputLabelColor,
                                           fontFamily: 'TribesRounded',
                                           fontWeight: FontWeight.bold,
                                         ),
                                         hintText: '',
+                                        counterStyle: TextStyle(
+                                          color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor,
+                                          fontFamily: 'TribesRounded',
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                        ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                           borderSide: BorderSide(
-                                            color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
+                                            color: tribeColor ?? Constants.inputFocusColor, 
                                             width: 2.0
                                           ),
                                         )
@@ -203,18 +176,26 @@ class _NewTribeState extends State<NewTribe> {
                                       keyboardType: TextInputType.multiline,
                                       maxLength: Constants.tribeDescMaxLength,
                                       maxLines: null,
-                                      decoration: Decorations.postContentInput.copyWith(
+                                      decoration: Decorations.newTribeInput.copyWith(
                                         labelText: 'Description',
                                         labelStyle: TextStyle(
-                                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                          color: tribeColor ?? Constants.inputLabelColor,
                                           fontFamily: 'TribesRounded',
                                           fontWeight: FontWeight.normal,
                                         ),
                                         hintText: '',
+                                        counterStyle: TextStyle(
+                                          color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor,
+                                          fontFamily: 'TribesRounded',
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                        ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                           borderSide: BorderSide(
-                                            color: tribeColor ?? DynamicTheme.of(context).data.primaryColor, 
+                                            color: tribeColor ?? Constants.inputFocusColor, 
                                             width: 2.0
                                           ),
                                         )

@@ -30,6 +30,11 @@ const defaultProfilePicRadius = 16.0;
 const defaultUsernameFontSize = 16.0;
 const defaultNameFontSize = 14.0;
 
+const inputLabelColor = primaryColor;
+const inputEnabledColor = Color(0x50ed217c);
+const inputFocusColor = primaryColor;
+const inputCounterColor = inputEnabledColor;
+
 // AppBar
 const appBarElevation = 0.0;
 const appBarColor = primaryColor;

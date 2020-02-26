@@ -1,6 +1,7 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tribes/services/auth.dart';
+import 'package:tribes/shared/widgets/CustomRaisedButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
@@ -159,14 +160,10 @@ class _RegisterState extends State<Register> {
                       ButtonTheme(
                         minWidth: MediaQuery.of(context).size.width,
                         height: 50.0,
-                        child: RaisedButton(
+                        child: CustomRaisedButton(
                           focusNode: registerButtonFocus,
-                          focusElevation: Constants.defaultButtonFocusElevation,
-                          color: DynamicTheme.of(context).data.accentColor,
-                          child: Text(
-                            'Register',
-                            style: DynamicTheme.of(context).data.textTheme.button
-                          ),
+                          text: 'Register',
+                          inverse: true,
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               setState(() => loading = true);

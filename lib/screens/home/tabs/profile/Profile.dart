@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/home/tabs/profile/dialogs/ProfileSettings.dart';
+import 'package:tribes/screens/home/tabs/profile/dialogs/ProfileSettingsDialog.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/CreatedPosts.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/LikedPosts.dart';
 import 'package:tribes/services/database.dart';
@@ -431,19 +431,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       onPressed: () {
                                         showDialog(
                                           context: context,
-                                          builder: (context) => AlertDialog(
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                                            contentPadding: EdgeInsets.all(0.0),
-                                            backgroundColor: Constants.profileSettingsBackgroundColor,
-                                            content: ClipRRect(
-                                              borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius)),
-                                              child: Container(
-                                                width: MediaQuery.of(context).size.width,
-                                                height: MediaQuery.of(context).size.height * 0.8,
-                                                alignment: Alignment.topLeft,
-                                                child: ProfileSettings(user: currentUser),
-                                              ),
-                                            ),
+                                          barrierDismissible: false,
+                                          builder: (context) => StreamProvider<UserData>.value(
+                                            value: DatabaseService().currentUser(currentUser.uid), 
+                                            child: ProfileSettingsDialog(user: currentUser),
                                           ),
                                         );
                                       },

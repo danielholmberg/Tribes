@@ -1,6 +1,8 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tribes/services/auth.dart';
+import 'package:tribes/shared/widgets/CustomRaisedButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
@@ -103,7 +105,11 @@ class _SignInState extends State<SignIn> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           GestureDetector(
-                            onTap: () => print('Tapped on "Forgot Password?"'),
+                            onTap: () => Fluttertoast.showToast(
+                              msg: 'Coming soon!',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                            ),
                             child: Text(
                               'Forgot Password?', 
                               style: TextStyle(
@@ -130,14 +136,10 @@ class _SignInState extends State<SignIn> {
                       ButtonTheme(
                         minWidth: MediaQuery.of(context).size.width,
                         height: 50.0,
-                        child: RaisedButton(
+                        child: CustomRaisedButton(
                           focusNode: signInButtonFocus,
-                          focusElevation: Constants.defaultButtonFocusElevation,
-                          color: DynamicTheme.of(context).data.accentColor,
-                          child: Text(
-                            'Sign in',
-                            style: DynamicTheme.of(context).data.textTheme.button
-                          ),
+                          text: 'Sign in',
+                          inverse: true,
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
                               setState(() => loading = true);

@@ -7,8 +7,9 @@ const signInInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
   hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
+  errorStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontStyle: FontStyle.italic),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Constants.primaryColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Colors.white, width: 2.0),
@@ -19,7 +20,6 @@ const signInInput = InputDecoration(
   focusedErrorBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Colors.white, width: 2.0),
   ),
-  errorStyle: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
 );
 
 const registerInput = InputDecoration(
@@ -27,8 +27,9 @@ const registerInput = InputDecoration(
   filled: true,
   counterStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded'),
   hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
+  errorStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontStyle: FontStyle.italic),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Constants.primaryColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Colors.white, width: 2.0),
@@ -39,55 +40,90 @@ const registerInput = InputDecoration(
   focusedErrorBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Colors.white, width: 2.0),
   ),
-  errorStyle: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
 );
 
-const postTitleInput = InputDecoration(
+const postInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
-  hintText: 'Title',
+  hintStyle: TextStyle(fontFamily: 'TribesRounded'),
+  counterStyle: TextStyle(color: Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.postBackgroundColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.postInputFocusColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.inputFocusColor, width: 2.0),
   )
 );
 
-const postContentInput = InputDecoration(
+const newTribeInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
   hintText: 'Content',
+  hintStyle: TextStyle(fontFamily: 'TribesRounded'),
+  counterStyle: TextStyle(color: Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.postBackgroundColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.postInputFocusColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.inputFocusColor, width: 2.0),
   )
 );
 
 const profileSettingsInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
-  labelStyle: TextStyle(color: Constants.postInputFocusColor),
+  labelStyle: TextStyle(color: Constants.inputLabelColor, fontFamily: 'TribeRounded'),
+  hintStyle: TextStyle(fontFamily: 'TribesRounded'),
+  counterStyle: TextStyle(color: Constants.inputCounterColor, fontFamily: 'TribesRounded'),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.postBackgroundColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.postInputFocusColor, width: 2.0),
+    borderSide: BorderSide(color: Constants.inputFocusColor, width: 2.0),
+  )
+);
+
+const tribeDetailsInput = InputDecoration(
+  fillColor: Colors.white,
+  filled: true,
+  labelStyle: TextStyle(color: Constants.inputLabelColor, fontFamily: 'TribeRounded'),
+  hintStyle: TextStyle(fontFamily: 'TribesRounded'),
+  counterStyle: TextStyle(color: Constants.inputCounterColor, fontFamily: 'TribesRounded'),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.inputFocusColor, width: 2.0),
+  )
+);
+
+const tribeSettingsInput = InputDecoration(
+  fillColor: Colors.white,
+  filled: true,
+  labelStyle: TextStyle(color: Constants.inputLabelColor, fontFamily: 'TribeRounded'),
+  hintStyle: TextStyle(fontFamily: 'TribesRounded'),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+    borderSide: BorderSide(color: Constants.inputFocusColor, width: 2.0),
   )
 );
 
 const newTribesInput = InputDecoration(
   fillColor: Constants.backgroundColor,
   filled: true,
-  labelStyle: TextStyle(color: Constants.tribesColor),
+  labelStyle: TextStyle(color: Constants.tribesColor, fontFamily: 'TribeRounded'),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),
     borderSide: BorderSide(color: Constants.backgroundColor, width: 2.0),
@@ -101,7 +137,7 @@ const newTribesInput = InputDecoration(
 const tribePasswordInput = InputDecoration(
   fillColor: Constants.backgroundColor,
   filled: true,
-  hintStyle: TextStyle(color: Colors.black26),
+  hintStyle: TextStyle(color: Colors.black26, fontFamily: 'TribeRounded'),
   hintText: '0',
   contentPadding: EdgeInsets.zero,
   enabledBorder: OutlineInputBorder(

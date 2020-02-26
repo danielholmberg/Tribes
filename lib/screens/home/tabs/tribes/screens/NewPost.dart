@@ -12,6 +12,7 @@ import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class NewPost extends StatefulWidget {  
@@ -135,44 +136,7 @@ class _NewPostState extends State<NewPost> {
                   if(title.isNotEmpty || content.isNotEmpty || _imageFile != null) {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                        backgroundColor: Constants
-                            .profileSettingsBackgroundColor,
-                        title: Text('Are your sure you want to discard changes?',
-                          style: TextStyle(
-                            fontFamily: 'TribesRounded',
-                            fontWeight: Constants.defaultDialogTitleFontWeight,
-                            fontSize: Constants.defaultDialogTitleFontSize,
-                          ),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('No', 
-                              style: TextStyle(
-                                color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                fontFamily: 'TribesRounded',
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          FlatButton(
-                            child: Text('Yes',
-                              style: TextStyle(
-                                color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                fontFamily: 'TribesRounded',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Dialog: "Are you sure...?"
-                              Navigator.of(context).pop(); // NewPost
-                            },
-                          ),
-                        ],
-                      ),
+                      builder: (context) => DiscardChangesDialog(color: widget.tribe.color)
                     );
                   } else {
                     Navigator.of(context).pop();
@@ -224,11 +188,16 @@ class _NewPostState extends State<NewPost> {
                                       textCapitalization: TextCapitalization.sentences,
                                       style: DynamicTheme.of(context).data.textTheme.title,
                                       cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                      decoration: Decorations.postTitleInput.copyWith(
+                                      decoration: Decorations.postInput.copyWith(
+                                        hintText: 'Title',
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(color: widget.tribe.color.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                        ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                           borderSide: BorderSide(
-                                            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
+                                            color: widget.tribe.color ?? Constants.inputFocusColor,
                                             width: 2.0
                                           ),
                                         )
@@ -249,11 +218,16 @@ class _NewPostState extends State<NewPost> {
                                       keyboardType: TextInputType.multiline,
                                       maxLines: null,
                                       cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                      decoration: Decorations.postContentInput.copyWith(
+                                      decoration: Decorations.postInput.copyWith(
+                                        hintText: 'Content',
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(color: widget.tribe.color.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                        ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                           borderSide: BorderSide(
-                                            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor, 
+                                            color: widget.tribe.color ?? Constants.inputFocusColor,
                                             width: 2.0
                                           ),
                                         )

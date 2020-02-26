@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
@@ -129,11 +130,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                     decoration: Decorations.tribePasswordInput.copyWith(
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: activeTribe.color ?? Constants.inputFocusColor, width: 2.0),
                                       ),
                                     ),
                                     onChanged: (val) {
@@ -173,11 +174,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: two.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: activeTribe.color ?? Constants.inputFocusColor, width: 2.0),
                                       ),
                                     ),
                                     onChanged: (val) {
@@ -217,11 +218,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: three.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: activeTribe.color ?? Constants.inputFocusColor, width: 2.0),
                                       ),
                                     ),
                                     onChanged: (val) {
@@ -261,11 +262,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: four.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: activeTribe.color ?? Constants.inputFocusColor, width: 2.0),
                                       ),
                                     ),
                                     onChanged: (val) {
@@ -305,11 +306,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: five.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: activeTribe.color ?? Constants.inputFocusColor, width: 2.0),
                                       ),
                                     ),
                                     onChanged: (val) {
@@ -349,11 +350,11 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: six.isEmpty ? Colors.black26 : activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                                        borderSide: BorderSide(color: activeTribe.color ?? Constants.inputFocusColor, width: 2.0),
                                       ),
                                     ),
                                     onChanged: (val) {
@@ -567,7 +568,7 @@ class _JoinTribeState extends State<JoinTribe> {
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
                           child: Icon(
-                            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back, 
+                            Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft, 
                             color: DynamicTheme.of(context).data.primaryColor
                           ),
                         ),

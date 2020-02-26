@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
             subhead: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
             body1: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
             body2: TextStyle(fontSize: 12.0, fontWeight: FontWeight.normal),
-            button: TextStyle(color: Constants.primaryColor, fontWeight: FontWeight.bold),
+            button: TextStyle(color: Constants.buttonIconColor, fontWeight: FontWeight.bold),
         ),
       );
   }
