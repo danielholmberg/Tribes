@@ -18,6 +18,8 @@ class TribeSettings extends StatefulWidget {
 
 class _TribeSettingsState extends State<TribeSettings> {
   final _formKey = GlobalKey<FormState>();
+  final FocusNode nameFocus = new FocusNode();
+  final FocusNode descFocus = new FocusNode();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
 
@@ -26,6 +28,13 @@ class _TribeSettingsState extends State<TribeSettings> {
   Color tribeColor;
   String imageURL;
   String error = '';
+
+  @override
+  void dispose() {
+    nameFocus.dispose();
+    descFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +86,7 @@ class _TribeSettingsState extends State<TribeSettings> {
                                 children: <Widget>[
                                   SizedBox(height: Constants.defaultSpacing),
                                   TextFormField(
+                                    focusNode: nameFocus,
                                     initialValue: currentTribe.name,
                                     maxLength: Constants.tribeNameMaxLength,
                                     textCapitalization:
@@ -91,9 +101,11 @@ class _TribeSettingsState extends State<TribeSettings> {
                                     onChanged: (val) {
                                       setState(() => name = val);
                                     },
+                                    onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(descFocus),
                                   ),
                                   SizedBox(height: Constants.defaultSpacing),
                                   TextFormField(
+                                    focusNode: descFocus,
                                     initialValue: currentTribe.desc,
                                     textCapitalization:
                                         TextCapitalization.sentences,
@@ -108,12 +120,12 @@ class _TribeSettingsState extends State<TribeSettings> {
                                       setState(() => desc = val);
                                     },
                                   ),
-                                  SizedBox(height: Constants.defaultSpacing),
+                                  SizedBox(height: Constants.smallSpacing),
                                   ButtonTheme(
                                     height: 40.0,
                                     minWidth: MediaQuery.of(context).size.width,
                                     child: RaisedButton.icon(
-                                      elevation: 8.0,
+                                      elevation: Constants.defaultElevation,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
@@ -161,7 +173,7 @@ class _TribeSettingsState extends State<TribeSettings> {
                                       },
                                     ),
                                   ),
-                                  SizedBox(height: Constants.defaultSpacing),
+                                  SizedBox(height: Constants.smallSpacing),
                                   RaisedButton(
                                     color: DynamicTheme.of(context)
                                         .data

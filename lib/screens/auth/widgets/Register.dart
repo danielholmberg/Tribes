@@ -20,6 +20,11 @@ class _RegisterState extends State<Register> {
 
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  final FocusNode nameFocus = new FocusNode();
+  final FocusNode usernameFocus = new FocusNode();
+  final FocusNode emailFocus = new FocusNode();
+  final FocusNode passwordFocus = new FocusNode();
+  final FocusNode registerButtonFocus = new FocusNode();
   bool loading = false;
 
   String name = '';
@@ -27,6 +32,16 @@ class _RegisterState extends State<Register> {
   String email = '';
   String password = '';
   String error = '';
+
+  @override
+  void dispose() {
+    nameFocus.dispose();
+    usernameFocus.dispose();
+    emailFocus.dispose();
+    passwordFocus.dispose();
+    registerButtonFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +72,10 @@ class _RegisterState extends State<Register> {
                     children: <Widget>[
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        focusNode: nameFocus,
                         textCapitalization: TextCapitalization.words,
                         decoration: Decorations.registerInput.copyWith(
-                          hintText: 'Name', 
+                          hintText: 'Full name', 
                           prefixIcon: Icon(Icons.face, color: Constants.primaryColor)
                         ),
                         validator: (val) => val.isEmpty 
@@ -68,9 +84,11 @@ class _RegisterState extends State<Register> {
                         onChanged: (val) {
                           setState(() => name = val);
                         },
+                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(usernameFocus),
                       ),
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        focusNode: usernameFocus,
                         maxLength: Constants.profileUsernameMaxLength,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Username', 
@@ -82,9 +100,11 @@ class _RegisterState extends State<Register> {
                         onChanged: (val) {
                           setState(() => username = val);
                         },
+                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(emailFocus),
                       ),
-                      SizedBox(height: Constants.defaultSpacing),
+                      SizedBox(height: Constants.smallSpacing),
                       TextFormField(
+                        focusNode: emailFocus,
                         keyboardType: TextInputType.emailAddress,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Email', 
@@ -96,9 +116,11 @@ class _RegisterState extends State<Register> {
                         onChanged: (val) {
                           setState(() => email = val);
                         },
+                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(passwordFocus),
                       ),
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        focusNode: passwordFocus,
                         obscureText: true,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Password', 
@@ -110,6 +132,7 @@ class _RegisterState extends State<Register> {
                         onChanged: (val) {
                           setState(() => password = val);
                         },
+                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(registerButtonFocus),
                       ),
                       SizedBox(height: Constants.defaultSpacing),
                       Center(
@@ -137,6 +160,8 @@ class _RegisterState extends State<Register> {
                         minWidth: MediaQuery.of(context).size.width,
                         height: 50.0,
                         child: RaisedButton(
+                          focusNode: registerButtonFocus,
+                          focusElevation: Constants.defaultButtonFocusElevation,
                           color: DynamicTheme.of(context).data.accentColor,
                           child: Text(
                             'Register',

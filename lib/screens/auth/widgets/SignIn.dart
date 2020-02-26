@@ -20,11 +20,22 @@ class _SignInState extends State<SignIn> {
 
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  final FocusNode emailFocus = new FocusNode();
+  final FocusNode passwordFocus = new FocusNode();
+  final FocusNode signInButtonFocus = new FocusNode();
   bool loading = false;
 
   String email = '';
   String password = '';
   String error = '';
+
+  @override
+  void dispose() {
+    emailFocus.dispose();
+    passwordFocus.dispose();
+    signInButtonFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +66,7 @@ class _SignInState extends State<SignIn> {
                     children: <Widget>[
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        focusNode: emailFocus,
                         keyboardType: TextInputType.emailAddress,
                         decoration: Decorations.signInInput.copyWith(
                           hintText: 'Email', 
@@ -66,9 +78,11 @@ class _SignInState extends State<SignIn> {
                         onChanged: (val) {
                           setState(() => email = val);
                         },
+                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(passwordFocus),
                       ),
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
+                        focusNode: passwordFocus,
                         obscureText: true,
                         decoration: Decorations.signInInput.copyWith(
                           hintText: 'Password', 
@@ -80,6 +94,7 @@ class _SignInState extends State<SignIn> {
                         onChanged: (val) {
                           setState(() => password = val);
                         },
+                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(signInButtonFocus),
                       ),
                       SizedBox(height: Constants.defaultSpacing),
                       Row(
@@ -116,6 +131,8 @@ class _SignInState extends State<SignIn> {
                         minWidth: MediaQuery.of(context).size.width,
                         height: 50.0,
                         child: RaisedButton(
+                          focusNode: signInButtonFocus,
+                          focusElevation: Constants.defaultButtonFocusElevation,
                           color: DynamicTheme.of(context).data.accentColor,
                           child: Text(
                             'Sign in',

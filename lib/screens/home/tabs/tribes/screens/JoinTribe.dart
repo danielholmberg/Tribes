@@ -69,12 +69,12 @@ class _JoinTribeState extends State<JoinTribe> {
           final _passwordFormKey = GlobalKey<FormState>();
           String one = '', two = '', three = '', four = '', five = '', six = '';
           bool loadingDialog = false;
-          FocusNode oneNode = new FocusNode();
-          FocusNode twoNode = new FocusNode();
-          FocusNode threeNode = new FocusNode();
-          FocusNode fourNode = new FocusNode();
-          FocusNode fiveNode = new FocusNode();
-          FocusNode sixNode = new FocusNode();
+          final FocusNode oneNode = new FocusNode();
+          final FocusNode twoNode = new FocusNode();
+          final FocusNode threeNode = new FocusNode();
+          final FocusNode fourNode = new FocusNode();
+          final FocusNode fiveNode = new FocusNode();
+          final FocusNode sixNode = new FocusNode();
 
           return StatefulBuilder(
             builder: (context, setState) { 

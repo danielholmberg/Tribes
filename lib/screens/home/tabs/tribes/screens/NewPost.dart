@@ -26,6 +26,8 @@ class NewPost extends StatefulWidget {
 class _NewPostState extends State<NewPost> {
   
   final _formKey = GlobalKey<FormState>();
+  final FocusNode titleFocus = new FocusNode();
+  final FocusNode contentFocus = new FocusNode();
   bool loading = false;
   
   String title = '';
@@ -36,9 +38,12 @@ class _NewPostState extends State<NewPost> {
   dynamic _pickImageError;
   String _retrieveDataError;
 
-  final TextEditingController maxWidthController = TextEditingController();
-  final TextEditingController maxHeightController = TextEditingController();
-  final TextEditingController qualityController = TextEditingController();
+  @override
+  void dispose() {
+    titleFocus.dispose();
+    contentFocus.dispose();
+    super.dispose();
+  }
 
   void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
     try {
@@ -215,6 +220,7 @@ class _NewPostState extends State<NewPost> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     TextFormField(
+                                      focusNode: titleFocus,
                                       textCapitalization: TextCapitalization.sentences,
                                       style: DynamicTheme.of(context).data.textTheme.title,
                                       cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
@@ -233,9 +239,11 @@ class _NewPostState extends State<NewPost> {
                                       onChanged: (val) {
                                         setState(() => title = val);
                                       },
+                                      onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
                                     ),
                                     SizedBox(height: Constants.defaultSpacing),
                                     TextFormField(
+                                      focusNode: contentFocus,
                                       textCapitalization: TextCapitalization.sentences,
                                       style: DynamicTheme.of(context).data.textTheme.body1,
                                       keyboardType: TextInputType.multiline,

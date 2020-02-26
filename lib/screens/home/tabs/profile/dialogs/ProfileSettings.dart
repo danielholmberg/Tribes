@@ -19,6 +19,10 @@ class ProfileSettings extends StatefulWidget {
 class _ProfileSettingsState extends State<ProfileSettings> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  final FocusNode nameFocus = new FocusNode();
+  final FocusNode usernameFocus = new FocusNode();
+  final FocusNode infoFocus = new FocusNode();
+  final FocusNode saveButtonFocus = new FocusNode();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
 
@@ -26,6 +30,15 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   String username;
   String info;
   String error = '';
+
+  @override
+  void dispose() {
+    nameFocus.dispose();
+    usernameFocus.dispose();
+    infoFocus.dispose();
+    saveButtonFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +77,14 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                 children: <Widget>[
                                   SizedBox(height: Constants.defaultSpacing),
                                   TextFormField(
+                                    focusNode: nameFocus,
                                     initialValue: currentUser.name,
                                     textCapitalization:
                                         TextCapitalization.words,
                                     decoration: Decorations.profileSettingsInput
                                         .copyWith(
                                       labelText: 'Name',
+                                      hintText: 'Full name'
                                     ),
                                     validator: (val) => val.isEmpty
                                         ? 'Please add your name'
@@ -78,9 +93,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     onChanged: (val) {
                                       setState(() => name = val);
                                     },
+                                    onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(usernameFocus),
                                   ),
                                   SizedBox(height: Constants.defaultSpacing),
                                   TextFormField(
+                                    focusNode: usernameFocus,
                                     initialValue: currentUser.username,
                                     maxLength: Constants.profileUsernameMaxLength,
                                     decoration: Decorations.profileSettingsInput
@@ -94,9 +111,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     onChanged: (val) {
                                       setState(() => username = val);
                                     },
+                                    onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(infoFocus),
                                   ),
                                   SizedBox(height: Constants.defaultSpacing),
                                   TextFormField(
+                                    focusNode: infoFocus,
                                     initialValue: currentUser.info,
                                     textCapitalization:
                                         TextCapitalization.sentences,
@@ -110,9 +129,12 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                                     onChanged: (val) {
                                       setState(() => info = val);
                                     },
+                                    onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(saveButtonFocus),
                                   ),
                                   SizedBox(height: Constants.defaultSpacing),
                                   RaisedButton(
+                                    focusNode: saveButtonFocus,
+                                    focusElevation: Constants.defaultButtonFocusElevation,
                                     color: DynamicTheme.of(context)
                                         .data
                                         .accentColor,

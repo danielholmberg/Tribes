@@ -25,6 +25,7 @@ const signInInput = InputDecoration(
 const registerInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
+  counterStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded'),
   hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
   enabledBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Constants.primaryColor, width: 2.0),

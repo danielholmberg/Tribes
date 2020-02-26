@@ -24,9 +24,10 @@ class _PostRoomState extends State<PostRoom> {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+  final FocusNode titleFocus = new FocusNode();
+  final FocusNode contentFocus = new FocusNode();
   bool loading = false;
   bool edited = false;
-  FocusNode focusNode = FocusNode();
 
   String title;
   String content;
@@ -35,7 +36,8 @@ class _PostRoomState extends State<PostRoom> {
 
   @override
   void dispose() {
-    focusNode.dispose();
+    titleFocus.dispose();
+    contentFocus.dispose();
     super.dispose();
   }
 
@@ -47,7 +49,7 @@ class _PostRoomState extends State<PostRoom> {
     content = originalContent;
 
     Future.delayed(Duration(milliseconds: 650)).then((val) {
-      FocusScope.of(context).requestFocus(focusNode);
+      FocusScope.of(context).requestFocus(titleFocus);
     });
     
     super.initState();
@@ -224,7 +226,7 @@ class _PostRoomState extends State<PostRoom> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 TextFormField(
-                                  focusNode: focusNode,
+                                  focusNode: titleFocus,
                                   initialValue: title ?? widget.post.title,
                                   textCapitalization: TextCapitalization.sentences,
                                   style: DynamicTheme.of(context).data.textTheme.title,
@@ -239,8 +241,10 @@ class _PostRoomState extends State<PostRoom> {
                                       edited = originalTitle != val || originalContent != content;
                                     });
                                   },
+                                  onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
                                 ),
                                 TextFormField(
+                                  focusNode: contentFocus,
                                   initialValue: content ?? widget.post.content,
                                   textCapitalization: TextCapitalization.sentences,
                                   style: DynamicTheme.of(context).data.textTheme.body1,

@@ -18,12 +18,21 @@ class NewTribe extends StatefulWidget {
 
 class _NewTribeState extends State<NewTribe> {
   final _formKey = GlobalKey<FormState>();
+  final FocusNode nameFocus = new FocusNode();
+  final FocusNode descFocus = new FocusNode();
   bool loading = false;
 
   String name = '';
   String desc = '';
   Color tribeColor;
   String error = '';
+
+  @override
+  void dispose() {
+    nameFocus.dispose();
+    descFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +170,7 @@ class _NewTribeState extends State<NewTribe> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     TextFormField(
+                                      focusNode: nameFocus,
                                       textCapitalization: TextCapitalization.words,
                                       maxLength: Constants.tribeNameMaxLength,
                                       cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
@@ -184,9 +194,11 @@ class _NewTribeState extends State<NewTribe> {
                                       onChanged: (val) {
                                         setState(() => name = val);
                                       },
+                                      onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(descFocus),
                                     ),
                                     SizedBox(height: Constants.smallSpacing),
                                     TextFormField(
+                                      focusNode: descFocus,
                                       textCapitalization: TextCapitalization.sentences,
                                       keyboardType: TextInputType.multiline,
                                       maxLength: Constants.tribeDescMaxLength,
