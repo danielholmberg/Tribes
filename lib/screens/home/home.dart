@@ -129,6 +129,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
     return StreamProvider<UserData>.value(
       value: DatabaseService().currentUser(user.uid),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,  // Avoid resize due to eg. toggled keyboard
         backgroundColor: DynamicTheme.of(context).data.backgroundColor,
         body: TabBarView(
           physics: NeverScrollableScrollPhysics(), // Disable horizontal swipe
