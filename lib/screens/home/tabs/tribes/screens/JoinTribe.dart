@@ -507,6 +507,7 @@ class _JoinTribeState extends State<JoinTribe> {
 
     return loading ? Loading() : Scaffold(
       key: _scaffoldKey,
+      resizeToAvoidBottomInset: false,
       backgroundColor: DynamicTheme.of(context).data.primaryColor,
       body: SafeArea(
         bottom: false,

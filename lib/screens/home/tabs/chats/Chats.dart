@@ -86,6 +86,7 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
       child: SafeArea(
         bottom: false,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: DynamicTheme.of(context).data.primaryColor,
           body: Column(
             children: <Widget>[

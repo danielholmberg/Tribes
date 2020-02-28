@@ -384,6 +384,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: DynamicTheme.of(context).data.primaryColor,
       body: SafeArea(
         bottom: false,

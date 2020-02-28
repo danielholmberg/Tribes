@@ -84,6 +84,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
       child: SafeArea(
         bottom: false,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: DynamicTheme.of(context).data.primaryColor,
           body: StreamBuilder<List<Tribe>>(
             initialData: [],

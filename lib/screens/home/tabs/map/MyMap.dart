@@ -64,6 +64,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
 
     return Container(
       child: currentUser == null ? Loading() : Scaffold(
+        resizeToAvoidBottomInset: false,
         body: StreamBuilder<List<Tribe>>(
           stream: DatabaseService().joinedTribes(currentUser.uid),
           builder: (context, snapshot) {
