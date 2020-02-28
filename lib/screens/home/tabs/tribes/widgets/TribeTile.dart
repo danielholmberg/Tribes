@@ -23,7 +23,7 @@ class TribeTile extends StatelessWidget {
     print('TribeTile: ${tribe.id}');
     print('Current user ${currentUser.toString()}');
 
-    final double verticalMargin = active ? 0.0 : 20.0;
+    final double verticalMargin = active ? 0.0 : MediaQuery.of(context).size.height * 0.04;
 
     return GestureDetector(
       onTap: () {
@@ -55,10 +55,9 @@ class TribeTile extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.only(bottom: 24.0),
                 children: <Widget>[
                   AutoSizeText(
                     tribe.name,
