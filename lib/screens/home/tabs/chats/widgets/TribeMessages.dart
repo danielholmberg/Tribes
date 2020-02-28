@@ -82,7 +82,6 @@ class TribeMessages extends StatelessWidget {
                     ? userAvatar(
                       user: snapshot.data, 
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      color: currentTribe.color, 
                       radius: 14, 
                       onlyAvatar: true
                     ) : SizedBox.shrink();

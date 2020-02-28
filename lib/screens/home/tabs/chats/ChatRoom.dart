@@ -96,8 +96,7 @@ class _ChatRoomState extends State<ChatRoom> {
                     return snapshot.hasData 
                     ? userAvatar(
                       user: snapshot.data, 
-                      padding: const EdgeInsets.symmetric(vertical: 6.0),
-                      color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, 
+                      padding: const EdgeInsets.symmetric(vertical: 6.0), 
                       radius: 14, 
                       onlyAvatar: true
                     ) : SizedBox.shrink();
@@ -127,7 +126,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   ? userAvatar(
                     user: snapshot.data, 
                     padding: const EdgeInsets.symmetric(vertical: 6.0),
-                    color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, 
+                    color: widget.currentTribe != null ? widget.currentTribe.color : Colors.grey, 
                     radius: 14, 
                     onlyAvatar: true
                   ) : SizedBox.shrink();
@@ -221,17 +220,33 @@ class _ChatRoomState extends State<ChatRoom> {
             title: widget.members != null ? StreamBuilder<UserData>(
               stream: DatabaseService().userData(widget.members.where((memberID) => memberID != currentUser.uid).toList()[0]),
               builder: (context, snapshot) {                
-                return AutoSizeText(snapshot.hasData ? snapshot.data.name : 'No name',
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  minFontSize: 10.0,
-                  overflow: TextOverflow.fade,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'TribesRounded',
-                  ),
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Visibility(
+                      visible: snapshot.hasData,
+                      child: userAvatar(
+                        user: snapshot.data, 
+                        color: Colors.white,
+                        onlyAvatar: true,
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      ),
+                    ),
+                    AutoSizeText(snapshot.hasData ? snapshot.data.name : 'No name',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      minFontSize: 10.0,
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'TribesRounded',
+                      ),
+                    ),
+                  ],
                 );
               }
             ) 
