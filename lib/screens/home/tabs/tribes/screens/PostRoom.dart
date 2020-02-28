@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
@@ -122,7 +123,8 @@ class _PostRoomState extends State<PostRoom> {
                 IconButton(
                   splashColor: Colors.transparent,
                   color: DynamicTheme.of(context).data.backgroundColor,
-                  icon: Icon(Icons.delete, 
+                  icon: CustomAwesomeIcon(
+                    icon: FontAwesomeIcons.solidTrashAlt, 
                     color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
                   ),
                   onPressed: () {
@@ -262,7 +264,7 @@ class _PostRoomState extends State<PostRoom> {
                               ),
                             ),
                             placeholder: (context, url) => Loading(),
-                            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                            errorWidget: (context, url, error) => Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
                           ),
                         ),
                       ],
@@ -285,7 +287,7 @@ class _PostRoomState extends State<PostRoom> {
                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                         ),
                         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                        icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                        icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, size: Constants.smallIconSize),
                         label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                         textColor: Colors.white,
                         onPressed: edited ? () {

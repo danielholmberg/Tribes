@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Message.dart';
@@ -151,10 +154,11 @@ class _ChatRoomState extends State<ChatRoom> {
         padding: EdgeInsets.symmetric(vertical: 8.0),
         color: Colors.white,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             IconButton(
-              icon: Icon(Icons.photo),
-              iconSize: 25.0,
+              icon: Icon(FontAwesomeIcons.paperclip),
+              iconSize: Constants.defaultIconSize,
               color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
               onPressed: () => Fluttertoast.showToast(
                 msg: 'Coming soon!',
@@ -162,7 +166,6 @@ class _ChatRoomState extends State<ChatRoom> {
                 gravity: ToastGravity.BOTTOM,
               ),
             ),
-            SizedBox(width: Constants.defaultPadding),
             Expanded(
               child: TextField(
                 controller: controller,
@@ -185,18 +188,15 @@ class _ChatRoomState extends State<ChatRoom> {
                 onChanged: (val) => setState(() => message = val),
               ),
             ),
-            SizedBox(width: Constants.defaultPadding),
             IconButton(
-              icon: Icon(Icons.send),
-              iconSize: 25.0,
+              icon: Icon(FontAwesomeIcons.solidPaperPlane),
+              iconSize: Constants.defaultIconSize,
               color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
-              onPressed: () {
-                if(message.isNotEmpty) {
-                  controller.clear();
-                  FocusScope.of(context).unfocus();
-                  DatabaseService().sendMessage(widget.roomID, currentUser.uid, message);
-                  listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-                }
+              onPressed: message.isEmpty ? null : () {
+                controller.clear();
+                FocusScope.of(context).unfocus();
+                DatabaseService().sendMessage(widget.roomID, currentUser.uid, message);
+                listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
               },
             ),
           ],
@@ -213,6 +213,11 @@ class _ChatRoomState extends State<ChatRoom> {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0.0,
+            leading: IconButton(
+              icon: Icon(Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft), 
+              color: Constants.buttonIconColor, 
+              onPressed: () => Navigator.of(context).pop()
+            ),
             title: widget.members != null ? StreamBuilder<UserData>(
               stream: DatabaseService().userData(widget.members.where((memberID) => memberID != currentUser.uid).toList()[0]),
               builder: (context, snapshot) {                
@@ -245,8 +250,8 @@ class _ChatRoomState extends State<ChatRoom> {
             centerTitle: true,
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.more_horiz),
-                iconSize: 30.0,
+                icon: Icon(FontAwesomeIcons.ellipsisH),
+                iconSize: Constants.defaultIconSize,
                 color: Colors.white,
                 onPressed: () => Fluttertoast.showToast(
                   msg: 'Coming soon!',

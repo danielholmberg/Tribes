@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firestore_ui/animated_firestore_list.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Chat.dart';
@@ -11,6 +12,7 @@ import 'package:tribes/screens/home/tabs/chats/ChatRoom.dart';
 import 'package:tribes/screens/home/tabs/chats/Chats.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/utils.dart';
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -153,7 +155,7 @@ class PrivateMessages extends StatelessWidget {
                             heroTag: 'replyButton-${reciever.uid}',
                             elevation: 4.0,
                             mini: true,
-                            child: Icon(Icons.reply, color: Constants.buttonIconColor),
+                            child: CustomAwesomeIcon(icon: FontAwesomeIcons.reply, size: Constants.smallIconSize),
                             backgroundColor: DynamicTheme.of(context).data.primaryColor,
                             onPressed: () => Navigator.push(context, 
                               CustomPageTransition(

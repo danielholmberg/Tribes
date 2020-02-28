@@ -1,5 +1,6 @@
 import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
@@ -45,7 +46,7 @@ class _LikedPostsState extends State<LikedPosts> with AutomaticKeepAliveClientMi
                 Post likedPost = snapshot.data;
                 return PostTileCompact(post: likedPost);
               } else if(snapshot.hasError) {
-                return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(Icons.error)));
+                return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)));
               } else {
                 return Loading();
               }

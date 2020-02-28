@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,7 @@ import 'package:tribes/screens/home/tabs/profile/widgets/LikedPosts.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 
 class Profile extends StatefulWidget {
   static const routeName = '/home/profile';
@@ -116,7 +118,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         errorWidget: (context, url, error) => CircleAvatar(
           radius: Constants.profilePagePicRadius,
           backgroundColor: Colors.transparent,
-          child: Center(child: Icon(Icons.error)),
+          child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)),
         ),
       );
     }
@@ -127,7 +129,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         return CircleAvatar(
           radius: Constants.profilePagePicRadius,
           backgroundColor: Colors.transparent,
-          child: Center(child: Icon(Icons.error)),
+          child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)),
         );
       }
       if (_croppedImageFile != null) {
@@ -203,7 +205,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         right: 0, 
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: DynamicTheme.of(context).data.backgroundColor, width: 2.0),
+                            border: Border.all(color: Constants.buttonIconColor, width: 2.0),
                             color: Colors.blue,
                             shape: BoxShape.circle,
                           ),
@@ -211,11 +213,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(Constants.maxCornerRadius),
                             child: Padding(
                               padding:EdgeInsets.all(4.0),
-                              child: Icon(
-                                Icons.add,
-                                size: 14.0,
-                                color: Colors.white,
-                              ),
+                              child: CustomAwesomeIcon(
+                                icon: FontAwesomeIcons.plus,
+                                size: 16.0,
+                              )
                             ),
                           ),
                         ),
@@ -305,9 +306,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Icon(Icons.email, 
+                      Icon(FontAwesomeIcons.at, 
                         color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.7),
-                        size: Constants.smallIconSize,
+                        size: Constants.tinyIconSize,
                       ),
                       SizedBox(width: Constants.defaultPadding),
                       Text(currentUser.email,
@@ -324,9 +325,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Icon(Icons.person_pin_circle, 
+                      Icon(Platform.isIOS ? FontAwesomeIcons.locationArrow : FontAwesomeIcons.mapMarkerAlt, 
                         color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.7),
-                        size: Constants.smallIconSize,
+                        size: Constants.tinyIconSize,
                       ),
                       SizedBox(width: Constants.defaultPadding),
                       FutureBuilder(
@@ -426,7 +427,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                   Positioned(right: 0, 
                                     child: IconButton(
                                       color: DynamicTheme.of(context).data.buttonColor,
-                                      icon: Icon(Icons.settings, color: Constants.buttonIconColor),
+                                      icon: Icon(FontAwesomeIcons.cog, color: Constants.buttonIconColor),
                                       splashColor: Colors.transparent,
                                       onPressed: () {
                                         showDialog(
@@ -465,7 +466,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         unselectedLabelColor: Constants.buttonIconColor.withOpacity(0.7),
                         tabs: [
                           Tab(icon: Icon(Icons.dashboard)),
-                          Tab(icon: Icon(Icons.favorite)),
+                          Tab(icon: Icon(FontAwesomeIcons.solidHeart)),
                         ],
                       ),
                     ),

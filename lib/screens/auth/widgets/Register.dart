@@ -1,5 +1,6 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/services/auth.dart';
 import 'package:tribes/shared/widgets/CustomRaisedButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
@@ -77,7 +78,7 @@ class _RegisterState extends State<Register> {
                         textCapitalization: TextCapitalization.words,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Full name', 
-                          prefixIcon: Icon(Icons.face, color: Constants.primaryColor)
+                          prefixIcon: Icon(FontAwesomeIcons.solidUser, color: Constants.primaryColor)
                         ),
                         validator: (val) => val.isEmpty 
                           ? 'Enter your name' 
@@ -93,7 +94,7 @@ class _RegisterState extends State<Register> {
                         maxLength: Constants.profileUsernameMaxLength,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Username', 
-                          prefixIcon: Icon(Icons.person, color: Constants.primaryColor)
+                          prefixIcon: Icon(FontAwesomeIcons.userSecret, color: Constants.primaryColor)
                         ),
                         validator: (val) => val.isEmpty 
                           ? 'Enter a username' 
@@ -109,7 +110,7 @@ class _RegisterState extends State<Register> {
                         keyboardType: TextInputType.emailAddress,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Email', 
-                          prefixIcon: Icon(Icons.email, color: Constants.primaryColor)
+                          prefixIcon: Icon(FontAwesomeIcons.at, color: Constants.primaryColor)
                         ),
                         validator: (val) => val.isEmpty 
                           ? 'Enter your email' 
@@ -125,7 +126,7 @@ class _RegisterState extends State<Register> {
                         obscureText: true,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Password', 
-                          prefixIcon: Icon(Icons.lock, color: Constants.primaryColor)
+                          prefixIcon: Icon(FontAwesomeIcons.lock, color: Constants.primaryColor)
                         ),
                         validator: (val) => val.length < 6 
                           ? 'Enter a password with 6 characters or more' 

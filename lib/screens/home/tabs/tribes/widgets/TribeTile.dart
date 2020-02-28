@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
@@ -7,6 +8,7 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/TribeRoom.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 
 class TribeTile extends StatelessWidget {
@@ -101,12 +103,12 @@ class TribeTile extends StatelessWidget {
 
                     return Row(
                       children: <Widget>[
-                        Icon(
-                          Icons.view_list,
+                        CustomAwesomeIcon(
+                          icon: FontAwesomeIcons.stream,
                           color: Constants.buttonIconColor,
-                          size: Constants.defaultIconSize,
+                          size: Constants.smallIconSize,
                         ),
-                        SizedBox(width: Constants.tinySpacing),
+                        SizedBox(width: Constants.smallSpacing),
                         Text(
                           '${postsList.length}',
                           style: TextStyle(
@@ -135,11 +137,10 @@ class TribeTile extends StatelessWidget {
                         fontFamily: 'TribesRounded',
                       ),
                     ),
-                    SizedBox(width: Constants.tinySpacing),
-                    Icon(
-                      Icons.group,
+                    SizedBox(width: Constants.smallSpacing),
+                    CustomAwesomeIcon(
+                      icon: FontAwesomeIcons.userFriends,
                       color: Constants.buttonIconColor,
-                      size: Constants.defaultIconSize,
                     ),
                   ],
                 ),

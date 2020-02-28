@@ -9,6 +9,7 @@ import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -455,12 +456,12 @@ class _JoinTribeState extends State<JoinTribe> {
 
                     return Row(
                       children: <Widget>[
-                        Icon(
-                          Icons.view_list,
+                        CustomAwesomeIcon(
+                          icon: FontAwesomeIcons.stream,
                           color: Constants.buttonIconColor,
-                          size: 20,
+                          size: Constants.smallIconSize,
                         ),
-                        SizedBox(width: Constants.tinySpacing),
+                        SizedBox(width: Constants.smallSpacing),
                         Text(
                           '${postsList.length}',
                           style: TextStyle(
@@ -489,11 +490,11 @@ class _JoinTribeState extends State<JoinTribe> {
                         fontFamily: 'TribesRounded',
                       ),
                     ),
-                    SizedBox(width: Constants.tinySpacing),
-                    Icon(
-                      Icons.group,
+                    SizedBox(width: Constants.smallSpacing),
+                    CustomAwesomeIcon(
+                      icon: FontAwesomeIcons.userFriends,
                       color: Constants.buttonIconColor,
-                      size: 20,
+                      size: Constants.smallIconSize,
                     ),
                   ],
                 ),
@@ -562,6 +563,7 @@ class _JoinTribeState extends State<JoinTribe> {
                   margin: EdgeInsets.all(12.0),
                   elevation: 8.0,
                   child: ListTile(
+                    contentPadding: EdgeInsets.only(left: 16.0, right: 12.0),
                     leading: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -573,7 +575,7 @@ class _JoinTribeState extends State<JoinTribe> {
                           ),
                         ),
                         SizedBox(width: Constants.defaultSpacing),
-                        Icon(Icons.search, color: Colors.black54),
+                        Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
                       ],
                     ),
                     title: TextField(
@@ -590,7 +592,8 @@ class _JoinTribeState extends State<JoinTribe> {
                       ),
                       onChanged: onSearchTextChanged,
                     ),
-                    trailing: IconButton(icon: Icon(Icons.cancel), onPressed: () {
+                    trailing: IconButton(icon: Icon(FontAwesomeIcons.solidTimesCircle), 
+                    onPressed: () {
                       controller.clear();
                       onSearchTextChanged('');
                     },),

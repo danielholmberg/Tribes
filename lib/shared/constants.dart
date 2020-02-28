@@ -49,6 +49,7 @@ const errorColor = Colors.red;
 // Icons
 const bottomBarIconSize = 30.0;
 const defaultIconSize = 24.0;
+const tinyIconSize = 12.0;
 const smallIconSize = 18.0;
 const mediumIconSize = 30.0;
 const largeIconSize = 46.0;

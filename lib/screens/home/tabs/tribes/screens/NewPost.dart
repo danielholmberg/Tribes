@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -10,6 +11,7 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
@@ -130,8 +132,11 @@ class _NewPostState extends State<NewPost> {
             appBar: AppBar(
               elevation: 0.0,
               backgroundColor: DynamicTheme.of(context).data.backgroundColor,
-              leading: IconButton(icon: Icon(Icons.close), 
-                color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+              leading: IconButton(
+                icon: CustomAwesomeIcon(
+                  icon: FontAwesomeIcons.times, 
+                  color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                ), 
                 onPressed: () {
                   if(title.isNotEmpty || content.isNotEmpty || _imageFile != null) {
                     showDialog(
@@ -145,21 +150,14 @@ class _NewPostState extends State<NewPost> {
               ),
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.add_a_photo),
-                  iconSize: Constants.defaultIconSize,
-                  color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                  onPressed: () {
-                    _onImageButtonPressed(ImageSource.camera, context: context);
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.add_photo_alternate),
-                  iconSize: Constants.defaultIconSize,
-                  color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                  icon: CustomAwesomeIcon(
+                    icon: FontAwesomeIcons.photoVideo,
+                    color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                  ),                  
                   onPressed: () {
                     _onImageButtonPressed(ImageSource.gallery, context: context);
                   },
-                )
+                ),
               ],
             ),
             body: Stack(
@@ -298,7 +296,7 @@ class _NewPostState extends State<NewPost> {
                               BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                         ),
                         color: Colors.green,
-                        icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                        icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, color: Constants.buttonIconColor, size: Constants.smallIconSize),
                         label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                         textColor: Colors.white,
                         onPressed: () async {                

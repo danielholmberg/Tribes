@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 
 Widget postedDateTime(int timestamp, 
 {double fontSize = Constants.timestampFontSize,
@@ -26,7 +28,7 @@ IconButton likeButton(UserData user, String postID, Color color) {
   return IconButton(
       splashColor: Colors.transparent,
       color: Constants.backgroundColor,
-      icon: Icon(likedByUser ? Icons.favorite : Icons.favorite_border, 
+      icon: CustomAwesomeIcon(icon: likedByUser ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart, 
         color: color,
       ),
       onPressed: () async {
@@ -82,7 +84,7 @@ Widget userAvatar({
         errorWidget: (context, url, error) => CircleAvatar(
           radius: radius,
           backgroundColor: Colors.transparent,
-          child: Center(child: Icon(Icons.error)),
+          child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
         ),
       ),
       Visibility(

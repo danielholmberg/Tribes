@@ -8,6 +8,7 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/chats/ChatRoom.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/utils.dart';
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -41,13 +42,16 @@ class _NewChatState extends State<NewChat> {
   Widget build(BuildContext context) {
     _friendTile(UserData friend) {
       return ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
         leading: userAvatar(user: friend, radius: 20, withName: true),
         trailing: FloatingActionButton(
           heroTag: 'newChatButton-${friend.uid}',
           elevation: 4.0,
           mini: true,
-          child: Icon(Icons.edit, color: Constants.buttonIconColor, size: 20),
+          child: CustomAwesomeIcon(
+            icon: FontAwesomeIcons.pen,
+            size: Constants.smallIconSize,
+          ),
           backgroundColor: DynamicTheme.of(context).data.primaryColor,
           onPressed: () async {
            String roomID = await DatabaseService().createNewPrivateChatRoom(widget.currentUserID, friend.uid);
@@ -118,6 +122,7 @@ class _NewChatState extends State<NewChat> {
                   margin: EdgeInsets.all(12.0),
                   elevation: 8.0,
                   child: ListTile(
+                    contentPadding: EdgeInsets.only(left: 16.0, right: 12.0),
                     leading: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -129,7 +134,7 @@ class _NewChatState extends State<NewChat> {
                           ),
                         ),
                         SizedBox(width: Constants.defaultSpacing),
-                        Icon(Icons.search, color: Colors.black54),
+                        Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
                       ],
                     ),
                     title: TextField(
@@ -146,10 +151,13 @@ class _NewChatState extends State<NewChat> {
                       ),
                       onChanged: onSearchTextChanged,
                     ),
-                    trailing: IconButton(icon: Icon(Icons.cancel), onPressed: () {
-                      controller.clear();
-                      onSearchTextChanged('');
-                    },),
+                    trailing: IconButton(
+                      icon: Icon(FontAwesomeIcons.solidTimesCircle), 
+                      onPressed: () {
+                        controller.clear();
+                        onSearchTextChanged('');
+                      },
+                    ),
                   ),
                 ),
               ),

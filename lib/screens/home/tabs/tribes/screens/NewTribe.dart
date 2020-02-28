@@ -9,6 +9,7 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -72,8 +73,11 @@ class _NewTribeState extends State<NewTribe> {
               ),
               backgroundColor: DynamicTheme.of(context).data.backgroundColor,
               iconTheme: IconThemeData(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
-              leading: IconButton(icon: Icon(Platform.isIOS ? FontAwesomeIcons.chevronCircleLeft : FontAwesomeIcons.arrowLeft), 
-                color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+              leading: IconButton(
+                icon: CustomAwesomeIcon(
+                  icon: Platform.isIOS ? FontAwesomeIcons.chevronCircleLeft : FontAwesomeIcons.arrowLeft,
+                  color: tribeColor,
+                ), 
                 onPressed: () {
                   if(name.isNotEmpty || desc.isNotEmpty || tribeColor != null) {
                     showDialog(
@@ -87,7 +91,7 @@ class _NewTribeState extends State<NewTribe> {
               ),
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.palette),
+                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -232,7 +236,7 @@ class _NewTribeState extends State<NewTribe> {
                   right: 0.0,
                   child: AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
-                    opacity: (name.isNotEmpty || desc.isNotEmpty) ? 1.0 : 0.0,
+                    opacity: (name.isNotEmpty && desc.isNotEmpty) ? 1.0 : 0.0,
                       child: ButtonTheme(
                       height: 60.0,
                       minWidth: MediaQuery.of(context).size.width,
@@ -243,7 +247,7 @@ class _NewTribeState extends State<NewTribe> {
                               BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                         ),
                         color: Colors.green,
-                        icon: Icon(Icons.done, color: Constants.buttonIconColor, size: Constants.defaultIconSize),
+                        icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, size: Constants.smallIconSize),
                         label: Text('Create', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                         textColor: Colors.white,
                         onPressed: () async {                

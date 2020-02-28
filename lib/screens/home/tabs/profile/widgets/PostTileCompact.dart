@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
@@ -87,7 +88,7 @@ class PostTileCompact extends StatelessWidget {
               errorWidget: (context, url, error) => Container(
                 height: Constants.postTileCompactImageHeight,
                 width: MediaQuery.of(context).size.width,
-                child: Center(child: Icon(Icons.error)),
+                child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)),
               ),
               ),
           ),

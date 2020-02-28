@@ -4,6 +4,7 @@ import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomRaisedButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -92,7 +93,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                   elevation: 0.0,
                   backgroundColor: DynamicTheme.of(context).data.backgroundColor,
                   leading: IconButton(
-                    icon: Icon(FontAwesomeIcons.times, color: tribeColor != null ? tribeColor : currentTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                    icon: CustomAwesomeIcon(icon: FontAwesomeIcons.times, color: tribeColor != null ? tribeColor : currentTribe.color),
                     onPressed: () {
                       bool edited = originalName != name || originalDesc != desc || originalTribeColor != tribeColor;
                       if(edited) {
@@ -117,7 +118,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                   centerTitle: true,
                   actions: <Widget>[
                     IconButton(
-                      icon: Icon(Icons.palette, color: tribeColor != null ? tribeColor : currentTribe.color ?? DynamicTheme.of(context).data.primaryColor), 
+                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor != null ? tribeColor : currentTribe.color), 
                       onPressed: () => showDialog(
                         context: context,
                         child: AlertDialog(

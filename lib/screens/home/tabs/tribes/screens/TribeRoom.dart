@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -10,6 +11,7 @@ import 'package:tribes/screens/home/tabs/tribes/screens/NewPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/Posts.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -62,19 +64,17 @@ class _TribeRoomState extends State<TribeRoom> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget> [
-                                  IconButton(icon: Icon(Icons.home), 
-                                    color: Constants.buttonIconColor,
+                                  IconButton(
+                                    icon: CustomAwesomeIcon(icon: FontAwesomeIcons.home),
                                     splashColor: Colors.transparent,
                                     onPressed: () => Navigator.of(context).pop(),
                                   ),
                                   Visibility(
                                     visible: isFounder,
                                     child: IconButton(
-                                      icon: Icon(Icons.settings),
-                                      iconSize: Constants.defaultIconSize,
+                                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.cog, color: currentTribe.color),
                                       enableFeedback: false,
                                       splashColor: Colors.transparent,
-                                      color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                       onPressed: () => null,
                                     ),
                                   ),
@@ -102,10 +102,8 @@ class _TribeRoomState extends State<TribeRoom> {
                                   Visibility(
                                     visible: isFounder,
                                     child: IconButton(
-                                      icon: Icon(Icons.settings),
-                                      iconSize: Constants.defaultIconSize,
+                                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.cog),
                                       splashColor: Colors.transparent,
-                                      color: Colors.white,
                                       onPressed: () {
                                         showDialog(
                                           context: context,
@@ -116,8 +114,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                     ),
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.info, color: Constants.buttonIconColor), 
-                                    iconSize: Constants.defaultIconSize,
+                                    icon: CustomAwesomeIcon(icon: FontAwesomeIcons.infoCircle), 
                                     splashColor: Colors.transparent,
                                     onPressed: () {
                                       showDialog(
@@ -188,9 +185,8 @@ class _TribeRoomState extends State<TribeRoom> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                               ),
-                              color: currentTribe.color ??
-                                  DynamicTheme.of(context).data.primaryColor,
-                              icon: Icon(Icons.library_add, color: DynamicTheme.of(context).data.accentColor, size: Constants.defaultIconSize),
+                              color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                              icon: CustomAwesomeIcon(icon: FontAwesomeIcons.solidPlusSquare, color: DynamicTheme.of(context).data.accentColor, size: Constants.defaultIconSize),
                               label: Text('Add a post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                               textColor: Colors.white,
                               onPressed: () {

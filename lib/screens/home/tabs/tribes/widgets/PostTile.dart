@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
@@ -10,6 +11,7 @@ import 'package:tribes/screens/home/tabs/tribes/screens/PostRoom.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/utils.dart';
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
@@ -67,10 +69,10 @@ class _PostTileState extends State<PostTile> {
           ),
           isAuthor ? IconButton(
             splashColor: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withAlpha(30),
-            icon: Icon(Icons.edit, 
-              color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+            icon: CustomAwesomeIcon(icon: FontAwesomeIcons.pen, 
+              color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+              size: Constants.smallIconSize,
             ),
-            iconSize: 20,
             onPressed: () async {
               Navigator.push(context, CustomPageTransition(
                 type: CustomPageTransitionType.postDetails, 
@@ -88,66 +90,69 @@ class _PostTileState extends State<PostTile> {
     }
 
     _postTileFooter() {
-      return Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              IconButton(
-                splashColor: Colors.transparent,
-                color: DynamicTheme.of(context).data.backgroundColor,
-                icon: Icon(Icons.comment, 
-                  color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                  splashColor: Colors.transparent,
+                  color: DynamicTheme.of(context).data.backgroundColor,
+                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.solidCommentDots, 
+                    color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
+                  ),
+                  onPressed: () async {
+                    Fluttertoast.showToast(
+                      msg: 'Coming soon!',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                    );
+                  },
                 ),
-                onPressed: () async {
-                  Fluttertoast.showToast(
-                    msg: 'Coming soon!',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                  );
-                },
-              ),
-            ],
-          ),
-          Spacer(),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: postedDateTime(widget.post.created, color: widget.tribeColor)
-          ),
-          Spacer(),   
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text('${widget.post.likes}',
-                    style: TextStyle(
-                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                      fontFamily: 'TribesRounded',
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold
+              ],
+            ),
+            Spacer(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.0),
+              child: postedDateTime(widget.post.created, color: widget.tribeColor)
+            ),
+            Spacer(),   
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('${widget.post.likes}',
+                      style: TextStyle(
+                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                        fontFamily: 'TribesRounded',
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
-                  ),
-                  likeButton(
-                    currentUser, 
-                    widget.post.id, 
-                    (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
-                  ),
-                ],
-              ),
-            ],
-          ),           
-        ],
+                    likeButton(
+                      currentUser, 
+                      widget.post.id, 
+                      (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
+                    ),
+                  ],
+                ),
+              ],
+            ),           
+          ],
+        ),
       );
     }
 
@@ -213,7 +218,7 @@ class _PostTileState extends State<PostTile> {
               errorWidget: (context, url, error) => Container(
                 height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
                 width: MediaQuery.of(context).size.width,
-                child: Center(child: Icon(Icons.error)),
+                child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
               ),
               ),
           ),

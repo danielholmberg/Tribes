@@ -1,5 +1,6 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -8,6 +9,7 @@ import 'package:tribes/screens/home/tabs/tribes/screens/NewTribe.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/TribeTile.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -115,12 +117,40 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget> [
-                                IconButton(
-                                  icon: Icon(Icons.add_to_photos, color: Colors.white),
-                                  iconSize: Constants.defaultIconSize,
-                                  splashColor: Colors.transparent,
-                                  onPressed: () => _showNewTribePage(),
+
+                                // New Tribe Icon Widget
+                                Stack(
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.campground),
+                                      iconSize: Constants.defaultIconSize,
+                                      splashColor: Colors.transparent,
+                                      onPressed: () => _showNewTribePage(),
+                                    ),
+                                    Positioned(
+                                      bottom: 6.0,
+                                      right: 6.0,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Constants.buttonIconColor, width: 2.0),
+                                          color: Constants.primaryColor,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: InkWell(
+                                          borderRadius: BorderRadius.circular(Constants.maxCornerRadius),
+                                          child: Padding(
+                                            padding:EdgeInsets.all(3.0), 
+                                            child: CustomAwesomeIcon(
+                                              icon: FontAwesomeIcons.plus, 
+                                              size: 10
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
+
                               ],
                             ),
                           ),
@@ -131,12 +161,15 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget> [
+
+                                // Join Tribe Icon Widget
                                 IconButton(
-                                  icon: Icon(Icons.group_add, color: Colors.white),
+                                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.search),
                                   iconSize: Constants.defaultIconSize,
                                   splashColor: Colors.transparent,
                                   onPressed: () => _showJoinTribePage(),
                                 ),
+
                               ],
                             ),
                           ),

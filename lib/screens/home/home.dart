@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/NotificationData.dart';
 import 'package:tribes/models/User.dart';
@@ -140,12 +141,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
             currentIndex: _currentIndex,
             backgroundColor: DynamicTheme.of(context).data.primaryColor,
             selectedItemColor: DynamicTheme.of(context).data.primaryColor,
+            iconSize: 20.0,
             fontSize: 12.0,
             items: [
-              CustomNavBarItem(icon: Icons.home, title: 'Tribes'),
-              CustomNavBarItem(icon: Icons.map, title: 'Map'),
-              CustomNavBarItem(icon: Icons.chat, title: 'Chat'),
-              CustomNavBarItem(icon: Icons.person, title: 'Profile'),
+              CustomNavBarItem(icon: FontAwesomeIcons.campground, title: 'Tribes'),
+              CustomNavBarItem(icon: FontAwesomeIcons.mapMarkedAlt, title: 'Map'),
+              CustomNavBarItem(icon: FontAwesomeIcons.solidComments, title: 'Chat'),
+              CustomNavBarItem(icon: FontAwesomeIcons.solidUser, title: 'Profile'),
             ],
             onTap: (index) {
               _onTabTap(index);

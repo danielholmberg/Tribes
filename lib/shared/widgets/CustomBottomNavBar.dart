@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomNavBarItem.dart';
 
 
@@ -60,59 +61,61 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 ]
               ),
               width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  mainAxisSize: MainAxisSize.max,
-                  children: items.map((f) {
-                    return Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          AnimatedContainer(
-                            duration: Duration(milliseconds: 300),
-                            decoration: BoxDecoration(
-                                color: widget.currentIndex == items.indexOf(f) ? widget.selectedBackgroundColor : widget.backgroundColor, borderRadius: BorderRadius.circular(20)),
-                            child: InkWell(
-                              onTap: () {
-                                this.widget.onTap(items.indexOf(f));
-                              },
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * (100 / (items.length * 100)) - 24,
-                                padding: EdgeInsets.all(4),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      f.icon,
-                                      color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor,
-                                      size: widget.iconSize,
-                                    ),
-                                    Text(
-                                      '${f.title}',
-                                      style: TextStyle(
-                                          color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor, 
-                                          fontSize: widget.fontSize,
-                                          fontFamily: 'TribesRounded',
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.5
-                                        ),
-                                    ),
-                                  ],
-                                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                children: items.map((f) {
+                  return Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          decoration: BoxDecoration(
+                              color: widget.currentIndex == items.indexOf(f) ? widget.selectedBackgroundColor : widget.backgroundColor, borderRadius: BorderRadius.circular(20)),
+                          child: InkWell(
+                            onTap: () {
+                              this.widget.onTap(items.indexOf(f));
+                            },
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * (100 / (items.length * 100)) - 24,
+                              padding: EdgeInsets.all(4),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  CustomAwesomeIcon(
+                                    icon: f.icon,
+                                    color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor,
+                                    size: widget.iconSize,
+                                  ),
+                                  /* Icon(
+                                    f.icon,
+                                    color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor,
+                                    size: widget.iconSize,
+                                  ), */
+                                  Text(
+                                    '${f.title}',
+                                    style: TextStyle(
+                                        color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor, 
+                                        fontSize: widget.fontSize,
+                                        fontFamily: 'TribesRounded',
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.5
+                                      ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ),

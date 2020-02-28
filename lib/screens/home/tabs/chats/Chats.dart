@@ -1,6 +1,7 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/NotificationData.dart';
 import 'package:tribes/models/User.dart';
@@ -88,40 +89,43 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
           backgroundColor: DynamicTheme.of(context).data.primaryColor,
           body: Column(
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.search),
-                    iconSize: Constants.defaultIconSize,
-                    color: Colors.white,
-                    onPressed: () => Fluttertoast.showToast(
-                      msg: 'Coming soon!',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(FontAwesomeIcons.search),
+                      iconSize: Constants.defaultIconSize,
+                      color: Colors.white,
+                      onPressed: () => Fluttertoast.showToast(
+                        msg: 'Coming soon!',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                      ),
                     ),
-                  ),
-                  Spacer(),
-                  _categorySelector(),
-                  Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    iconSize: Constants.defaultIconSize,
-                    color: Colors.white,
-                    onPressed: () => Navigator.push(context, 
-                      CustomPageTransition(
-                        type: CustomPageTransitionType.newMessage, 
-                        duration: Constants.pageTransition600, 
-                        child: StreamProvider<UserData>.value(
-                          value: DatabaseService().currentUser(currentUser.uid), 
-                          child: NewChat(currentUserID: currentUser.uid),
-                        ),
-                      )
+                    Spacer(),
+                    _categorySelector(),
+                    Spacer(),
+                    IconButton(
+                      icon: Icon(FontAwesomeIcons.commentMedical),
+                      iconSize: Constants.defaultIconSize,
+                      color: Colors.white,
+                      onPressed: () => Navigator.push(context, 
+                        CustomPageTransition(
+                          type: CustomPageTransitionType.newMessage, 
+                          duration: Constants.pageTransition600, 
+                          child: StreamProvider<UserData>.value(
+                            value: DatabaseService().currentUser(currentUser.uid), 
+                            child: NewChat(currentUserID: currentUser.uid),
+                          ),
+                        )
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Expanded(
                 child: Container(

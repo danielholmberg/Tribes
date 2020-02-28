@@ -1,6 +1,7 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/services/auth.dart';
 import 'package:tribes/shared/widgets/CustomRaisedButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
@@ -72,7 +73,7 @@ class _SignInState extends State<SignIn> {
                         keyboardType: TextInputType.emailAddress,
                         decoration: Decorations.signInInput.copyWith(
                           hintText: 'Email', 
-                          prefixIcon: Icon(Icons.email, color: Constants.primaryColor)
+                          prefixIcon: Icon(FontAwesomeIcons.at, color: Constants.primaryColor)
                         ),
                         validator: (val) => val.isEmpty 
                           ? 'Enter an email' 
@@ -88,7 +89,7 @@ class _SignInState extends State<SignIn> {
                         obscureText: true,
                         decoration: Decorations.signInInput.copyWith(
                           hintText: 'Password', 
-                          prefixIcon: Icon(Icons.lock, color: Constants.primaryColor)
+                          prefixIcon: Icon(FontAwesomeIcons.lock, color: Constants.primaryColor)
                         ),
                         validator: (val) => val.length < 6 
                           ? 'Enter a password with 6 characters or more' 
