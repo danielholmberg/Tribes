@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/chats/ChatRoom.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/UserAvatar.dart';
 
 class NewChat extends StatefulWidget {
   final String currentUserID;
@@ -43,7 +43,7 @@ class _NewChatState extends State<NewChat> {
     _friendTile(UserData friend) {
       return ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-        leading: userAvatar(user: friend, radius: 20, withName: true),
+        leading: UserAvatar(user: friend, radius: 20, withName: true),
         trailing: FloatingActionButton(
           heroTag: 'newChatButton-${friend.uid}',
           elevation: 4.0,

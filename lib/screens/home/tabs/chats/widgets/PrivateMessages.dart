@@ -11,11 +11,11 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/chats/ChatRoom.dart';
 import 'package:tribes/screens/home/tabs/chats/Chats.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/UserAvatar.dart';
 
 class PrivateMessages extends StatelessWidget {
   static const routeName = Chats.routeName + '/privateMessages';
@@ -88,7 +88,7 @@ class PrivateMessages extends StatelessWidget {
                           padding: EdgeInsets.only(right: isMe || message == null ? 6.0 : 22.0),
                           child: ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
-                            leading: userAvatar(user: reciever, radius: Constants.chatMessageAvatarSize, onlyAvatar: true),
+                            leading: UserAvatar(user: reciever, radius: Constants.chatMessageAvatarSize, onlyAvatar: true),
                             title: Text(reciever.name,
                               style: TextStyle(
                                 fontFamily: 'TribesRounded',

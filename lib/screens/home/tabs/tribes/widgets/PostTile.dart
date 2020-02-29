@@ -10,10 +10,12 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/PostRoom.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
-import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
+import 'package:tribes/shared/widgets/LikeButton.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
+import 'package:tribes/shared/widgets/PostedDateTime.dart';
+import 'package:tribes/shared/widgets/UserAvatar.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -58,7 +60,7 @@ class _PostTileState extends State<PostTile> {
             stream: DatabaseService().userData(widget.post.author),
             builder: (context, snapshot) {
               if(snapshot.hasData) {
-                return userAvatar(user: snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
+                return UserAvatar(user: snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
               } else if(snapshot.hasError) {
                 print('Error retrieving author data: ${snapshot.error.toString()}');
                 return SizedBox.shrink();
@@ -121,7 +123,7 @@ class _PostTileState extends State<PostTile> {
             Spacer(),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.0),
-              child: postedDateTime(widget.post.created, color: widget.tribeColor)
+              child: PostedDateTime(timestamp: widget.post.created, color: widget.tribeColor)
             ),
             Spacer(),   
             Row(
@@ -142,10 +144,10 @@ class _PostTileState extends State<PostTile> {
                         fontWeight: FontWeight.bold
                       ),
                     ),
-                    likeButton(
-                      currentUser, 
-                      widget.post.id, 
-                      (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
+                    LikeButton(
+                      user: currentUser, 
+                      postID: widget.post.id, 
+                      color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
                     ),
                   ],
                 ),

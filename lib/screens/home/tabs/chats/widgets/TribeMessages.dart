@@ -11,10 +11,10 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/chats/ChatRoom.dart';
 import 'package:tribes/screens/home/tabs/chats/Chats.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/UserAvatar.dart';
 
 class TribeMessages extends StatelessWidget {
   static const routeName = Chats.routeName + '/tribeMessages';
@@ -79,7 +79,7 @@ class TribeMessages extends StatelessWidget {
                   stream: DatabaseService().userData(message.senderID),
                   builder: (context, snapshot) {
                     return snapshot.hasData 
-                    ? userAvatar(
+                    ? UserAvatar(
                       user: snapshot.data, 
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       radius: 14, 
@@ -108,7 +108,7 @@ class TribeMessages extends StatelessWidget {
                 stream: DatabaseService().userData(message.senderID),
                 builder: (context, snapshot) {
                   return snapshot.hasData 
-                  ? userAvatar(
+                  ? UserAvatar(
                     user: snapshot.data, 
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     color: currentTribe.color, 

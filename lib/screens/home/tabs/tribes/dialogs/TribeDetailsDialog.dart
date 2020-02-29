@@ -7,9 +7,9 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
-import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
+import 'package:tribes/shared/widgets/UserAvatar.dart';
 
 class TribeDetailsDialog extends StatefulWidget {
   final Tribe tribe;
@@ -131,7 +131,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                             builder: (context, snapshot) {
 
                               if(snapshot.hasData) {
-                                return userAvatar(user: snapshot.data, color: widget.tribe.color);
+                                return UserAvatar(user: snapshot.data, color: widget.tribe.color);
                               } else if(snapshot.hasError) {
                                 print('Error getting founder user data: ${snapshot.error.toString()}');
                                 return SizedBox.shrink();

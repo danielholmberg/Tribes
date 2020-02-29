@@ -10,9 +10,9 @@ import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
-import 'package:tribes/shared/utils.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
+import 'package:tribes/shared/widgets/UserAvatar.dart';
 
 class MyMap extends StatefulWidget {
   static const routeName = '/home/myMap';
@@ -161,7 +161,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                                           children: <Widget>[
                                             Container(
                                               margin: EdgeInsets.all(8.0),
-                                              child: userAvatar(
+                                              child: UserAvatar(
                                                 user: friendsDataList[index], 
                                                 padding: const EdgeInsets.all(8.0),
                                                 radius: 30, 
