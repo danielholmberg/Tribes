@@ -125,6 +125,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
+                                    obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                     style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
@@ -149,7 +150,10 @@ class _JoinTribeState extends State<JoinTribe> {
 
                                         Navigator.of(context).pop();
                                       } else {
-                                        setState(() => one = val);
+                                        setState(() {
+                                          one = val;
+                                          error = '';
+                                        });
                                         FocusScope.of(context).requestFocus(val.isEmpty ? oneNode : twoNode);
                                       }
                                     },
@@ -168,6 +172,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
+                                    obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                     style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
@@ -175,7 +180,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
+                                        borderSide: BorderSide(color: two.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -193,7 +198,10 @@ class _JoinTribeState extends State<JoinTribe> {
 
                                         Navigator.of(context).pop();
                                       } else {
-                                        setState(() => two = val);
+                                        setState(() {
+                                          two = val;
+                                          error = '';
+                                        });
                                         FocusScope.of(context).requestFocus(val.isEmpty ? oneNode : threeNode);
                                       }
                                     },
@@ -212,6 +220,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
+                                    obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                     style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
@@ -219,7 +228,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
+                                        borderSide: BorderSide(color: three.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -237,7 +246,10 @@ class _JoinTribeState extends State<JoinTribe> {
 
                                         Navigator.of(context).pop();
                                       } else {
-                                        setState(() => three = val);
+                                        setState(() {
+                                          three = val;
+                                          error = '';
+                                        });
                                         FocusScope.of(context).requestFocus(val.isEmpty ? twoNode : fourNode);
                                       }
                                     },
@@ -256,6 +268,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
+                                    obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                     style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
@@ -263,7 +276,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
+                                        borderSide: BorderSide(color: four.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -281,7 +294,10 @@ class _JoinTribeState extends State<JoinTribe> {
 
                                         Navigator.of(context).pop();
                                       } else {
-                                        setState(() => four = val);
+                                        setState(() {
+                                          four = val;
+                                          error = '';
+                                        });
                                         FocusScope.of(context).requestFocus(val.isEmpty ? threeNode : fiveNode);
                                       }
                                     },
@@ -300,6 +316,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
+                                    obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                     style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
@@ -307,7 +324,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
+                                        borderSide: BorderSide(color: five.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -325,7 +342,10 @@ class _JoinTribeState extends State<JoinTribe> {
 
                                         Navigator.of(context).pop();
                                       } else {
-                                        setState(() => five = val);
+                                        setState(() {
+                                          five = val;
+                                          error = '';
+                                        });
                                         FocusScope.of(context).requestFocus(val.isEmpty ? fourNode : sixNode);
                                       }
                                     },
@@ -344,6 +364,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
+                                    obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
                                     cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                                     style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
@@ -351,7 +372,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                       labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                        borderSide: BorderSide(color: one.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
+                                        borderSide: BorderSide(color: six.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -369,7 +390,10 @@ class _JoinTribeState extends State<JoinTribe> {
 
                                         Navigator.of(context).pop();
                                       } else {
-                                        setState(() => six = val);
+                                        setState(() {
+                                          six = val;
+                                          error = '';
+                                        });
                                         FocusScope.of(context).requestFocus(val.isEmpty ? fiveNode : sixNode);
                                       }
                                     },
