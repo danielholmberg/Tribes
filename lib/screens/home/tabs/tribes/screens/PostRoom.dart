@@ -77,7 +77,7 @@ class _PostRoomState extends State<PostRoom> {
         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
         child: SafeArea(
           bottom: false,
-          child: loading ? Loading() : Scaffold(
+          child: loading ? Loading(color: widget.tribeColor) : Scaffold(
             key: _scaffoldKey,
             backgroundColor: DynamicTheme.of(context).data.backgroundColor,
             appBar: AppBar(
@@ -263,7 +263,7 @@ class _PostRoomState extends State<PostRoom> {
                                 ),
                               ),
                             ),
-                            placeholder: (context, url) => Loading(),
+                            placeholder: (context, url) => Loading(color: widget.tribeColor),
                             errorWidget: (context, url, error) => Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
                           ),
                         ),

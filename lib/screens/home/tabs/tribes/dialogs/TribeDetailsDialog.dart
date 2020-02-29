@@ -61,7 +61,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
               ),
               centerTitle: true,
             ),
-            body: loading ? Loading() 
+            body: loading ? Loading(color: widget.tribe.color) 
             : ScrollConfiguration(
               behavior: CustomScrollBehavior(),
               child: ClipRRect(

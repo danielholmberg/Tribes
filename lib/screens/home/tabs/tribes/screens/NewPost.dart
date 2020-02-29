@@ -126,7 +126,7 @@ class _NewPostState extends State<NewPost> {
         color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
         child: SafeArea(
           bottom: false,
-          child: loading ? Loading() : Scaffold(
+          child: loading ? Loading(color: widget.tribe.color) : Scaffold(
             backgroundColor: DynamicTheme.of(context).data.backgroundColor,
             extendBody: true,
             appBar: AppBar(

@@ -213,7 +213,7 @@ class _PostTileState extends State<PostTile> {
               placeholder: (context, url) => Container(
                 height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
                 width: MediaQuery.of(context).size.width,
-                child: Loading(),
+                child: Loading(color: widget.tribeColor),
               ),
               errorWidget: (context, url, error) => Container(
                 height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,

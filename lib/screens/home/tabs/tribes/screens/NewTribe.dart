@@ -59,7 +59,7 @@ class _NewTribeState extends State<NewTribe> {
         color: DynamicTheme.of(context).data.primaryColor,
         child: SafeArea(
           bottom: false,
-          child: loading ? Loading() : Scaffold(
+          child: loading ? Loading(color: tribeColor) : Scaffold(
             backgroundColor: DynamicTheme.of(context).data.backgroundColor,
             appBar: AppBar(
               elevation: 0.0,

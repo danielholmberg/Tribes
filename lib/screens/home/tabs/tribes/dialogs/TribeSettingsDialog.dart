@@ -85,7 +85,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
             builder: (context, snapshot) {
               Tribe currentTribe = snapshot.hasData ? snapshot.data : widget.tribe;
 
-              return loading ? Loading() 
+              return loading ? Loading(color: currentTribe.color ?? widget.tribe.color) 
               : Scaffold(
                 key: _scaffoldKey,
                 backgroundColor: DynamicTheme.of(context).data.backgroundColor,
