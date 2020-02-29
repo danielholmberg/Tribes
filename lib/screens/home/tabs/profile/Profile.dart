@@ -201,8 +201,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ) : _profilePicture(),
                       ),
                       Positioned(
-                        bottom: 0, 
-                        right: 0, 
+                        bottom: 2, 
+                        right: 2, 
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(color: Constants.buttonIconColor, width: 2.0),
@@ -215,7 +215,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                               padding:EdgeInsets.all(4.0),
                               child: CustomAwesomeIcon(
                                 icon: FontAwesomeIcons.plus,
-                                size: 16.0,
+                                size: 12.0,
                               )
                             ),
                           ),
