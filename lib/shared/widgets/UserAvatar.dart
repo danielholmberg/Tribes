@@ -10,6 +10,34 @@ enum UserAvatarDirections {
   horizontal
 }
 
+class UserAvatarPlaceholder extends StatelessWidget {
+  final Widget child;
+  final double radius;
+  final EdgeInsets padding;
+  UserAvatarPlaceholder({
+    this.child,
+    this.radius = Constants.defaultProfilePicRadius,
+    this.padding = EdgeInsets.zero,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.zero,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.transparent, width: 2.0),
+        color: Colors.transparent,
+        shape: BoxShape.circle,
+      ),
+      child: CircleAvatar(
+        radius: Constants.defaultProfilePicRadius,
+        backgroundColor: Colors.transparent,
+        child: child,
+      ),
+    );
+  }
+}
+
 class UserAvatar extends StatelessWidget {
   final UserData user;
   final Color color;
@@ -52,13 +80,8 @@ class UserAvatar extends StatelessWidget {
               backgroundColor: Colors.transparent,
             ),
           ),
-          placeholder: (context, url) => CircleAvatar(
-            radius: radius,
-            backgroundColor: Colors.transparent,
-          ),
-          errorWidget: (context, url, error) => CircleAvatar(
-            radius: radius,
-            backgroundColor: Colors.transparent,
+          placeholder: (context, url) => UserAvatarPlaceholder(),
+          errorWidget: (context, url, error) => UserAvatarPlaceholder(
             child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
           ),
         ),

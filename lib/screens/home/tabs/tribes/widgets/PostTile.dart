@@ -63,9 +63,9 @@ class _PostTileState extends State<PostTile> {
                 return UserAvatar(user: snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
               } else if(snapshot.hasError) {
                 print('Error retrieving author data: ${snapshot.error.toString()}');
-                return SizedBox.shrink();
+                return UserAvatarPlaceholder(child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)));
               } else {
-                return SizedBox.shrink();
+                return UserAvatarPlaceholder();
               }
             }
           ),

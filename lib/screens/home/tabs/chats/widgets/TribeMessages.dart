@@ -84,7 +84,10 @@ class TribeMessages extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       radius: 14, 
                       onlyAvatar: true
-                    ) : SizedBox.shrink();
+                    ) : UserAvatarPlaceholder(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0), 
+                      radius: 14,
+                    );
                   }
                 ),
               ],
@@ -114,7 +117,10 @@ class TribeMessages extends StatelessWidget {
                     color: currentTribe.color, 
                     radius: 14, 
                     onlyAvatar: true
-                  ) : SizedBox.shrink();
+                  ) : UserAvatarPlaceholder(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    radius: 14,
+                  );
                 }
               ),
               msg, 

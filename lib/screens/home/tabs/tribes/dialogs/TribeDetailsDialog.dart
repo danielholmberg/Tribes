@@ -7,6 +7,7 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
+import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/widgets/UserAvatar.dart';
@@ -134,9 +135,9 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                                 return UserAvatar(user: snapshot.data, color: widget.tribe.color);
                               } else if(snapshot.hasError) {
                                 print('Error getting founder user data: ${snapshot.error.toString()}');
-                                return SizedBox.shrink();
+                                return UserAvatarPlaceholder(child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)));
                               } else {
-                                return SizedBox.shrink();
+                                return UserAvatarPlaceholder();
                               }
                               
                             }

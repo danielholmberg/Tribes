@@ -99,7 +99,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       padding: const EdgeInsets.symmetric(vertical: 6.0), 
                       radius: 14, 
                       onlyAvatar: true
-                    ) : SizedBox.shrink();
+                    ) : UserAvatarPlaceholder();
                   }
                 ),
               ],
@@ -129,7 +129,10 @@ class _ChatRoomState extends State<ChatRoom> {
                     color: widget.currentTribe != null ? widget.currentTribe.color : Colors.grey, 
                     radius: 14, 
                     onlyAvatar: true
-                  ) : SizedBox.shrink();
+                  ) : UserAvatarPlaceholder(
+                    padding: const EdgeInsets.symmetric(vertical: 6.0), 
+                    radius: 14
+                  );
                 }
               ),
               msg, 
