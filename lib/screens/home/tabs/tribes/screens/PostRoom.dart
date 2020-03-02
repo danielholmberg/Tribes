@@ -233,7 +233,7 @@ class _PostRoomState extends State<PostRoom> {
                             ),
                           ),
                         ),
-                        widget.post.fileURL.isEmpty 
+                        /* widget.post.fileURL.isEmpty 
                         ? SizedBox.shrink() 
                         : Container(
                           padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -266,7 +266,7 @@ class _PostRoomState extends State<PostRoom> {
                             placeholder: (context, url) => Loading(color: widget.tribeColor),
                             errorWidget: (context, url, error) => Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
                           ),
-                        ),
+                        ), */
                       ],
                     ),
                   ),

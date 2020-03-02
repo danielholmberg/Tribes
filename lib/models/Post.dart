@@ -5,7 +5,7 @@ class Post {
   final String author;
   final String title;
   final String content;
-  final String fileURL;
+  final List<String> images;
   final String tribeID;
   final double lat;
   final double lng;
@@ -18,7 +18,7 @@ class Post {
       this.author,
       this.title,
       this.content,
-      this.fileURL,
+      this.images,
       this.tribeID,
       this.lat,
       this.lng,
@@ -33,7 +33,7 @@ class Post {
       title: doc.data['title'] ?? '',
       content: doc.data['content'] ?? '',
       tribeID: doc.data['tribeID'] ?? '',
-      fileURL: doc.data['fileURL'] ?? '',
+      images: List.from(doc.data['images'] ?? []),
       lat: doc.data['lat'] ?? 0, // value 0 is used for fail-safe check for a location
       lng: doc.data['lng'] ?? 0, // value 0 is used for fail-safe check for a location
       likes: doc.data['likes'] ?? 0,

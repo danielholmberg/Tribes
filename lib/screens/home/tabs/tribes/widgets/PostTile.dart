@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,12 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/PostRoom.dart';
+import 'package:tribes/screens/home/tabs/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/LikeButton.dart';
-import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/widgets/PostedDateTime.dart';
 import 'package:tribes/shared/widgets/UserAvatar.dart';
 
@@ -181,49 +180,7 @@ class _PostTileState extends State<PostTile> {
               overflow: TextOverflow.fade,
               style: DynamicTheme.of(context).data.textTheme.body2),
           ),
-          widget.post.fileURL.isEmpty ? SizedBox.shrink() 
-          : Container(
-              padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
-              child: CachedNetworkImage(
-              imageUrl: widget.post.fileURL,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  border: Border.all(width: 2.0, color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4),
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
-                    ),
-                  ]
-                ),
-                height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                width: MediaQuery.of(context).size.width,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  child: Image(
-                    image: imageProvider, 
-                    fit: BoxFit.cover,
-                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-                      return child;
-                    },
-                  ),
-                ),
-              ),
-              placeholder: (context, url) => Container(
-                height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                width: MediaQuery.of(context).size.width,
-                child: Loading(color: widget.tribeColor),
-              ),
-              errorWidget: (context, url, error) => Container(
-                height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                width: MediaQuery.of(context).size.width,
-                child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
-              ),
-              ),
-          ),
+          widget.post.images.isEmpty ? SizedBox.shrink() : ImageCarousel(images: widget.post.images, color: widget.tribeColor),
           Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(

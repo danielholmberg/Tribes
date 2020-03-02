@@ -54,6 +54,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building Tribes()...');
     print('Current user ${currentUser.toString()}');

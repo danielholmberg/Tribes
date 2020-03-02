@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -13,7 +14,6 @@ import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
@@ -35,11 +35,15 @@ class _NewPostState extends State<NewPost> {
   
   String title = '';
   String content = '';
+  String tribeColor = '';
 
-  File _imageFile;
-  String _fileURL;
-  dynamic _pickImageError;
-  String _retrieveDataError;
+  List<Asset> images;
+
+  @override
+  void initState() {
+    tribeColor = widget.tribe.color.value.toRadixString(16);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -48,70 +52,129 @@ class _NewPostState extends State<NewPost> {
     super.dispose();
   }
 
-  void _onImageButtonPressed(ImageSource source, {BuildContext context}) async {
-    try {
-      _imageFile = await ImagePicker.pickImage(source: source);
-      setState(() {});
-    } catch (e) {
-      print(e.toString());
-      _pickImageError = e;
-    }
-  }
-
-  Widget _previewImage() {
-    final Text retrieveError = _getRetrieveErrorWidget();
-    if (retrieveError != null) {
-      return retrieveError;
-    }
-    if (_imageFile != null) {
-      return Container(
-        decoration: BoxDecoration(
-          color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-          border: Border.all(width: 2.0, color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4)),
-          boxShadow: [
-            BoxShadow(
-              color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4),
-              blurRadius: 10,
-              offset: Offset(0, 0),
+  Widget buildGridView() {
+    if (images != null)
+      return GridView.count(
+        crossAxisCount: 3,
+        padding: EdgeInsets.all(16.0),
+        shrinkWrap: true,
+        crossAxisSpacing: 4.0,
+        mainAxisSpacing: 4.0,
+        children: List.generate(images.length, (index) {
+          Asset asset = images[index];
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: PhotoView.customChild(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: widget.tribe.color.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(width: 2.0, color: widget.tribe.color.withOpacity(0.4)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: widget.tribe.color.withOpacity(0.4),
+                      blurRadius: 10,
+                      offset: Offset(0, 0),
+                    ),
+                  ]
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Stack(
+                    children: <Widget>[
+                      AssetThumb(
+                        asset: asset,
+                        width: 300,
+                        height: 300,
+                      ),
+                      Positioned(
+                        top: 4,
+                        left: 4,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(1000),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black54,
+                                blurRadius: 20,
+                                offset: Offset(0, 0),
+                              )
+                            ]
+                          ),
+                          child: GestureDetector(
+                            child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
+                            onTap: () {
+                              images.removeAt(index);
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ]
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-          child: Image.file(_imageFile, 
-            fit: BoxFit.scaleDown,
-            frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-              return child;
-            },
-          ),
-        ),
+          );
+        }),
       );
-    } else if (_pickImageError != null) {
-      return Text(
-        'Pick image error: $_pickImageError',
-        textAlign: TextAlign.center,
+    else
+      return Container(
+        padding: EdgeInsets.all(16.0),
+        child: Center(child: Text('No Images Selected'))
       );
-    } else {
-      return const Text(
-        'You have not yet picked an image.',
-        textAlign: TextAlign.center,
-      );
-    }
   }
 
-  Future<void> retrieveLostData() async {
-    final LostDataResponse response = await ImagePicker.retrieveLostData();
-    if (response.isEmpty) {
-      return;
+  Future<void> loadAssets() async {
+    setState(() {
+      images = List<Asset>();
+    });
+
+    List<Asset> resultList;
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 5,
+        enableCamera: true,
+        materialOptions: MaterialOptions(
+          actionBarTitle: "Select image(s)",
+          allViewTitle: "Select image(s)",
+          actionBarColor: "#ed217c",  // TO-DO: Change
+          actionBarTitleColor: "#ffffff",  // TO-DO: Change
+          lightStatusBar: false,
+          statusBarColor: '#ed217c',  // TO-DO: Change
+          startInAllView: true,
+          selectCircleStrokeColor: "#ed217c", // TO-DO: Change
+          selectionLimitReachedText: "You can't select any more.",
+      ),
+      cupertinoOptions: CupertinoOptions(
+        selectionFillColor: "#ed217c",  // TO-DO: Change
+        selectionTextColor: "#ffffff",  // TO-DO: Change
+        selectionCharacter: "✓",
+      ),
+    );
+    } on PermissionDeniedException catch (e) {
+      // User has denied image permission
+      print(e.toString());
+    } on PermissionPermanentlyDeniedExeption catch (e) {
+      // User has denied image permission permanently
+      print(e.toString());
+    } on NoImagesSelectedException catch (e) {
+      // User pressed cancel
+      print(e.toString());
+    } on Exception catch (e) {
+      // Generic error
+      print(e.toString());
     }
-    if (response.file != null) {
-      setState(() {
-        _imageFile = response.file;
-      });
-    } else {
-      _retrieveDataError = response.exception.code;
-    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      images = resultList;
+    });
   }
 
   @override
@@ -138,7 +201,7 @@ class _NewPostState extends State<NewPost> {
                   color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
                 ), 
                 onPressed: () {
-                  if(title.isNotEmpty || content.isNotEmpty || _imageFile != null) {
+                  if(title.isNotEmpty || content.isNotEmpty || images != null) {
                     showDialog(
                       context: context,
                       builder: (context) => DiscardChangesDialog(color: widget.tribe.color)
@@ -154,9 +217,7 @@ class _NewPostState extends State<NewPost> {
                     icon: FontAwesomeIcons.photoVideo,
                     color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
                   ),                  
-                  onPressed: () {
-                    _onImageButtonPressed(ImageSource.gallery, context: context);
-                  },
+                  onPressed: () async => await loadAssets(),
                 ),
               ],
             ),
@@ -167,11 +228,10 @@ class _NewPostState extends State<NewPost> {
                     behavior: CustomScrollBehavior(),
                     child: ListView(
                       padding: EdgeInsets.only(bottom: 76.0),
-                      shrinkWrap: true,
                       children: <Widget>[
                         Container(
                           alignment: Alignment.topCenter,
-                          padding: EdgeInsets.all(16),
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
@@ -243,38 +303,7 @@ class _NewPostState extends State<NewPost> {
                             ],
                           ),
                         ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Platform.isAndroid
-                          ? FutureBuilder<void>(
-                              future: retrieveLostData(),
-                              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.none:
-                                  case ConnectionState.waiting:
-                                    return _imageFile != null ? _previewImage() : Text(
-                                      'You have not yet picked an image.',
-                                      textAlign: TextAlign.center,
-                                    );
-                                  case ConnectionState.done:
-                                    return _previewImage();
-                                  default:
-                                    if (snapshot.hasError) {
-                                      return Text(
-                                        'Pick image/video error: ${snapshot.error}}',
-                                        textAlign: TextAlign.center,
-                                      );
-                                    } else {
-                                      return Text(
-                                        'You have not yet picked an image.',
-                                        textAlign: TextAlign.center,
-                                      );
-                                    }
-                                }
-                              },
-                            )
-                          : _previewImage(),
-                        ),
+                        buildGridView(),
                       ],
                     ),
                   ),
@@ -285,7 +314,7 @@ class _NewPostState extends State<NewPost> {
                   right: 0.0,
                   child: AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
-                    opacity: (title.isNotEmpty || content.isNotEmpty || _imageFile != null) ? 1.0 : 0.0,
+                    opacity: (title.isNotEmpty || content.isNotEmpty || images != null) ? 1.0 : 0.0,
                       child: ButtonTheme(
                       height: 60.0,
                       minWidth: MediaQuery.of(context).size.width,
@@ -302,16 +331,21 @@ class _NewPostState extends State<NewPost> {
                         onPressed: () async {                
                           if(_formKey.currentState.validate()) {
                             setState(() => loading = true);
+                            List<String> imageURLs;
 
-                            if(_imageFile != null) {
-                              _fileURL = await StorageService().uploadFile(_imageFile);
+                            if(images.length > 0) {
+                              imageURLs = new List<String>();
+                              await Future.forEach(images, (image) async {
+                                String imageURL = await StorageService().uploadPostImage(image);
+                                imageURLs.add(imageURL);
+                              });
                             }
                             
                             DatabaseService().addNewPost(
                               currentUser.uid, 
                               title, 
                               content, 
-                              _fileURL ?? null, 
+                              imageURLs, 
                               widget.tribe.id
                             );
 
@@ -329,13 +363,4 @@ class _NewPostState extends State<NewPost> {
       ),
     );
   } 
-
-  Text _getRetrieveErrorWidget() {
-    if (_retrieveDataError != null) {
-      final Text result = Text(_retrieveDataError);
-      _retrieveDataError = null;
-      return result;
-    }
-    return null;
-  }
 }

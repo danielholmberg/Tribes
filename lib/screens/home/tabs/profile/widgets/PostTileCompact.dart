@@ -1,14 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/PostRoom.dart';
+import 'package:tribes/screens/home/tabs/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
-import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class PostTileCompact extends StatelessWidget {
@@ -49,49 +47,7 @@ class PostTileCompact extends StatelessWidget {
               ),
             ),
           ),
-          post.fileURL.isEmpty ? SizedBox.shrink() 
-          : Container(
-              padding: EdgeInsets.only(top: 4.0),
-              child: CachedNetworkImage(
-              imageUrl: post.fileURL,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  border: Border.all(width: 1.0, color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4),
-                      blurRadius: 5,
-                      offset: Offset(0, 0),
-                    ),
-                  ]
-                ),
-                height: Constants.postTileCompactImageHeight,
-                width: MediaQuery.of(context).size.width,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                  child: Image(
-                    image: imageProvider, 
-                    fit: BoxFit.cover,
-                    frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-                      return child;
-                    },
-                  ),
-                ),
-              ),
-              placeholder: (context, url) => Container(
-                height: Constants.postTileCompactImageHeight,
-                width: MediaQuery.of(context).size.width,
-                child: Loading(),
-              ),
-              errorWidget: (context, url, error) => Container(
-                height: Constants.postTileCompactImageHeight,
-                width: MediaQuery.of(context).size.width,
-                child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)),
-              ),
-              ),
-          ),
+          post.images.isEmpty ? SizedBox.shrink() : ImageCarousel(images: post.images, small: true),
         ],
       );
     }

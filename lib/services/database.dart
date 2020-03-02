@@ -142,7 +142,7 @@ class DatabaseService {
   }
 
   // Add a new Post
-  Future addNewPost(String author, String title, String content, String fileURL, String tribeID) async {
+  Future addNewPost(String author, String title, String content, List<String> images, String tribeID) async {
     DocumentReference postRef = postsRoot.document();
     Position currentPosition;
 
@@ -154,7 +154,7 @@ class DatabaseService {
         'title': title,
         'content': content,
         'tribeID': tribeID,
-        'fileURL': fileURL,
+        'images': images,
         'lat': currentPosition.latitude,
         'lng': currentPosition.longitude,
         'created': new DateTime.now().millisecondsSinceEpoch,
@@ -168,7 +168,7 @@ class DatabaseService {
         'title': title,
         'content': content,
         'tribeID': tribeID,
-        'fileURL': fileURL,
+        'images': images,
         'created': new DateTime.now().millisecondsSinceEpoch,
       };
 
@@ -180,7 +180,7 @@ class DatabaseService {
   }
 
   Future deletePost(Post post) async {
-    if(post.fileURL.isNotEmpty) await StorageService().deleteFile(post.fileURL);
+    if(post.images.isNotEmpty) await Future.forEach(post.images, (imageURL) async => await StorageService().deleteFile(imageURL)); 
     return postsRoot.document(post.id).delete();
   }
 

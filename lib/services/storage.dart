@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path/path.dart' as Path;
 import 'package:tribes/services/database.dart';
 
@@ -54,15 +56,16 @@ class StorageService {
     }
     await DatabaseService().updateUserPicURL(picURL);
     return picURL;
-  }  
+  }
 
-  Future<String> uploadFile(File newFile) async {    
-    StorageReference storageReference = StorageService().postImagesRoot.child('${Path.basename(newFile.path)}');    
-    StorageUploadTask uploadTask = storageReference.putFile(newFile);    
-    await uploadTask.onComplete;    
-    print('File Uploaded');    
-    return await storageReference.getDownloadURL();    
-  } 
+  Future<String> uploadPostImage(Asset asset) async {
+    ByteData byteData = await asset.getByteData();
+    List<int> imageData = byteData.buffer.asUint8List();
+    StorageReference ref = StorageService().postImagesRoot.child('${asset.name}');
+    StorageUploadTask uploadTask = ref.putData(imageData);
+
+    return await (await uploadTask.onComplete).ref.getDownloadURL();
+  }
 
   Future deleteFile(String fileURL) async {
     StorageReference fileRef = await getReferenceFromUrl(fileURL);

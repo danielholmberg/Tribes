@@ -62,6 +62,15 @@ dependencies:
   # Image Picker
   image_picker: ^0.6.3+1
 
+  # Multi Image Picker
+  multi_image_picker: ^4.6.1
+
+  # Zoomable PhotoView
+  photo_view: ^0.9.2
+
+  # Image Carousel
+  carousel_slider: ^1.4.1
+  
   # Cached Network Images
   cached_network_image: ^2.0.0
   
