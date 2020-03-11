@@ -55,14 +55,16 @@ class PostTileCompact extends StatelessWidget {
     return InkWell(
         splashColor: Constants.tribesColor.withAlpha(30),
         onTap: () {
-          Navigator.push(context, CustomPageTransition(
-            type: CustomPageTransitionType.postDetails, 
-            duration: Constants.pageTransition600, 
-            child: StreamProvider<UserData>.value(
-              value: DatabaseService().currentUser(currentUser.uid), 
-              child: PostRoom(post, DynamicTheme.of(context).data.primaryColor),
-            ),
-          ));
+          if(post.author == currentUser.uid) {
+            Navigator.push(context, CustomPageTransition(
+              type: CustomPageTransitionType.postDetails, 
+              duration: Constants.pageTransition600, 
+              child: StreamProvider<UserData>.value(
+                value: DatabaseService().currentUser(currentUser.uid), 
+                child: PostRoom(post, DynamicTheme.of(context).data.primaryColor),
+              ),
+            ));
+          }
         },
           child: Container(
         padding: EdgeInsets.all(8.0),
