@@ -124,7 +124,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                 Stack(
                                   children: <Widget>[
                                     IconButton(
-                                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.campground),
+                                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.home),
                                       iconSize: Constants.defaultIconSize,
                                       splashColor: Colors.transparent,
                                       onPressed: () => _showNewTribePage(),

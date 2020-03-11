@@ -145,7 +145,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
             iconSize: 20.0,
             fontSize: 12.0,
             items: [
-              CustomNavBarItem(icon: FontAwesomeIcons.campground, title: 'Tribes'),
+              CustomNavBarItem(icon: FontAwesomeIcons.home, title: 'Tribes'),
               CustomNavBarItem(icon: FontAwesomeIcons.mapMarkedAlt, title: 'Map'),
               CustomNavBarItem(icon: FontAwesomeIcons.solidComments, title: 'Chat'),
               CustomNavBarItem(icon: FontAwesomeIcons.solidUser, title: 'Profile'),
