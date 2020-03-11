@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
+import 'package:tribes/screens/home/tabs/tribes/widgets/CustomImage.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
@@ -34,8 +37,10 @@ class _PostRoomState extends State<PostRoom> {
 
   String title;
   String content;
+  List<String> images;
   String originalTitle;
   String originalContent;
+  List<String> originalImages;
 
   @override
   void dispose() {
@@ -48,8 +53,10 @@ class _PostRoomState extends State<PostRoom> {
   void initState() {
     originalTitle = widget.post.title;
     originalContent = widget.post.content;
+    originalImages = widget.post.images;
     title = originalTitle;
     content = originalContent;
+    images = originalImages;
 
     Future.delayed(Duration(milliseconds: 650)).then((val) {
       FocusScope.of(context).requestFocus(titleFocus);
@@ -69,6 +76,65 @@ class _PostRoomState extends State<PostRoom> {
         context: context,
         builder: (context) => DiscardChangesDialog(color: widget.tribeColor)
       );
+    }
+
+    Widget buildGridView() {
+      if (images.length > 0)
+        return GridView.count(
+          crossAxisCount: 3,
+          padding: EdgeInsets.all(16.0),
+          shrinkWrap: true,
+          crossAxisSpacing: 4.0,
+          mainAxisSpacing: 4.0,
+          children: List.generate(widget.post.images.length, (index) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: PhotoView.customChild(
+                child: Stack(
+                  children: <Widget>[
+                    CustomImage(
+                      imageURL: images[index],
+                      color: widget.tribeColor,
+                      width: 300,
+                      height: 300,
+                      margin: EdgeInsets.zero,
+                    ),
+                    Positioned(
+                      top: 4,
+                      left: 4,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(1000),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black54,
+                              blurRadius: 20,
+                              offset: Offset(0, 0),
+                            )
+                          ]
+                        ),
+                        child: GestureDetector(
+                          child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
+                          onTap: () {
+                            images.removeAt(index);
+                            setState(() {
+                              edited = true;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        );
+      else
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Center(child: Text('No Images Selected'))
+        );
     }
 
     return WillPopScope(
@@ -205,7 +271,7 @@ class _PostRoomState extends State<PostRoom> {
                                   onChanged: (val) {
                                     setState(() {
                                       title = val;
-                                      edited = originalTitle != val || originalContent != content;
+                                      edited = originalTitle != val || originalContent != content || !listEquals(images, originalImages);
                                     });
                                   },
                                   onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
@@ -225,7 +291,7 @@ class _PostRoomState extends State<PostRoom> {
                                   onChanged: (val) {
                                     setState((){
                                       content = val;
-                                      edited = originalContent != val || originalTitle != title;
+                                      edited = originalContent != val || originalTitle != title || !listEquals(images, originalImages);
                                     });
                                   },
                                 )
@@ -233,40 +299,7 @@ class _PostRoomState extends State<PostRoom> {
                             ),
                           ),
                         ),
-                        /* widget.post.fileURL.isEmpty 
-                        ? SizedBox.shrink() 
-                        : Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: CachedNetworkImage(
-                            imageUrl: widget.post.fileURL,
-                            imageBuilder: (context, imageProvider) => Container(
-                              decoration: BoxDecoration(
-                                color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                border: Border.all(width: 2.0, color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.4),
-                                    blurRadius: 10,
-                                    offset: Offset(0, 0),
-                                  ),
-                                ]
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                child: Image(
-                                  image: imageProvider, 
-                                  fit: BoxFit.scaleDown,
-                                  frameBuilder: (BuildContext context, Widget child, int frame, bool wasSynchronouslyLoaded) {
-                                    return child;
-                                  },
-                                ),
-                              ),
-                            ),
-                            placeholder: (context, url) => Loading(color: widget.tribeColor),
-                            errorWidget: (context, url, error) => Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
-                          ),
-                        ), */
+                        buildGridView(),
                       ],
                     ),
                   ),
@@ -299,7 +332,8 @@ class _PostRoomState extends State<PostRoom> {
                             DatabaseService().updatePostData(
                               widget.post.id, 
                               title ?? widget.post.title, 
-                              content ?? widget.post.content
+                              content ?? widget.post.content,
+                              images ?? widget.post.images,
                             );
 
                             _scaffoldKey.currentState.showSnackBar(

@@ -184,10 +184,11 @@ class DatabaseService {
     return postsRoot.document(post.id).delete();
   }
 
-  Future updatePostData(String id, String title, String content) {
+  Future updatePostData(String id, String title, String content, List<String> images) {
     var data = {
       'title': title,
       'content': content,
+      'images': images,
       'updated': new DateTime.now().millisecondsSinceEpoch,
     };
     print('Updated Post data: $data');

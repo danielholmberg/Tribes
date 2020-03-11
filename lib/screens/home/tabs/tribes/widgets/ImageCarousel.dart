@@ -4,6 +4,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:tribes/screens/home/tabs/tribes/widgets/CustomImage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -55,47 +56,11 @@ class _ImageCarouselState extends State<ImageCarousel> {
           child: CarouselSlider.builder(
             itemCount: widget.images.length,
             itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.all(5.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.images[index],
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        color: widget.color.withOpacity(0.6),
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        border: Border.all(width: widget.small ? 2.0 : 4.0, color: widget.color.withOpacity(0.4)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: widget.color.withOpacity(0.4),
-                            blurRadius: 10,
-                            offset: Offset(0, 0),
-                          ),
-                        ]
-                      ),
-                      height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                      width: MediaQuery.of(context).size.width,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        child: PhotoView(
-                          imageProvider: imageProvider,
-                          controller: controller,
-                        ),
-                      ),
-                    ),
-                    placeholder: (context, url) => Container(
-                      height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                      width: MediaQuery.of(context).size.width,
-                      child: Loading(color: widget.color),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-                      width: MediaQuery.of(context).size.width,
-                      child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
-                    ),
-                  ),
-                ),
+              return CustomImage(
+                imageURL: widget.images[index],
+                color: widget.color,
+                small: widget.small,
+                controller: controller,
               );
             },
             viewportFraction: 1.0,
