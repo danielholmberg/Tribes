@@ -6,6 +6,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
+import 'package:tribes/screens/home/tabs/tribes/dialogs/FullscreenCarouselDialog.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/PostRoom.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
@@ -161,26 +162,44 @@ class _PostTileState extends State<PostTile> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+
+          // Header
           Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.fromLTRB(8.0, isAuthor ? 4.0 : 10.0, 0.0, isAuthor ? 0.0 : 4.0),
+            padding: EdgeInsets.fromLTRB(8.0, isAuthor ? 2.0 : 8.0, 0.0, 0.0),
             child: _postTileHeader()
           ),
+
+          // Title
           Container(
             width: MediaQuery.of(context).size.width,            
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(widget.post.title,
                 style: DynamicTheme.of(context).data.textTheme.title),
           ),
+
+          // Content
           Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
+            padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
             child: Text(widget.post.content,
               maxLines: expanded ? null : Constants.postTileContentMaxLines,
               overflow: TextOverflow.fade,
               style: DynamicTheme.of(context).data.textTheme.body2),
           ),
-          widget.post.images.isEmpty ? SizedBox.shrink() : ImageCarousel(images: widget.post.images, color: widget.tribeColor),
+
+          // ImageCarousel
+          widget.post.images.isEmpty 
+          ? SizedBox.shrink() 
+          : GestureDetector(
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => FullscreenCarouselDialog(images: widget.post.images, color: Colors.white)
+            ), 
+            child: ImageCarousel(images: widget.post.images, color: widget.tribeColor),
+          ),
+
+          // Footer
           Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(

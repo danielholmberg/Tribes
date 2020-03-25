@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -10,7 +9,7 @@ class CustomImage extends StatelessWidget {
   final String imageURL;
   final Color color;
   final bool small;
-  final PhotoViewController controller;
+  final bool fullscreen;
   final double width;
   final double height;
   final EdgeInsets margin;
@@ -18,7 +17,7 @@ class CustomImage extends StatelessWidget {
     @required this.imageURL,
     this.color = Constants.primaryColor,
     this.small = false,
-    this.controller,
+    this.fullscreen = false,
     this.width, 
     this.height,
     this.margin = const EdgeInsets.all(5.0),
@@ -38,7 +37,7 @@ class CustomImage extends StatelessWidget {
             decoration: BoxDecoration(
               color: color.withOpacity(0.6),
               borderRadius: BorderRadius.all(Radius.circular(8.0)),
-              border: Border.all(width: small ? 2.0 : 4.0, color: color.withOpacity(0.4)),
+              border: fullscreen ? null : Border.all(width: small ? 2.0 : 4.0, color: color.withOpacity(0.4)),
               boxShadow: [
                 BoxShadow(
                   color: color.withOpacity(0.4),
@@ -48,23 +47,23 @@ class CustomImage extends StatelessWidget {
               ]
             ),
             height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-            width: MediaQuery.of(context).size.width,
+            width: fullscreen ? null : MediaQuery.of(context).size.width,
             child: ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(8.0)),
-              child: PhotoView(
-                imageProvider: imageProvider,
-                controller: controller,
+              child: Image(
+                image: imageProvider, 
+                fit: fullscreen ? BoxFit.contain : BoxFit.cover,
               ),
             ),
           ),
           placeholder: (context, url) => Container(
-            height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * (fullscreen ? 1.0 : Constants.postTileScaleFactor),
+            width: fullscreen ? null : MediaQuery.of(context).size.width,
             child: Loading(color: color),
           ),
           errorWidget: (context, url, error) => Container(
-            height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * (fullscreen ? 1.0 : Constants.postTileScaleFactor),
+            width: fullscreen ? null : MediaQuery.of(context).size.width,
             child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
           ),
         ),
