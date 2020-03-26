@@ -20,7 +20,7 @@ class CustomImage extends StatelessWidget {
     this.fullscreen = false,
     this.width, 
     this.height,
-    this.margin = const EdgeInsets.all(5.0),
+    this.margin = EdgeInsets.zero,
   });
 
   @override
@@ -29,43 +29,35 @@ class CustomImage extends StatelessWidget {
       width: width,
       height: height,
       margin: margin,
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        child: CachedNetworkImage(
-          imageUrl: imageURL,
-          imageBuilder: (context, imageProvider) => Container(
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.6),
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-              border: fullscreen ? null : Border.all(width: small ? 2.0 : 4.0, color: color.withOpacity(0.4)),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withOpacity(0.4),
-                  blurRadius: 10,
-                  offset: Offset(0, 0),
-                ),
-              ]
-            ),
-            height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-            width: fullscreen ? null : MediaQuery.of(context).size.width,
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-              child: Image(
-                image: imageProvider, 
-                fit: fullscreen ? BoxFit.contain : BoxFit.cover,
+      child: CachedNetworkImage(
+        imageUrl: imageURL,
+        imageBuilder: (context, imageProvider) => Container(
+          decoration: fullscreen ? null : BoxDecoration(
+            color: color.withOpacity(0.6),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.4),
+                blurRadius: 10,
+                offset: Offset(0, 0),
               ),
-            ),
+            ]
           ),
-          placeholder: (context, url) => Container(
-            height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-            width: fullscreen ? null : MediaQuery.of(context).size.width,
-            child: fullscreen ? Center(child: CircularProgressIndicator()) : Loading(color: color),
+          height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
+          width: fullscreen ? null : MediaQuery.of(context).size.width,
+          child: Image(
+            image: imageProvider, 
+            fit: fullscreen ? BoxFit.contain : BoxFit.cover,
           ),
-          errorWidget: (context, url, error) => Container(
-            height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
-            width: fullscreen ? null : MediaQuery.of(context).size.width,
-            child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
-          ),
+        ),
+        placeholder: (context, url) => Container(
+          height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
+          width: fullscreen ? null : MediaQuery.of(context).size.width,
+          child: fullscreen ? Center(child: CircularProgressIndicator()) : Loading(color: color),
+        ),
+        errorWidget: (context, url, error) => Container(
+          height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
+          width: fullscreen ? null : MediaQuery.of(context).size.width,
+          child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
         ),
       ),
     );

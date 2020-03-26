@@ -213,36 +213,33 @@ class _PostTileState extends State<PostTile> {
       );
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        decoration: BoxDecoration(
-          color: DynamicTheme.of(context).data.backgroundColor,
-          borderRadius: BorderRadius.circular(20),
-          //border: Border.all(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6), width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black54, //(widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
-              blurRadius: 2,
-              offset: Offset(0, 1),
-            ),
-          ]
-        ),
-        margin: EdgeInsets.fromLTRB(6.0, Constants.defaultPadding, 6.0, 4.0),
-        child: InkWell(
-          splashColor: Constants.tribesColor.withAlpha(30),
-          onTap: () {
-            setState(() {
-              expanded = !expanded;
-            });
-          },
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: <Widget>[
-                _postTileMain(),
-              ],
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        color: DynamicTheme.of(context).data.backgroundColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: widget.tribeColor.withOpacity(0.4), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black54, //(widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6),
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          ),
+        ]
+      ),
+      margin: EdgeInsets.fromLTRB(6.0, Constants.defaultPadding, 6.0, 4.0),
+      child: InkWell(
+        splashColor: Constants.tribesColor.withAlpha(30),
+        onTap: () {
+          setState(() {
+            expanded = !expanded;
+          });
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: <Widget>[
+              _postTileMain(),
+            ],
           ),
         ),
       ),

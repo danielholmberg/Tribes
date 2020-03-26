@@ -26,6 +26,7 @@ class PostTileCompact extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Container(
+            padding: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 0.0),
             child: Text(post.title,
               style: TextStyle(
                 fontFamily: 'TribesRounded',
@@ -36,7 +37,7 @@ class PostTileCompact extends StatelessWidget {
           ),
           Container(
             width: MediaQuery.of(context).size.width * Constants.postTileCompactScaleFactor,
-            padding: EdgeInsets.only(top: 0.0),
+            padding: EdgeInsets.fromLTRB(4.0, 0.0, 4.0, 4.0),
             child: Text(post.content,
               maxLines: 2,
               overflow: TextOverflow.fade,
@@ -66,28 +67,31 @@ class PostTileCompact extends StatelessWidget {
             ));
           }
         },
-          child: Container(
-        padding: EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: DynamicTheme.of(context).data.backgroundColor,
-          borderRadius: BorderRadius.circular(2.0),
-          //border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6), width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black54, //DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
-              blurRadius: 1,
-              offset: Offset(0, 1),
+        child: Container(
+          margin: EdgeInsets.all(2.0),
+          decoration: BoxDecoration(
+            color: DynamicTheme.of(context).data.backgroundColor,
+            borderRadius: BorderRadius.circular(12.0),
+            border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black54, //DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
+                blurRadius: 1,
+                offset: Offset(0, 1),
+              ),
+            ]
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(11.0), bottomRight: Radius.circular(11.0)),
+                      child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _postTileMain(),
+              ],
             ),
-          ]
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _postTileMain(),
-          ],
-        )
+          )
       ),
     );
   }

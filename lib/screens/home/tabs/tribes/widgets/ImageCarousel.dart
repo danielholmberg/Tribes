@@ -25,33 +25,35 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final mainAxisSize = widget.fullscreen ? MainAxisSize.max : MainAxisSize.min;
-
+    
     buildCarousel() {
       return widget.fullscreen 
-      ? Expanded(
-        child: CarouselSlider.builder(
-          itemCount: widget.images.length,
-          itemBuilder: (context, index) {
-            return CustomImage(
-              imageURL: widget.images[index],
-              color: widget.color,
-              small: widget.small,
-              fullscreen: widget.fullscreen,
-            );
-          },
-          viewportFraction: 1.0,
-          reverse: false,
-          autoPlay: false,
-          enableInfiniteScroll: false,
-          enlargeCenterPage: false,
-          aspectRatio: 0.6,
-          onPageChanged: (index) {
-            setState(() {
-              _current = index;
-            });
-          },
-        ),
+      ? Column(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          CarouselSlider.builder(
+            itemCount: widget.images.length,
+            itemBuilder: (context, index) {
+              return CustomImage(
+                imageURL: widget.images[index],
+                color: widget.color,
+                small: widget.small,
+                fullscreen: widget.fullscreen,
+              );
+            },
+            viewportFraction: 1.0,
+            reverse: false,
+            autoPlay: false,
+            enableInfiniteScroll: false,
+            enlargeCenterPage: false,
+            aspectRatio: 0.6,
+            onPageChanged: (index) {
+              setState(() {
+                _current = index;
+              });
+            },
+          ),
+        ],
       )
       : Container(
         child: CarouselSlider.builder(
@@ -79,24 +81,36 @@ class _ImageCarouselState extends State<ImageCarousel> {
       );
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: mainAxisSize,
+    return Stack(
+      alignment: Alignment.center,
       children: <Widget>[
         buildCarousel(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(widget.images.length, (index) {
-            return Container(
-              width: widget.small ? 4.0 : 8.0,
-              height: widget.small ? 4.0 : 8.0,
-              margin: EdgeInsets.symmetric(vertical: widget.small ? 3.0 : 6.0, horizontal: 2.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _current == index ? widget.color : widget.color.withOpacity(0.2),
-              ),
-            );
-          }),
+        Positioned(
+          bottom: widget.small ? 4.0 : 8.0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black12,
+              borderRadius: BorderRadius.circular(20)
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(widget.images.length, (index) {
+                if(widget.images.length > 1) {
+                  return Container(
+                    width: widget.small ? 4.0 : 8.0,
+                    height: widget.small ? 4.0 : 8.0,
+                    margin: EdgeInsets.symmetric(vertical: widget.small ? 2.0 : 4.0, horizontal: 4.0),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _current == index ? widget.color : widget.color.withOpacity(0.2),
+                    ),
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              }),
+            ),
+          ),
         )
       ],
     );
