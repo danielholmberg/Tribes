@@ -57,12 +57,12 @@ class CustomImage extends StatelessWidget {
             ),
           ),
           placeholder: (context, url) => Container(
-            height: MediaQuery.of(context).size.height * (fullscreen ? 1.0 : Constants.postTileScaleFactor),
+            height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
             width: fullscreen ? null : MediaQuery.of(context).size.width,
-            child: Loading(color: color),
+            child: fullscreen ? Center(child: CircularProgressIndicator()) : Loading(color: color),
           ),
           errorWidget: (context, url, error) => Container(
-            height: MediaQuery.of(context).size.height * (fullscreen ? 1.0 : Constants.postTileScaleFactor),
+            height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
             width: fullscreen ? null : MediaQuery.of(context).size.width,
             child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
           ),
