@@ -53,76 +53,60 @@ class _NewPostState extends State<NewPost> {
   }
 
   Widget buildGridView() {
-    if (images != null)
-      return GridView.count(
-        crossAxisCount: 3,
-        padding: EdgeInsets.all(16.0),
-        shrinkWrap: true,
-        crossAxisSpacing: 4.0,
-        mainAxisSpacing: 4.0,
-        children: List.generate(images.length, (index) {
-          Asset asset = images[index];
-          return ClipRRect(
+    return images == null ? SizedBox.shrink() : 
+    GridView.count(
+      crossAxisCount: 3,
+      padding: Constants.imageGridViewPadding,
+      shrinkWrap: true,
+      crossAxisSpacing: Constants.imageGridViewCrossAxisSpacing,
+      mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
+      children: List.generate(images.length, (index) {
+        Asset asset = images[index];
+        return PhotoView.customChild(
+          backgroundDecoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8.0),
-            child: PhotoView.customChild(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: widget.tribe.color.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(8.0),
-                  border: Border.all(width: 2.0, color: widget.tribe.color.withOpacity(0.4)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.tribe.color.withOpacity(0.4),
-                      blurRadius: 10,
-                      offset: Offset(0, 0),
-                    ),
-                  ]
+            border: Border.all(color: widget.tribe.color.withOpacity(0.4), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black54,
+                blurRadius: 2,
+                offset: Offset(0, 0),
+              ),
+            ]
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Stack(
+              children: <Widget>[
+                AssetThumb(
+                  asset: asset,
+                  width: 300,
+                  height: 300,
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Stack(
-                    children: <Widget>[
-                      AssetThumb(
-                        asset: asset,
-                        width: 300,
-                        height: 300,
-                      ),
-                      Positioned(
-                        top: 4,
-                        left: 4,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(1000),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black54,
-                                blurRadius: 20,
-                                offset: Offset(0, 0),
-                              )
-                            ]
-                          ),
-                          child: GestureDetector(
-                            child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
-                            onTap: () {
-                              images.removeAt(index);
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
+                Positioned(
+                  top: 4,
+                  left: 4,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 1.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.circular(1000),
+                    ),
+                    child: GestureDetector(
+                      child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
+                      onTap: () {
+                        images.removeAt(index);
+                        setState(() {});
+                      },
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          );
-        }),
-      );
-    else
-      return Container(
-        padding: EdgeInsets.all(16.0),
-        child: Center(child: Text('No Images Selected'))
-      );
+          ),
+        );
+      }),
+    );
   }
 
   Future<void> loadAssets() async {
@@ -219,9 +203,11 @@ class _NewPostState extends State<NewPost> {
                   ),                  
                   onPressed: () async => await loadAssets(),
                 ),
+                SizedBox(width: 8.0)
               ],
             ),
             body: Stack(
+              fit: StackFit.expand,
               children: <Widget>[
                 Positioned.fill(
                   child: ScrollConfiguration(
@@ -234,7 +220,6 @@ class _NewPostState extends State<NewPost> {
                           padding: EdgeInsets.symmetric(horizontal: 16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Form(
                                 key: _formKey,
@@ -246,20 +231,7 @@ class _NewPostState extends State<NewPost> {
                                       textCapitalization: TextCapitalization.sentences,
                                       style: DynamicTheme.of(context).data.textTheme.title,
                                       cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                      decoration: Decorations.postInput.copyWith(
-                                        hintText: 'Title',
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                          borderSide: BorderSide(color: widget.tribe.color.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                          borderSide: BorderSide(
-                                            color: widget.tribe.color ?? Constants.inputFocusColor,
-                                            width: 2.0
-                                          ),
-                                        )
-                                      ),
+                                      decoration: Decorations.postInput.copyWith(hintText: 'Title'),
                                       validator: (val) => val.isEmpty 
                                         ? 'Enter a title' 
                                         : null,
@@ -268,7 +240,6 @@ class _NewPostState extends State<NewPost> {
                                       },
                                       onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
                                     ),
-                                    SizedBox(height: Constants.defaultSpacing),
                                     TextFormField(
                                       focusNode: contentFocus,
                                       textCapitalization: TextCapitalization.sentences,
@@ -276,20 +247,7 @@ class _NewPostState extends State<NewPost> {
                                       keyboardType: TextInputType.multiline,
                                       maxLines: null,
                                       cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                      decoration: Decorations.postInput.copyWith(
-                                        hintText: 'Content',
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                          borderSide: BorderSide(color: widget.tribe.color.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                          borderSide: BorderSide(
-                                            color: widget.tribe.color ?? Constants.inputFocusColor,
-                                            width: 2.0
-                                          ),
-                                        )
-                                      ),
+                                      decoration: Decorations.postInput.copyWith(hintText: 'Content'),
                                       validator: (val) => val.isEmpty 
                                         ? 'Enter some content' 
                                         : null,
@@ -315,43 +273,57 @@ class _NewPostState extends State<NewPost> {
                   child: AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
                     opacity: (title.isNotEmpty || content.isNotEmpty || images != null) ? 1.0 : 0.0,
-                      child: ButtonTheme(
-                      height: 60.0,
-                      minWidth: MediaQuery.of(context).size.width,
-                      child: RaisedButton.icon(
-                        elevation: 8.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0), 
+                          topRight: Radius.circular(20.0),
                         ),
-                        color: Colors.green,
-                        icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, color: Constants.buttonIconColor, size: Constants.smallIconSize),
-                        label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                        textColor: Colors.white,
-                        onPressed: () async {                
-                          if(_formKey.currentState.validate()) {
-                            setState(() => loading = true);
-                            List<String> imageURLs;
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black45,
+                            blurRadius: 2,
+                            offset: Offset(0, -2),
+                          ),
+                        ]
+                      ),
+                      child: ButtonTheme(
+                        height: 60.0,
+                        minWidth: MediaQuery.of(context).size.width,
+                        child: RaisedButton.icon(
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                          ),
+                          color: Colors.green,
+                          icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, color: Constants.buttonIconColor, size: Constants.smallIconSize),
+                          label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                          textColor: Colors.white,
+                          onPressed: () async {                
+                            if(_formKey.currentState.validate()) {
+                              setState(() => loading = true);
+                              List<String> imageURLs;
 
-                            if(images.length > 0) {
-                              imageURLs = new List<String>();
-                              await Future.forEach(images, (image) async {
-                                String imageURL = await StorageService().uploadPostImage(image);
-                                imageURLs.add(imageURL);
-                              });
+                              if(images.length > 0) {
+                                imageURLs = new List<String>();
+                                await Future.forEach(images, (image) async {
+                                  String imageURL = await StorageService().uploadPostImage(image);
+                                  imageURLs.add(imageURL);
+                                });
+                              }
+                              
+                              DatabaseService().addNewPost(
+                                currentUser.uid, 
+                                title, 
+                                content, 
+                                imageURLs, 
+                                widget.tribe.id
+                              );
+
+                              Navigator.pop(context);
                             }
-                            
-                            DatabaseService().addNewPost(
-                              currentUser.uid, 
-                              title, 
-                              content, 
-                              imageURLs, 
-                              widget.tribe.id
-                            );
-
-                            Navigator.pop(context);
                           }
-                        }
+                        ),
                       ),
                     ),
                   ),

@@ -43,18 +43,14 @@ const registerInput = InputDecoration(
 );
 
 const postInput = InputDecoration(
+  border: InputBorder.none,
   fillColor: Colors.white,
   filled: true,
+  contentPadding: EdgeInsets.zero,
   hintStyle: TextStyle(fontFamily: 'TribesRounded'),
   counterStyle: TextStyle(color: Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
-  enabledBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    borderSide: BorderSide(color: Constants.inputFocusColor, width: 2.0),
-  )
+  enabledBorder: InputBorder.none,
+  focusedBorder: InputBorder.none,
 );
 
 const newTribeInput = InputDecoration(

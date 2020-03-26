@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,19 +13,20 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
-class PostRoom extends StatefulWidget {
+class EditPost extends StatefulWidget {
   final Color tribeColor;
   final Post post;
-  PostRoom(this.post, this.tribeColor);
+  EditPost(this.post, this.tribeColor);
 
   @override
-  _PostRoomState createState() => _PostRoomState();
+  _EditPostState createState() => _EditPostState();
 }
 
-class _PostRoomState extends State<PostRoom> {
+class _EditPostState extends State<EditPost> {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
@@ -68,7 +68,7 @@ class _PostRoomState extends State<PostRoom> {
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
-    print('Building PostRoom()...');
+    print('Building EditPost()...');
     print('Current user ${currentUser.toString()}');
 
     _showDiscardDialog() {
@@ -79,62 +79,63 @@ class _PostRoomState extends State<PostRoom> {
     }
 
     Widget buildGridView() {
-      if (images.length > 0)
-        return GridView.count(
-          crossAxisCount: 3,
-          padding: EdgeInsets.all(16.0),
-          shrinkWrap: true,
-          crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
-          children: List.generate(widget.post.images.length, (index) {
-            return ClipRRect(
+      return images.length <= 0 ? SizedBox.shrink() :
+      GridView.count(
+        crossAxisCount: 3,
+        padding: Constants.imageGridViewPadding,
+        shrinkWrap: true,
+        crossAxisSpacing: Constants.imageGridViewCrossAxisSpacing,
+        mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
+        children: List.generate(widget.post.images.length, (index) {
+          return PhotoView.customChild(
+            backgroundDecoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
-              child: PhotoView.customChild(
-                child: Stack(
-                  children: <Widget>[
-                    CustomImage(
-                      imageURL: images[index],
-                      color: widget.tribeColor,
-                      width: 300,
-                      height: 300,
-                      margin: EdgeInsets.zero,
-                    ),
-                    Positioned(
-                      top: 4,
-                      left: 4,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(1000),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black54,
-                              blurRadius: 20,
-                              offset: Offset(0, 0),
-                            )
-                          ]
-                        ),
-                        child: GestureDetector(
-                          child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
-                          onTap: () {
-                            images.removeAt(index);
-                            setState(() {
-                              edited = true;
-                            });
-                          },
-                        ),
+              border: Border.all(color: widget.tribeColor.withOpacity(0.4), width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 2,
+                  offset: Offset(0, 0),
+                ),
+              ]
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Stack(
+                children: <Widget>[
+                  CustomImage(
+                    imageURL: images[index],
+                    color: widget.tribeColor,
+                    width: 300,
+                    height: 300,
+                    margin: EdgeInsets.zero,
+                  ),
+                  Positioned(
+                    top: 4,
+                    left: 4,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 1.0),
+                      decoration: BoxDecoration(
+                        color: Colors.black38,
+                        borderRadius: BorderRadius.circular(1000),
+                      ),
+                      child: GestureDetector(
+                        child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
+                        onTap: () {
+                          images.removeAt(index);
+                          setState(() {
+                            edited = true;
+                          });
+                        },
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }),
-        );
-      else
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          child: Center(child: Text('No Images Selected'))
-        );
+            ),
+          );
+        }),
+      );
     }
 
     return WillPopScope(
@@ -252,7 +253,7 @@ class _PostRoomState extends State<PostRoom> {
                       children: <Widget>[
                         Container(
                           alignment: Alignment.topCenter,
-                          padding: EdgeInsets.all(16.0),
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           child: Form(
                             key: _formKey,
                             child: Column(
@@ -264,7 +265,7 @@ class _PostRoomState extends State<PostRoom> {
                                   textCapitalization: TextCapitalization.sentences,
                                   style: DynamicTheme.of(context).data.textTheme.title,
                                   cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                  decoration: Decorations.postInput.copyWith(hintText: 'Title'),
                                   validator: (val) => val.isEmpty 
                                     ? 'Enter a title' 
                                     : null,
@@ -284,7 +285,7 @@ class _PostRoomState extends State<PostRoom> {
                                   cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                                   keyboardType: TextInputType.multiline,
                                   maxLines: null,
-                                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                  decoration: Decorations.postInput.copyWith(hintText: 'Content'),
                                   validator: (val) => val.isEmpty 
                                     ? 'Enter some content' 
                                     : null,
@@ -311,52 +312,66 @@ class _PostRoomState extends State<PostRoom> {
                   child: AnimatedOpacity(
                   duration: Duration(milliseconds: 500),
                   opacity: edited ? 1.0 : 0.0,
-                    child: ButtonTheme(
-                      height: 60.0,
-                      minWidth: MediaQuery.of(context).size.width,
-                      child: RaisedButton.icon(
-                        elevation: 8.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0), 
+                          topRight: Radius.circular(20.0),
                         ),
-                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                        icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, size: Constants.smallIconSize),
-                        label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                        textColor: Colors.white,
-                        onPressed: edited ? () {
-                          if(_formKey.currentState.validate()) {
-                            setState(() { 
-                              loading = true;
-                            });
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black45,
+                            blurRadius: 2,
+                            offset: Offset(0, -2),
+                          ),
+                        ]
+                      ),
+                      child: ButtonTheme(
+                        height: 60.0,
+                        minWidth: MediaQuery.of(context).size.width,
+                        child: RaisedButton.icon(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                          ),
+                          color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                          icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, size: Constants.smallIconSize),
+                          label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                          textColor: Colors.white,
+                          onPressed: edited ? () {
+                            if(_formKey.currentState.validate()) {
+                              setState(() { 
+                                loading = true;
+                              });
 
-                            DatabaseService().updatePostData(
-                              widget.post.id, 
-                              title ?? widget.post.title, 
-                              content ?? widget.post.content,
-                              images ?? widget.post.images,
-                            );
+                              DatabaseService().updatePostData(
+                                widget.post.id, 
+                                title ?? widget.post.title, 
+                                content ?? widget.post.content,
+                                images ?? widget.post.images,
+                              );
 
-                            _scaffoldKey.currentState.showSnackBar(
-                            SnackBar(
-                                content: Text('Post saved', 
-                                  style: TextStyle(
-                                    fontFamily: 'TribesRounded'
+                              _scaffoldKey.currentState.showSnackBar(
+                              SnackBar(
+                                  content: Text('Post saved', 
+                                    style: TextStyle(
+                                      fontFamily: 'TribesRounded'
+                                    ),
                                   ),
-                                ),
-                                duration: Duration(milliseconds: 500),
-                              )
-                            );
+                                  duration: Duration(milliseconds: 500),
+                                )
+                              );
 
-                            FocusScope.of(context).unfocus();
+                              FocusScope.of(context).unfocus();
 
-                            setState(() {
-                              loading = false;
-                              edited = false;
-                              originalTitle = title;
-                              originalContent = content;
-                            });
-                          }
-                        } : null,
+                              setState(() {
+                                loading = false;
+                                edited = false;
+                                originalTitle = title;
+                                originalContent = content;
+                              });
+                            }
+                          } : null,
+                        ),
                       ),
                     ),
                   ),

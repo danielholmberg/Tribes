@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/home/tabs/tribes/screens/PostRoom.dart';
+import 'package:tribes/screens/home/tabs/tribes/screens/EditPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
@@ -62,7 +62,7 @@ class PostTileCompact extends StatelessWidget {
               duration: Constants.pageTransition600, 
               child: StreamProvider<UserData>.value(
                 value: DatabaseService().currentUser(currentUser.uid), 
-                child: PostRoom(post, DynamicTheme.of(context).data.primaryColor),
+                child: EditPost(post, DynamicTheme.of(context).data.primaryColor),
               ),
             ));
           }
