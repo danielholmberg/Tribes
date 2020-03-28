@@ -33,9 +33,9 @@ class _LikedPostsState extends State<LikedPosts> with AutomaticKeepAliveClientMi
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
         padding: EdgeInsets.fromLTRB(
-          Constants.smallPadding, 
           Constants.defaultPadding, 
-          Constants.smallPadding, 
+          Constants.defaultPadding, 
+          Constants.defaultPadding, 
           80.0
         ),
         itemBuilder: (context, index) {

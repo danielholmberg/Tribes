@@ -99,7 +99,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                   return Container(
                     width: widget.small ? 4.0 : 8.0,
                     height: widget.small ? 4.0 : 8.0,
-                    margin: EdgeInsets.symmetric(vertical: widget.small ? 2.0 : 4.0, horizontal: 4.0),
+                    margin: EdgeInsets.symmetric(vertical: widget.small ? 2.0 : 4.0, horizontal: widget.small ? 2.0 : 4.0),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _current == index ? widget.color : widget.color.withOpacity(0.2),

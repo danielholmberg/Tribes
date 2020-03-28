@@ -32,9 +32,9 @@ class _CreatedPostsState extends State<CreatedPosts> with AutomaticKeepAliveClie
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
         padding: EdgeInsets.fromLTRB(
-          Constants.smallPadding, 
           Constants.defaultPadding, 
-          Constants.smallPadding, 
+          Constants.defaultPadding, 
+          Constants.defaultPadding, 
           80.0
         ),
         query: DatabaseService().postsPublishedByUser(currentUser.uid),
