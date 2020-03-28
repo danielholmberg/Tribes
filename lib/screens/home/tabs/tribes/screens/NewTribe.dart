@@ -27,7 +27,7 @@ class _NewTribeState extends State<NewTribe> {
 
   String name = '';
   String desc = '';
-  Color tribeColor = Constants.primaryColor;
+  Color tribeColor;
   String error = '';
 
   @override
@@ -59,7 +59,7 @@ class _NewTribeState extends State<NewTribe> {
         color: DynamicTheme.of(context).data.primaryColor,
         child: SafeArea(
           bottom: false,
-          child: loading ? Loading(color: tribeColor) : Scaffold(
+          child: loading ? Loading(color: tribeColor ?? Constants.primaryColor) : Scaffold(
             backgroundColor: DynamicTheme.of(context).data.backgroundColor,
             appBar: AppBar(
               elevation: 0.0,
@@ -76,7 +76,7 @@ class _NewTribeState extends State<NewTribe> {
               leading: IconButton(
                 icon: CustomAwesomeIcon(
                   icon: Platform.isIOS ? FontAwesomeIcons.chevronCircleLeft : FontAwesomeIcons.arrowLeft,
-                  color: tribeColor,
+                  color: tribeColor ?? Constants.primaryColor,
                 ), 
                 onPressed: () {
                   if(name.isNotEmpty || desc.isNotEmpty || tribeColor != null) {
@@ -91,7 +91,7 @@ class _NewTribeState extends State<NewTribe> {
               ),
               actions: <Widget>[
                 IconButton(
-                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor),
+                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor ?? Constants.primaryColor),
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -142,7 +142,7 @@ class _NewTribeState extends State<NewTribe> {
                                       focusNode: nameFocus,
                                       textCapitalization: TextCapitalization.words,
                                       maxLength: Constants.tribeNameMaxLength,
-                                      cursorColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                      cursorColor: tribeColor ?? Constants.primaryColor,
                                       decoration: Decorations.newTribeInput.copyWith(
                                         labelText: 'Name',
                                         labelStyle: TextStyle(
@@ -152,12 +152,12 @@ class _NewTribeState extends State<NewTribe> {
                                         ),
                                         hintText: '',
                                         counterStyle: TextStyle(
-                                          color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor,
+                                          color: (tribeColor ?? Constants.primaryColor).withOpacity(0.5) ?? Constants.inputCounterColor,
                                           fontFamily: 'TribesRounded',
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                          borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                          borderSide: BorderSide(color: (tribeColor ?? Constants.primaryColor).withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -189,12 +189,12 @@ class _NewTribeState extends State<NewTribe> {
                                         ),
                                         hintText: '',
                                         counterStyle: TextStyle(
-                                          color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor,
+                                          color: (tribeColor ?? Constants.primaryColor).withOpacity(0.5) ?? Constants.inputCounterColor,
                                           fontFamily: 'TribesRounded',
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                          borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                          borderSide: BorderSide(color: (tribeColor ?? Constants.primaryColor).withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(Radius.circular(8.0)),
