@@ -129,22 +129,23 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                       splashColor: Colors.transparent,
                                       onPressed: () => _showNewTribePage(),
                                     ),
-                                    Positioned(
-                                      bottom: 6.0,
-                                      right: 6.0,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Constants.buttonIconColor, width: 2.0),
-                                          color: Constants.primaryColor,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: InkWell(
-                                          borderRadius: BorderRadius.circular(Constants.maxCornerRadius),
-                                          child: Padding(
-                                            padding:EdgeInsets.all(3.0), 
-                                            child: CustomAwesomeIcon(
-                                              icon: FontAwesomeIcons.plus, 
-                                              size: 10
+                                    Positioned.fill(
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Constants.buttonIconColor, width: 2.0),
+                                            color: Constants.primaryColor,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(Constants.maxCornerRadius),
+                                            child: Padding(
+                                              padding: EdgeInsets.all(3.0), 
+                                              child: CustomAwesomeIcon(
+                                                icon: FontAwesomeIcons.plus, 
+                                                size: 8
+                                              ),
                                             ),
                                           ),
                                         ),
