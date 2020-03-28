@@ -13,6 +13,7 @@ import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
+import 'package:tribes/shared/widgets/CustomButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -273,58 +274,38 @@ class _NewPostState extends State<NewPost> {
                   child: AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
                     opacity: (title.isNotEmpty || content.isNotEmpty || images != null) ? 1.0 : 0.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0), 
-                          topRight: Radius.circular(20.0),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black45,
-                            blurRadius: 2,
-                            offset: Offset(0, -2),
-                          ),
-                        ]
-                      ),
-                      child: ButtonTheme(
-                        height: 60.0,
-                        minWidth: MediaQuery.of(context).size.width,
-                        child: RaisedButton.icon(
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                          ),
-                          color: Colors.green,
-                          icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, color: Constants.buttonIconColor, size: Constants.smallIconSize),
-                          label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                          textColor: Colors.white,
-                          onPressed: () async {                
-                            if(_formKey.currentState.validate()) {
-                              setState(() => loading = true);
-                              List<String> imageURLs;
+                    child: CustomButton(
+                      icon: FontAwesomeIcons.check,
+                      height: 60.0, 
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.all(16.0),
+                      label: Text('Publish', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                      color: Colors.green,
+                      iconColor: Colors.white,
+                      onPressed: () async {                
+                        if(_formKey.currentState.validate()) {
+                          setState(() => loading = true);
+                          List<String> imageURLs;
 
-                              if(images.length > 0) {
-                                imageURLs = new List<String>();
-                                await Future.forEach(images, (image) async {
-                                  String imageURL = await StorageService().uploadPostImage(image);
-                                  imageURLs.add(imageURL);
-                                });
-                              }
-                              
-                              DatabaseService().addNewPost(
-                                currentUser.uid, 
-                                title, 
-                                content, 
-                                imageURLs, 
-                                widget.tribe.id
-                              );
-
-                              Navigator.pop(context);
-                            }
+                          if(images.length > 0) {
+                            imageURLs = new List<String>();
+                            await Future.forEach(images, (image) async {
+                              String imageURL = await StorageService().uploadPostImage(image);
+                              imageURLs.add(imageURL);
+                            });
                           }
-                        ),
-                      ),
+                          
+                          DatabaseService().addNewPost(
+                            currentUser.uid, 
+                            title, 
+                            content, 
+                            imageURLs, 
+                            widget.tribe.id
+                          );
+
+                          Navigator.pop(context);
+                        }
+                      },
                     ),
                   ),
                 )

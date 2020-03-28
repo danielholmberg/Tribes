@@ -10,6 +10,7 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
+import 'package:tribes/shared/widgets/CustomButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -237,56 +238,37 @@ class _NewTribeState extends State<NewTribe> {
                   child: AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
                     opacity: (name.isNotEmpty && desc.isNotEmpty) ? 1.0 : 0.0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0), 
-                            topRight: Radius.circular(20.0),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black45,
-                              blurRadius: 2,
-                              offset: Offset(0, -2),
-                            ),
-                          ]
-                        ),
-                        child: ButtonTheme(
-                          height: 60.0,
-                          minWidth: MediaQuery.of(context).size.width,
-                          child: RaisedButton.icon(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                            ),
-                            color: Colors.green,
-                            icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, size: Constants.smallIconSize),
-                            label: Text('Create', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                            textColor: Colors.white,
-                            onPressed: () async {                
-                              if(_formKey.currentState.validate()) {
-                                setState(() => loading = true);
-                                try {
-                                  DatabaseService().createNewTribe(
-                                    currentUser.uid,
-                                    name, 
-                                    desc, 
-                                    tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
-                                    null
-                                  );
-                                  Navigator.pop(context);
-                                } catch (e) {
-                                  print(e.toString());
-                                  setState(() { 
-                                    loading = false;
-                                    error = 'Unable to create new Tribe';
-                                  });
-                                }
-                              }
+                      child: CustomButton(
+                        height: 60.0,
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.all(16.0),
+                        icon: FontAwesomeIcons.check,
+                        iconColor: Colors.white,
+                        color: Colors.green,
+                        label: Text('Create', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                        labelColor: Colors.white,
+                        onPressed: () async {                
+                          if(_formKey.currentState.validate()) {
+                            setState(() => loading = true);
+                            try {
+                              DatabaseService().createNewTribe(
+                                currentUser.uid,
+                                name, 
+                                desc, 
+                                tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
+                                null
+                              );
+                              Navigator.pop(context);
+                            } catch (e) {
+                              print(e.toString());
+                              setState(() { 
+                                loading = false;
+                                error = 'Unable to create new Tribe';
+                              });
                             }
-                          ),
+                          }
+                        }
                       ),
-                    ),
                   ),
                 )
               ],

@@ -12,6 +12,7 @@ import 'package:tribes/screens/home/tabs/tribes/widgets/Posts.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
+import 'package:tribes/shared/widgets/CustomButton.dart';
 import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
@@ -167,42 +168,25 @@ class _TribeRoomState extends State<TribeRoom> {
                       right: 0.0,
                       child: Hero(
                         tag: 'NewPostButton',
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20.0), 
-                              topRight: Radius.circular(20.0),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black45,
-                                blurRadius: 2,
-                                offset: Offset(0, -2),
+                        child: CustomButton(
+                          height: 60.0,
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.all(16.0),
+                          icon: FontAwesomeIcons.plusCircle,
+                          color: currentTribe.color,
+                          iconColor: Colors.white,
+                          label: Text('Add a post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                          labelColor: Colors.white,
+                          onPressed: () {
+                            Navigator.push(context, CustomPageTransition(
+                              type: CustomPageTransitionType.newPost,
+                              duration: Duration(seconds: 1),
+                              child: StreamProvider<UserData>.value(
+                                value: DatabaseService().currentUser(currentUser.uid), 
+                                child: NewPost(tribe: currentTribe),
                               ),
-                            ]
-                          ),
-                          child: ButtonTheme(
-                            height: 60.0,
-                            child: RaisedButton.icon(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                              ),
-                              color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                              icon: CustomAwesomeIcon(icon: FontAwesomeIcons.solidPlusSquare, color: DynamicTheme.of(context).data.accentColor, size: Constants.defaultIconSize),
-                              label: Text('Add a post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                              textColor: Colors.white,
-                              onPressed: () {
-                                Navigator.push(context, CustomPageTransition(
-                                  type: CustomPageTransitionType.newPost,
-                                  duration: Duration(seconds: 1),
-                                  child: StreamProvider<UserData>.value(
-                                    value: DatabaseService().currentUser(currentUser.uid), 
-                                    child: NewPost(tribe: currentTribe),
-                                  ),
-                                ));
-                              },
-                            ),
-                          ),
+                            ));
+                          },
                         ),
                       ),
                     ),

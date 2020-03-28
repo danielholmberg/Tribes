@@ -11,6 +11,7 @@ import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/CustomImage.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
+import 'package:tribes/shared/widgets/CustomButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
@@ -248,7 +249,7 @@ class _EditPostState extends State<EditPost> {
                   child: ScrollConfiguration(
                     behavior: CustomScrollBehavior(),
                     child: ListView(
-                      padding: EdgeInsets.only(bottom: 76.0),
+                      padding: EdgeInsets.only(bottom: 86.0),
                       shrinkWrap: true,
                       children: <Widget>[
                         Container(
@@ -312,67 +313,48 @@ class _EditPostState extends State<EditPost> {
                   child: AnimatedOpacity(
                   duration: Duration(milliseconds: 500),
                   opacity: edited ? 1.0 : 0.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0), 
-                          topRight: Radius.circular(20.0),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black45,
-                            blurRadius: 2,
-                            offset: Offset(0, -2),
-                          ),
-                        ]
-                      ),
-                      child: ButtonTheme(
-                        height: 60.0,
-                        minWidth: MediaQuery.of(context).size.width,
-                        child: RaisedButton.icon(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                          ),
-                          color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                          icon: CustomAwesomeIcon(icon: FontAwesomeIcons.check, size: Constants.smallIconSize),
-                          label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                          textColor: Colors.white,
-                          onPressed: edited ? () {
-                            if(_formKey.currentState.validate()) {
-                              setState(() { 
-                                loading = true;
-                              });
+                    child: CustomButton(
+                      height: 60.0,
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.all(16.0),
+                      color: widget.tribeColor,
+                      icon: FontAwesomeIcons.check,
+                      label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                      labelColor: Colors.white,
+                      onPressed: edited ? () {
+                        if(_formKey.currentState.validate()) {
+                          setState(() { 
+                            loading = true;
+                          });
 
-                              DatabaseService().updatePostData(
-                                widget.post.id, 
-                                title ?? widget.post.title, 
-                                content ?? widget.post.content,
-                                images ?? widget.post.images,
-                              );
+                          DatabaseService().updatePostData(
+                            widget.post.id, 
+                            title ?? widget.post.title, 
+                            content ?? widget.post.content,
+                            images ?? widget.post.images,
+                          );
 
-                              _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(
-                                  content: Text('Post saved', 
-                                    style: TextStyle(
-                                      fontFamily: 'TribesRounded'
-                                    ),
-                                  ),
-                                  duration: Duration(milliseconds: 500),
-                                )
-                              );
+                          _scaffoldKey.currentState.showSnackBar(
+                          SnackBar(
+                              content: Text('Post saved', 
+                                style: TextStyle(
+                                  fontFamily: 'TribesRounded'
+                                ),
+                              ),
+                              duration: Duration(milliseconds: 500),
+                            )
+                          );
 
-                              FocusScope.of(context).unfocus();
+                          FocusScope.of(context).unfocus();
 
-                              setState(() {
-                                loading = false;
-                                edited = false;
-                                originalTitle = title;
-                                originalContent = content;
-                              });
-                            }
-                          } : null,
-                        ),
-                      ),
+                          setState(() {
+                            loading = false;
+                            edited = false;
+                            originalTitle = title;
+                            originalContent = content;
+                          });
+                        }
+                      } : null,
                     ),
                   ),
                 )

@@ -28,7 +28,7 @@ class Posts extends StatelessWidget {
     return Container(
       child: FirestoreAnimatedList(
         controller: controller,
-        padding: EdgeInsets.only(top: Constants.defaultPadding, bottom: 66.0),
+        padding: EdgeInsets.only(top: Constants.defaultPadding, bottom: 86.0),
         query: DatabaseService().posts(tribe.id),
         onLoaded: (snapshot) => currentUser != null 
         ? ((snapshot.documentChanges.first.type == DocumentChangeType.added && snapshot.documents.first.data['author'] == currentUser.uid) 
