@@ -78,7 +78,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
         borderRadius: BorderRadius.circular(20.0),
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.8,
+          height: MediaQuery.of(context).size.height * 0.5,
           alignment: Alignment.topCenter,
           child: StreamBuilder<Tribe>(
             stream: DatabaseService().tribe(widget.tribe.id),
@@ -140,6 +140,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                         ),
                       )
                     ),
+                    SizedBox(width: 4.0,)
                   ],
                 ),
                 body: ScrollConfiguration(

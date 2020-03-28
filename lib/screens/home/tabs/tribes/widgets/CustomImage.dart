@@ -32,16 +32,7 @@ class CustomImage extends StatelessWidget {
       child: CachedNetworkImage(
         imageUrl: imageURL,
         imageBuilder: (context, imageProvider) => Container(
-          decoration: fullscreen ? null : BoxDecoration(
-            color: color.withOpacity(0.6),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.4),
-                blurRadius: 10,
-                offset: Offset(0, 0),
-              ),
-            ]
-          ),
+          color: Colors.black12,
           height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
           width: fullscreen ? null : MediaQuery.of(context).size.width,
           child: Image(

@@ -92,69 +92,66 @@ class _PostTileState extends State<PostTile> {
     }
 
     _postTileFooter() {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                IconButton(
-                  splashColor: Colors.transparent,
-                  color: DynamicTheme.of(context).data.backgroundColor,
-                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.solidCommentDots, 
-                    color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              IconButton(
+                splashColor: Colors.transparent,
+                color: DynamicTheme.of(context).data.backgroundColor,
+                icon: CustomAwesomeIcon(icon: FontAwesomeIcons.solidCommentDots, 
+                  color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.6)
+                ),
+                onPressed: () async {
+                  Fluttertoast.showToast(
+                    msg: 'Coming soon!',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                  );
+                },
+              ),
+            ],
+          ),
+          Spacer(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            child: PostedDateTime(timestamp: widget.post.created, color: widget.tribeColor)
+          ),
+          Spacer(),   
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text('${widget.post.likes}',
+                    style: TextStyle(
+                      color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                      fontFamily: 'TribesRounded',
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold
+                    ),
                   ),
-                  onPressed: () async {
-                    Fluttertoast.showToast(
-                      msg: 'Coming soon!',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                    );
-                  },
-                ),
-              ],
-            ),
-            Spacer(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.0),
-              child: PostedDateTime(timestamp: widget.post.created, color: widget.tribeColor)
-            ),
-            Spacer(),   
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text('${widget.post.likes}',
-                      style: TextStyle(
-                        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                        fontFamily: 'TribesRounded',
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                    LikeButton(
-                      user: currentUser, 
-                      postID: widget.post.id, 
-                      color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
-                    ),
-                  ],
-                ),
-              ],
-            ),           
-          ],
-        ),
+                  LikeButton(
+                    user: currentUser, 
+                    postID: widget.post.id, 
+                    color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor)
+                  ),
+                ],
+              ),
+            ],
+          ),           
+        ],
       );
     }
 
@@ -173,7 +170,7 @@ class _PostTileState extends State<PostTile> {
           // Title
           Container(
             width: MediaQuery.of(context).size.width,            
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: Text(widget.post.title,
                 style: DynamicTheme.of(context).data.textTheme.title),
           ),
@@ -181,12 +178,14 @@ class _PostTileState extends State<PostTile> {
           // Content
           Container(
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(widget.post.content,
               maxLines: expanded ? null : Constants.postTileContentMaxLines,
               overflow: TextOverflow.fade,
               style: DynamicTheme.of(context).data.textTheme.body2),
           ),
+
+          SizedBox(height: widget.post.images.isEmpty ? 0.0 : 8.0),
 
           // ImageCarousel
           widget.post.images.isEmpty 
@@ -196,18 +195,20 @@ class _PostTileState extends State<PostTile> {
               context: context,
               builder: (context) => FullscreenCarouselDialog(images: widget.post.images, color: Colors.white)
             ), 
-            child: ImageCarousel(images: widget.post.images, color: widget.tribeColor),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)),
+                  bottom: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)), 
+                ),
+              ),
+              child: ImageCarousel(images: widget.post.images, color: widget.tribeColor)
+            ),
           ),
 
           // Footer
           Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)), 
-              ),
-            ),
-            child: _postTileFooter()
+            child: _postTileFooter(),
           ),
         ],
       );
