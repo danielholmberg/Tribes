@@ -73,6 +73,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
         borderRadius: BorderRadius.circular(20.0),
         child: Container(
           width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.6,
           alignment: Alignment.topCenter,
           child: currentUser == null ? Loading() 
           : Scaffold(
