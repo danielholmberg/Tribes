@@ -188,7 +188,7 @@ class _NewPostState extends State<NewPost> {
                   color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
                 ), 
                 onPressed: () {
-                  if(title.isNotEmpty || content.isNotEmpty || images != null) {
+                  if(title.isNotEmpty || content.isNotEmpty || images.length > 0) {
                     showDialog(
                       context: context,
                       builder: (context) => DiscardChangesDialog(color: widget.tribe.color)
