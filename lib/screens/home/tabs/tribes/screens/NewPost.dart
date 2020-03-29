@@ -33,12 +33,13 @@ class _NewPostState extends State<NewPost> {
   final FocusNode titleFocus = new FocusNode();
   final FocusNode contentFocus = new FocusNode();
   bool loading = false;
+  bool photoVideoButtonIsDisabled = false;
   
   String title = '';
   String content = '';
   String tribeColor = '';
 
-  List<Asset> images;
+  List<Asset> images = [];
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _NewPostState extends State<NewPost> {
   }
 
   Widget buildGridView() {
-    return images == null ? SizedBox.shrink() : 
+    return images.length == 0 ? SizedBox.shrink() : 
     GridView.count(
       crossAxisCount: 3,
       padding: Constants.imageGridViewPadding,
@@ -97,7 +98,9 @@ class _NewPostState extends State<NewPost> {
                       child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
                       onTap: () {
                         images.removeAt(index);
-                        setState(() {});
+                        setState(() {
+                          photoVideoButtonIsDisabled = images.length == 5;
+                        });
                       },
                     ),
                   ),
@@ -111,10 +114,6 @@ class _NewPostState extends State<NewPost> {
   }
 
   Future<void> loadAssets() async {
-    setState(() {
-      images = List<Asset>();
-    });
-
     List<Asset> resultList;
 
     try {
@@ -157,9 +156,12 @@ class _NewPostState extends State<NewPost> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
-    setState(() {
-      images = resultList;
-    });
+    if(resultList.length > 0) {
+      setState(() {
+        images = resultList;
+        photoVideoButtonIsDisabled = images.length == 5;
+      });
+    }
   }
 
   @override
@@ -200,9 +202,9 @@ class _NewPostState extends State<NewPost> {
                 IconButton(
                   icon: CustomAwesomeIcon(
                     icon: FontAwesomeIcons.photoVideo,
-                    color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                    color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(photoVideoButtonIsDisabled ? 0.4 : 1.0),
                   ),                  
-                  onPressed: () async => await loadAssets(),
+                  onPressed: photoVideoButtonIsDisabled ? null : () async => await loadAssets(),
                 ),
                 SizedBox(width: 8.0)
               ],
@@ -273,7 +275,7 @@ class _NewPostState extends State<NewPost> {
                   right: 0.0,
                   child: AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
-                    opacity: (title.isNotEmpty || content.isNotEmpty || images != null) ? 1.0 : 0.0,
+                    opacity: (title.isNotEmpty || content.isNotEmpty || images.length > 0) ? 1.0 : 0.0,
                     child: CustomButton(
                       icon: FontAwesomeIcons.check,
                       height: 60.0, 
@@ -285,10 +287,9 @@ class _NewPostState extends State<NewPost> {
                       onPressed: () async {                
                         if(_formKey.currentState.validate()) {
                           setState(() => loading = true);
-                          List<String> imageURLs;
+                          List<String> imageURLs = [];
 
                           if(images.length > 0) {
-                            imageURLs = new List<String>();
                             await Future.forEach(images, (image) async {
                               String imageURL = await StorageService().uploadPostImage(image);
                               imageURLs.add(imageURL);
