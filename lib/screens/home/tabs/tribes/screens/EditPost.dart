@@ -4,12 +4,14 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/CustomImage.dart';
 import 'package:tribes/services/database.dart';
+import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
@@ -35,6 +37,7 @@ class _EditPostState extends State<EditPost> {
   final FocusNode contentFocus = new FocusNode();
   bool loading = false;
   bool edited = false;
+  bool photoVideoButtonIsDisabled;
 
   String title;
   String content;
@@ -42,6 +45,8 @@ class _EditPostState extends State<EditPost> {
   String originalTitle;
   String originalContent;
   List<String> originalImages;
+
+  List<Asset> assetImages = [];
 
   @override
   void dispose() {
@@ -58,12 +63,65 @@ class _EditPostState extends State<EditPost> {
     title = originalTitle;
     content = originalContent;
     images = originalImages;
+    photoVideoButtonIsDisabled = images.length == 5;
 
     Future.delayed(Duration(milliseconds: 650)).then((val) {
       FocusScope.of(context).requestFocus(titleFocus);
     });
     
     super.initState();
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList;
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 5 - images.length,
+        enableCamera: true,
+        materialOptions: MaterialOptions(
+          actionBarTitle: "Select image(s)",
+          allViewTitle: "Select image(s)",
+          actionBarColor: "#ed217c",  // TO-DO: Change
+          actionBarTitleColor: "#ffffff",  // TO-DO: Change
+          lightStatusBar: false,
+          statusBarColor: '#ed217c',  // TO-DO: Change
+          startInAllView: true,
+          selectCircleStrokeColor: "#ed217c", // TO-DO: Change
+          selectionLimitReachedText: "You can't select any more.",
+      ),
+      cupertinoOptions: CupertinoOptions(
+        selectionFillColor: "#ed217c",  // TO-DO: Change
+        selectionTextColor: "#ffffff",  // TO-DO: Change
+        selectionCharacter: "✓",
+      ),
+    );
+    } on PermissionDeniedException catch (e) {
+      // User has denied image permission
+      print(e.toString());
+    } on PermissionPermanentlyDeniedExeption catch (e) {
+      // User has denied image permission permanently
+      print(e.toString());
+    } on NoImagesSelectedException catch (e) {
+      // User pressed cancel
+      print(e.toString());
+    } on Exception catch (e) {
+      // Generic error
+      print(e.toString());
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    if(resultList.length > 0) {
+      setState(() {
+        assetImages = resultList;
+        edited = true;
+        photoVideoButtonIsDisabled = (images.length + resultList.length) == 5;
+      });
+    }
   }
 
   @override
@@ -79,63 +137,89 @@ class _EditPostState extends State<EditPost> {
       );
     }
 
+    List<Widget> buildImages(int length, bool asset) {
+      return List.generate(length, (index) {
+        return PhotoView.customChild(
+          backgroundDecoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: widget.tribeColor.withOpacity(0.4), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black54,
+                blurRadius: 2,
+                offset: Offset(0, 0),
+              ),
+            ]
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Stack(
+              children: <Widget>[
+                asset ? AssetThumb(
+                  asset: assetImages[index],
+                  width: 300,
+                  height: 300,
+                ) : CustomImage(
+                  imageURL: images[index],
+                  color: widget.tribeColor,
+                  width: 300,
+                  height: 300,
+                  margin: EdgeInsets.zero,
+                ),
+                Positioned(
+                  top: 4,
+                  left: 4,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 1.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.circular(1000),
+                    ),
+                    child: GestureDetector(
+                      child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
+                      onTap: () {
+                        if(asset) {
+                          assetImages.removeAt(index);
+                          setState(() {
+                            photoVideoButtonIsDisabled = (images.length + assetImages.length) == 5;
+                          });
+                        } else {
+                          images.removeAt(index);
+                          setState(() {
+                            edited = true;
+                            photoVideoButtonIsDisabled = (images.length + assetImages.length) == 5;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      });
+    }
+
     Widget buildGridView() {
-      return images.length <= 0 ? SizedBox.shrink() :
+      List<Widget> children = [];
+
+      if(images.length > 0) {
+        children += buildImages(images.length, false);
+      }
+
+      if(assetImages.length > 0) {
+        children += buildImages(assetImages.length, true);
+      }
+
+      return children.length == 0 ? SizedBox.shrink() :
       GridView.count(
         crossAxisCount: 3,
         padding: Constants.imageGridViewPadding,
         shrinkWrap: true,
         crossAxisSpacing: Constants.imageGridViewCrossAxisSpacing,
         mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
-        children: List.generate(widget.post.images.length, (index) {
-          return PhotoView.customChild(
-            backgroundDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: widget.tribeColor.withOpacity(0.4), width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black54,
-                  blurRadius: 2,
-                  offset: Offset(0, 0),
-                ),
-              ]
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Stack(
-                children: <Widget>[
-                  CustomImage(
-                    imageURL: images[index],
-                    color: widget.tribeColor,
-                    width: 300,
-                    height: 300,
-                    margin: EdgeInsets.zero,
-                  ),
-                  Positioned(
-                    top: 4,
-                    left: 4,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        color: Colors.black38,
-                        borderRadius: BorderRadius.circular(1000),
-                      ),
-                      child: GestureDetector(
-                        child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
-                        onTap: () {
-                          images.removeAt(index);
-                          setState(() {
-                            edited = true;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
+        children: children,
       );
     }
 
@@ -189,6 +273,13 @@ class _EditPostState extends State<EditPost> {
               ),
               actions: <Widget>[
                 IconButton(
+                  icon: CustomAwesomeIcon(
+                    icon: FontAwesomeIcons.photoVideo,
+                    color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(photoVideoButtonIsDisabled ? 0.4 : 1.0),
+                  ),                  
+                  onPressed: photoVideoButtonIsDisabled ? null : () async => await loadAssets(),
+                ),
+                IconButton(
                   splashColor: Colors.transparent,
                   color: DynamicTheme.of(context).data.backgroundColor,
                   icon: CustomAwesomeIcon(
@@ -240,6 +331,7 @@ class _EditPostState extends State<EditPost> {
                     );
                   },
                 ),
+                SizedBox(width: 4.0)
               ]
             ),
             body: Stack(
@@ -273,7 +365,7 @@ class _EditPostState extends State<EditPost> {
                                   onChanged: (val) {
                                     setState(() {
                                       title = val;
-                                      edited = originalTitle != val || originalContent != content || !listEquals(images, originalImages);
+                                      edited = originalTitle != val || originalContent != content || !listEquals(images, originalImages) || assetImages.length > 0;
                                     });
                                   },
                                   onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
@@ -293,7 +385,7 @@ class _EditPostState extends State<EditPost> {
                                   onChanged: (val) {
                                     setState((){
                                       content = val;
-                                      edited = originalContent != val || originalTitle != title || !listEquals(images, originalImages);
+                                      edited = originalContent != val || originalTitle != title || !listEquals(images, originalImages) || assetImages.length > 0;
                                     });
                                   },
                                 )
@@ -321,10 +413,22 @@ class _EditPostState extends State<EditPost> {
                       icon: FontAwesomeIcons.check,
                       label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                       labelColor: Colors.white,
-                      onPressed: edited ? () {
+                      onPressed: edited ? () async {
                         if(_formKey.currentState.validate()) {
                           setState(() { 
                             loading = true;
+                          });
+                          List<String> imageURLs = [];
+
+                          if(assetImages.length > 0) {
+                            await Future.forEach(assetImages, (image) async {
+                              String imageURL = await StorageService().uploadPostImage(image);
+                              imageURLs.add(imageURL);
+                            });
+                          }
+
+                          setState(() {
+                            images += imageURLs;
                           });
 
                           DatabaseService().updatePostData(
@@ -334,24 +438,28 @@ class _EditPostState extends State<EditPost> {
                             images ?? widget.post.images,
                           );
 
-                          _scaffoldKey.currentState.showSnackBar(
-                          SnackBar(
-                              content: Text('Post saved', 
-                                style: TextStyle(
-                                  fontFamily: 'TribesRounded'
+                          if(assetImages.length == 0) {
+                            _scaffoldKey.currentState.showSnackBar(
+                            SnackBar(
+                                content: Text('Post saved', 
+                                  style: TextStyle(
+                                    fontFamily: 'TribesRounded'
+                                  ),
                                 ),
-                              ),
-                              duration: Duration(milliseconds: 500),
-                            )
-                          );
+                                duration: Duration(milliseconds: 500),
+                              )
+                            );
+                          }
 
                           FocusScope.of(context).unfocus();
 
                           setState(() {
                             loading = false;
                             edited = false;
+                            assetImages = [];
                             originalTitle = title;
                             originalContent = content;
+                            originalImages = images;
                           });
                         }
                       } : null,
