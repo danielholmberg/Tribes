@@ -155,10 +155,13 @@ class DatabaseService {
         'content': content,
         'tribeID': tribeID,
         'images': images,
+        'likes': 1,
         'lat': currentPosition.latitude,
         'lng': currentPosition.longitude,
         'created': new DateTime.now().millisecondsSinceEpoch,
       };
+
+      usersRoot.document(author).updateData({'likedPosts': FieldValue.arrayUnion([postRef.documentID])});
 
       print('Publishing post: $data');
       return postRef.setData(data);
