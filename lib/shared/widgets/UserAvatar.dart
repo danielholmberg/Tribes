@@ -23,6 +23,8 @@ class UserAvatarPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: radius * 2,
+      width: radius * 2,
       padding: EdgeInsets.zero,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.transparent, width: 2.0),
@@ -80,7 +82,7 @@ class UserAvatar extends StatelessWidget {
               backgroundColor: Colors.transparent,
             ),
           ),
-          placeholder: (context, url) => UserAvatarPlaceholder(),
+          placeholder: (context, url) => UserAvatarPlaceholder(radius: radius),
           errorWidget: (context, url, error) => UserAvatarPlaceholder(
             child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
           ),
@@ -89,7 +91,7 @@ class UserAvatar extends StatelessWidget {
           visible: !onlyAvatar || withName,
           child: direction == UserAvatarDirections.horizontal 
             ? SizedBox(width: Constants.mediumPadding) 
-            : SizedBox(height: Constants.mediumPadding)
+            : SizedBox(height: 0.0)
         ),
         Visibility(
           visible: !onlyAvatar || withName,
@@ -101,7 +103,7 @@ class UserAvatar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Visibility(
-                  visible: withName || !onlyAvatar,
+                  visible: (withName || !onlyAvatar) && direction == UserAvatarDirections.horizontal,
                   child: Text(withName ? user.name : user.username,
                     style: TextStyle(
                       color: color,
@@ -149,7 +151,7 @@ class UserAvatar extends StatelessWidget {
                 ],
             ),
           ),
-        )
+        ),
       ];
     }
 
@@ -172,10 +174,38 @@ class UserAvatar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: _layout()) 
-      :  Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: _layout()),
+      : Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: _layout(), 
+          ),
+          Container(
+            width: 30,
+            child: Text(withName ? user.name : user.username,
+              softWrap: true,
+              maxLines: 3,
+              overflow: TextOverflow.fade,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(0.0, 0.0),
+                    blurRadius: 2.0,
+                    color: Colors.black,
+                  ),
+                ],
+                fontFamily: 'TribesRounded',
+                fontWeight: FontWeight.bold,
+                fontSize: nameFontSize,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -103,7 +103,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                         child: GoogleMap(
                           padding: EdgeInsets.fromLTRB(
                             6.0, 
-                            friendsList.isEmpty ? MediaQuery.of(context).padding.top : 146.0, 
+                            friendsList.isEmpty ? MediaQuery.of(context).padding.top : 108.0, 
                             6.0, 
                             Platform.isIOS ? 80 : 0.0
                           ),
@@ -133,7 +133,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                       Padding(
                         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                         child: Container(
-                          height: 130,
+                          height: 92,
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -160,14 +160,12 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Container(
-                                              margin: EdgeInsets.all(8.0),
                                               child: UserAvatar(
                                                 user: friendsDataList[index], 
                                                 padding: const EdgeInsets.all(8.0),
                                                 radius: 30, 
-                                                nameFontSize: 10, 
+                                                nameFontSize: 8, 
                                                 direction: UserAvatarDirections.vertical,
-                                                withTextDecoration: true,
                                               ),
                                             ),
                                           ],
