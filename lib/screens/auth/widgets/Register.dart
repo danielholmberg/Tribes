@@ -55,6 +55,7 @@ class _RegisterState extends State<Register> {
           child: ScrollConfiguration(
             behavior: CustomScrollBehavior(),
             child: ListView(
+              physics: ClampingScrollPhysics(),
               shrinkWrap: true,
               children: <Widget>[
                 Center(

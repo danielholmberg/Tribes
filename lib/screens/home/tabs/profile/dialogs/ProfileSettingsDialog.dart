@@ -162,6 +162,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
               : ScrollConfiguration(
                 behavior: CustomScrollBehavior(),
                 child: ListView(
+                  physics: ClampingScrollPhysics(),
                   padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                   shrinkWrap: true,
                   children: <Widget>[

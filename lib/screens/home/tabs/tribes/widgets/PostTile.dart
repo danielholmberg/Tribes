@@ -56,18 +56,20 @@ class _PostTileState extends State<PostTile> {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          StreamBuilder<UserData>(
-            stream: DatabaseService().userData(widget.post.author),
-            builder: (context, snapshot) {
-              if(snapshot.hasData) {
-                return UserAvatar(user: snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
-              } else if(snapshot.hasError) {
-                print('Error retrieving author data: ${snapshot.error.toString()}');
-                return UserAvatarPlaceholder(child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)));
-              } else {
-                return UserAvatarPlaceholder();
+          Expanded(
+            child: StreamBuilder<UserData>(
+              stream: DatabaseService().userData(widget.post.author),
+              builder: (context, snapshot) {
+                if(snapshot.hasData) {
+                  return UserAvatar(user: snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
+                } else if(snapshot.hasError) {
+                  print('Error retrieving author data: ${snapshot.error.toString()}');
+                  return UserAvatarPlaceholder(child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)));
+                } else {
+                  return UserAvatarPlaceholder();
+                }
               }
-            }
+            ),
           ),
           isAuthor ? IconButton(
             splashColor: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withAlpha(30),

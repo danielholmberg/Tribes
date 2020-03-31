@@ -68,6 +68,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius)),
                 child: ListView(
+                  physics: ClampingScrollPhysics(),
                   shrinkWrap: true,
                   padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
                   children: <Widget>[

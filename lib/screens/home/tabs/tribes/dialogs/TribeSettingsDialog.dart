@@ -146,6 +146,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                 body: ScrollConfiguration(
                   behavior: CustomScrollBehavior(),
                   child: ListView(
+                    physics: ClampingScrollPhysics(),
                     shrinkWrap: true,
                     padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                     children: <Widget>[

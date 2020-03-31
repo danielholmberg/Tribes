@@ -50,6 +50,7 @@ class _SignInState extends State<SignIn> {
           child: ScrollConfiguration(
             behavior: CustomScrollBehavior(),
             child: ListView(
+              physics: ClampingScrollPhysics(),
               shrinkWrap: true,
               children: <Widget>[
                 Center(

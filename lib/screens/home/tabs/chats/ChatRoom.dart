@@ -33,6 +33,19 @@ class _ChatRoomState extends State<ChatRoom> {
   String message = '';
   final TextEditingController controller = new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
+  FocusNode textFieldFocus;
+
+  @override
+  void initState() {
+    textFieldFocus = new FocusNode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    textFieldFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +166,7 @@ class _ChatRoomState extends State<ChatRoom> {
     _buildMessageComposer() {
       return Container(
         constraints: BoxConstraints(minHeight: 70),
-        padding: EdgeInsets.symmetric(vertical: 8.0),
+        padding: EdgeInsets.only(top: 8.0, bottom: Platform.isIOS ? (textFieldFocus.hasFocus ? 8.0 : 24.0) : 8.0),
         color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -170,6 +183,7 @@ class _ChatRoomState extends State<ChatRoom> {
             ),
             Expanded(
               child: TextField(
+                focusNode: textFieldFocus,
                 controller: controller,
                 autofocus: widget.reply != null ? widget.reply : false,
                 textCapitalization: TextCapitalization.sentences,

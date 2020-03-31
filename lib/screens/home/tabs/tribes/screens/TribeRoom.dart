@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +45,9 @@ class _TribeRoomState extends State<TribeRoom> {
         : Container(
           color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
           child: SafeArea(
+            bottom: false,
             child: Scaffold(
+              resizeToAvoidBottomInset: false,
               backgroundColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
               body: Container(
                 color: currentTribe.color.withOpacity(0.2) ?? DynamicTheme.of(context).data.backgroundColor,
@@ -163,7 +167,7 @@ class _TribeRoomState extends State<TribeRoom> {
                       ],
                     ),
                     Positioned(
-                      bottom: 0.0,
+                      bottom: Platform.isIOS ? 8.0 : 0.0,
                       left: 0.0,
                       right: 0.0,
                       child: Hero(

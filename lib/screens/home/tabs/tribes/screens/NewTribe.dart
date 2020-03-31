@@ -76,7 +76,7 @@ class _NewTribeState extends State<NewTribe> {
               iconTheme: IconThemeData(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
               leading: IconButton(
                 icon: CustomAwesomeIcon(
-                  icon: Platform.isIOS ? FontAwesomeIcons.chevronCircleLeft : FontAwesomeIcons.arrowLeft,
+                  icon: Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
                   color: tribeColor ?? Constants.primaryColor,
                 ), 
                 onPressed: () {
@@ -232,7 +232,7 @@ class _NewTribeState extends State<NewTribe> {
                   ),
                 ),
                 Positioned(
-                  bottom: 0.0,
+                  bottom: Platform.isIOS ? 8.0 : 0.0,
                   left: 0.0,
                   right: 0.0,
                   child: AnimatedOpacity(

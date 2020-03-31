@@ -56,6 +56,7 @@ class TribeTile extends StatelessWidget {
             alignment: Alignment.center,
             children: <Widget>[
               ListView(
+                physics: ClampingScrollPhysics(),
                 shrinkWrap: true,
                 padding: const EdgeInsets.only(bottom: 24.0),
                 children: <Widget>[

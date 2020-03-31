@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
@@ -270,7 +271,7 @@ class _NewPostState extends State<NewPost> {
                   ),
                 ),
                 Positioned(
-                  bottom: 0.0,
+                  bottom: Platform.isIOS ? 8.0 : 0.0,
                   left: 0.0,
                   right: 0.0,
                   child: AnimatedOpacity(

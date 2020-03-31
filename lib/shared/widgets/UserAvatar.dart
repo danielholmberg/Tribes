@@ -93,51 +93,61 @@ class UserAvatar extends StatelessWidget {
         ),
         Visibility(
           visible: !onlyAvatar || withName,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Visibility(
-                visible: withName || !onlyAvatar,
-                child: Text(withName ? user.name : user.username,
-                  style: TextStyle(
-                    color: color,
-                    fontFamily: 'TribesRounded',
-                    fontWeight: FontWeight.bold,
-                    fontSize: nameFontSize,
+          child: Expanded(
+            flex: addressFuture != null ? 1 : 0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Visibility(
+                  visible: withName || !onlyAvatar,
+                  child: Text(withName ? user.name : user.username,
+                    style: TextStyle(
+                      color: color,
+                      fontFamily: 'TribesRounded',
+                      fontWeight: FontWeight.bold,
+                      fontSize: nameFontSize,
+                    ),
                   ),
                 ),
-              ),
-              Visibility(
-                visible: addressFuture != null,
-                child: FutureBuilder(
-                  future: addressFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      var addresses = snapshot.data;
-                      var first = addresses.first;
-                      var location = '${first.addressLine}';
-                      return Text(location,
-                        style: TextStyle(
-                          color: Colors.blueGrey,
-                          fontFamily: 'TribesRounded',
-                          fontSize: 10,
-                          fontWeight: FontWeight.normal
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      print('Error getting address from coordinates: ${snapshot.error}');
-                      return SizedBox.shrink();
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                    
-                  }
+                Visibility(
+                  visible: addressFuture != null,
+                  child: SingleChildScrollView(
+                    physics: ClampingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    child: FutureBuilder(
+                      future: addressFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var addresses = snapshot.data;
+                          var first = addresses.first;
+                          var location = '${first.addressLine}';
+                          return Text(location,
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                              color: Colors.blueGrey,
+                              fontFamily: 'TribesRounded',
+                              fontSize: 10,
+                              fontWeight: FontWeight.normal
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          print('Error getting address from coordinates: ${snapshot.error}');
+                          return SizedBox.shrink();
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                        
+                      }
+                    ),
+                  ),
                 ),
-              ),
-              
-              ],
+                
+                ],
+            ),
           ),
         )
       ];

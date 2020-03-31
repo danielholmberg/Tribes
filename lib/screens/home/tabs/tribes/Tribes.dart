@@ -134,7 +134,7 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                         alignment: Alignment.center,
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            border: Border.all(color: Constants.buttonIconColor, width: 2.0),
+                                            //border: Border.all(color: Constants.buttonIconColor, width: 2.0),
                                             color: Constants.primaryColor,
                                             shape: BoxShape.circle,
                                           ),
