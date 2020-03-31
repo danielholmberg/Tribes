@@ -46,7 +46,7 @@ class StorageService {
     print('File Uploaded');    
 
     String picURL = await storageReference.getDownloadURL();
-    if(oldImageURL.isNotEmpty) {
+    if(oldImageURL != null) {
       try {
         await deleteOldFile(oldImageURL);
       } catch (e) {

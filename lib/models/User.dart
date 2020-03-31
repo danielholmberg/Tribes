@@ -48,6 +48,10 @@ class UserData {
     );
   }
 
+  bool hasUserPic() {
+    return picURL != Constants.placeholderPicURL;
+  }
+
   @override
   String toString() {
     return '[$uid, $name, $username, $info, $lat, $lng, $likedPosts]';
