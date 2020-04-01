@@ -171,13 +171,26 @@ class _NewPostState extends State<NewPost> {
     print('Building NewPost()...');
     print('Current user ${currentUser.toString()}');
 
-    return Hero(
-      tag: 'NewPostButton',
+    return WillPopScope(
+      onWillPop: () {
+        if(loading) {
+          return Future.value(false);
+        } else if(title.isNotEmpty || content.isNotEmpty || images.length > 0) {
+          showDialog(
+            context: context,
+            builder: (context) => DiscardChangesDialog(color: widget.tribe.color)
+          );
+          return Future.value(false);
+        } else {
+          return Future.value(true);
+        }
+      },
       child: Container(
         color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
         child: SafeArea(
           bottom: false,
-          child: loading ? Loading(color: widget.tribe.color) : Scaffold(
+          child: loading ? Loading(color: widget.tribe.color) 
+          : Scaffold(
             backgroundColor: DynamicTheme.of(context).data.backgroundColor,
             extendBody: true,
             appBar: AppBar(

@@ -15,7 +15,6 @@ import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomButton.dart';
-import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
@@ -29,6 +28,8 @@ class TribeRoom extends StatefulWidget {
 }
 
 class _TribeRoomState extends State<TribeRoom> {
+  final _postsKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
@@ -138,6 +139,7 @@ class _TribeRoomState extends State<TribeRoom> {
                         ),
                         Expanded(
                           child: Container(
+                            key: _postsKey,
                             decoration: BoxDecoration(
                               color: DynamicTheme.of(context).data.backgroundColor,
                               borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
@@ -170,27 +172,44 @@ class _TribeRoomState extends State<TribeRoom> {
                       bottom: Platform.isIOS ? 8.0 : 0.0,
                       left: 0.0,
                       right: 0.0,
-                      child: Hero(
-                        tag: 'NewPostButton',
-                        child: CustomButton(
-                          height: 60.0,
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.all(16.0),
-                          icon: FontAwesomeIcons.plusCircle,
-                          color: currentTribe.color,
-                          iconColor: Colors.white,
-                          label: Text('Add a post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-                          labelColor: Colors.white,
-                          onPressed: () {
-                            Navigator.push(context, CustomPageTransition(
-                              type: CustomPageTransitionType.newPost,
-                              duration: Duration(seconds: 1),
-                              child: StreamProvider<UserData>.value(
-                                value: DatabaseService().currentUser(currentUser.uid), 
-                                child: NewPost(tribe: currentTribe),
+                      child: CustomButton(
+                        height: 60.0,
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.all(16.0),
+                        icon: FontAwesomeIcons.plusCircle,
+                        color: currentTribe.color,
+                        iconColor: Colors.white,
+                        label: Text('Add a post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+                        labelColor: Colors.white,
+                        onPressed: () => showModalBottomSheet(
+                          context: context,
+                          isDismissible: false,
+                          isScrollControlled: true,
+                          builder: (buildContext) {
+                            RenderBox postsContainer = _postsKey.currentContext.findRenderObject();
+                            double postsHeight = postsContainer.size.height;
+                            return StreamProvider<UserData>.value(
+                              value: DatabaseService().currentUser(currentUser.uid), 
+                              child: Container(
+                                height: postsHeight,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.0),
+                                    topRight: Radius.circular(20.0),
+                                  ),
+                                  child: NewPost(tribe: currentTribe),
+                                ),
                               ),
-                            ));
+                            );
                           },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
+                            ),
+                          ),
+                          backgroundColor: Colors.transparent,
+                          elevation: 8.0
                         ),
                       ),
                     ),
