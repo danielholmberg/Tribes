@@ -7,11 +7,13 @@ class CustomAwesomeIcon extends StatelessWidget {
   final Color color;
   final double size;
   final bool inverse;
+  final List<Shadow> shadows;
   CustomAwesomeIcon({
     @required this.icon,
     this.color = Constants.buttonIconColor,
     this.size = Constants.defaultIconSize,
     this.inverse = false,
+    this.shadows,
   });
 
   @override
@@ -23,6 +25,7 @@ class CustomAwesomeIcon extends StatelessWidget {
         fontSize: size,
         fontFamily: icon.fontFamily,
         package: icon.fontPackage,
+        shadows: shadows,
       ),
     );
   }
