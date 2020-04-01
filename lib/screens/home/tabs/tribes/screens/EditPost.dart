@@ -36,7 +36,6 @@ class _EditPostState extends State<EditPost> {
   final FocusNode titleFocus = new FocusNode();
   final FocusNode contentFocus = new FocusNode();
   bool loading = false;
-  bool edited = false;
   bool photoVideoButtonIsDisabled;
 
   String title;
@@ -118,7 +117,6 @@ class _EditPostState extends State<EditPost> {
     if(resultList.length > 0) {
       setState(() {
         assetImages = resultList;
-        edited = true;
         photoVideoButtonIsDisabled = (images.length + resultList.length) == 5;
       });
     }
@@ -129,6 +127,8 @@ class _EditPostState extends State<EditPost> {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building EditPost()...');
     print('Current user ${currentUser.toString()}');
+
+    bool edited = originalTitle != title || originalContent != content || !listEquals(images, originalImages) || assetImages.length > 0;
 
     _showDiscardDialog() {
       return showDialog(
@@ -178,18 +178,11 @@ class _EditPostState extends State<EditPost> {
                     child: GestureDetector(
                       child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
                       onTap: () {
-                        if(asset) {
-                          assetImages.removeAt(index);
-                          setState(() {
-                            photoVideoButtonIsDisabled = (images.length + assetImages.length) == 5;
-                          });
-                        } else {
-                          images.removeAt(index);
-                          setState(() {
-                            edited = true;
-                            photoVideoButtonIsDisabled = (images.length + assetImages.length) == 5;
-                          });
-                        }
+                        asset ? assetImages.removeAt(index) : images.removeAt(index);
+
+                        setState(() {
+                          photoVideoButtonIsDisabled = (images.length + assetImages.length) == 5;
+                        });
                       },
                     ),
                   ),
@@ -224,7 +217,7 @@ class _EditPostState extends State<EditPost> {
     }
 
     return WillPopScope(
-      onWillPop: () => edited ? _showDiscardDialog() : Future(() => true),
+      onWillPop: () => edited ? _showDiscardDialog() : Future.value(true),
       child: Container(
         color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
         child: SafeArea(
@@ -365,7 +358,6 @@ class _EditPostState extends State<EditPost> {
                                   onChanged: (val) {
                                     setState(() {
                                       title = val;
-                                      edited = originalTitle != val || originalContent != content || !listEquals(images, originalImages) || assetImages.length > 0;
                                     });
                                   },
                                   onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
@@ -385,7 +377,6 @@ class _EditPostState extends State<EditPost> {
                                   onChanged: (val) {
                                     setState((){
                                       content = val;
-                                      edited = originalContent != val || originalTitle != title || !listEquals(images, originalImages) || assetImages.length > 0;
                                     });
                                   },
                                 )
@@ -402,7 +393,8 @@ class _EditPostState extends State<EditPost> {
                   bottom: Platform.isIOS ? 8.0 : 0.0,
                   left: 0.0,
                   right: 0.0,
-                  child: AnimatedOpacity(
+                  child: !edited ? SizedBox.shrink() 
+                  : AnimatedOpacity(
                   duration: Duration(milliseconds: 500),
                   opacity: edited ? 1.0 : 0.0,
                     child: CustomButton(

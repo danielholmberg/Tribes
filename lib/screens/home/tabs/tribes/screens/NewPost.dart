@@ -171,11 +171,13 @@ class _NewPostState extends State<NewPost> {
     print('Building NewPost()...');
     print('Current user ${currentUser.toString()}');
 
+    bool edited = title.isNotEmpty || content.isNotEmpty || images.length > 0;
+
     return WillPopScope(
       onWillPop: () {
         if(loading) {
           return Future.value(false);
-        } else if(title.isNotEmpty || content.isNotEmpty || images.length > 0) {
+        } else if(edited) {
           showDialog(
             context: context,
             builder: (context) => DiscardChangesDialog(color: widget.tribe.color)
@@ -202,7 +204,7 @@ class _NewPostState extends State<NewPost> {
                   color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
                 ), 
                 onPressed: () {
-                  if(title.isNotEmpty || content.isNotEmpty || images.length > 0) {
+                  if(edited) {
                     showDialog(
                       context: context,
                       builder: (context) => DiscardChangesDialog(color: widget.tribe.color)
@@ -287,9 +289,10 @@ class _NewPostState extends State<NewPost> {
                   bottom: Platform.isIOS ? 8.0 : 0.0,
                   left: 0.0,
                   right: 0.0,
-                  child: AnimatedOpacity(
+                  child: !edited ? SizedBox.shrink() 
+                  : AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
-                    opacity: (title.isNotEmpty || content.isNotEmpty || images.length > 0) ? 1.0 : 0.0,
+                    opacity: edited ? 1.0 : 0.0,
                     child: CustomButton(
                       icon: FontAwesomeIcons.check,
                       height: 60.0, 

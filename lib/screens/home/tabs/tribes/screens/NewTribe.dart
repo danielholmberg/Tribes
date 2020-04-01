@@ -235,7 +235,7 @@ class _NewTribeState extends State<NewTribe> {
                   bottom: Platform.isIOS ? 8.0 : 0.0,
                   left: 0.0,
                   right: 0.0,
-                  child: AnimatedOpacity(
+                  child: (name.isEmpty || desc.isEmpty) ? SizedBox.shrink() : AnimatedOpacity(
                     duration: Duration(milliseconds: 500),
                     opacity: (name.isNotEmpty && desc.isNotEmpty) ? 1.0 : 0.0,
                       child: CustomButton(
