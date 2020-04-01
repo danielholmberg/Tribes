@@ -254,7 +254,12 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                       duration: Duration(milliseconds: 500),
                                     ));
 
-                                    setState(() => loading = false);
+                                    setState(() {
+                                      loading = false;
+                                      originalName = name;
+                                      originalDesc = desc;
+                                      originalTribeColor = tribeColor;
+                                    });
                                   }
                                 },
                               ),
