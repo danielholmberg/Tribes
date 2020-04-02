@@ -14,8 +14,9 @@ import 'package:tribes/shared/constants.dart' as Constants;
 
 class Posts extends StatelessWidget {
   final Tribe tribe;
+  final Function onEditPostPress;
   final Function onEmptyTextPress;
-  Posts({@required this.tribe, this.onEmptyTextPress});
+  Posts({@required this.tribe, this.onEditPostPress, this.onEmptyTextPress});
 
   final ScrollController controller = new ScrollController();
   
@@ -44,7 +45,7 @@ class Posts extends StatelessWidget {
         ) =>
             FadeTransition(
           opacity: animation,
-          child: PostTile(Post.fromSnapshot(snapshot), tribe.color),
+          child: PostTile(Post.fromSnapshot(snapshot), tribe.color, this.onEditPostPress),
         ),
         emptyChild: Center(
           child: Row(

@@ -5,10 +5,12 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/dialogs/TribeDetailsDialog.dart';
 import 'package:tribes/screens/home/tabs/tribes/dialogs/TribeSettingsDialog.dart';
+import 'package:tribes/screens/home/tabs/tribes/screens/EditPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/NewPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/Posts.dart';
 import 'package:tribes/services/database.dart';
@@ -35,6 +37,42 @@ class _TribeRoomState extends State<TribeRoom> {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building TribeRoom()...');
     print('Current user ${currentUser.toString()}');
+
+    double _calculatePostsHeight() {
+      RenderBox postsContainer = _postsKey.currentContext.findRenderObject();
+      return postsContainer.size.height;
+    }
+
+    _showModalBottomSheet({Tribe currentTribe, Widget child}) {
+      showModalBottomSheet(
+        context: context,
+        isDismissible: false,
+        isScrollControlled: true,
+        builder: (buildContext) {
+          return StreamProvider<UserData>.value(
+            value: DatabaseService().currentUser(currentUser.uid), 
+            child: Container(
+              height: _calculatePostsHeight(),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+                child: child,
+              ),
+            ),
+          );
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 8.0
+      );
+    }
     
     return StreamBuilder<Tribe>(
       stream: DatabaseService().tribe(widget.tribeID),
@@ -161,37 +199,15 @@ class _TribeRoomState extends State<TribeRoom> {
                                 child: StreamProvider<UserData>.value(
                                   value: DatabaseService().currentUser(currentUser.uid),
                                   child: Posts(
-                                    tribe: currentTribe, 
-                                    onEmptyTextPress: () => showModalBottomSheet(
-                                      context: context,
-                                      isDismissible: false,
-                                      isScrollControlled: true,
-                                      builder: (buildContext) {
-                                        RenderBox postsContainer = _postsKey.currentContext.findRenderObject();
-                                        double postsHeight = postsContainer.size.height;
-                                        return StreamProvider<UserData>.value(
-                                          value: DatabaseService().currentUser(currentUser.uid), 
-                                          child: Container(
-                                            height: postsHeight,
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(20.0),
-                                                topRight: Radius.circular(20.0),
-                                              ),
-                                              child: NewPost(tribe: currentTribe),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20.0),
-                                          topRight: Radius.circular(20.0),
-                                        ),
-                                      ),
-                                      backgroundColor: Colors.transparent,
-                                      elevation: 8.0
+                                    tribe: currentTribe,
+                                    onEditPostPress: (Post post) => _showModalBottomSheet(
+                                      currentTribe: currentTribe, 
+                                      child: EditPost(post, currentTribe.color, FontAwesomeIcons.times),
                                     ), 
+                                    onEmptyTextPress: () => _showModalBottomSheet(
+                                      currentTribe: currentTribe, 
+                                      child: NewPost(tribe: currentTribe),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -213,36 +229,7 @@ class _TribeRoomState extends State<TribeRoom> {
                         iconColor: Colors.white,
                         label: Text('Add a post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
                         labelColor: Colors.white,
-                        onPressed: () => showModalBottomSheet(
-                          context: context,
-                          isDismissible: false,
-                          isScrollControlled: true,
-                          builder: (buildContext) {
-                            RenderBox postsContainer = _postsKey.currentContext.findRenderObject();
-                            double postsHeight = postsContainer.size.height;
-                            return StreamProvider<UserData>.value(
-                              value: DatabaseService().currentUser(currentUser.uid), 
-                              child: Container(
-                                height: postsHeight,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20.0),
-                                    topRight: Radius.circular(20.0),
-                                  ),
-                                  child: NewPost(tribe: currentTribe),
-                                ),
-                              ),
-                            );
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20.0),
-                              topRight: Radius.circular(20.0),
-                            ),
-                          ),
-                          backgroundColor: Colors.transparent,
-                          elevation: 8.0
-                        ),
+                        onPressed: () => _showModalBottomSheet(currentTribe: currentTribe, child: NewPost(tribe: currentTribe)),
                       ),
                     ),
                   ],

@@ -23,7 +23,8 @@ import 'package:tribes/shared/widgets/Loading.dart';
 class EditPost extends StatefulWidget {
   final Color tribeColor;
   final Post post;
-  EditPost(this.post, this.tribeColor);
+  final IconData leadingIcon;
+  EditPost(this.post, this.tribeColor, this.leadingIcon);
 
   @override
   _EditPostState createState() => _EditPostState();
@@ -258,7 +259,7 @@ class _EditPostState extends State<EditPost> {
                   ),
                 ],
               ),
-              leading: IconButton(icon: Icon(Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft), 
+              leading: IconButton(icon: Icon(widget.leadingIcon), 
                 color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                 onPressed: () {
                   edited ? _showDiscardDialog() : Navigator.of(context).pop();

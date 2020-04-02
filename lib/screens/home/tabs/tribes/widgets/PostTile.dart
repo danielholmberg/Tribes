@@ -20,7 +20,8 @@ import 'package:tribes/shared/widgets/UserAvatar.dart';
 class PostTile extends StatefulWidget {
   final Post post;
   final Color tribeColor;
-  PostTile(this.post, this.tribeColor);
+  final Function onEditPostPress;
+  PostTile(this.post, this.tribeColor, this.onEditPostPress);
 
   @override
   _PostTileState createState() => _PostTileState();
@@ -77,17 +78,7 @@ class _PostTileState extends State<PostTile> {
               color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
               size: Constants.smallIconSize,
             ),
-            onPressed: () async {
-              Navigator.push(context, CustomPageTransition(
-                type: CustomPageTransitionType.postDetails, 
-                  duration: Constants.pageTransition600, 
-                  child: StreamProvider<UserData>.value(
-                    value: DatabaseService().currentUser(currentUser.uid), 
-                    child: EditPost(widget.post, widget.tribeColor),
-                  ),
-                )
-              );
-            },
+            onPressed: () => widget.onEditPostPress(widget.post),
           ) : SizedBox.shrink(),
         ],
       );

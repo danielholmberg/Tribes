@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
@@ -62,7 +65,7 @@ class PostTileCompact extends StatelessWidget {
               duration: Constants.pageTransition600, 
               child: StreamProvider<UserData>.value(
                 value: DatabaseService().currentUser(currentUser.uid), 
-                child: EditPost(post, DynamicTheme.of(context).data.primaryColor),
+                child: EditPost(post, DynamicTheme.of(context).data.primaryColor, Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft),
               ),
             ));
           }
