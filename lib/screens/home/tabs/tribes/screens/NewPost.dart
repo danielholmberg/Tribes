@@ -34,7 +34,7 @@ class _NewPostState extends State<NewPost> {
   final FocusNode titleFocus = new FocusNode();
   final FocusNode contentFocus = new FocusNode();
   bool loading = false;
-  bool photoVideoButtonIsDisabled = false;
+  bool photoButtonIsDisabled = false;
   
   String title = '';
   String content = '';
@@ -100,7 +100,7 @@ class _NewPostState extends State<NewPost> {
                       onTap: () {
                         images.removeAt(index);
                         setState(() {
-                          photoVideoButtonIsDisabled = images.length == 5;
+                          photoButtonIsDisabled = images.length == 5;
                         });
                       },
                     ),
@@ -122,15 +122,15 @@ class _NewPostState extends State<NewPost> {
         maxImages: 5,
         enableCamera: true,
         materialOptions: MaterialOptions(
-          actionBarTitle: "Select image(s)",
-          allViewTitle: "Select image(s)",
+          actionBarTitle: "Add images",
+          allViewTitle: "Add images",
           actionBarColor: "#ed217c",  // TO-DO: Change
           actionBarTitleColor: "#ffffff",  // TO-DO: Change
           lightStatusBar: false,
           statusBarColor: '#ed217c',  // TO-DO: Change
           startInAllView: true,
           selectCircleStrokeColor: "#ed217c", // TO-DO: Change
-          selectionLimitReachedText: "You can't select any more.",
+          selectionLimitReachedText: "You can't add any more.",
       ),
       cupertinoOptions: CupertinoOptions(
         selectionFillColor: "#ed217c",  // TO-DO: Change
@@ -160,7 +160,7 @@ class _NewPostState extends State<NewPost> {
     if(resultList.length > 0) {
       setState(() {
         images = resultList;
-        photoVideoButtonIsDisabled = images.length == 5;
+        photoButtonIsDisabled = images.length == 5;
       });
     }
   }
@@ -217,10 +217,10 @@ class _NewPostState extends State<NewPost> {
               actions: <Widget>[
                 IconButton(
                   icon: CustomAwesomeIcon(
-                    icon: FontAwesomeIcons.photoVideo,
-                    color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(photoVideoButtonIsDisabled ? 0.4 : 1.0),
+                    icon: FontAwesomeIcons.camera,
+                    color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
                   ),                  
-                  onPressed: photoVideoButtonIsDisabled ? null : () async => await loadAssets(),
+                  onPressed: photoButtonIsDisabled ? null : () async => await loadAssets(),
                 ),
                 SizedBox(width: 8.0)
               ],

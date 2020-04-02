@@ -36,7 +36,7 @@ class _EditPostState extends State<EditPost> {
   final FocusNode titleFocus = new FocusNode();
   final FocusNode contentFocus = new FocusNode();
   bool loading = false;
-  bool photoVideoButtonIsDisabled;
+  bool photoButtonIsDisabled;
 
   String title;
   String content;
@@ -62,7 +62,7 @@ class _EditPostState extends State<EditPost> {
     title = originalTitle;
     content = originalContent;
     images = originalImages;
-    photoVideoButtonIsDisabled = images.length == 5;
+    photoButtonIsDisabled = images.length == 5;
 
     Future.delayed(Duration(milliseconds: 650)).then((val) {
       FocusScope.of(context).requestFocus(titleFocus);
@@ -79,15 +79,15 @@ class _EditPostState extends State<EditPost> {
         maxImages: 5 - images.length,
         enableCamera: true,
         materialOptions: MaterialOptions(
-          actionBarTitle: "Select image(s)",
-          allViewTitle: "Select image(s)",
+          actionBarTitle: "Add images",
+          allViewTitle: "Add images",
           actionBarColor: "#ed217c",  // TO-DO: Change
           actionBarTitleColor: "#ffffff",  // TO-DO: Change
           lightStatusBar: false,
           statusBarColor: '#ed217c',  // TO-DO: Change
           startInAllView: true,
           selectCircleStrokeColor: "#ed217c", // TO-DO: Change
-          selectionLimitReachedText: "You can't select any more.",
+          selectionLimitReachedText: "You can't add any more.",
       ),
       cupertinoOptions: CupertinoOptions(
         selectionFillColor: "#ed217c",  // TO-DO: Change
@@ -117,7 +117,7 @@ class _EditPostState extends State<EditPost> {
     if(resultList.length > 0) {
       setState(() {
         assetImages = resultList;
-        photoVideoButtonIsDisabled = (images.length + resultList.length) == 5;
+        photoButtonIsDisabled = (images.length + resultList.length) == 5;
       });
     }
   }
@@ -181,7 +181,7 @@ class _EditPostState extends State<EditPost> {
                         asset ? assetImages.removeAt(index) : images.removeAt(index);
 
                         setState(() {
-                          photoVideoButtonIsDisabled = (images.length + assetImages.length) == 5;
+                          photoButtonIsDisabled = (images.length + assetImages.length) == 5;
                         });
                       },
                     ),
@@ -267,10 +267,10 @@ class _EditPostState extends State<EditPost> {
               actions: <Widget>[
                 IconButton(
                   icon: CustomAwesomeIcon(
-                    icon: FontAwesomeIcons.photoVideo,
-                    color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(photoVideoButtonIsDisabled ? 0.4 : 1.0),
+                    icon: FontAwesomeIcons.camera,
+                    color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
                   ),                  
-                  onPressed: photoVideoButtonIsDisabled ? null : () async => await loadAssets(),
+                  onPressed: photoButtonIsDisabled ? null : () async => await loadAssets(),
                 ),
                 IconButton(
                   splashColor: Colors.transparent,
