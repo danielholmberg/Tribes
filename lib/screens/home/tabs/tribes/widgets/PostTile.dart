@@ -27,11 +27,16 @@ class PostTile extends StatefulWidget {
   _PostTileState createState() => _PostTileState();
 }
 
-class _PostTileState extends State<PostTile> {
+class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
 
   Coordinates coordinates;
   Future<List<Address>> addressFuture;
   bool expanded = false;
+  bool showLikedAnimation = false;
+
+  // Liked animation
+  AnimationController likedAnimationController;
+  Animation likedAnimation;
 
   @override
   void initState() { 
@@ -39,7 +44,26 @@ class _PostTileState extends State<PostTile> {
       coordinates = Coordinates(widget.post.lat, widget.post.lng);
       addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
     }
+
+    likedAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 800));
+    likedAnimation = Tween(begin: 20.0, end: 100.0).animate(CurvedAnimation(
+      curve: Curves.bounceOut, parent: likedAnimationController)
+    );
+
+    likedAnimationController.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
+        setState(() => showLikedAnimation = false);
+        likedAnimationController.reset();
+      }
+    });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    likedAnimationController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -172,10 +196,13 @@ class _PostTileState extends State<PostTile> {
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: Text(widget.post.content,
-              maxLines: expanded ? null : Constants.postTileContentMaxLines,
-              overflow: TextOverflow.fade,
-              style: DynamicTheme.of(context).data.textTheme.body2),
+            child: GestureDetector(
+              onTap: () => setState(() => expanded = !expanded),
+              child: Text(widget.post.content,
+                maxLines: expanded ? null : Constants.postTileContentMaxLines,
+                overflow: TextOverflow.fade,
+                style: DynamicTheme.of(context).data.textTheme.body2),
+            ),
           ),
 
           SizedBox(height: widget.post.images.isEmpty ? 0.0 : 8.0),
@@ -221,18 +248,46 @@ class _PostTileState extends State<PostTile> {
         ]
       ),
       margin: EdgeInsets.fromLTRB(6.0, Constants.defaultPadding, 6.0, 4.0),
-      child: InkWell(
-        splashColor: Constants.tribesColor.withAlpha(30),
-        onTap: () {
-          setState(() {
-            expanded = !expanded;
-          });
+      child: GestureDetector(
+        onDoubleTap: () {
+          bool likedByUser = currentUser.likedPosts.contains(widget.post.id);
+          if (likedByUser) {
+            print('User ${currentUser.uid} unliked Post ${widget.post.id}');
+            DatabaseService().unlikePost(currentUser.uid, widget.post.id);
+          } else {
+            print('User ${currentUser.uid} liked Post ${widget.post.id}');
+            DatabaseService().likePost(currentUser.uid, widget.post.id);
+            setState(() => showLikedAnimation = true);
+            likedAnimationController.forward();
+          }
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
-          child: Column(
+          child: Stack(
+            alignment: Alignment.center,
             children: <Widget>[
               _postTileMain(),
+              Visibility(
+                visible: showLikedAnimation,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: AnimatedBuilder(
+                    animation: likedAnimationController,
+                    builder: (context, child) => CustomAwesomeIcon(
+                      icon: FontAwesomeIcons.solidHeart, 
+                      size: likedAnimation.value, 
+                      color: widget.tribeColor,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(0, 0),
+                          blurRadius: 4.0,
+                          color: Colors.black87,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),
