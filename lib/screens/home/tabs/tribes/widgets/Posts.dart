@@ -8,20 +8,17 @@ import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/home/tabs/tribes/screens/NewPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/PostTile.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class Posts extends StatelessWidget {
   final Tribe tribe;
-  final double height;
-  Posts({@required this.tribe, this.height});
+  final Function onEmptyTextPress;
+  Posts({@required this.tribe, this.onEmptyTextPress});
 
   final ScrollController controller = new ScrollController();
   
-  final _postsKey = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
@@ -30,7 +27,6 @@ class Posts extends StatelessWidget {
     print('Tribe id: ${tribe.id}');
 
     return Container(
-      key: _postsKey,
       child: FirestoreAnimatedList(
         controller: controller,
         padding: EdgeInsets.only(top: Constants.defaultPadding, bottom: Platform.isIOS ? 94.0 : 86.0),
@@ -63,36 +59,7 @@ class Posts extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  isDismissible: false,
-                  isScrollControlled: true,
-                  builder: (buildContext) {
-                    RenderBox postsContainer = _postsKey.currentContext.findRenderObject();
-                    double postsHeight = postsContainer.size.height;
-                    return StreamProvider<UserData>.value(
-                      value: DatabaseService().currentUser(currentUser.uid), 
-                      child: Container(
-                        height: postsHeight,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0),
-                          ),
-                          child: NewPost(tribe: tribe),
-                        ),
-                      ),
-                    );
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
-                  ),
-                  backgroundColor: Colors.transparent,
-                  elevation: 8.0
-                ),
+                onTap: onEmptyTextPress,
                 child: Text(' add a post',
                   style: TextStyle(
                     color: Colors.blueGrey,

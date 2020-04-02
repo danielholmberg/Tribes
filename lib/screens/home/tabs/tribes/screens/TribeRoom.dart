@@ -160,7 +160,39 @@ class _TribeRoomState extends State<TribeRoom> {
                                 behavior: CustomScrollBehavior(),
                                 child: StreamProvider<UserData>.value(
                                   value: DatabaseService().currentUser(currentUser.uid),
-                                  child: Posts(tribe: currentTribe)
+                                  child: Posts(
+                                    tribe: currentTribe, 
+                                    onEmptyTextPress: () => showModalBottomSheet(
+                                      context: context,
+                                      isDismissible: false,
+                                      isScrollControlled: true,
+                                      builder: (buildContext) {
+                                        RenderBox postsContainer = _postsKey.currentContext.findRenderObject();
+                                        double postsHeight = postsContainer.size.height;
+                                        return StreamProvider<UserData>.value(
+                                          value: DatabaseService().currentUser(currentUser.uid), 
+                                          child: Container(
+                                            height: postsHeight,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(20.0),
+                                                topRight: Radius.circular(20.0),
+                                              ),
+                                              child: NewPost(tribe: currentTribe),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20.0),
+                                          topRight: Radius.circular(20.0),
+                                        ),
+                                      ),
+                                      backgroundColor: Colors.transparent,
+                                      elevation: 8.0
+                                    ), 
+                                  ),
                                 ),
                               ),
                             ),
