@@ -161,7 +161,10 @@ class DatabaseService {
         'created': new DateTime.now().millisecondsSinceEpoch,
       };
 
-      usersRoot.document(author).updateData({'likedPosts': FieldValue.arrayUnion([postRef.documentID])});
+      usersRoot.document(author).updateData({
+        'createdPosts': FieldValue.arrayUnion([postRef.documentID]),
+        'likedPosts': FieldValue.arrayUnion([postRef.documentID]),
+      });
 
       print('Publishing post: $data');
       return postRef.setData(data);
@@ -183,7 +186,8 @@ class DatabaseService {
   }
 
   Future deletePost(Post post) async {
-    if(post.images.isNotEmpty) await Future.forEach(post.images, (imageURL) async => await StorageService().deleteFile(imageURL)); 
+    if(post.images.isNotEmpty) await Future.forEach(post.images, (imageURL) async => await StorageService().deleteFile(imageURL));
+    usersRoot.document(post.author).updateData({'createdPosts': FieldValue.arrayRemove([post.id])});
     return postsRoot.document(post.id).delete();
   }
 
@@ -276,13 +280,6 @@ class DatabaseService {
 
       return Post.fromSnapshot(postData);
     });
-  }
-
-  // Return QuerySnapshot to make it work with FirebaseAnimatedList.
-  Stream<QuerySnapshot> postsPublishedByUser(String userID) {
-    // Chaining .where() and .orderBy() requires a Composite-index in Firebase Firestore setup.
-    // See https://github.com/flutter/flutter/issues/15928#issuecomment-394197426 for more info.
-    return postsRoot.where('author', isEqualTo: userID).orderBy('created', descending: true).snapshots();
   }
 
   Future addUserToTribe(String userID, String tribeID) {

@@ -108,6 +108,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   builder: (context, snapshot) {
                     return snapshot.hasData 
                     ? UserAvatar(
+                      currentUserID: currentUser.uid,
                       user: snapshot.data, 
                       padding: const EdgeInsets.symmetric(vertical: 6.0), 
                       radius: 14, 
@@ -137,6 +138,7 @@ class _ChatRoomState extends State<ChatRoom> {
                 builder: (context, snapshot) {
                   return snapshot.hasData 
                   ? UserAvatar(
+                    currentUserID: currentUser.uid,
                     user: snapshot.data, 
                     padding: const EdgeInsets.symmetric(vertical: 6.0),
                     color: widget.currentTribe != null ? widget.currentTribe.color : Colors.grey, 
@@ -245,6 +247,7 @@ class _ChatRoomState extends State<ChatRoom> {
                     Visibility(
                       visible: snapshot.hasData,
                       child: UserAvatar(
+                        currentUserID: currentUser.uid,
                         user: snapshot.data, 
                         color: Colors.white,
                         onlyAvatar: true,

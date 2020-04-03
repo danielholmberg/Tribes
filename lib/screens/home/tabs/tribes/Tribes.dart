@@ -6,6 +6,7 @@ import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/JoinTribe.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/NewTribe.dart';
+import 'package:tribes/screens/home/tabs/tribes/screens/TribeRoom.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/TribeTile.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -253,13 +254,27 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                                 controller: tribeController,
                                 itemCount: joinedTribesList.length,
                                 itemBuilder: (context, index) {
+                                  Tribe currentTribe = joinedTribesList[index];
                                   double padding = MediaQuery.of(context).size.height * 0.08;
+                                  double verticalMargin = index == currentPage ? 0.0 : MediaQuery.of(context).size.height * 0.04;
 
-                                  return Container(
+                                  return AnimatedContainer(
+                                    duration: Duration(milliseconds: 1000),
+                                    curve: Curves.easeOutQuint,
                                     padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight + padding, top: padding),
-                                    child: TribeTile(
-                                      tribe: joinedTribesList[index],
-                                      active: index == currentPage,
+                                    margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: verticalMargin),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        print('Tapped tribe: ${currentTribe.name}');
+                                        Navigator.push(context, CustomPageTransition(
+                                          type: CustomPageTransitionType.tribeRoom,
+                                          child: StreamProvider<UserData>.value(
+                                            value: DatabaseService().currentUser(currentUser.uid), 
+                                            child: TribeRoom(tribeID: currentTribe.id),
+                                          ),
+                                        ));
+                                      },
+                                      child: TribeTile(tribe: currentTribe),
                                     ),
                                   );
                                 },

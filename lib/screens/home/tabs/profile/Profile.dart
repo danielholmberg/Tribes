@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,6 +12,7 @@ import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/profile/dialogs/ProfileSettingsDialog.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/CreatedPosts.dart';
+import 'package:tribes/screens/home/tabs/profile/widgets/JoinedTribes.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/LikedPosts.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/services/storage.dart';
@@ -21,6 +21,9 @@ import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 
 class Profile extends StatefulWidget {
   static const routeName = '/home/profile';
+
+  final UserData user;
+  Profile({this.user});
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -39,7 +42,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    _tabController = TabController(vsync: this, length: 2);
+    _tabController = TabController(vsync: this, length: 3);
     super.initState();
   }
 
@@ -51,13 +54,20 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = Provider.of<UserData>(context);
+    UserData currentUser = Provider.of<UserData>(context);
     print('Building Profile()...');
     print('Current user ${currentUser.uid}');
 
-    if((currentUser.lat != 0 && currentUser.lng != 0)) {
-      coordinates = Coordinates(currentUser.lat, currentUser.lng);
-      addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
+    if(widget.user != null) {
+      if((widget.user.lat != 0 && widget.user.lng != 0)) {
+        coordinates = Coordinates(widget.user.lat, widget.user.lng);
+        addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
+      }
+    } else {
+      if((currentUser.lat != 0 && currentUser.lng != 0)) {
+        coordinates = Coordinates(currentUser.lat, currentUser.lng);
+        addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
+      }
     }
 
     _chooseNewProfilePic() async {
@@ -105,7 +115,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _placeholderPic() {
       return CachedNetworkImage(
-        imageUrl: currentUser.picURL,
+        imageUrl: widget.user != null ? widget.user.picURL : currentUser.picURL,
         imageBuilder: (context, imageProvider) => CircleAvatar(
           radius: Constants.profilePagePicRadius,
           backgroundImage: imageProvider,
@@ -171,7 +181,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () => loading ? null : _chooseNewProfilePic(),
+                  onTap: () => widget.user != null ? null : (loading ? null : _chooseNewProfilePic()),
                   child: Stack(
                     alignment: Alignment.centerLeft,
                     children: <Widget>[
@@ -200,7 +210,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             },
                           ) : _profilePicture(),
                       ),
-                      Positioned(
+                      
+                      widget.user != null ? SizedBox.shrink() 
+                      : Positioned(
                         bottom: 2, 
                         right: 2, 
                         child: Container(
@@ -225,21 +237,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 Spacer(),
-                StreamBuilder<QuerySnapshot>(
-                  stream: DatabaseService().postsPublishedByUser(currentUser.uid),
-                  builder: (context, snapshot) {
-                    String publishedCount = snapshot.hasData ? '${snapshot.data.documents.length}' : '0';
-
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(publishedCount, style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
-                        Text('Published', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
-                      ],
-                    );
-                  }
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('${widget.user != null ? widget.user.createdPosts.length : currentUser.createdPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                    Text('Published', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
+                  ],
                 ),
                 Spacer(),
                 Column(
@@ -247,13 +252,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('${currentUser.likedPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                    Text('${widget.user != null ? widget.user.likedPosts.length : currentUser.likedPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
                     Text('Liked', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
                   ],
                 ),
                 Spacer(),
                 StreamBuilder<List<Tribe>>(
-                  stream: DatabaseService().joinedTribes(currentUser.uid),
+                  stream: DatabaseService().joinedTribes(widget.user != null ? widget.user.uid : currentUser.uid),
                   builder: (context, snapshot) {
                     List<Tribe> tribesList =
                         snapshot.hasData ? snapshot.data : [];
@@ -294,7 +299,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(currentUser.name,
+                  Text(widget.user != null ? widget.user.name : currentUser.name,
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: 'TribesRounded',
@@ -311,7 +316,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         size: Constants.tinyIconSize,
                       ),
                       SizedBox(width: Constants.defaultPadding),
-                      Text(currentUser.email,
+                      Text(widget.user != null ? widget.user.email : currentUser.email,
                         style: TextStyle(
                           color: Colors.blueGrey,
                           fontFamily: 'TribesRounded',
@@ -337,7 +342,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             var addresses = snapshot.data;
                             var first = addresses.first;
                             var location = '${first.addressLine}';
-                            print('lat ${currentUser.lat}, lng ${currentUser.lng}');
+                            print('lat ${widget.user != null ? widget.user.lat : currentUser.lat}, lng ${widget.user != null ? widget.user.lng : currentUser.lng}');
                             print('location: $location');
                             return Text(location,
                               style: TextStyle(
@@ -362,10 +367,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               ),
               Divider(),
               Visibility(
-                visible: currentUser.info.isNotEmpty,
+                visible: widget.user != null ? widget.user.info.isNotEmpty : currentUser.info.isNotEmpty,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  child: Text(currentUser.info,
+                  child: Text(widget.user != null ? widget.user.info : currentUser.info,
                     maxLines: 2,
                     overflow: TextOverflow.fade,
                     textAlign: TextAlign.center,
@@ -390,7 +395,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         bottom: false,
           child: Container(
           child: DefaultTabController(
-            length: 2,
+            length: _tabController.length,
             child: NestedScrollView(
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
@@ -415,7 +420,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.max,
                                     children: <Widget>[
-                                      Text(currentUser.username,
+                                      Text(widget.user != null ? widget.user.username : currentUser.username,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontFamily: 'TribesRounded',
@@ -425,12 +430,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       ),
                                     ],
                                   ),
-                                  Positioned(right: 0, 
+
+                                  widget.user != null ? SizedBox.shrink() 
+                                  : Positioned(right: 0, 
                                     child: IconButton(
                                       color: DynamicTheme.of(context).data.buttonColor,
                                       icon: Icon(FontAwesomeIcons.cog, color: Constants.buttonIconColor),
                                       splashColor: Colors.transparent,
-                                      onPressed: () {
+                                      onPressed: widget.user != null ? null : () {
                                         showDialog(
                                           context: context,
                                           barrierDismissible: false,
@@ -456,7 +463,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 ];
               },
               body: Container(
-                color: DynamicTheme.of(context).data.backgroundColor.withOpacity(0.8),
+                color: Colors.white,
                 child: Column(
                   children: <Widget>[
                     Container(
@@ -468,14 +475,16 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         tabs: [
                           Tab(icon: Icon(Icons.dashboard)),
                           Tab(icon: Icon(FontAwesomeIcons.solidHeart)),
+                          Tab(icon: Icon(FontAwesomeIcons.home))
                         ],
                       ),
                     ),
                     Expanded(
                       child: TabBarView(
                         children: [
-                          CreatedPosts(),
-                          LikedPosts(),
+                          CreatedPosts(user: widget.user ?? currentUser),
+                          LikedPosts(user: widget.user ?? currentUser),
+                          JoinedTribes(user: widget.user ?? currentUser),
                         ],
                       ),
                     ),

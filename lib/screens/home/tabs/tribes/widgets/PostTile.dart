@@ -7,12 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/dialogs/FullscreenCarouselDialog.dart';
-import 'package:tribes/screens/home/tabs/tribes/screens/EditPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
-import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/widgets/LikeButton.dart';
 import 'package:tribes/shared/widgets/PostedDateTime.dart';
 import 'package:tribes/shared/widgets/UserAvatar.dart';
@@ -86,7 +84,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
               stream: DatabaseService().userData(widget.post.author),
               builder: (context, snapshot) {
                 if(snapshot.hasData) {
-                  return UserAvatar(user: snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
+                  return UserAvatar(currentUserID: currentUser.uid, user: snapshot.data, color: widget.tribeColor, addressFuture: addressFuture);
                 } else if(snapshot.hasError) {
                   print('Error retrieving author data: ${snapshot.error.toString()}');
                   return UserAvatarPlaceholder(child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)));
@@ -184,45 +182,61 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
             child: _postTileHeader()
           ),
 
-          // Title
-          Container(
-            width: MediaQuery.of(context).size.width,            
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Text(widget.post.title,
-                style: DynamicTheme.of(context).data.textTheme.title),
-          ),
-
-          // Content
-          Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(horizontal: 12.0),
-            child: GestureDetector(
-              onTap: () => setState(() => expanded = !expanded),
-              child: Text(widget.post.content,
-                maxLines: expanded ? null : Constants.postTileContentMaxLines,
-                overflow: TextOverflow.fade,
-                style: DynamicTheme.of(context).data.textTheme.body2),
-            ),
-          ),
-
-          SizedBox(height: widget.post.images.isEmpty ? 0.0 : 8.0),
-
-          // ImageCarousel
-          widget.post.images.isEmpty 
-          ? SizedBox.shrink() 
-          : GestureDetector(
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => FullscreenCarouselDialog(images: widget.post.images, color: Colors.white)
-            ), 
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)),
-                  bottom: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)), 
+          GestureDetector(
+            onDoubleTap: () {
+              bool likedByUser = currentUser.likedPosts.contains(widget.post.id);
+              if (!likedByUser) {
+                print('User ${currentUser.uid} liked Post ${widget.post.id}');
+                DatabaseService().likePost(currentUser.uid, widget.post.id);
+                setState(() => showLikedAnimation = true);
+                likedAnimationController.forward();
+              }
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                Container(
+                  width: MediaQuery.of(context).size.width,            
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Text(widget.post.title,
+                      style: DynamicTheme.of(context).data.textTheme.title),
                 ),
-              ),
-              child: ImageCarousel(images: widget.post.images, color: widget.tribeColor)
+
+                // Content
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.symmetric(horizontal: 12.0),
+                  child: GestureDetector(
+                    onTap: () => setState(() => expanded = !expanded),
+                    child: Text(widget.post.content,
+                      maxLines: expanded ? null : Constants.postTileContentMaxLines,
+                      overflow: TextOverflow.fade,
+                      style: DynamicTheme.of(context).data.textTheme.body2),
+                  ),
+                ),
+
+                SizedBox(height: widget.post.images.isEmpty ? 0.0 : 8.0),
+
+                // ImageCarousel
+                widget.post.images.isEmpty 
+                ? SizedBox.shrink() 
+                : GestureDetector(
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => FullscreenCarouselDialog(images: widget.post.images, color: Colors.white)
+                  ), 
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)),
+                        bottom: BorderSide(color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(0.2)), 
+                      ),
+                    ),
+                    child: ImageCarousel(images: widget.post.images, color: widget.tribeColor)
+                  ),
+                ),
+              ]
             ),
           ),
 
@@ -248,48 +262,34 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
         ]
       ),
       margin: EdgeInsets.fromLTRB(6.0, Constants.defaultPadding, 6.0, 4.0),
-      child: GestureDetector(
-        onDoubleTap: () {
-          bool likedByUser = currentUser.likedPosts.contains(widget.post.id);
-          if (likedByUser) {
-            print('User ${currentUser.uid} unliked Post ${widget.post.id}');
-            DatabaseService().unlikePost(currentUser.uid, widget.post.id);
-          } else {
-            print('User ${currentUser.uid} liked Post ${widget.post.id}');
-            DatabaseService().likePost(currentUser.uid, widget.post.id);
-            setState(() => showLikedAnimation = true);
-            likedAnimationController.forward();
-          }
-        },
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              _postTileMain(),
-              Visibility(
-                visible: showLikedAnimation,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: AnimatedBuilder(
-                    animation: likedAnimationController,
-                    builder: (context, child) => CustomAwesomeIcon(
-                      icon: FontAwesomeIcons.solidHeart, 
-                      size: likedAnimation.value, 
-                      color: widget.tribeColor,
-                      shadows: [
-                        Shadow(
-                          offset: Offset(0, 0),
-                          blurRadius: 4.0,
-                          color: Colors.black87,
-                        )
-                      ],
-                    ),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            _postTileMain(),
+            Visibility(
+              visible: showLikedAnimation,
+              child: Align(
+                alignment: Alignment.center,
+                child: AnimatedBuilder(
+                  animation: likedAnimationController,
+                  builder: (context, child) => CustomAwesomeIcon(
+                    icon: FontAwesomeIcons.solidHeart, 
+                    size: likedAnimation.value, 
+                    color: widget.tribeColor,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 0),
+                        blurRadius: 4.0,
+                        color: Colors.black87,
+                      )
+                    ],
                   ),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );

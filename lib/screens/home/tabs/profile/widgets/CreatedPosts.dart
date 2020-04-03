@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_ui/animated_firestore_staggered.dart';
 import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
@@ -9,8 +10,12 @@ import 'package:tribes/screens/home/tabs/profile/widgets/PostTileCompact.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class CreatedPosts extends StatefulWidget {
+  final UserData user;
+  CreatedPosts({@required this.user});
+
   @override
   _CreatedPostsState createState() => _CreatedPostsState();
 }
@@ -19,15 +24,12 @@ class _CreatedPostsState extends State<CreatedPosts> with AutomaticKeepAliveClie
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
-    final UserData currentUser = Provider.of<UserData>(context);
-    print('Building CreatedPosts()...');
-    print('Current user ${currentUser.uid}');
 
     return ScrollConfiguration(
       behavior: CustomScrollBehavior(),
-      child: FirestoreAnimatedStaggered(
-        staggeredTileBuilder: (int index, DocumentSnapshot snapshot) => StaggeredTile.fit(1),
+      child: StaggeredGridView.countBuilder(
+        itemCount: widget.user.createdPosts.length,
+        staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
         crossAxisCount: 4,
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
@@ -37,20 +39,21 @@ class _CreatedPostsState extends State<CreatedPosts> with AutomaticKeepAliveClie
           Constants.defaultPadding, 
           80.0
         ),
-        query: DatabaseService().postsPublishedByUser(currentUser.uid),
-        itemBuilder: (
-          BuildContext context,
-          DocumentSnapshot snapshot,
-          Animation<double> animation,
-          int index,
-        ) =>
-        FadeTransition(
-          opacity: animation,
-          child: Transform.scale(
-            scale: Constants.postTileCompactScaleFactor,
-            child: PostTileCompact(post: Post.fromSnapshot(snapshot))
-          ),
-        ),
+        itemBuilder: (context, index) {
+          return StreamBuilder<Post>(
+            stream: DatabaseService().post(widget.user.uid, widget.user.createdPosts[index]),
+            builder: (context, snapshot) {
+              if(snapshot.hasData) {
+                Post likedPost = snapshot.data;
+                return PostTileCompact(post: likedPost);
+              } else if(snapshot.hasError) {
+                return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)));
+              } else {
+                return Loading();
+              }
+            }
+          );
+        }, 
       ),
     );
   }

@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
+import 'package:tribes/screens/home/tabs/profile/Profile.dart';
+import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 
@@ -41,6 +44,7 @@ class UserAvatarPlaceholder extends StatelessWidget {
 }
 
 class UserAvatar extends StatelessWidget {
+  final String currentUserID;
   final UserData user;
   final Color color;
   final Future addressFuture;
@@ -52,6 +56,7 @@ class UserAvatar extends StatelessWidget {
   final UserAvatarDirections direction;
   final EdgeInsets padding;
   UserAvatar({
+    this.currentUserID,
     @required this.user,
     this.color = Constants.primaryColor, 
     this.addressFuture, 
@@ -211,10 +216,30 @@ class UserAvatar extends StatelessWidget {
           ),
         ],
       ) 
-      : Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: _layout()),
+      : GestureDetector(
+        onTap: () => showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            contentPadding: EdgeInsets.zero,
+            content: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: StreamProvider<UserData>.value(
+                  value: DatabaseService().currentUser(currentUserID),
+                  child: Profile(user: user),
+                ),
+              ),
+            ),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: _layout()),
+      ),
     );
   }
 }

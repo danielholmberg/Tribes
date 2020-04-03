@@ -121,7 +121,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                             builder: (context, snapshot) {
 
                               if(snapshot.hasData) {
-                                return UserAvatar(user: snapshot.data, color: widget.tribe.color);
+                                return UserAvatar(currentUserID: currentUser.uid, user: snapshot.data, color: widget.tribe.color);
                               } else if(snapshot.hasError) {
                                 print('Error getting founder user data: ${snapshot.error.toString()}');
                                 return UserAvatarPlaceholder(child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)));

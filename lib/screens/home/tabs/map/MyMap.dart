@@ -161,6 +161,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                                           children: <Widget>[
                                             Container(
                                               child: UserAvatar(
+                                                currentUserID: currentUser.uid,
                                                 user: friendsDataList[index], 
                                                 padding: const EdgeInsets.all(8.0),
                                                 radius: 30, 

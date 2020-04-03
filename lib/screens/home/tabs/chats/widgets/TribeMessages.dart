@@ -80,6 +80,7 @@ class TribeMessages extends StatelessWidget {
                   builder: (context, snapshot) {
                     return snapshot.hasData 
                     ? UserAvatar(
+                      currentUserID: currentUser.uid,
                       user: snapshot.data, 
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       radius: 14, 
@@ -112,6 +113,7 @@ class TribeMessages extends StatelessWidget {
                 builder: (context, snapshot) {
                   return snapshot.hasData 
                   ? UserAvatar(
+                    currentUserID: currentUser.uid,
                     user: snapshot.data, 
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     color: currentTribe.color, 

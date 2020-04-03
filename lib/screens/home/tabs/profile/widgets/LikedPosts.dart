@@ -5,12 +5,16 @@ import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/PostTileCompact.dart';
+import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class LikedPosts extends StatefulWidget {
+  final UserData user;
+  LikedPosts({@required this.user});
+
   @override
   _LikedPostsState createState() => _LikedPostsState();
 }
@@ -19,15 +23,12 @@ class _LikedPostsState extends State<LikedPosts> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
-    final UserData currentUser = Provider.of<UserData>(context);
     print('Building LikedPosts()...');
-    print('Current user ${currentUser.uid}');
 
     return ScrollConfiguration(
       behavior: CustomScrollBehavior(),
       child: StaggeredGridView.countBuilder(
-        itemCount: currentUser.likedPosts.length,
+        itemCount: widget.user.likedPosts.length,
         staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
         crossAxisCount: 4,
         mainAxisSpacing: 4.0,
@@ -40,7 +41,7 @@ class _LikedPostsState extends State<LikedPosts> with AutomaticKeepAliveClientMi
         ),
         itemBuilder: (context, index) {
           return StreamBuilder<Post>(
-            stream: DatabaseService().post(currentUser.uid, currentUser.likedPosts[index]),
+            stream: DatabaseService().post(widget.user.uid, widget.user.likedPosts[index]),
             builder: (context, snapshot) {
               if(snapshot.hasData) {
                 Post likedPost = snapshot.data;

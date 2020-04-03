@@ -14,7 +14,7 @@ import 'package:tribes/shared/constants.dart' as Constants;
 
 class PostTileCompact extends StatelessWidget {
   final Post post;
-  PostTileCompact({this.post});
+  PostTileCompact({@required this.post});
 
   @override
   Widget build(BuildContext context) {
