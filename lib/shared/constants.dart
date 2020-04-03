@@ -9,6 +9,7 @@ const backgroundColor = Color(0xFFfefffd);
 const buttonIconColor = Colors.white;
 const buttonColor = primaryColor;
 const timestampFontSize = 11.0;
+const primaryColorHueValue = 333.24;
 
 const defaultPadding = 4.0;
 const smallPadding = 2.0;

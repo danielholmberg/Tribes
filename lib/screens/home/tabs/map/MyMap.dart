@@ -28,7 +28,6 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
   Completer<GoogleMapController> mapController = Completer<GoogleMapController>();
   bool _isMapLoading = true;
   bool _showMap = false;
-  BitmapDescriptor markerIcon;
 
   StreamSubscription<Position> positionStream;
 
@@ -86,9 +85,10 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                   friendsDataList.forEach((friendData) => markers.add(Marker(
                       markerId: MarkerId(friendData.uid),
                       position: LatLng(friendData.lat, friendData.lng),
-                      icon: markerIcon,
+                      icon: BitmapDescriptor.defaultMarkerWithHue(Constants.primaryColorHueValue),
                       infoWindow: InfoWindow(
                         title: friendData.username,
+                        snippet: friendData.name
                       ),
                     ))
                   );
@@ -114,7 +114,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                             target: _initialPosition,
                             zoom: 5.0,
                           ),
-                          markers: markers.toSet(),
+                          markers: markers,
                         ),
                       ) : Center(child: CircularProgressIndicator()),
 

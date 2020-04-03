@@ -66,6 +66,8 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isMapAvatar = direction == UserAvatarDirections.vertical;
+
     _layout() {
       return [
         CachedNetworkImage(
@@ -75,6 +77,13 @@ class UserAvatar extends StatelessWidget {
               border: Border.all(color: color, width: 2.0),
               color: color,
               shape: BoxShape.circle,
+              boxShadow: isMapAvatar ? [
+                BoxShadow(
+                  offset: Offset(2, 2),
+                  blurRadius: 2.0,
+                  color: Colors.black87
+                )
+              ] : null
             ),
             child: CircleAvatar(
               radius: radius,
@@ -89,9 +98,9 @@ class UserAvatar extends StatelessWidget {
         ),
         Visibility(
           visible: !onlyAvatar || withName,
-          child: direction == UserAvatarDirections.horizontal 
-            ? SizedBox(width: Constants.mediumPadding) 
-            : SizedBox(height: 0.0)
+          child: isMapAvatar 
+            ? SizedBox(height: 0.0)
+            : SizedBox(width: Constants.mediumPadding)
         ),
         Visibility(
           visible: !onlyAvatar || withName,
@@ -103,7 +112,7 @@ class UserAvatar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Visibility(
-                  visible: (withName || !onlyAvatar) && direction == UserAvatarDirections.horizontal,
+                  visible: (withName || !onlyAvatar) && !isMapAvatar,
                   child: Text(withName ? user.name : user.username,
                     style: TextStyle(
                       color: color,
@@ -169,12 +178,8 @@ class UserAvatar extends StatelessWidget {
           ),
         ],
       ) : null,
-      child: direction == UserAvatarDirections.horizontal 
-      ? Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: _layout()) 
-      : Stack(
+      child: isMapAvatar
+      ? Stack(
         alignment: Alignment.center,
         children: <Widget>[
           Column(
@@ -205,7 +210,11 @@ class UserAvatar extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ) 
+      : Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: _layout()),
     );
   }
 }
