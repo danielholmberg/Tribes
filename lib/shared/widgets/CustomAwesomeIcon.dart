@@ -8,24 +8,29 @@ class CustomAwesomeIcon extends StatelessWidget {
   final double size;
   final bool inverse;
   final List<Shadow> shadows;
+  final EdgeInsets padding;
   CustomAwesomeIcon({
     @required this.icon,
     this.color = Constants.buttonIconColor,
     this.size = Constants.defaultIconSize,
     this.inverse = false,
     this.shadows,
+    this.padding = EdgeInsets.zero,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      String.fromCharCode(icon.codePoint),
-      style: TextStyle(
-        color: inverse ? Constants.primaryColor : color,
-        fontSize: size,
-        fontFamily: icon.fontFamily,
-        package: icon.fontPackage,
-        shadows: shadows,
+    return Padding(
+      padding: padding,
+      child: Text(
+        String.fromCharCode(icon.codePoint),
+        style: TextStyle(
+          color: inverse ? Constants.primaryColor : color,
+          fontSize: size,
+          fontFamily: icon.fontFamily,
+          package: icon.fontPackage,
+          shadows: shadows,
+        ),
       ),
     );
   }

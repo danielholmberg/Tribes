@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
@@ -58,9 +59,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     print('Building Profile()...');
     print('Current user ${currentUser.uid}');
 
-    if(widget.user != null) {
-      if((widget.user.lat != 0 && widget.user.lng != 0)) {
-        coordinates = Coordinates(widget.user.lat, widget.user.lng);
+    bool isAnotherUser = widget.user != null;
+    UserData anotherUser = widget.user;
+
+    if(isAnotherUser) {
+      if((anotherUser.lat != 0 && anotherUser.lng != 0)) {
+        coordinates = Coordinates(anotherUser.lat, anotherUser.lng);
         addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
       }
     } else {
@@ -115,7 +119,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
     _placeholderPic() {
       return CachedNetworkImage(
-        imageUrl: widget.user != null ? widget.user.picURL : currentUser.picURL,
+        imageUrl: isAnotherUser ? anotherUser.picURL : currentUser.picURL,
         imageBuilder: (context, imageProvider) => CircleAvatar(
           radius: Constants.profilePagePicRadius,
           backgroundImage: imageProvider,
@@ -181,7 +185,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () => widget.user != null ? null : (loading ? null : _chooseNewProfilePic()),
+                  onTap: () => isAnotherUser ? null : (loading ? null : _chooseNewProfilePic()),
                   child: Stack(
                     alignment: Alignment.centerLeft,
                     children: <Widget>[
@@ -211,7 +215,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ) : _profilePicture(),
                       ),
                       
-                      widget.user != null ? SizedBox.shrink() 
+                      isAnotherUser ? SizedBox.shrink() 
                       : Positioned(
                         bottom: 2, 
                         right: 2, 
@@ -242,7 +246,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('${widget.user != null ? widget.user.createdPosts.length : currentUser.createdPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                    Text('${isAnotherUser ? anotherUser.createdPosts.length : currentUser.createdPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
                     Text('Published', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
                   ],
                 ),
@@ -252,13 +256,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('${widget.user != null ? widget.user.likedPosts.length : currentUser.likedPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                    Text('${isAnotherUser ? anotherUser.likedPosts.length : currentUser.likedPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
                     Text('Liked', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
                   ],
                 ),
                 Spacer(),
                 StreamBuilder<List<Tribe>>(
-                  stream: DatabaseService().joinedTribes(widget.user != null ? widget.user.uid : currentUser.uid),
+                  stream: DatabaseService().joinedTribes(isAnotherUser ? anotherUser.uid : currentUser.uid),
                   builder: (context, snapshot) {
                     List<Tribe> tribesList =
                         snapshot.hasData ? snapshot.data : [];
@@ -299,7 +303,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(widget.user != null ? widget.user.name : currentUser.name,
+                  Text(isAnotherUser ? anotherUser.name : currentUser.name,
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: 'TribesRounded',
@@ -316,7 +320,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         size: Constants.tinyIconSize,
                       ),
                       SizedBox(width: Constants.defaultPadding),
-                      Text(widget.user != null ? widget.user.email : currentUser.email,
+                      Text(isAnotherUser ? anotherUser.email : currentUser.email,
                         style: TextStyle(
                           color: Colors.blueGrey,
                           fontFamily: 'TribesRounded',
@@ -342,7 +346,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             var addresses = snapshot.data;
                             var first = addresses.first;
                             var location = '${first.addressLine}';
-                            print('lat ${widget.user != null ? widget.user.lat : currentUser.lat}, lng ${widget.user != null ? widget.user.lng : currentUser.lng}');
+                            print('lat ${isAnotherUser ? anotherUser.lat : currentUser.lat}, lng ${isAnotherUser ? anotherUser.lng : currentUser.lng}');
                             print('location: $location');
                             return Text(location,
                               style: TextStyle(
@@ -367,14 +371,16 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               ),
               Divider(),
               Visibility(
-                visible: widget.user != null ? widget.user.info.isNotEmpty : currentUser.info.isNotEmpty,
+                visible: isAnotherUser ? anotherUser.info.isNotEmpty : currentUser.info.isNotEmpty,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  child: Text(widget.user != null ? widget.user.info : currentUser.info,
+                  child: AutoSizeText(isAnotherUser ? anotherUser.info : currentUser.info,
                     maxLines: 2,
                     overflow: TextOverflow.fade,
                     textAlign: TextAlign.center,
+                    minFontSize: 12,
                     style: TextStyle(
+                      fontSize: 14,
                       color: Colors.blueGrey,
                       fontFamily: 'TribesRounded',
                       fontWeight: FontWeight.normal
@@ -400,15 +406,24 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
-                    expandedHeight: 350,
+                    expandedHeight: 330,
                     floating: false,
                     pinned: false,
                     elevation: 4.0,
                     backgroundColor: DynamicTheme.of(context).data.primaryColor,
+                    leading: !isAnotherUser ? SizedBox.shrink() 
+                    : GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: CustomAwesomeIcon(
+                        icon: FontAwesomeIcons.times, 
+                        color: Colors.white,
+                        padding: const EdgeInsets.only(left: 16, top: 12),
+                      ),
+                    ),
                     flexibleSpace: FlexibleSpaceBar(
                       background: SafeArea(
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
+                          padding: const EdgeInsets.only(top: 12.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
@@ -420,7 +435,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.max,
                                     children: <Widget>[
-                                      Text(widget.user != null ? widget.user.username : currentUser.username,
+                                      Text(isAnotherUser ? anotherUser.username : currentUser.username,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontFamily: 'TribesRounded',
@@ -431,13 +446,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                     ],
                                   ),
 
-                                  widget.user != null ? SizedBox.shrink() 
+                                  isAnotherUser ? SizedBox.shrink() 
                                   : Positioned(right: 0, 
                                     child: IconButton(
                                       color: DynamicTheme.of(context).data.buttonColor,
                                       icon: Icon(FontAwesomeIcons.cog, color: Constants.buttonIconColor),
                                       splashColor: Colors.transparent,
-                                      onPressed: widget.user != null ? null : () {
+                                      onPressed: isAnotherUser ? null : () {
                                         showDialog(
                                           context: context,
                                           barrierDismissible: false,
@@ -482,9 +497,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          CreatedPosts(user: widget.user ?? currentUser),
-                          LikedPosts(user: widget.user ?? currentUser),
-                          JoinedTribes(user: widget.user ?? currentUser),
+                          CreatedPosts(user: anotherUser ?? currentUser),
+                          LikedPosts(user: anotherUser ?? currentUser),
+                          JoinedTribes(user: anotherUser ?? currentUser),
                         ],
                       ),
                     ),
