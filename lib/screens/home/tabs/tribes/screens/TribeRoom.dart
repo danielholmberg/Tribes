@@ -202,7 +202,7 @@ class _TribeRoomState extends State<TribeRoom> {
                                     tribe: currentTribe,
                                     onEditPostPress: (Post post) => _showModalBottomSheet(
                                       currentTribe: currentTribe, 
-                                      child: EditPost(post, currentTribe.color, FontAwesomeIcons.times),
+                                      child: EditPost(post: post, tribeColor: currentTribe.color),
                                     ), 
                                     onEmptyTextPress: () => _showModalBottomSheet(
                                       currentTribe: currentTribe, 

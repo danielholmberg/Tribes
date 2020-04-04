@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firestore_ui/animated_firestore_staggered.dart';
 import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/profile/widgets/PostTileCompact.dart';
@@ -14,7 +11,8 @@ import 'package:tribes/shared/widgets/Loading.dart';
 
 class CreatedPosts extends StatefulWidget {
   final UserData user;
-  CreatedPosts({@required this.user});
+  final bool viewOnly;
+  CreatedPosts({@required this.user, this.viewOnly = false});
 
   @override
   _CreatedPostsState createState() => _CreatedPostsState();
@@ -45,7 +43,7 @@ class _CreatedPostsState extends State<CreatedPosts> with AutomaticKeepAliveClie
             builder: (context, snapshot) {
               if(snapshot.hasData) {
                 Post likedPost = snapshot.data;
-                return PostTileCompact(post: likedPost);
+                return PostTileCompact(post: likedPost, viewOnly: widget.viewOnly);
               } else if(snapshot.hasError) {
                 return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)));
               } else {

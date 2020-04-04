@@ -497,8 +497,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          CreatedPosts(user: anotherUser ?? currentUser),
-                          LikedPosts(user: anotherUser ?? currentUser),
+                          CreatedPosts(user: anotherUser ?? currentUser, viewOnly: isAnotherUser),
+                          LikedPosts(user: anotherUser ?? currentUser, viewOnly: isAnotherUser),
                           JoinedTribes(user: anotherUser ?? currentUser),
                         ],
                       ),

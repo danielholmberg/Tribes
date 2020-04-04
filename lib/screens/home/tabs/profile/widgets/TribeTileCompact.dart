@@ -8,7 +8,7 @@ import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 
 class TribeTileCompact extends StatelessWidget {
   final Tribe tribe;
-  TribeTileCompact({this.tribe});
+  TribeTileCompact({@required this.tribe});
 
   @override
   Widget build(BuildContext context) {

@@ -21,10 +21,9 @@ import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
 class EditPost extends StatefulWidget {
-  final Color tribeColor;
   final Post post;
-  final IconData leadingIcon;
-  EditPost(this.post, this.tribeColor, this.leadingIcon);
+  final Color tribeColor;
+  EditPost({@required this.post, this.tribeColor = Constants.primaryColor});
 
   @override
   _EditPostState createState() => _EditPostState();
@@ -259,7 +258,7 @@ class _EditPostState extends State<EditPost> {
                   ),
                 ],
               ),
-              leading: IconButton(icon: Icon(widget.leadingIcon), 
+              leading: IconButton(icon: Icon(FontAwesomeIcons.times), 
                 color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
                 onPressed: () {
                   edited ? _showDiscardDialog() : Navigator.of(context).pop();

@@ -1,20 +1,17 @@
-import 'dart:io';
-
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/EditPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/shared/widgets/CustomPageTransition.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class PostTileCompact extends StatelessWidget {
   final Post post;
-  PostTileCompact({@required this.post});
+  final bool viewOnly;
+  PostTileCompact({@required this.post, this.viewOnly = false});
 
   @override
   Widget build(BuildContext context) {
@@ -58,16 +55,36 @@ class PostTileCompact extends StatelessWidget {
 
     return InkWell(
         splashColor: Constants.tribesColor.withAlpha(30),
-        onTap: () {
+        onTap: viewOnly ? null : () {
           if(post.author == currentUser.uid) {
-            Navigator.push(context, CustomPageTransition(
-              type: CustomPageTransitionType.postDetails, 
-              duration: Constants.pageTransition600, 
-              child: StreamProvider<UserData>.value(
-                value: DatabaseService().currentUser(currentUser.uid), 
-                child: EditPost(post, DynamicTheme.of(context).data.primaryColor, Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft),
+            showModalBottomSheet(
+              context: context,
+              isDismissible: false,
+              isScrollControlled: true,
+              builder: (buildContext) {
+                return StreamProvider<UserData>.value(
+                  value: DatabaseService().currentUser(currentUser.uid), 
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
+                      ),
+                      child: EditPost(post: post),
+                    ),
+                  ),
+                );
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
               ),
-            ));
+              backgroundColor: Colors.transparent,
+              elevation: 8.0
+            );
           }
         },
         child: Container(
