@@ -224,11 +224,12 @@ class DatabaseService {
     return tribesRoot.document().setData(data);
   }
 
-  Future updateTribeData(String id, String name, String desc, String color, String imageURL) {
+  Future updateTribeData(String id, String name, String desc, String color, String password, String imageURL) {
     var data = {
       'name': name,
       'desc': desc,
       'color': color,
+      'password': password,
       'imageURL': imageURL,
       'updated': new DateTime.now().millisecondsSinceEpoch,
     };

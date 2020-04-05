@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/models/Tribe.dart';
@@ -27,27 +28,32 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
   final _formKey = GlobalKey<FormState>();
   final FocusNode nameFocus = new FocusNode();
   final FocusNode descFocus = new FocusNode();
+  final FocusNode passwordFocus = new FocusNode();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
 
   String name;
   String desc;
   Color tribeColor;
+  String password;
   String imageURL;
   String error = '';
 
   String originalName;
   String originalDesc;
   Color originalTribeColor;
+  String originalPassword;
 
   @override
   void initState() {
     originalName = widget.tribe.name;
     originalDesc = widget.tribe.desc;
     originalTribeColor = widget.tribe.color;
+    originalPassword = widget.tribe.password;
     name = originalName;
     desc = originalDesc;
     tribeColor = originalTribeColor;
+    password = originalPassword;
 
     super.initState();
   }
@@ -230,6 +236,43 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                   setState(() => desc = val);
                                 },
                               ),
+                              SizedBox(height: Constants.smallSpacing),
+                              TextFormField(
+                                focusNode: passwordFocus,
+                                initialValue: currentTribe.password,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                keyboardType: TextInputType.number,
+                                maxLength: 6,
+                                maxLines: null,
+                                validator: (val) => val.length != 6 ? 'Password must be 6 digits' : null,
+                                inputFormatters: <TextInputFormatter>[
+                                  WhitelistingTextInputFormatter.digitsOnly
+                                ],
+                                decoration: Decorations.tribeSettingsInput.copyWith(
+                                  labelText: 'Password',
+                                  labelStyle: TextStyle(
+                                    color: tribeColor ?? Constants.inputLabelColor,
+                                    fontFamily: 'TribesRounded',
+                                  ),
+                                  hintText: 'eg. 123456',
+                                  counterStyle: TextStyle(color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                    borderSide: BorderSide(
+                                      color: tribeColor ?? Constants.inputFocusColor, 
+                                      width: 2.0
+                                    ),
+                                  )
+                                ),
+                                onChanged: (val) {
+                                  setState(() => password = val);
+                                },
+                              ),
                               CustomRaisedButton(
                                 text: 'Save',
                                 onPressed: () {
@@ -248,7 +291,8 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                                   .toRadixString(16) ??
                                               Constants.primaryColor.value
                                                   .toRadixString(16),
-                                      imageURL
+                                      password ?? currentTribe.password,
+                                      imageURL,
                                     );
 
                                     _scaffoldKey.currentState
@@ -266,10 +310,11 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                       originalName = name;
                                       originalDesc = desc;
                                       originalTribeColor = tribeColor;
+                                      originalPassword = password;
                                     });
 
                                     widget.onSave(
-                                      widget.tribe.copyWith(name: name, desc: desc, color: tribeColor)
+                                      widget.tribe.copyWith(name: name, desc: desc, color: tribeColor, password: password)
                                     );
                                   }
                                 },
