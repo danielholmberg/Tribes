@@ -178,6 +178,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                               focusNode: nameFocus,
                               initialValue: name ?? widget.user.name,
                               textCapitalization: TextCapitalization.words,
+                              textInputAction: TextInputAction.next,
                               decoration: Decorations.profileSettingsInput.copyWith(
                                 labelText: 'Name',
                                 hintText: 'Full name'
@@ -197,11 +198,13 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                               focusNode: usernameFocus,
                               initialValue: username ?? widget.user.username,
                               maxLength: Constants.profileUsernameMaxLength,
+                              textInputAction: TextInputAction.next,
                               decoration: Decorations.profileSettingsInput.copyWith(
                                 labelText: 'Username',
                               ),
                               validator: (val) => val.isEmpty ? 'Your username cannot be empty' : null,
                               autovalidate: true,
+                              autocorrect: false,
                               onChanged: (val) {
                                 setState(() => username = val);
                               },
@@ -214,9 +217,9 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                             TextFormField(
                               focusNode: infoFocus,
                               initialValue: info ?? widget.user.info,
-                              textCapitalization:
-                                  TextCapitalization.sentences,
-                              keyboardType: TextInputType.multiline,
+                              textCapitalization: TextCapitalization.sentences,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.done,
                               maxLength: Constants.profileInfoMaxLength,
                               maxLines: null,
                               decoration: Decorations.profileSettingsInput.copyWith(
@@ -263,7 +266,12 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                                     duration: Duration(milliseconds: 500),
                                   ));
 
-                                  setState(() => loading = false);
+                                  setState(() {
+                                    loading = false;
+                                    originalName = name;
+                                    originalUsername = username;
+                                    originalInfo = info;
+                                  });
                                 }
                               },
                             ),

@@ -369,7 +369,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   )
                 ],
               ),
-              Divider(),
+              Visibility(
+                visible: isAnotherUser ? anotherUser.info.isNotEmpty : currentUser.info.isNotEmpty,
+                child: Divider(),
+              ),
               Visibility(
                 visible: isAnotherUser ? anotherUser.info.isNotEmpty : currentUser.info.isNotEmpty,
                 child: Container(
@@ -406,7 +409,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
-                    expandedHeight: 330,
+                    expandedHeight: isAnotherUser ? (anotherUser.info.isNotEmpty ? 330 : 280): (currentUser.info.isNotEmpty ? 330 : 280),
                     floating: false,
                     pinned: false,
                     elevation: 4.0,
