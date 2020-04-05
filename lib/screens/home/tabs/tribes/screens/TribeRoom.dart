@@ -9,7 +9,6 @@ import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/home/tabs/tribes/dialogs/TribeDetailsDialog.dart';
-import 'package:tribes/screens/home/tabs/tribes/dialogs/TribeSettingsDialog.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/EditPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/screens/NewPost.dart';
 import 'package:tribes/screens/home/tabs/tribes/widgets/Posts.dart';
@@ -78,7 +77,6 @@ class _TribeRoomState extends State<TribeRoom> {
       stream: DatabaseService().tribe(widget.tribeID),
       builder: (context, snapshot) {
         final Tribe currentTribe = snapshot.hasData ? snapshot.data : null;
-        bool isFounder = currentTribe != null ? currentUser.uid == currentTribe.founder : false;
 
         return currentUser == null || currentTribe == null ? Loading()
         : Container(
@@ -113,15 +111,6 @@ class _TribeRoomState extends State<TribeRoom> {
                                     splashColor: Colors.transparent,
                                     onPressed: () => Navigator.of(context).pop(),
                                   ),
-                                  Visibility(
-                                    visible: isFounder,
-                                    child: IconButton(
-                                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.cog, color: currentTribe.color),
-                                      enableFeedback: false,
-                                      splashColor: Colors.transparent,
-                                      onPressed: () => null,
-                                    ),
-                                  ),
                                 ],
                               ),
                               Expanded(
@@ -143,20 +132,6 @@ class _TribeRoomState extends State<TribeRoom> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget> [
-                                  Visibility(
-                                    visible: isFounder,
-                                    child: IconButton(
-                                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.cog),
-                                      splashColor: Colors.transparent,
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (context) => TribeSettingsDialog(tribe: currentTribe)
-                                        );
-                                      },
-                                    ),
-                                  ),
                                   IconButton(
                                     icon: CustomAwesomeIcon(icon: FontAwesomeIcons.infoCircle), 
                                     splashColor: Colors.transparent,

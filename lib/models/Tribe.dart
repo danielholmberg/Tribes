@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 class Tribe {
   final String id;
@@ -27,6 +28,7 @@ class Tribe {
       this.created});
 
   factory Tribe.fromSnapshot(DocumentSnapshot doc) {
+    String fallbackColor = Constants.primaryColor.value.toRadixString(16);
     return Tribe(
       id: doc.documentID,
       name: doc.data['name'] ?? '',
@@ -34,10 +36,36 @@ class Tribe {
       members: List.from(doc.data['members'] ?? []),
       founder: doc.data['founder'] ?? '',
       password: doc.data['password'] ?? '',
-      color: Color(int.parse('0x${doc.data['color'] ?? 'FF242424'}')),
+      color: Color(int.parse('0x${doc.data['color'] ?? fallbackColor}')),
       imageURL: doc.data['imageURL'] ?? 'tribe-placeholder.jpg',
       updated: doc.data['updated'] ?? 0,
       created: doc.data['created'] ?? 0,
+    );
+  }
+
+  Tribe copyWith({
+    String id,
+    String name,
+    String desc,
+    List<String> members,
+    String founder,
+    String password,
+    Color color,
+    String imageURL,
+    int updated,
+    int created,
+  }) {
+    return Tribe(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      desc: desc ?? this.desc,
+      members: members ?? this.members,
+      founder: founder ?? this.founder,
+      password: password ?? this.password,
+      color: color ?? this.color,
+      imageURL: imageURL ?? this.imageURL,
+      updated: updated ?? this.updated,
+      created: created ?? this.created,
     );
   }
 

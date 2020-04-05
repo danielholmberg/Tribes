@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
@@ -14,7 +16,8 @@ import 'package:tribes/shared/widgets/Loading.dart';
 
 class TribeSettingsDialog extends StatefulWidget {
   final Tribe tribe;
-  TribeSettingsDialog({this.tribe});
+  final Function onSave;
+  TribeSettingsDialog({this.tribe, this.onSave});
 
   @override
   _TribeSettingsDialogState createState() => _TribeSettingsDialogState();
@@ -93,7 +96,11 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                   elevation: 0.0,
                   backgroundColor: DynamicTheme.of(context).data.backgroundColor,
                   leading: IconButton(
-                    icon: CustomAwesomeIcon(icon: FontAwesomeIcons.times, color: tribeColor != null ? tribeColor : currentTribe.color),
+                    icon: CustomAwesomeIcon(
+                      icon: Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft, 
+                      color: tribeColor != null ? tribeColor : currentTribe.color,
+                    ),
+                    splashColor: Colors.transparent,
                     onPressed: () {
                       bool edited = originalName != name || originalDesc != desc || originalTribeColor != tribeColor;
                       if(edited) {
@@ -260,6 +267,10 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                       originalDesc = desc;
                                       originalTribeColor = tribeColor;
                                     });
+
+                                    widget.onSave(
+                                      widget.tribe.copyWith(name: name, desc: desc, color: tribeColor)
+                                    );
                                   }
                                 },
                               ),
