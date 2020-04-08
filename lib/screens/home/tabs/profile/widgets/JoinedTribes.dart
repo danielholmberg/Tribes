@@ -12,7 +12,8 @@ import 'package:tribes/shared/constants.dart' as Constants;
 
 class JoinedTribes extends StatefulWidget {
   final UserData user;
-  JoinedTribes({@required this.user});
+  final bool showSecrets;
+  JoinedTribes({@required this.user, this.showSecrets});
 
   @override
   _JoinedTribesState createState() => _JoinedTribesState();
@@ -31,21 +32,23 @@ class _JoinedTribesState extends State<JoinedTribes> with AutomaticKeepAliveClie
         builder: (context, snapshot) {
           if(snapshot.hasData) {
             List<Tribe> joinedTribes = snapshot.data;
-            return StaggeredGridView.countBuilder(
-              itemCount: joinedTribes.length,
-              staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              mainAxisSpacing: 8.0,
-              crossAxisSpacing: 8.0,
+
+            if(!widget.showSecrets) {
+              joinedTribes.removeWhere((tribe) => tribe.secret);
+            }
+            
+            return GridView.builder(
               padding: EdgeInsets.fromLTRB(
-                Constants.smallSpacing, 
-                Constants.smallSpacing, 
-                Constants.smallSpacing, 
-                80.0
+                Constants.defaultPadding,
+                Constants.defaultPadding,
+                Constants.defaultPadding,
+                80),
+              itemCount: joinedTribes.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
               ),
-              itemBuilder: (context, index) {
-                Tribe currentTribe = joinedTribes[index];
+              itemBuilder: (context, i) {
+                Tribe currentTribe = joinedTribes[i];
                 return GestureDetector(
                   onTap: () => showDialog(
                     context: context, 
@@ -64,7 +67,7 @@ class _JoinedTribesState extends State<JoinedTribes> with AutomaticKeepAliveClie
                   ),
                   child: TribeTileCompact(tribe: currentTribe),
                 );
-              }, 
+              },
             );
           } else if(snapshot.hasError) {
             return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)));

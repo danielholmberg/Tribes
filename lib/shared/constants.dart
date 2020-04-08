@@ -10,6 +10,7 @@ const buttonIconColor = Colors.white;
 const buttonColor = primaryColor;
 const timestampFontSize = 11.0;
 const primaryColorHueValue = 333.24;
+const whiteWaterMarkColor = Colors.white60;
 
 const defaultPadding = 4.0;
 const smallPadding = 2.0;

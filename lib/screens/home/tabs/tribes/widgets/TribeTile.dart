@@ -65,6 +65,15 @@ class TribeTile extends StatelessWidget {
               ),
             ],
           ),
+          tribe.secret ? Positioned(
+            top: 0,
+            right: 0,
+            child: CustomAwesomeIcon(
+              icon: FontAwesomeIcons.solidEyeSlash,
+              color: Constants.whiteWaterMarkColor,
+              size: Constants.smallIconSize,
+            ),
+          ) : SizedBox.shrink(),
           Positioned(
             bottom: 0,
             left: 0,

@@ -502,7 +502,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         children: [
                           CreatedPosts(user: anotherUser ?? currentUser, viewOnly: isAnotherUser),
                           LikedPosts(user: anotherUser ?? currentUser, viewOnly: isAnotherUser),
-                          JoinedTribes(user: anotherUser ?? currentUser),
+                          JoinedTribes(user: anotherUser ?? currentUser, showSecrets: !isAnotherUser),
                         ],
                       ),
                     ),

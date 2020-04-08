@@ -12,6 +12,7 @@ class Tribe {
   final String password;
   final Color color;
   final String imageURL;
+  final bool secret;
   final int updated;
   final int created;
 
@@ -24,6 +25,7 @@ class Tribe {
       this.password,
       this.imageURL,
       this.color,
+      this.secret,
       this.updated,
       this.created});
 
@@ -38,6 +40,7 @@ class Tribe {
       password: doc.data['password'] ?? '',
       color: Color(int.parse('0x${doc.data['color'] ?? fallbackColor}')),
       imageURL: doc.data['imageURL'] ?? 'tribe-placeholder.jpg',
+      secret: doc.data['secret'] ?? false,
       updated: doc.data['updated'] ?? 0,
       created: doc.data['created'] ?? 0,
     );
@@ -52,6 +55,7 @@ class Tribe {
     String password,
     Color color,
     String imageURL,
+    bool secret,
     int updated,
     int created,
   }) {
@@ -64,6 +68,7 @@ class Tribe {
       password: password ?? this.password,
       color: color ?? this.color,
       imageURL: imageURL ?? this.imageURL,
+      secret: secret ?? this.secret,
       updated: updated ?? this.updated,
       created: created ?? this.created,
     );
@@ -71,6 +76,6 @@ class Tribe {
 
   @override
   String toString() {
-    return '[$id, $name, $desc, $members, $founder, $color, $imageURL, $updated, $created]';
+    return '[$id, $name, $desc, $members, $founder, $color, $imageURL, $secret, $updated, $created]';
   }
 }

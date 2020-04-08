@@ -27,6 +27,7 @@ class _JoinTribeState extends State<JoinTribe> {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Tribe> _tribesList = [];
+  List<Tribe> _secretTribesList = [];
   List<Tribe> _searchResult = [];
   bool loading = false;
   String error = '';
@@ -37,8 +38,33 @@ class _JoinTribeState extends State<JoinTribe> {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building JoinTribe()...');
     print('Current user ${currentUser.toString()}');
+
+    _onSearchTextChanged(String text) async {
+      _searchResult.clear();
+      if (text.isEmpty) {
+        setState(() {});
+        return;
+      }
+
+      List<Tribe> searchList = _tribesList + _secretTribesList;
+      searchList.forEach((tribe) {
+        if(tribe.secret) {
+          if(tribe.name == text) {
+            _searchResult.add(tribe);
+          }
+        } else {
+          if (tribe.name.toLowerCase().contains(text.toLowerCase())) {
+            _searchResult.add(tribe);
+          }
+        }
+      });
+
+      setState(() {});
+    }
     
     _showJoinedSnackbar(Tribe joinedTribe) {
+      _searchResult.clear();
+      controller.clear();
       Future.delayed(Duration(milliseconds: 300), () => 
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(
@@ -545,7 +571,8 @@ class _JoinTribeState extends State<JoinTribe> {
                   builder: (context, snapshot) {
 
                     if(snapshot.hasData) {
-                      _tribesList = snapshot.data;
+                      _tribesList = snapshot.data.where((tribe) => !tribe.secret).toList();
+                      _secretTribesList = snapshot.data.where((tribe) => tribe.secret).toList();
 
                       return Container(
                         child: ScrollConfiguration(
@@ -615,12 +642,12 @@ class _JoinTribeState extends State<JoinTribe> {
                           color: Colors.black54.withOpacity(0.3),
                         ),
                       ),
-                      onChanged: onSearchTextChanged,
+                      onChanged: _onSearchTextChanged,
                     ),
                     trailing: IconButton(icon: Icon(FontAwesomeIcons.solidTimesCircle), 
                     onPressed: () {
                       controller.clear();
-                      onSearchTextChanged('');
+                      _onSearchTextChanged('');
                     },),
                   ),
                 ),
@@ -630,20 +657,5 @@ class _JoinTribeState extends State<JoinTribe> {
         ),
       ),
     );
-  }
-
-  onSearchTextChanged(String text) async {
-    _searchResult.clear();
-    if (text.isEmpty) {
-      setState(() {});
-      return;
-    }
-
-    _tribesList.forEach((tribe) {
-      if (tribe.name.toLowerCase().contains(text.toLowerCase()))
-        _searchResult.add(tribe);
-    });
-
-    setState(() {});
   }
 }

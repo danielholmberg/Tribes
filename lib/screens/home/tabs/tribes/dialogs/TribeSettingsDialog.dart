@@ -31,18 +31,21 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
   final FocusNode passwordFocus = new FocusNode();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
+  bool firstToggle = true;
 
   String name;
   String desc;
   Color tribeColor;
   String password;
   String imageURL;
+  bool secret;
   String error = '';
 
   String originalName;
   String originalDesc;
   Color originalTribeColor;
   String originalPassword;
+  bool originalSecret;
 
   @override
   void initState() {
@@ -50,10 +53,12 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
     originalDesc = widget.tribe.desc;
     originalTribeColor = widget.tribe.color;
     originalPassword = widget.tribe.password;
+    originalSecret = widget.tribe.secret;
     name = originalName;
     desc = originalDesc;
     tribeColor = originalTribeColor;
     password = originalPassword;
+    secret = originalSecret;
 
     super.initState();
   }
@@ -120,7 +125,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                     },
                   ),
                   title: Text(
-                    'Tribe Settings',
+                    'Settings',
                     style: TextStyle(
                       color: tribeColor != null ? tribeColor : currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
                       fontFamily: 'TribesRounded',
@@ -130,6 +135,71 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                   ),
                   centerTitle: true,
                   actions: <Widget>[
+                    IconButton(
+                      icon: CustomAwesomeIcon(
+                        icon: secret ? FontAwesomeIcons.solidEyeSlash : FontAwesomeIcons.eye, 
+                        color: (tribeColor ?? Constants.primaryColor).withOpacity(secret ? 0.6 : 1.0),
+                      ),
+                      onPressed: () {
+                        if(firstToggle) {
+                          setState(() => firstToggle = false);
+
+                          showDialog(
+                            context: context,
+                            child: AlertDialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                              title: Text('Secret Tribe',
+                                style: TextStyle(
+                                  fontFamily: 'TribesRounded',
+                                  fontWeight: Constants.defaultDialogTitleFontWeight,
+                                  fontSize: Constants.defaultDialogTitleFontSize,
+                                ),
+                              ),
+                              content: Container(
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: 'This will make your Tribe',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'TribesRounded'
+                                    ),
+                                    children: <TextSpan>[
+                                      TextSpan(text: ' secret ', 
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'TribesRounded', 
+                                          fontStyle: FontStyle.italic
+                                        ),
+                                      ),
+                                      TextSpan(text: 'and can only be found by typing in the', 
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'TribesRounded'
+                                        ),
+                                      ),
+                                      TextSpan(text: ' exact ', 
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'TribesRounded', 
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      TextSpan(text: 'Tribe name.', 
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'TribesRounded'
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        } 
+                        setState(() => secret = !secret);
+                      },
+                    ),
                     IconButton(
                       icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor != null ? tribeColor : currentTribe.color), 
                       onPressed: () => showDialog(
@@ -293,6 +363,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                                   .toRadixString(16),
                                       password ?? currentTribe.password,
                                       imageURL,
+                                      secret,
                                     );
 
                                     _scaffoldKey.currentState
@@ -311,10 +382,11 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                       originalDesc = desc;
                                       originalTribeColor = tribeColor;
                                       originalPassword = password;
+                                      originalSecret = secret;
                                     });
 
                                     widget.onSave(
-                                      widget.tribe.copyWith(name: name, desc: desc, color: tribeColor, password: password)
+                                      widget.tribe.copyWith(name: name, desc: desc, color: tribeColor, password: password, secret: secret)
                                     );
                                   }
                                 },

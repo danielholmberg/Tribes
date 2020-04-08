@@ -29,7 +29,10 @@ class _NewTribeState extends State<NewTribe> {
   String name = '';
   String desc = '';
   Color tribeColor;
+  bool secret = false;
   String error = '';
+
+  bool firstToggle = true;
 
   @override
   void dispose() {
@@ -91,6 +94,71 @@ class _NewTribeState extends State<NewTribe> {
                 },
               ),
               actions: <Widget>[
+                IconButton(
+                  icon: CustomAwesomeIcon(
+                    icon: secret ? FontAwesomeIcons.solidEyeSlash : FontAwesomeIcons.eye, 
+                    color: (tribeColor ?? Constants.primaryColor).withOpacity(secret ? 0.6 : 1.0),
+                  ),
+                  onPressed: () {
+                    if(firstToggle) {
+                      setState(() => firstToggle = false);
+
+                      showDialog(
+                        context: context,
+                        child: AlertDialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                          title: Text('Secret Tribe',
+                            style: TextStyle(
+                              fontFamily: 'TribesRounded',
+                              fontWeight: Constants.defaultDialogTitleFontWeight,
+                              fontSize: Constants.defaultDialogTitleFontSize,
+                            ),
+                          ),
+                          content: Container(
+                            child: RichText(
+                              text: TextSpan(
+                                text: 'This will make your Tribe',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'TribesRounded'
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(text: ' secret ', 
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'TribesRounded', 
+                                      fontStyle: FontStyle.italic
+                                    ),
+                                  ),
+                                  TextSpan(text: 'and can only be found by typing in the', 
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'TribesRounded'
+                                    ),
+                                  ),
+                                  TextSpan(text: ' exact ', 
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'TribesRounded', 
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                  TextSpan(text: 'Tribe name.', 
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'TribesRounded'
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    } 
+                    setState(() => secret = !secret);
+                  },
+                ),
                 IconButton(
                   icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor ?? Constants.primaryColor),
                   onPressed: () {
@@ -256,7 +324,8 @@ class _NewTribeState extends State<NewTribe> {
                                 name, 
                                 desc, 
                                 tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
-                                null
+                                null,
+                                secret,
                               );
                               Navigator.pop(context);
                             } catch (e) {

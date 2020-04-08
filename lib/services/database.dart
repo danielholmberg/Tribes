@@ -203,7 +203,7 @@ class DatabaseService {
     return postsRoot.document(id).updateData(data);
   }
 
-  Future createNewTribe(String userID, String name, String desc, String color, String imageURL) {
+  Future createNewTribe(String userID, String name, String desc, String color, String imageURL, bool secret) {
 
     var rng = new Random();
     var password = rng.nextInt(900000) + 100000;
@@ -216,6 +216,7 @@ class DatabaseService {
       'password': '$password',
       'color': color,
       'imageURL': imageURL,
+      'secret': secret,
       'updated': new DateTime.now().millisecondsSinceEpoch,
       'created': new DateTime.now().millisecondsSinceEpoch,
     };
@@ -224,13 +225,14 @@ class DatabaseService {
     return tribesRoot.document().setData(data);
   }
 
-  Future updateTribeData(String id, String name, String desc, String color, String password, String imageURL) {
+  Future updateTribeData(String id, String name, String desc, String color, String password, String imageURL, bool secret) {
     var data = {
       'name': name,
       'desc': desc,
       'color': color,
       'password': password,
       'imageURL': imageURL,
+      'secret': secret,
       'updated': new DateTime.now().millisecondsSinceEpoch,
     };
 
