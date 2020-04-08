@@ -65,134 +65,13 @@ class _NewTribeState extends State<NewTribe> {
           bottom: false,
           child: loading ? Loading(color: tribeColor ?? Constants.primaryColor) : Scaffold(
             backgroundColor: DynamicTheme.of(context).data.backgroundColor,
-            appBar: AppBar(
-              elevation: 0.0,
-              centerTitle: true,
-              title: Text('New Tribe', 
-                style: TextStyle(
-                  color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                  fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              backgroundColor: DynamicTheme.of(context).data.backgroundColor,
-              iconTheme: IconThemeData(color: tribeColor ?? DynamicTheme.of(context).data.primaryColor),
-              leading: IconButton(
-                icon: CustomAwesomeIcon(
-                  icon: Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
-                  color: tribeColor ?? Constants.primaryColor,
-                ), 
-                onPressed: () {
-                  if(name.isNotEmpty || desc.isNotEmpty || tribeColor != null) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => DiscardChangesDialog(color: tribeColor)
-                    );
-                  } else {
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-              actions: <Widget>[
-                IconButton(
-                  icon: CustomAwesomeIcon(
-                    icon: secret ? FontAwesomeIcons.solidEyeSlash : FontAwesomeIcons.eye, 
-                    color: (tribeColor ?? Constants.primaryColor).withOpacity(secret ? 0.6 : 1.0),
-                  ),
-                  onPressed: () {
-                    if(firstToggle) {
-                      setState(() => firstToggle = false);
-
-                      showDialog(
-                        context: context,
-                        child: AlertDialog(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                          title: Text('Secret Tribe',
-                            style: TextStyle(
-                              fontFamily: 'TribesRounded',
-                              fontWeight: Constants.defaultDialogTitleFontWeight,
-                              fontSize: Constants.defaultDialogTitleFontSize,
-                            ),
-                          ),
-                          content: Container(
-                            child: RichText(
-                              text: TextSpan(
-                                text: 'This will make your Tribe',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'TribesRounded'
-                                ),
-                                children: <TextSpan>[
-                                  TextSpan(text: ' secret ', 
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'TribesRounded', 
-                                      fontStyle: FontStyle.italic
-                                    ),
-                                  ),
-                                  TextSpan(text: 'and can only be found by typing in the', 
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'TribesRounded'
-                                    ),
-                                  ),
-                                  TextSpan(text: ' exact ', 
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'TribesRounded', 
-                                      fontWeight: FontWeight.bold
-                                    ),
-                                  ),
-                                  TextSpan(text: 'Tribe name.', 
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'TribesRounded'
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    } 
-                    setState(() => secret = !secret);
-                  },
-                ),
-                IconButton(
-                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor ?? Constants.primaryColor),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      child: AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                        title: Text('Pick a Tribe color',
-                          style: TextStyle(
-                            fontFamily: 'TribesRounded',
-                            fontWeight: Constants.defaultDialogTitleFontWeight,
-                            fontSize: Constants.defaultDialogTitleFontSize,
-                          ),
-                        ),
-                        content: SingleChildScrollView(
-                          child: BlockPicker(
-                            availableColors: Constants.defaultTribeColors,
-                            pickerColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                            onColorChanged: _changeColor,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
             body: Stack(
               children: <Widget>[
                 Positioned.fill(
                   child: ScrollConfiguration(
                     behavior: CustomScrollBehavior(),
                     child: ListView(
-                      padding: EdgeInsets.only(bottom: 20.0),
+                      padding: EdgeInsets.only(top: 70, bottom: 36.0),
                       shrinkWrap: true,
                       children: <Widget>[
                         Container(
@@ -296,6 +175,139 @@ class _NewTribeState extends State<NewTribe> {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Card(
+                    margin: EdgeInsets.all(12.0),
+                    elevation: 8.0,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.only(left: 16.0, right: 12.0),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            icon: CustomAwesomeIcon(
+                              icon: Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
+                              color: tribeColor ?? Constants.primaryColor,
+                            ), 
+                            onPressed: () {
+                              if(name.isNotEmpty || desc.isNotEmpty || tribeColor != null) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => DiscardChangesDialog(color: tribeColor)
+                                );
+                              } else {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      title: Text('New Tribe', 
+                        style: TextStyle(
+                          color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                          fontFamily: 'TribesRounded',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            icon: CustomAwesomeIcon(
+                              icon: secret ? FontAwesomeIcons.solidEyeSlash : FontAwesomeIcons.eye, 
+                              color: (tribeColor ?? Constants.primaryColor).withOpacity(secret ? 0.6 : 1.0),
+                            ),
+                            onPressed: () {
+                              if(firstToggle) {
+                                setState(() => firstToggle = false);
+
+                                showDialog(
+                                  context: context,
+                                  child: AlertDialog(
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                                    title: Text('Secret Tribe',
+                                      style: TextStyle(
+                                        fontFamily: 'TribesRounded',
+                                        fontWeight: Constants.defaultDialogTitleFontWeight,
+                                        fontSize: Constants.defaultDialogTitleFontSize,
+                                      ),
+                                    ),
+                                    content: Container(
+                                      child: RichText(
+                                        text: TextSpan(
+                                          text: 'This will make your Tribe',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: 'TribesRounded'
+                                          ),
+                                          children: <TextSpan>[
+                                            TextSpan(text: ' secret ', 
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'TribesRounded', 
+                                                fontStyle: FontStyle.italic
+                                              ),
+                                            ),
+                                            TextSpan(text: 'and can only be found by typing in the', 
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'TribesRounded'
+                                              ),
+                                            ),
+                                            TextSpan(text: ' exact ', 
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'TribesRounded', 
+                                                fontWeight: FontWeight.bold
+                                              ),
+                                            ),
+                                            TextSpan(text: 'Tribe name.', 
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontFamily: 'TribesRounded'
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } 
+                              setState(() => secret = !secret);
+                            },
+                          ),
+                          IconButton(
+                            icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor ?? Constants.primaryColor),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                child: AlertDialog(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                                  title: Text('Pick a Tribe color',
+                                    style: TextStyle(
+                                      fontFamily: 'TribesRounded',
+                                      fontWeight: Constants.defaultDialogTitleFontWeight,
+                                      fontSize: Constants.defaultDialogTitleFontSize,
+                                    ),
+                                  ),
+                                  content: SingleChildScrollView(
+                                    child: BlockPicker(
+                                      availableColors: Constants.defaultTribeColors,
+                                      pickerColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                      onColorChanged: _changeColor,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

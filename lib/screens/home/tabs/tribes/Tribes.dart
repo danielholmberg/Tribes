@@ -114,51 +114,6 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                             ),
                           ),
                           Align(
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget> [
-
-                                // New Tribe Icon Widget
-                                Stack(
-                                  children: <Widget>[
-                                    IconButton(
-                                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.home),
-                                      iconSize: Constants.defaultIconSize,
-                                      splashColor: Colors.transparent,
-                                      onPressed: () => _showNewTribePage(),
-                                    ),
-                                    Positioned.fill(
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            //border: Border.all(color: Constants.buttonIconColor, width: 2.0),
-                                            color: Constants.primaryColor,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: InkWell(
-                                            borderRadius: BorderRadius.circular(Constants.maxCornerRadius),
-                                            child: Padding(
-                                              padding: EdgeInsets.all(3.0), 
-                                              child: CustomAwesomeIcon(
-                                                icon: FontAwesomeIcons.plus, 
-                                                size: 8
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                              ],
-                            ),
-                          ),
-                          Align(
                             alignment: Alignment.centerRight,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,

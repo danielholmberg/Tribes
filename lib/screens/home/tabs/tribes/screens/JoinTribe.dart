@@ -473,7 +473,7 @@ class _JoinTribeState extends State<JoinTribe> {
               boxShadow: [
                 BoxShadow(
                   color: tribe.color,
-                  blurRadius: 10,
+                  blurRadius: 5,
                   offset: Offset(0, 0),
                 ),
               ]),
