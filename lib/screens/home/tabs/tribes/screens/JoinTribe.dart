@@ -33,6 +33,8 @@ class _JoinTribeState extends State<JoinTribe> {
   String error = '';
   TextEditingController controller = new TextEditingController();
 
+  final EdgeInsets gridPadding = const EdgeInsets.fromLTRB(8.0, 76.0, 8.0, 8.0);
+
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
@@ -526,6 +528,15 @@ class _JoinTribeState extends State<JoinTribe> {
                   }
                 ),
               ),
+              tribe.secret ? Positioned(
+                top: 0,
+                right: 0,
+                child: CustomAwesomeIcon(
+                  icon: FontAwesomeIcons.solidEyeSlash,
+                  color: Constants.whiteWaterMarkColor,
+                  size: Constants.smallIconSize,
+                ),
+              ) : SizedBox.shrink(),
               Positioned(
                 bottom: 0,
                 right: 0,
@@ -579,7 +590,7 @@ class _JoinTribeState extends State<JoinTribe> {
                           behavior: CustomScrollBehavior(), 
                           child: _searchResult.length != 0 || controller.text.isNotEmpty
                           ? GridView.builder(
-                            padding: EdgeInsets.fromLTRB(12.0, 80.0, 12.0, 12.0),
+                            padding: gridPadding,
                             itemCount: _searchResult.length,
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2
@@ -589,7 +600,7 @@ class _JoinTribeState extends State<JoinTribe> {
                             }
                           )
                           : GridView.builder(
-                            padding: EdgeInsets.fromLTRB(12.0, 80.0, 12.0, 12.0),
+                            padding: gridPadding,
                             itemCount: _tribesList.length,
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
@@ -614,42 +625,66 @@ class _JoinTribeState extends State<JoinTribe> {
                 child: Card(
                   margin: EdgeInsets.all(12.0),
                   elevation: 8.0,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.only(left: 16.0, right: 12.0),
-                    leading: Row(
-                      mainAxisSize: MainAxisSize.min,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Icon(
-                            Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft, 
-                            color: DynamicTheme.of(context).data.primaryColor
+                        // Leading Actions
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(
+                                Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
+                                color: DynamicTheme.of(context).data.primaryColor
+                              ), 
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
+                          ],
+                        ),
+
+                        SizedBox(width: Constants.largePadding),
+
+                        // Center Widget
+                        Expanded(
+                          child: TextField(
+                            controller: controller,
+                            autofocus: false,
+                            decoration: InputDecoration(
+                              hintText: 'Enter Tribe name', 
+                              border: InputBorder.none,
+                              hintStyle: TextStyle(
+                                fontFamily: 'TribesRounded',
+                                fontSize: 16,
+                                color: Colors.black54.withOpacity(0.3),
+                              ),
+                            ),
+                            onChanged: _onSearchTextChanged,
                           ),
                         ),
-                        SizedBox(width: Constants.defaultSpacing),
-                        Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
+
+                        // Trailing Actions
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.solidTimesCircle,
+                                color: DynamicTheme.of(context).data.primaryColor,
+                              ), 
+                              onPressed: () {
+                                controller.clear();
+                                _onSearchTextChanged('');
+                              },
+                            ),
+                          ],
+                        ),
+
                       ],
                     ),
-                    title: TextField(
-                      controller: controller,
-                      autofocus: false,
-                      decoration: InputDecoration(
-                        hintText: 'Find your Tribe', 
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(
-                          fontFamily: 'TribesRounded',
-                          fontSize: 16,
-                          color: Colors.black54.withOpacity(0.3),
-                        ),
-                      ),
-                      onChanged: _onSearchTextChanged,
-                    ),
-                    trailing: IconButton(icon: Icon(FontAwesomeIcons.solidTimesCircle), 
-                    onPressed: () {
-                      controller.clear();
-                      _onSearchTextChanged('');
-                    },),
-                  ),
+                  ), 
                 ),
               ),
             ],
