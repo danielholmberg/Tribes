@@ -123,8 +123,7 @@ class DatabaseService {
   // Get joined Tribes Stream
   Stream<List<Tribe>> joinedTribes(String userID) {
     return tribesRoot.where('members', arrayContains: userID).orderBy('created', descending: true).snapshots().map(
-        (list) =>
-            list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList());
+        (list) => list.documents.map((doc) => Tribe.fromSnapshot(doc)).toList());
   }
 
   // Get not yet joined Tribes Stream

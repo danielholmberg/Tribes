@@ -92,11 +92,6 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                                     color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor,
                                     size: widget.iconSize,
                                   ),
-                                  /* Icon(
-                                    f.icon,
-                                    color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor,
-                                    size: widget.iconSize,
-                                  ), */
                                   Text(
                                     '${f.title}',
                                     style: TextStyle(

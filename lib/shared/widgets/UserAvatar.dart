@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/home/tabs/profile/Profile.dart';
+import 'package:tribes/screens/base/profile/Profile.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';

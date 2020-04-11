@@ -2,12 +2,12 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/home/home.dart';
-import 'package:tribes/screens/home/tabs/chats/Chats.dart';
-import 'package:tribes/screens/home/tabs/chats/widgets/TribeMessages.dart';
-import 'package:tribes/screens/home/tabs/map/MyMap.dart';
-import 'package:tribes/screens/home/tabs/profile/Profile.dart';
-import 'package:tribes/screens/home/tabs/tribes/Tribes.dart';
+import 'package:tribes/screens/base/base.dart';
+import 'package:tribes/screens/base/chats/Chats.dart';
+import 'package:tribes/screens/base/chats/widgets/TribeMessages.dart';
+import 'package:tribes/screens/base/map/MyMap.dart';
+import 'package:tribes/screens/base/profile/Profile.dart';
+import 'package:tribes/screens/base/tribes/Tribes.dart';
 import 'package:tribes/screens/wrapper.dart';
 import 'package:tribes/services/auth.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -58,11 +58,11 @@ class MyApp extends StatelessWidget {
             initialRoute: '/', // Start the app with the "/" named route. 
             routes: {
               '/': (context) => Wrapper(),
-              Home.routeName: (context) => Home(),
-              Tribes.routeName: (context) => new Home(tabIndex: 0),
-              MyMap.routeName: (context) => new Home(tabIndex: 1),
-              Chats.routeName: (context) => new Home(tabIndex: 2),
-              Profile.routeName: (context) => new Home(tabIndex: 3),
+              Base.routeName: (context) => Base(),
+              Tribes.routeName: (context) => new Base(tabIndex: 0),
+              MyMap.routeName: (context) => new Base(tabIndex: 1),
+              Chats.routeName: (context) => new Base(tabIndex: 2),
+              Profile.routeName: (context) => new Base(tabIndex: 3),
             },
           ),
         );
