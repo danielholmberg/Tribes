@@ -48,7 +48,7 @@ class _NewTribeState extends State<NewTribe> {
     print('Building NewTribe()...');
     print('Current user ${currentUser.toString()}');
 
-    edited = name.isNotEmpty|| desc.isNotEmpty;
+    edited = name.isNotEmpty || desc.isNotEmpty || secret || tribeColor != null;
 
     _changeColor(Color color) async {
       setState(() => tribeColor = color);
@@ -128,6 +128,32 @@ class _NewTribeState extends State<NewTribe> {
                                   fontSize: Constants.defaultDialogTitleFontSize,
                                 ),
                               ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text('Abort', 
+                                    style: TextStyle(
+                                      color: tribeColor,
+                                      fontFamily: 'TribesRounded',
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text('OK', 
+                                    style: TextStyle(
+                                      color: tribeColor,
+                                      fontFamily: 'TribesRounded',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() => secret = !secret);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
                               content: Container(
                                 child: RichText(
                                   text: TextSpan(
@@ -169,8 +195,9 @@ class _NewTribeState extends State<NewTribe> {
                               ),
                             ),
                           );
-                        } 
-                        setState(() => secret = !secret);
+                        } else {
+                          setState(() => secret = !secret);
+                        }
                       },
                     ),
                     IconButton(

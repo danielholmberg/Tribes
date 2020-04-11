@@ -129,7 +129,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
               color: (tribeColor ?? Constants.primaryColor).withOpacity(secret ? 0.6 : 1.0),
             ),
             onPressed: () {
-              if(firstToggle) {
+              if(firstToggle && !originalSecret) {
                 setState(() => firstToggle = false);
 
                 showDialog(
@@ -143,6 +143,32 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                         fontSize: Constants.defaultDialogTitleFontSize,
                       ),
                     ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Abort', 
+                          style: TextStyle(
+                            color: currentTribe.color,
+                            fontFamily: 'TribesRounded',
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('OK', 
+                          style: TextStyle(
+                            color: currentTribe.color,
+                            fontFamily: 'TribesRounded',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() => secret = !secret);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
                     content: Container(
                       child: RichText(
                         text: TextSpan(
@@ -184,8 +210,9 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                     ),
                   ),
                 );
-              } 
-              setState(() => secret = !secret);
+              } else {
+                setState(() => secret = !secret);
+              }
             },
           ),
           IconButton(
