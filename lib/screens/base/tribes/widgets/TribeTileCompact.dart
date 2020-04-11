@@ -24,6 +24,13 @@ class TribeTileCompact extends StatelessWidget {
         minFontSize: 10.0,
         style: TextStyle(
           color: Colors.white,
+          shadows: [
+            Shadow(
+              offset: Offset(1, 1),
+              blurRadius: 2,
+              color: Colors.black45
+            ),
+          ],
           fontSize: 20.0,
           fontWeight: FontWeight.bold,
           fontFamily: 'TribesRounded',
@@ -53,14 +60,14 @@ class TribeTileCompact extends StatelessWidget {
             children: <Widget>[
               CustomAwesomeIcon(
                 icon: FontAwesomeIcons.stream,
-                color: Constants.buttonIconColor,
+                color: Constants.tribeDetailIconColor,
                 size: Constants.smallIconSize,
               ),
               SizedBox(width: Constants.smallSpacing),
               Text(
                 '${postsList.length}',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Constants.tribeDetailIconColor,
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'TribesRounded',
@@ -78,7 +85,7 @@ class TribeTileCompact extends StatelessWidget {
           Text(
             '${tribe.members.length}',
             style: TextStyle(
-              color: Colors.white,
+              color: Constants.tribeDetailIconColor,
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
               fontFamily: 'TribesRounded',
@@ -87,7 +94,7 @@ class TribeTileCompact extends StatelessWidget {
           SizedBox(width: Constants.smallSpacing),
           CustomAwesomeIcon(
             icon: FontAwesomeIcons.userFriends,
-            color: Constants.buttonIconColor,
+            color: Constants.tribeDetailIconColor,
             size: Constants.smallIconSize,
           ),
         ],
@@ -100,11 +107,12 @@ class TribeTileCompact extends StatelessWidget {
       decoration: BoxDecoration(
         color: tribe.color,
         borderRadius: BorderRadius.circular(20.0),
+        border: Border.all(color: Colors.black26, width: 2.0),
         boxShadow: [
           BoxShadow(
-            color: tribe.color,
-            blurRadius: 5,
-            offset: Offset(0, 0),
+            color: Colors.black45,
+            blurRadius: 4,
+            offset: Offset(2, 2),
           ),
         ]
       ),

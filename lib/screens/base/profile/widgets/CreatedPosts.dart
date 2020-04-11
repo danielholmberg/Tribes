@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/base/profile/widgets/PostTileCompact.dart';
+import 'package:tribes/screens/base/tribes/widgets/PostTileCompact.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;

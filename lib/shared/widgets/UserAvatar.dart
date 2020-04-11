@@ -7,6 +7,7 @@ import 'package:tribes/screens/base/profile/Profile.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
+import 'package:tribes/shared/widgets/CustomStrokedText.dart';
 
 enum UserAvatarDirections {
   vertical,
@@ -84,7 +85,7 @@ class UserAvatar extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: isMapAvatar ? [
                 BoxShadow(
-                  offset: Offset(2, 2),
+                  offset: Offset(1, 1),
                   blurRadius: 2.0,
                   color: Colors.black87
                 )
@@ -194,24 +195,11 @@ class UserAvatar extends StatelessWidget {
           ),
           Container(
             width: 30,
-            child: Text(withName ? user.name : user.username,
-              softWrap: true,
+            child: CustomStrokedText(
+              text: withName ? user.name : user.username,
+              minFontSize: nameFontSize, 
               maxLines: 3,
-              overflow: TextOverflow.fade,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(0.0, 0.0),
-                    blurRadius: 2.0,
-                    color: Colors.black,
-                  ),
-                ],
-                fontFamily: 'TribesRounded',
-                fontWeight: FontWeight.bold,
-                fontSize: nameFontSize,
-              ),
+              strokeWidth: 3,
             ),
           ),
         ],

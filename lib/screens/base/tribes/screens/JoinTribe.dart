@@ -1,15 +1,13 @@
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
+import 'package:tribes/screens/base/tribes/widgets/TribeTileCompact.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -30,7 +28,7 @@ class _JoinTribeState extends State<JoinTribe> {
   String error = '';
   TextEditingController controller = new TextEditingController();
 
-  final EdgeInsets gridPadding = const EdgeInsets.fromLTRB(8.0, 76.0, 8.0, 8.0);
+  final EdgeInsets gridPadding = const EdgeInsets.fromLTRB(8.0, 82.0, 8.0, 8.0);
 
   @override
   Widget build(BuildContext context) {
@@ -64,69 +62,78 @@ class _JoinTribeState extends State<JoinTribe> {
     _buildAppBar() {
       return Align(
         alignment: Alignment.topCenter,
-        child: Card(
+        child: Container(
           margin: EdgeInsets.all(12.0),
-          elevation: 8.0,
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                // Leading Actions
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
-                        color: DynamicTheme.of(context).data.primaryColor
-                      ), 
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
-                  ],
-                ),
-
-                SizedBox(width: Constants.largePadding),
-
-                // Center Widget
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    autofocus: false,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Tribe name', 
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(
-                        fontFamily: 'TribesRounded',
-                        fontSize: 16,
-                        color: Colors.black54.withOpacity(0.3),
-                      ),
-                    ),
-                    onChanged: _onSearchTextChanged,
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border.all(color: Colors.white, width: 2.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black45,
+                blurRadius: 8,
+                offset: Offset(2, 2),
+              ),
+            ]
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              // Leading Actions
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
+                      color: DynamicTheme.of(context).data.primaryColor
+                    ), 
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                ),
+                  Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
+                ],
+              ),
 
-                // Trailing Actions
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        FontAwesomeIcons.solidTimesCircle,
-                        color: DynamicTheme.of(context).data.primaryColor,
-                      ), 
-                      onPressed: () {
-                        controller.clear();
-                        _onSearchTextChanged('');
-                      },
+              SizedBox(width: Constants.largePadding),
+
+              // Center Widget
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  autofocus: false,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Tribe name', 
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(
+                      fontFamily: 'TribesRounded',
+                      fontSize: 16,
+                      color: Colors.black54.withOpacity(0.3),
                     ),
-                  ],
+                  ),
+                  onChanged: _onSearchTextChanged,
                 ),
+              ),
 
-              ],
-            ),
-          ), 
+              // Trailing Actions
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      FontAwesomeIcons.solidTimesCircle,
+                      color: DynamicTheme.of(context).data.primaryColor,
+                    ), 
+                    onPressed: () {
+                      controller.clear();
+                      _onSearchTextChanged('');
+                    },
+                  ),
+                ],
+              ),
+
+            ],
+          ),
         ),
       );
     }
@@ -533,103 +540,7 @@ class _JoinTribeState extends State<JoinTribe> {
     _tribeTile(Tribe tribe) {
       return GestureDetector(
         onTap: () => _showPasswordDialog(tribe),
-        child: Container(
-          margin: EdgeInsets.all(6.0),
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-              color: tribe.color,
-              borderRadius: BorderRadius.circular(20.0),
-              boxShadow: [
-                BoxShadow(
-                  color: tribe.color,
-                  blurRadius: 5,
-                  offset: Offset(0, 0),
-                ),
-              ]),
-          child: Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              AutoSizeText(
-                tribe.name,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                minFontSize: 10.0,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'TribesRounded',
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                child: StreamBuilder<List<Post>>(
-                  stream: DatabaseService().posts(tribe.id)
-                    .map((list) => list.documents
-                    .map((doc) => Post.fromSnapshot(doc))
-                    .toList()
-                  ),
-                  builder: (context, snapshot) {
-                    var postsList = snapshot.hasData ? snapshot.data : []; 
-
-                    return Row(
-                      children: <Widget>[
-                        CustomAwesomeIcon(
-                          icon: FontAwesomeIcons.stream,
-                          color: Constants.buttonIconColor,
-                          size: Constants.smallIconSize,
-                        ),
-                        SizedBox(width: Constants.smallSpacing),
-                        Text(
-                          '${postsList.length}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'TribesRounded',
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                ),
-              ),
-              tribe.secret ? Positioned(
-                top: 0,
-                right: 0,
-                child: CustomAwesomeIcon(
-                  icon: FontAwesomeIcons.solidEyeSlash,
-                  color: Constants.whiteWaterMarkColor,
-                  size: Constants.smallIconSize,
-                ),
-              ) : SizedBox.shrink(),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      '${tribe.members.length}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'TribesRounded',
-                      ),
-                    ),
-                    SizedBox(width: Constants.smallSpacing),
-                    CustomAwesomeIcon(
-                      icon: FontAwesomeIcons.userFriends,
-                      color: Constants.buttonIconColor,
-                      size: Constants.smallIconSize,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: TribeTileCompact(tribe: tribe),
       );
     }
 

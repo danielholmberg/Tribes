@@ -59,176 +59,185 @@ class _NewTribeState extends State<NewTribe> {
     _buildAppBar() {
       return Align(
         alignment: Alignment.topCenter,
-        child: Card(
+        child: Container(
           margin: EdgeInsets.all(12.0),
-          elevation: 8.0,
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                // Leading Actions
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
-                        color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                      ), 
-                      onPressed: () {
-                        if(name.isNotEmpty || desc.isNotEmpty || tribeColor != null || secret) {
-                          showDialog(
-                            context: context,
-                            builder: (context) => DiscardChangesDialog(color: tribeColor)
-                          );
-                        } else {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                    ),
-                  ],
-                ),
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(
+            color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border.all(color: Colors.black26, width: 2.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black45,
+                blurRadius: 8,
+                offset: Offset(2, 2),
+              ),
+            ]
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              // Leading Actions
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
+                      color: Constants.buttonIconColor,
+                    ), 
+                    onPressed: () {
+                      if(name.isNotEmpty || desc.isNotEmpty || tribeColor != null || secret) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => DiscardChangesDialog(color: tribeColor)
+                        );
+                      } else {
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                ],
+              ),
 
-                SizedBox(width: Constants.defaultPadding),
+              SizedBox(width: Constants.defaultPadding),
 
-                // Center Widget
-                Expanded(
-                  child: Text('New Tribe',
-                    style: TextStyle(
-                      color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                      fontFamily: 'TribesRounded',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20
-                    ),
+              // Center Widget
+              Expanded(
+                child: Text('New Tribe',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'TribesRounded',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20
                   ),
                 ),
+              ),
 
-                // Trailing Actions
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                      icon: CustomAwesomeIcon(
-                        icon: secret ? FontAwesomeIcons.solidEyeSlash : FontAwesomeIcons.eye, 
-                        color: (tribeColor ?? Constants.primaryColor).withOpacity(secret ? 0.6 : 1.0),
-                      ),
-                      onPressed: () {
-                        if(firstToggle) {
-                          setState(() => firstToggle = false);
-
-                          showDialog(
-                            context: context,
-                            child: AlertDialog(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                              title: Text('Secret Tribe',
-                                style: TextStyle(
-                                  fontFamily: 'TribesRounded',
-                                  fontWeight: Constants.defaultDialogTitleFontWeight,
-                                  fontSize: Constants.defaultDialogTitleFontSize,
-                                ),
-                              ),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text('Abort', 
-                                    style: TextStyle(
-                                      color: tribeColor,
-                                      fontFamily: 'TribesRounded',
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                FlatButton(
-                                  child: Text('OK', 
-                                    style: TextStyle(
-                                      color: tribeColor,
-                                      fontFamily: 'TribesRounded',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    setState(() => secret = !secret);
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                              content: Container(
-                                child: RichText(
-                                  text: TextSpan(
-                                    text: 'This will make your Tribe',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'TribesRounded'
-                                    ),
-                                    children: <TextSpan>[
-                                      TextSpan(text: ' secret ', 
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: 'TribesRounded', 
-                                          fontStyle: FontStyle.italic
-                                        ),
-                                      ),
-                                      TextSpan(text: 'and can only be found by typing in the', 
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: 'TribesRounded'
-                                        ),
-                                      ),
-                                      TextSpan(text: ' exact ', 
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: 'TribesRounded', 
-                                          fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      TextSpan(text: 'Tribe name.', 
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: 'TribesRounded'
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          setState(() => secret = !secret);
-                        }
-                      },
+              // Trailing Actions
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                    icon: CustomAwesomeIcon(
+                      icon: secret ? FontAwesomeIcons.solidEyeSlash : FontAwesomeIcons.eye, 
+                      color: Constants.buttonIconColor.withOpacity(secret ? 0.6 : 1.0),
                     ),
-                    IconButton(
-                      icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: tribeColor ?? Constants.primaryColor),
-                      onPressed: () {
+                    onPressed: () {
+                      if(firstToggle) {
+                        setState(() => firstToggle = false);
+
                         showDialog(
                           context: context,
                           child: AlertDialog(
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                            title: Text('Pick a Tribe color',
+                            title: Text('Secret Tribe',
                               style: TextStyle(
                                 fontFamily: 'TribesRounded',
                                 fontWeight: Constants.defaultDialogTitleFontWeight,
                                 fontSize: Constants.defaultDialogTitleFontSize,
                               ),
                             ),
-                            content: SingleChildScrollView(
-                              child: BlockPicker(
-                                availableColors: Constants.defaultTribeColors,
-                                pickerColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                onColorChanged: _changeColor,
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Abort', 
+                                  style: TextStyle(
+                                    color: tribeColor,
+                                    fontFamily: 'TribesRounded',
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('OK', 
+                                  style: TextStyle(
+                                    color: tribeColor,
+                                    fontFamily: 'TribesRounded',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  setState(() => secret = !secret);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                            content: Container(
+                              child: RichText(
+                                text: TextSpan(
+                                  text: 'This will make your Tribe',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'TribesRounded'
+                                  ),
+                                  children: <TextSpan>[
+                                    TextSpan(text: ' secret ', 
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'TribesRounded', 
+                                        fontStyle: FontStyle.italic
+                                      ),
+                                    ),
+                                    TextSpan(text: 'and can only be found by typing in the', 
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'TribesRounded'
+                                      ),
+                                    ),
+                                    TextSpan(text: ' exact ', 
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'TribesRounded', 
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                    TextSpan(text: 'Tribe name.', 
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'TribesRounded'
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      } else {
+                        setState(() => secret = !secret);
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: CustomAwesomeIcon(icon: FontAwesomeIcons.palette, color: Constants.buttonIconColor),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        child: AlertDialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+                          title: Text('Pick a Tribe color',
+                            style: TextStyle(
+                              fontFamily: 'TribesRounded',
+                              fontWeight: Constants.defaultDialogTitleFontWeight,
+                              fontSize: Constants.defaultDialogTitleFontSize,
+                            ),
+                          ),
+                          content: SingleChildScrollView(
+                            child: BlockPicker(
+                              availableColors: Constants.defaultTribeColors,
+                              pickerColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                              onColorChanged: _changeColor,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       );
@@ -290,7 +299,7 @@ class _NewTribeState extends State<NewTribe> {
                   child: ScrollConfiguration(
                     behavior: CustomScrollBehavior(),
                     child: ListView(
-                      padding: EdgeInsets.only(top: 70, bottom: 36.0),
+                      padding: EdgeInsets.only(top: 76, bottom: 36.0),
                       shrinkWrap: true,
                       children: <Widget>[
                         Container(

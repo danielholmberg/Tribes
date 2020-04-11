@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/base/profile/widgets/TribeTileCompact.dart';
+import 'package:tribes/screens/base/tribes/widgets/TribeTileCompact.dart';
 import 'package:tribes/screens/base/tribes/screens/JoinTribe.dart';
 import 'package:tribes/screens/base/tribes/screens/NewTribe.dart';
 import 'package:tribes/screens/base/tribes/widgets/TribeTile.dart';

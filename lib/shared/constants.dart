@@ -92,6 +92,8 @@ List<Color> defaultTribeColors = [
   Colors.blueGrey,
   Colors.black,
 ];
+const tribeDetailIconColor = Color(0xCCFFFFFF); // CC = 80% Opacity
+
 // - Post
 const postBackgroundColor = Color(0xFFFAFAFA);
 const postInputFocusColor = tribesColor;

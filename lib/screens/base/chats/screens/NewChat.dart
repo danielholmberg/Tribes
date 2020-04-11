@@ -32,6 +32,8 @@ class _NewChatState extends State<NewChat> {
   TextEditingController controller = new TextEditingController();
   Future friendsFuture;
 
+  final EdgeInsets gridPadding = const EdgeInsets.fromLTRB(12.0, 82.0, 12.0, 12.0);
+
   @override
   void initState() {
     friendsFuture = DatabaseService().friendsList(widget.currentUserID);
@@ -40,6 +42,24 @@ class _NewChatState extends State<NewChat> {
 
   @override
   Widget build(BuildContext context) {
+
+    _onSearchTextChanged(String text) async {
+      _searchResult.clear();
+      if (text.isEmpty) {
+        setState(() {});
+        return;
+      }
+
+      _friendsList.forEach((friend) {
+        if (friend.name.toLowerCase().contains(text.toLowerCase()) || 
+        friend.username.toLowerCase().contains(text.toLowerCase())) {
+          _searchResult.add(friend);
+        }
+      });
+
+      setState(() {});
+    }
+    
     _friendTile(UserData friend) {
       return ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
@@ -92,14 +112,14 @@ class _NewChatState extends State<NewChat> {
                           behavior: CustomScrollBehavior(), 
                           child: _searchResult.length != 0 || controller.text.isNotEmpty
                           ? ListView.builder(
-                            padding: EdgeInsets.fromLTRB(12.0, 80.0, 12.0, 12.0),
+                            padding: gridPadding,
                             itemCount: _searchResult.length,
                             itemBuilder: (context, i) {
                               return _friendTile(_searchResult[i]); 
                             }
                           )
                           : ListView.builder(
-                            padding: EdgeInsets.fromLTRB(12.0, 80.0, 12.0, 12.0),
+                            padding: gridPadding,
                             itemCount: _friendsList.length,
                             itemBuilder: (context, i) {
                               return _friendTile(_friendsList[i]);
@@ -118,46 +138,77 @@ class _NewChatState extends State<NewChat> {
               ),
               Align(
                 alignment: Alignment.topCenter,
-                child: Card(
+                child: Container(
                   margin: EdgeInsets.all(12.0),
-                  elevation: 8.0,
-                  child: ListTile(
-                    contentPadding: EdgeInsets.only(left: 16.0, right: 12.0),
-                    leading: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Icon(
-                            Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft, 
-                            color: DynamicTheme.of(context).data.primaryColor
-                          ),
-                        ),
-                        SizedBox(width: Constants.defaultSpacing),
-                        Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
-                      ],
-                    ),
-                    title: TextField(
-                      controller: controller,
-                      autofocus: false,
-                      decoration: InputDecoration(
-                        hintText: 'Find your friend', 
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(
-                          fontFamily: 'TribesRounded',
-                          fontSize: 16,
-                          color: Colors.black54.withOpacity(0.3),
-                        ),
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.0),
+                    border: Border.all(color: Colors.white, width: 2.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black45,
+                        blurRadius: 8,
+                        offset: Offset(2, 2),
                       ),
-                      onChanged: onSearchTextChanged,
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(FontAwesomeIcons.solidTimesCircle), 
-                      onPressed: () {
-                        controller.clear();
-                        onSearchTextChanged('');
-                      },
-                    ),
+                    ]
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      // Leading Actions
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(
+                              Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
+                              color: DynamicTheme.of(context).data.primaryColor
+                            ), 
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
+                        ],
+                      ),
+
+                      SizedBox(width: Constants.largePadding),
+
+                      // Center Widget
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          autofocus: false,
+                          decoration: InputDecoration(
+                            hintText: 'Find your friend', 
+                            border: InputBorder.none,
+                            hintStyle: TextStyle(
+                              fontFamily: 'TribesRounded',
+                              fontSize: 16,
+                              color: Colors.black54.withOpacity(0.3),
+                            ),
+                          ),
+                          onChanged: _onSearchTextChanged,
+                        )
+                      ),
+
+                      // Trailing Actions
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(
+                              FontAwesomeIcons.solidTimesCircle,
+                              color: DynamicTheme.of(context).data.primaryColor,
+                            ), 
+                            onPressed: () {
+                              controller.clear();
+                              _onSearchTextChanged('');
+                            },
+                          ),
+                        ],
+                      ),
+
+                    ],
                   ),
                 ),
               ),
@@ -166,22 +217,5 @@ class _NewChatState extends State<NewChat> {
         ),
       ),
     );
-  }
-
-  onSearchTextChanged(String text) async {
-    _searchResult.clear();
-    if (text.isEmpty) {
-      setState(() {});
-      return;
-    }
-
-    _friendsList.forEach((friend) {
-      if (friend.name.toLowerCase().contains(text.toLowerCase()) || 
-      friend.username.toLowerCase().contains(text.toLowerCase())) {
-        _searchResult.add(friend);
-      }
-    });
-
-    setState(() {});
   }
 }
