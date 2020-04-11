@@ -205,9 +205,8 @@ class _NewPostState extends State<NewPost> {
     }
 
     _buildPublishButton() {
-      return !edited ? SizedBox.shrink() : AnimatedOpacity(
-        duration: Duration(milliseconds: 500),
-        opacity: edited ? 1.0 : 0.0,
+      return Visibility(
+        visible: edited,
         child: CustomButton(
           icon: FontAwesomeIcons.check,
           height: 60.0, 

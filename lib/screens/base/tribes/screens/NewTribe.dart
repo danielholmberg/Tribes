@@ -25,6 +25,7 @@ class _NewTribeState extends State<NewTribe> {
   final FocusNode nameFocus = new FocusNode();
   final FocusNode descFocus = new FocusNode();
   bool loading = false;
+  bool edited = false;
 
   String name = '';
   String desc = '';
@@ -46,6 +47,8 @@ class _NewTribeState extends State<NewTribe> {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building NewTribe()...');
     print('Current user ${currentUser.toString()}');
+
+    edited = name.isNotEmpty|| desc.isNotEmpty;
 
     _changeColor(Color color) async {
       setState(() => tribeColor = color);
@@ -205,41 +208,40 @@ class _NewTribeState extends State<NewTribe> {
     }
 
     _buildCreateButton() {
-      return (name.isEmpty || desc.isEmpty) ? SizedBox.shrink() : AnimatedOpacity(
-        duration: Duration(milliseconds: 500),
-        opacity: (name.isNotEmpty && desc.isNotEmpty) ? 1.0 : 0.0,
-          child: CustomButton(
-            height: 60.0,
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.all(16.0),
-            icon: FontAwesomeIcons.check,
-            iconColor: Colors.white,
-            color: Colors.green,
-            label: Text('Create', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-            labelColor: Colors.white,
-            onPressed: () async {                
-              if(_formKey.currentState.validate()) {
-                setState(() => loading = true);
-                try {
-                  DatabaseService().createNewTribe(
-                    currentUser.uid,
-                    name, 
-                    desc, 
-                    tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
-                    null,
-                    secret,
-                  );
-                  Navigator.pop(context);
-                } catch (e) {
-                  print(e.toString());
-                  setState(() { 
-                    loading = false;
-                    error = 'Unable to create new Tribe';
-                  });
-                }
+      return Visibility(
+        visible: edited,
+        child: CustomButton(
+          height: 60.0,
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.all(16.0),
+          icon: FontAwesomeIcons.check,
+          iconColor: Colors.white,
+          color: Colors.green,
+          label: Text('Create', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+          labelColor: Colors.white,
+          onPressed: () async {                
+            if(_formKey.currentState.validate()) {
+              setState(() => loading = true);
+              try {
+                DatabaseService().createNewTribe(
+                  currentUser.uid,
+                  name, 
+                  desc, 
+                  tribeColor != null ? tribeColor.value.toRadixString(16) : Constants.primaryColor.value.toRadixString(16), 
+                  null,
+                  secret,
+                );
+                Navigator.pop(context);
+              } catch (e) {
+                print(e.toString());
+                setState(() { 
+                  loading = false;
+                  error = 'Unable to create new Tribe';
+                });
               }
             }
-          ),
+          }
+        ),
       );
     }
 

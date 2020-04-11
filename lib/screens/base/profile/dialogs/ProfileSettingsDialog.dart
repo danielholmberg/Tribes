@@ -7,6 +7,7 @@ import 'package:tribes/services/auth.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
+import 'package:tribes/shared/widgets/CustomButton.dart';
 import 'package:tribes/shared/widgets/CustomRaisedButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/DiscardChangesDialog.dart';
@@ -29,6 +30,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
   final FocusNode saveButtonFocus = new FocusNode();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
+  bool edited = false;
 
   String name;
   String username;
@@ -65,6 +67,8 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building ProfileSettings()...');
     print('Current user ${currentUser.toString()}');
+
+    edited = originalName != name || originalUsername != username || originalInfo != info;
 
     _buildAppBar() {
       return AppBar(
@@ -146,6 +150,49 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
       );
     }
 
+    _buildSaveButton() {
+      return Visibility(
+        visible: edited, 
+        child: CustomButton(
+          height: 60.0,
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.all(16.0),
+          color: Colors.green,
+          icon: FontAwesomeIcons.check,
+          label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+          labelColor: Colors.white,
+          onPressed: edited ? () async {
+            if (_formKey.currentState.validate()) {
+              print('Updating profile information...');
+              setState(() => loading = true);
+
+              await DatabaseService().updateUserData(
+                currentUser.uid,
+                name ?? currentUser.name,
+                username ?? currentUser.username,
+                currentUser.email,
+                info ?? currentUser.info,
+                currentUser.lat,
+                currentUser.lng
+              );
+
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text('Profile info saved'),
+                duration: Duration(milliseconds: 500),
+              ));
+
+              setState(() {
+                loading = false;
+                originalName = name;
+                originalUsername = username;
+                originalInfo = info;
+              });
+            }
+          } : null,
+        ),
+      );
+    }
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
       contentPadding: EdgeInsets.zero,
@@ -153,7 +200,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
         borderRadius: BorderRadius.circular(20.0),
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * (edited ? 0.6 : 0.5),
           alignment: Alignment.topCenter,
           child: currentUser == null ? Loading() 
           : Scaffold(
@@ -165,125 +212,105 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
               ? Loading()
               : ScrollConfiguration(
                 behavior: CustomScrollBehavior(),
-                child: ListView(
-                  physics: ClampingScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
-                  shrinkWrap: true,
+                child: Stack(
                   children: <Widget>[
-                    Container(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
+                    Positioned.fill(
+                      child: ListView(
+                        physics: ClampingScrollPhysics(),
+                        padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, (edited ? 86.0 : 16.0)),
+                        shrinkWrap: true,
+                        children: <Widget>[
+                          Container(
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
 
-                            // Name
-                            TextFormField(
-                              focusNode: nameFocus,
-                              initialValue: name ?? widget.user.name,
-                              textCapitalization: TextCapitalization.words,
-                              textInputAction: TextInputAction.next,
-                              decoration: Decorations.profileSettingsInput.copyWith(
-                                labelText: 'Name',
-                                hintText: 'Full name'
+                                  // Name
+                                  TextFormField(
+                                    focusNode: nameFocus,
+                                    initialValue: name ?? widget.user.name,
+                                    textCapitalization: TextCapitalization.words,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: Decorations.profileSettingsInput.copyWith(
+                                      labelText: 'Name',
+                                      hintText: 'Full name'
+                                    ),
+                                    validator: (val) => val.isEmpty ? 'Please add your name' : null,
+                                    autovalidate: true,
+                                    onChanged: (val) {
+                                      setState(() => name = val);
+                                    },
+                                    onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(usernameFocus),
+                                  ),
+
+                                  SizedBox(height: Constants.defaultSpacing),
+
+                                  // Username
+                                  TextFormField(
+                                    focusNode: usernameFocus,
+                                    initialValue: username ?? widget.user.username,
+                                    maxLength: Constants.profileUsernameMaxLength,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: Decorations.profileSettingsInput.copyWith(
+                                      labelText: 'Username',
+                                    ),
+                                    validator: (val) => val.isEmpty ? 'Your username cannot be empty' : null,
+                                    autovalidate: true,
+                                    autocorrect: false,
+                                    onChanged: (val) {
+                                      setState(() => username = val);
+                                    },
+                                    onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(infoFocus),
+                                  ),
+
+                                  SizedBox(height: Constants.smallSpacing),
+
+                                  // Info
+                                  TextFormField(
+                                    focusNode: infoFocus,
+                                    initialValue: info ?? widget.user.info,
+                                    textCapitalization: TextCapitalization.sentences,
+                                    keyboardType: TextInputType.text,
+                                    textInputAction: TextInputAction.done,
+                                    maxLength: Constants.profileInfoMaxLength,
+                                    maxLines: null,
+                                    decoration: Decorations.profileSettingsInput.copyWith(
+                                      labelText: 'Info',
+                                    ),
+                                    onChanged: (val) {
+                                      setState(() => info = val);
+                                    },
+                                    onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(saveButtonFocus),
+                                  ),
+
+                                  SizedBox(height: Constants.smallSpacing),
+
+                                  // Error message
+                                  Visibility(
+                                    visible: error.isNotEmpty,
+                                    child: Text(
+                                      error,
+                                      style: TextStyle(
+                                        color: Constants.errorColor,
+                                        fontSize: Constants.errorFontSize
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
-                              validator: (val) => val.isEmpty ? 'Please add your name' : null,
-                              autovalidate: true,
-                              onChanged: (val) {
-                                setState(() => name = val);
-                              },
-                              onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(usernameFocus),
                             ),
-
-                            SizedBox(height: Constants.defaultSpacing),
-
-                            // Username
-                            TextFormField(
-                              focusNode: usernameFocus,
-                              initialValue: username ?? widget.user.username,
-                              maxLength: Constants.profileUsernameMaxLength,
-                              textInputAction: TextInputAction.next,
-                              decoration: Decorations.profileSettingsInput.copyWith(
-                                labelText: 'Username',
-                              ),
-                              validator: (val) => val.isEmpty ? 'Your username cannot be empty' : null,
-                              autovalidate: true,
-                              autocorrect: false,
-                              onChanged: (val) {
-                                setState(() => username = val);
-                              },
-                              onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(infoFocus),
-                            ),
-
-                            SizedBox(height: Constants.smallSpacing),
-
-                            // Info
-                            TextFormField(
-                              focusNode: infoFocus,
-                              initialValue: info ?? widget.user.info,
-                              textCapitalization: TextCapitalization.sentences,
-                              keyboardType: TextInputType.text,
-                              textInputAction: TextInputAction.done,
-                              maxLength: Constants.profileInfoMaxLength,
-                              maxLines: null,
-                              decoration: Decorations.profileSettingsInput.copyWith(
-                                labelText: 'Info',
-                              ),
-                              onChanged: (val) {
-                                setState(() => info = val);
-                              },
-                              onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(saveButtonFocus),
-                            ),
-
-                            SizedBox(height: Constants.smallSpacing),
-
-                            // Error message
-                            error.isNotEmpty ? Text(
-                              error,
-                              style: TextStyle(
-                                color: Constants.errorColor,
-                                fontSize: Constants.errorFontSize
-                              ),
-                            ) : SizedBox.shrink(),
-                            
-                            // Save Button
-                            CustomRaisedButton(
-                              focusNode: saveButtonFocus,
-                              text: 'Save',
-                              onPressed: () async {
-                                if (_formKey.currentState.validate()) {
-                                  print('Updating profile information...');
-                                  setState(() => loading = true);
-
-                                  await DatabaseService().updateUserData(
-                                    currentUser.uid,
-                                    name ?? currentUser.name,
-                                    username ?? currentUser.username,
-                                    currentUser.email,
-                                    info ?? currentUser.info,
-                                    currentUser.lat,
-                                    currentUser.lng
-                                  );
-
-                                  _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                    content: Text('Profile info saved'),
-                                    duration: Duration(milliseconds: 500),
-                                  ));
-
-                                  setState(() {
-                                    loading = false;
-                                    originalName = name;
-                                    originalUsername = username;
-                                    originalInfo = info;
-                                  });
-                                }
-                              },
-                            ),
-
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: _buildSaveButton(),
+                    )
                   ],
                 ),
               ),

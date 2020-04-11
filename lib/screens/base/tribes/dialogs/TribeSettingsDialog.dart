@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
+import 'package:tribes/shared/widgets/CustomButton.dart';
 import 'package:tribes/shared/widgets/CustomRaisedButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -32,6 +33,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool loading = false;
   bool firstToggle = true;
+  bool edited = false;
 
   String name;
   String desc;
@@ -72,6 +74,9 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
+
+    edited = originalName != name || originalDesc != desc || originalPassword != password || originalTribeColor != tribeColor || originalSecret != secret;
+
     _changeColor(Color color) async {
       setState(() => tribeColor = color);
       await Future.delayed(Duration(milliseconds: 300));
@@ -323,6 +328,66 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
       );
     }
 
+    _buildSaveButton(Tribe currentTribe) {
+      return Visibility(
+        visible: edited,
+        child: CustomButton(
+          height: 60.0,
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.all(16.0),
+          color: Colors.green,
+          icon: FontAwesomeIcons.check,
+          label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+          labelColor: Colors.white,
+          onPressed: edited ? () {
+            if (_formKey.currentState.validate()) {
+              print('Updating Tribe information...');
+              setState(() => loading = true);
+
+              DatabaseService().updateTribeData(
+                currentTribe.id,
+                name ?? currentTribe.name,
+                desc ?? currentTribe.desc,
+                tribeColor != null
+                    ? tribeColor.value
+                        .toRadixString(16)
+                    : currentTribe.color.value
+                            .toRadixString(16) ??
+                        Constants.primaryColor.value
+                            .toRadixString(16),
+                password ?? currentTribe.password,
+                imageURL,
+                secret,
+              );
+
+              _scaffoldKey.currentState
+                  .showSnackBar(SnackBar(
+                content: Text('Tribe settings saved!',
+                  style: TextStyle(
+                    fontFamily: 'TribesRounded',
+                  ),
+                ),
+                duration: Duration(milliseconds: 500),
+              ));
+
+              setState(() {
+                loading = false;
+                originalName = name;
+                originalDesc = desc;
+                originalTribeColor = tribeColor;
+                originalPassword = password;
+                originalSecret = secret;
+              });
+
+              widget.onSave(
+                widget.tribe.copyWith(name: name, desc: desc, color: tribeColor, password: password, secret: secret)
+              );
+            }
+          } : null,
+        ),
+      );
+    }
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
       contentPadding: EdgeInsets.zero,
@@ -330,7 +395,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
         borderRadius: BorderRadius.circular(20.0),
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * (edited ? 0.65 : 0.55),
           alignment: Alignment.topCenter,
           child: StreamBuilder<Tribe>(
             stream: DatabaseService().tribe(widget.tribe.id),
@@ -344,184 +409,148 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                 appBar: _buildAppBar(currentTribe),
                 body: ScrollConfiguration(
                   behavior: CustomScrollBehavior(),
-                  child: ListView(
-                    physics: ClampingScrollPhysics(),
-                    shrinkWrap: true,
-                    padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
+                  child: Stack(
                     children: <Widget>[
-                      Container(
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              TextFormField(
-                                focusNode: nameFocus,
-                                initialValue: currentTribe.name,
-                                maxLength: Constants.tribeNameMaxLength,
-                                textCapitalization:
-                                    TextCapitalization.words,
-                                decoration: Decorations.tribeSettingsInput.copyWith(
-                                  labelText: 'Name',
-                                  labelStyle: TextStyle(
-                                    color: tribeColor ?? Constants.inputLabelColor,
-                                    fontFamily: 'TribesRounded',
-                                  ),
-                                  hintText: 'Tribe name',
-                                  counterStyle: TextStyle(color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                    borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                    borderSide: BorderSide(
-                                      color: tribeColor ?? Constants.inputFocusColor, 
-                                      width: 2.0
-                                    ),
-                                  )
-                                ),
-                                validator: (val) => val.isEmpty ? 'Please add a name' : null,
-                                onChanged: (val) {
-                                  setState(() => name = val);
-                                },
-                                onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(descFocus),
-                              ),
-                              SizedBox(height: Constants.smallSpacing),
-                              TextFormField(
-                                focusNode: descFocus,
-                                initialValue: currentTribe.desc,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                keyboardType: TextInputType.multiline,
-                                maxLength: Constants.tribeDescMaxLength,
-                                maxLines: null,
-                                decoration: Decorations.tribeSettingsInput.copyWith(
-                                  labelText: 'Description',
-                                  labelStyle: TextStyle(
-                                    color: tribeColor ?? Constants.inputLabelColor,
-                                    fontFamily: 'TribesRounded',
-                                  ),
-                                  hintText: 'Descriptive text',
-                                  counterStyle: TextStyle(color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                    borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                    borderSide: BorderSide(
-                                      color: tribeColor ?? Constants.inputFocusColor, 
-                                      width: 2.0
-                                    ),
-                                  )
-                                ),
-                                onChanged: (val) {
-                                  setState(() => desc = val);
-                                },
-                              ),
-                              SizedBox(height: Constants.smallSpacing),
-                              TextFormField(
-                                focusNode: passwordFocus,
-                                initialValue: currentTribe.password,
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                keyboardType: TextInputType.number,
-                                maxLength: 6,
-                                maxLines: null,
-                                validator: (val) => val.length != 6 ? 'Password must be 6 digits' : null,
-                                inputFormatters: <TextInputFormatter>[
-                                  WhitelistingTextInputFormatter.digitsOnly
-                                ],
-                                decoration: Decorations.tribeSettingsInput.copyWith(
-                                  labelText: 'Password',
-                                  labelStyle: TextStyle(
-                                    color: tribeColor ?? Constants.inputLabelColor,
-                                    fontFamily: 'TribesRounded',
-                                  ),
-                                  hintText: 'eg. 123456',
-                                  counterStyle: TextStyle(color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                    borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                    borderSide: BorderSide(
-                                      color: tribeColor ?? Constants.inputFocusColor, 
-                                      width: 2.0
-                                    ),
-                                  )
-                                ),
-                                onChanged: (val) {
-                                  setState(() => password = val);
-                                },
-                              ),
-                              CustomRaisedButton(
-                                text: 'Save',
-                                onPressed: () {
-                                  if (_formKey.currentState.validate()) {
-                                    print('Updating Tribe information...');
-                                    setState(() => loading = true);
-
-                                    DatabaseService().updateTribeData(
-                                      currentTribe.id,
-                                      name ?? currentTribe.name,
-                                      desc ?? currentTribe.desc,
-                                      tribeColor != null
-                                          ? tribeColor.value
-                                              .toRadixString(16)
-                                          : currentTribe.color.value
-                                                  .toRadixString(16) ??
-                                              Constants.primaryColor.value
-                                                  .toRadixString(16),
-                                      password ?? currentTribe.password,
-                                      imageURL,
-                                      secret,
-                                    );
-
-                                    _scaffoldKey.currentState
-                                        .showSnackBar(SnackBar(
-                                      content: Text('Tribe info saved',
-                                        style: TextStyle(
+                      Positioned.fill(
+                        child: ListView(
+                          physics: ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, edited ? 92.0 : 16.0),
+                          children: <Widget>[
+                            Container(
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    TextFormField(
+                                      focusNode: nameFocus,
+                                      initialValue: currentTribe.name,
+                                      maxLength: Constants.tribeNameMaxLength,
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      decoration: Decorations.tribeSettingsInput.copyWith(
+                                        labelText: 'Name',
+                                        labelStyle: TextStyle(
+                                          color: tribeColor ?? Constants.inputLabelColor,
                                           fontFamily: 'TribesRounded',
                                         ),
+                                        hintText: 'Tribe name',
+                                        counterStyle: TextStyle(color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                            color: tribeColor ?? Constants.inputFocusColor, 
+                                            width: 2.0
+                                          ),
+                                        )
                                       ),
-                                      duration: Duration(milliseconds: 500),
-                                    ));
-
-                                    setState(() {
-                                      loading = false;
-                                      originalName = name;
-                                      originalDesc = desc;
-                                      originalTribeColor = tribeColor;
-                                      originalPassword = password;
-                                      originalSecret = secret;
-                                    });
-
-                                    widget.onSave(
-                                      widget.tribe.copyWith(name: name, desc: desc, color: tribeColor, password: password, secret: secret)
-                                    );
-                                  }
-                                },
+                                      validator: (val) => val.isEmpty ? 'Please add a name' : null,
+                                      onChanged: (val) {
+                                        setState(() => name = val);
+                                      },
+                                      onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(descFocus),
+                                    ),
+                                    SizedBox(height: Constants.smallSpacing),
+                                    TextFormField(
+                                      focusNode: descFocus,
+                                      initialValue: currentTribe.desc,
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
+                                      keyboardType: TextInputType.multiline,
+                                      maxLength: Constants.tribeDescMaxLength,
+                                      maxLines: null,
+                                      decoration: Decorations.tribeSettingsInput.copyWith(
+                                        labelText: 'Description',
+                                        labelStyle: TextStyle(
+                                          color: tribeColor ?? Constants.inputLabelColor,
+                                          fontFamily: 'TribesRounded',
+                                        ),
+                                        hintText: 'Descriptive text',
+                                        counterStyle: TextStyle(color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                            color: tribeColor ?? Constants.inputFocusColor, 
+                                            width: 2.0
+                                          ),
+                                        )
+                                      ),
+                                      onChanged: (val) {
+                                        setState(() => desc = val);
+                                      },
+                                    ),
+                                    SizedBox(height: Constants.smallSpacing),
+                                    TextFormField(
+                                      focusNode: passwordFocus,
+                                      initialValue: currentTribe.password,
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
+                                      keyboardType: TextInputType.number,
+                                      maxLength: 6,
+                                      maxLines: null,
+                                      validator: (val) => val.length != 6 ? 'Password must be 6 digits' : null,
+                                      inputFormatters: <TextInputFormatter>[
+                                        WhitelistingTextInputFormatter.digitsOnly
+                                      ],
+                                      decoration: Decorations.tribeSettingsInput.copyWith(
+                                        labelText: 'Password',
+                                        labelStyle: TextStyle(
+                                          color: tribeColor ?? Constants.inputLabelColor,
+                                          fontFamily: 'TribesRounded',
+                                        ),
+                                        hintText: 'eg. 123456',
+                                        counterStyle: TextStyle(color: tribeColor.withOpacity(0.5) ?? Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(color: tribeColor.withOpacity(0.5) ?? Constants.inputEnabledColor, width: 2.0),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                          borderSide: BorderSide(
+                                            color: tribeColor ?? Constants.inputFocusColor, 
+                                            width: 2.0
+                                          ),
+                                        )
+                                      ),
+                                      onChanged: (val) {
+                                        setState(() => password = val);
+                                      },
+                                    ),
+                                    SizedBox(height: Constants.smallSpacing),
+                                    error.isNotEmpty
+                                        ? Text(
+                                            error,
+                                            style: TextStyle(
+                                                color: Constants.errorColor,
+                                                fontSize:
+                                                    Constants.errorFontSize),
+                                          )
+                                        : SizedBox.shrink(),
+                                  ],
+                                ),
                               ),
-                              SizedBox(height: Constants.smallSpacing),
-                              error.isNotEmpty
-                                  ? Text(
-                                      error,
-                                      style: TextStyle(
-                                          color: Constants.errorColor,
-                                          fontSize:
-                                              Constants.errorFontSize),
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          ),
+                            ),
+                            _buildDeleteTribeButton(currentTribe),
+                          ],
                         ),
                       ),
-                      _buildDeleteTribeButton(currentTribe),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: _buildSaveButton(currentTribe),
+                      ),
                     ],
                   ),
                 ),

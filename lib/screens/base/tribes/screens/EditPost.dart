@@ -322,9 +322,8 @@ class _EditPostState extends State<EditPost> {
     }
 
     _buildSaveButton() {
-      return !edited ? SizedBox.shrink() : AnimatedOpacity(
-        duration: Duration(milliseconds: 500),
-        opacity: edited ? 1.0 : 0.0,
+      return Visibility(
+        visible: edited,
         child: CustomButton(
           height: 60.0,
           width: MediaQuery.of(context).size.width,
