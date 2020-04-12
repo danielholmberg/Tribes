@@ -56,6 +56,8 @@ class UserAvatar extends StatelessWidget {
   final double nameFontSize;
   final UserAvatarDirections direction;
   final EdgeInsets padding;
+  final double strokeWidth;
+  final Color strokeColor;
   UserAvatar({
     this.currentUserID,
     @required this.user,
@@ -68,6 +70,8 @@ class UserAvatar extends StatelessWidget {
     this.nameFontSize = Constants.defaultNameFontSize,
     this.direction = UserAvatarDirections.horizontal,
     this.padding = EdgeInsets.zero,
+    this.strokeWidth = 0.0,
+    this.strokeColor = Colors.white,
   });
 
   @override
@@ -79,22 +83,28 @@ class UserAvatar extends StatelessWidget {
         CachedNetworkImage(
           imageUrl: user.picURL,
           imageBuilder: (context, imageProvider) => Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: color, width: 2.0),
-              color: color,
+            decoration: strokeWidth != 0.0 ? BoxDecoration(
+              border: Border.all(color: Colors.white, width: strokeWidth),
               shape: BoxShape.circle,
-              boxShadow: isMapAvatar ? [
-                BoxShadow(
-                  offset: Offset(1, 1),
-                  blurRadius: 2.0,
-                  color: Colors.black87
-                )
-              ] : null
-            ),
-            child: CircleAvatar(
-              radius: radius,
-              backgroundImage: imageProvider,
-              backgroundColor: Colors.transparent,
+            ) : null,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: color, width: 2.0),
+                color: color,
+                shape: BoxShape.circle,
+                boxShadow: isMapAvatar ? [
+                  BoxShadow(
+                    offset: Offset(1, 1),
+                    blurRadius: 2.0,
+                    color: Colors.black87
+                  )
+                ] : null
+              ),
+              child: CircleAvatar(
+                radius: radius,
+                backgroundImage: imageProvider,
+                backgroundColor: Colors.transparent,
+              ),
             ),
           ),
           placeholder: (context, url) => UserAvatarPlaceholder(radius: radius),
@@ -119,13 +129,13 @@ class UserAvatar extends StatelessWidget {
               children: <Widget>[
                 Visibility(
                   visible: (withName || !onlyAvatar) && !isMapAvatar,
-                  child: Text(withName ? user.name : user.username,
-                    style: TextStyle(
-                      color: color,
-                      fontFamily: 'TribesRounded',
-                      fontWeight: FontWeight.bold,
-                      fontSize: nameFontSize,
-                    ),
+                  child: CustomStrokedText(
+                    text: withName ? user.name : user.username,
+                    textColor: color,
+                    fontWeight: FontWeight.bold,
+                    minFontSize: nameFontSize,
+                    strokeColor: strokeColor,
+                    strokeWidth: strokeWidth,
                   ),
                 ),
                 Visibility(
@@ -140,16 +150,15 @@ class UserAvatar extends StatelessWidget {
                           var addresses = snapshot.data;
                           var first = addresses.first;
                           var location = '${first.addressLine}';
-                          return Text(location,
+                          return CustomStrokedText(
+                            text: location,
                             overflow: TextOverflow.fade,
                             maxLines: 1,
                             softWrap: false,
-                            style: TextStyle(
-                              color: Colors.blueGrey,
-                              fontFamily: 'TribesRounded',
-                              fontSize: 10,
-                              fontWeight: FontWeight.normal
-                            ),
+                            minFontSize: 10,
+                            textColor: strokeWidth != 0.0 ? Colors.white.withOpacity(0.8) : Colors.blueGrey,
+                            fontWeight: FontWeight.normal,
+                            letterSpacing: 0.8,
                           );
                         } else if (snapshot.hasError) {
                           print('Error getting address from coordinates: ${snapshot.error}');
@@ -199,7 +208,7 @@ class UserAvatar extends StatelessWidget {
               text: withName ? user.name : user.username,
               minFontSize: nameFontSize, 
               maxLines: 3,
-              strokeWidth: 3,
+              strokeWidth: strokeWidth,
             ),
           ),
         ],

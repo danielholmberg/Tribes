@@ -108,13 +108,7 @@ class TribeTileCompact extends StatelessWidget {
         color: tribe.color,
         borderRadius: BorderRadius.circular(20.0),
         border: Border.all(color: Colors.black26, width: 2.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black45,
-            blurRadius: 4,
-            offset: Offset(2, 2),
-          ),
-        ]
+        boxShadow: [Constants.defaultBoxShadow],
       ),
       child: Stack(
         alignment: Alignment.center,

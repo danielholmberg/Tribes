@@ -17,8 +17,10 @@ class LikeButton extends StatelessWidget {
     return IconButton(
         splashColor: Colors.transparent,
         color: Constants.backgroundColor,
-        icon: CustomAwesomeIcon(icon: likedByUser ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart, 
+        icon: CustomAwesomeIcon(
+          icon: likedByUser ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart, 
           color: color,
+          strokeWidth: 4,
         ),
         onPressed: () {
           if (likedByUser) {

@@ -37,6 +37,12 @@ const inputEnabledColor = Color(0x50ed217c);
 const inputFocusColor = primaryColor;
 const inputCounterColor = inputEnabledColor;
 
+const defaultBoxShadow = BoxShadow(
+  color: Colors.black45,
+  blurRadius: 4,
+  offset: Offset(2, 2),
+);
+
 // AppBar
 const appBarElevation = 0.0;
 const appBarColor = primaryColor;

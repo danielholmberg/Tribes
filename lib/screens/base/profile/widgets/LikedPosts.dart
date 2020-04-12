@@ -1,4 +1,3 @@
-import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/models/Post.dart';
@@ -7,7 +6,6 @@ import 'package:tribes/screens/base/tribes/widgets/PostTileCompact.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
-import 'package:tribes/shared/constants.dart' as Constants;
 
 class LikedPosts extends StatefulWidget {
   final UserData user;
@@ -26,17 +24,15 @@ class _LikedPostsState extends State<LikedPosts> with AutomaticKeepAliveClientMi
 
     return ScrollConfiguration(
       behavior: CustomScrollBehavior(),
-      child: StaggeredGridView.countBuilder(
+      child: GridView.builder(
         itemCount: widget.user.likedPosts.length,
-        staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-        crossAxisCount: 4,
-        mainAxisSpacing: 4.0,
-        crossAxisSpacing: 4.0,
-        padding: EdgeInsets.fromLTRB(
-          Constants.defaultPadding, 
-          Constants.defaultPadding, 
-          Constants.defaultPadding, 
-          80.0
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 80.0),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          childAspectRatio: 1.0,
+          crossAxisCount: 3,
+          mainAxisSpacing: 8.0,
+          crossAxisSpacing: 8.0,
         ),
         itemBuilder: (context, index) {
           return StreamBuilder<Post>(

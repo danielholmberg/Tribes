@@ -103,6 +103,13 @@ class _TribeRoomState extends State<TribeRoom> {
                   fontWeight: FontWeight.bold,
                   fontFamily: 'TribesRounded',
                   color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 2,
+                      color: Colors.black45
+                    ),
+                  ],
                 ),
               ),
             ),
