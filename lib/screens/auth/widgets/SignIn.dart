@@ -71,6 +71,7 @@ class _SignInState extends State<SignIn> {
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
                         focusNode: emailFocus,
+                        cursorRadius: Radius.circular(1000),
                         keyboardType: TextInputType.emailAddress,
                         decoration: Decorations.signInInput.copyWith(
                           hintText: 'Email', 
@@ -87,6 +88,7 @@ class _SignInState extends State<SignIn> {
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
                         focusNode: passwordFocus,
+                        cursorRadius: Radius.circular(1000),
                         obscureText: true,
                         decoration: Decorations.signInInput.copyWith(
                           hintText: 'Password', 

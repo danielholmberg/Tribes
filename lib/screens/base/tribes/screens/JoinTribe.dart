@@ -224,6 +224,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                     focusNode: oneNode,
                                     autofocus: true,
                                     textInputAction: TextInputAction.next,
+                                    cursorRadius: Radius.circular(1000),
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
@@ -271,6 +272,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   child: TextFormField(
                                     focusNode: twoNode,
                                     textInputAction: TextInputAction.next,
+                                    cursorRadius: Radius.circular(1000),
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
@@ -319,6 +321,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   child: TextFormField(
                                     focusNode: threeNode,
                                     textInputAction: TextInputAction.next,
+                                    cursorRadius: Radius.circular(1000),
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
@@ -367,6 +370,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   child: TextFormField(
                                     focusNode: fourNode,
                                     textInputAction: TextInputAction.next,
+                                    cursorRadius: Radius.circular(1000),
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
@@ -415,6 +419,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   child: TextFormField(
                                     focusNode: fiveNode,
                                     textInputAction: TextInputAction.next,
+                                    cursorRadius: Radius.circular(1000),
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,
@@ -463,6 +468,7 @@ class _JoinTribeState extends State<JoinTribe> {
                                   child: TextFormField(
                                     focusNode: sixNode,
                                     textInputAction: TextInputAction.done,
+                                    cursorRadius: Radius.circular(1000),
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.number,
                                     maxLength: 1,

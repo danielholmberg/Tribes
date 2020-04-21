@@ -286,6 +286,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                       ),
                       content: Container(
                         child: TextFormField(
+                          cursorRadius: Radius.circular(1000),
                           textCapitalization: TextCapitalization.words,
                           decoration: Decorations.tribeSettingsInput.copyWith(
                             hintText: currentTribe.name,
@@ -454,6 +455,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                   children: <Widget>[
                                     TextFormField(
                                       focusNode: nameFocus,
+                                      cursorRadius: Radius.circular(1000),
                                       initialValue: currentTribe.name,
                                       maxLength: Constants.tribeNameMaxLength,
                                       textCapitalization:
@@ -487,6 +489,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                     SizedBox(height: Constants.smallSpacing),
                                     TextFormField(
                                       focusNode: descFocus,
+                                      cursorRadius: Radius.circular(1000),
                                       initialValue: currentTribe.desc,
                                       textCapitalization:
                                           TextCapitalization.sentences,
@@ -520,9 +523,9 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                                     SizedBox(height: Constants.smallSpacing),
                                     TextFormField(
                                       focusNode: passwordFocus,
+                                      cursorRadius: Radius.circular(1000),
                                       initialValue: currentTribe.password,
-                                      textCapitalization:
-                                          TextCapitalization.sentences,
+                                      textCapitalization: TextCapitalization.sentences,
                                       keyboardType: TextInputType.number,
                                       maxLength: 6,
                                       maxLines: null,

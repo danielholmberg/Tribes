@@ -78,16 +78,16 @@ class TribeMessages extends StatelessWidget {
                 StreamBuilder<UserData>(
                   stream: DatabaseService().userData(message.senderID),
                   builder: (context, snapshot) {
-                    return snapshot.hasData 
-                    ? UserAvatar(
+                    if(snapshot.hasError) {
+                      print('Error retrieving sender data: ${snapshot.error.toString()}');
+                    } 
+
+                    return UserAvatar(
                       currentUserID: currentUser.uid,
                       user: snapshot.data, 
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       radius: 14, 
                       onlyAvatar: true
-                    ) : UserAvatarPlaceholder(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0), 
-                      radius: 14,
                     );
                   }
                 ),
@@ -111,17 +111,17 @@ class TribeMessages extends StatelessWidget {
               StreamBuilder<UserData>(
                 stream: DatabaseService().userData(message.senderID),
                 builder: (context, snapshot) {
-                  return snapshot.hasData 
-                  ? UserAvatar(
+                  if(snapshot.hasError) {
+                    print('Error retrieving sender data: ${snapshot.error.toString()}');
+                  }
+
+                  return UserAvatar(
                     currentUserID: currentUser.uid,
                     user: snapshot.data, 
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     color: currentTribe.color, 
                     radius: 14, 
                     onlyAvatar: true
-                  ) : UserAvatarPlaceholder(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    radius: 14,
                   );
                 }
               ),

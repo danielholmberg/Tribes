@@ -107,7 +107,7 @@ const postTileContentMaxLines = 10;
 const postTileScaleFactor = 0.5;
 const postTileCompactScaleFactor = 1.0;
 const postTileCompactImageHeight = 80.0;
-const imageGridViewPadding = EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0);
+const imageGridViewPadding = EdgeInsets.fromLTRB(0.0, 12.0, 16.0, 8.0);
 const imageGridViewCrossAxisSpacing = 16.0;
 const imageGridViewMainAxisSpacing = 16.0;
 

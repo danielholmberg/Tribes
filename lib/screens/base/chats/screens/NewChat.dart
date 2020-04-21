@@ -63,7 +63,15 @@ class _NewChatState extends State<NewChat> {
     _friendTile(UserData friend) {
       return ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-        leading: UserAvatar(currentUserID: widget.currentUserID, user: friend, radius: 20, withName: true),
+        leading: UserAvatar(
+          currentUserID: widget.currentUserID, 
+          user: friend, 
+          radius: 20, 
+          withName: true,
+          color: DynamicTheme.of(context).data.primaryColor,
+          textColor: DynamicTheme.of(context).data.primaryColor,
+          textPadding: const EdgeInsets.only(left: 8.0),
+        ),
         trailing: FloatingActionButton(
           heroTag: 'newChatButton-${friend.uid}',
           elevation: 4.0,

@@ -44,8 +44,9 @@ const registerInput = InputDecoration(
 
 const postInput = InputDecoration(
   border: InputBorder.none,
-  fillColor: Colors.white,
+  fillColor: Colors.transparent,
   filled: true,
+  isDense: true,
   contentPadding: EdgeInsets.zero,
   hintStyle: TextStyle(fontFamily: 'TribesRounded'),
   counterStyle: TextStyle(color: Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
@@ -56,6 +57,7 @@ const postInput = InputDecoration(
 const newTribeInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
+  isDense: true,
   hintText: 'Content',
   hintStyle: TextStyle(fontFamily: 'TribesRounded'),
   counterStyle: TextStyle(color: Constants.inputCounterColor, fontFamily: 'TribesTrounded'),
@@ -134,7 +136,6 @@ const tribePasswordInput = InputDecoration(
   fillColor: Constants.backgroundColor,
   filled: true,
   hintStyle: TextStyle(color: Colors.black26, fontFamily: 'TribeRounded'),
-  hintText: '0',
   contentPadding: EdgeInsets.zero,
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(8.0)),

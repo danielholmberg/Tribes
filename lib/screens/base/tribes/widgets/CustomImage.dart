@@ -29,7 +29,6 @@ class CustomImage extends StatelessWidget {
     _buildImage(ImageProvider imageProvider) {
       return Container(
         color: Colors.black12,
-        height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
         width: fullscreen ? null : MediaQuery.of(context).size.width,
         child: Image(
           image: imageProvider, 
@@ -40,7 +39,6 @@ class CustomImage extends StatelessWidget {
 
     _buildPlaceholder() {
       return Container(
-        height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
         width: fullscreen ? null : MediaQuery.of(context).size.width,
         child: fullscreen ? Center(child: CircularProgressIndicator()) : Loading(color: color),
       );
@@ -48,7 +46,6 @@ class CustomImage extends StatelessWidget {
 
     _buildError() {
       return Container(
-        height: MediaQuery.of(context).size.height * Constants.postTileScaleFactor,
         width: fullscreen ? null : MediaQuery.of(context).size.width,
         child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
       );

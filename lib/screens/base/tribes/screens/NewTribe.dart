@@ -316,6 +316,7 @@ class _NewTribeState extends State<NewTribe> {
                                   children: <Widget>[
                                     TextFormField(
                                       focusNode: nameFocus,
+                                      cursorRadius: Radius.circular(1000),
                                       textCapitalization: TextCapitalization.words,
                                       maxLength: Constants.tribeNameMaxLength,
                                       cursorColor: tribeColor ?? Constants.primaryColor,
@@ -352,6 +353,7 @@ class _NewTribeState extends State<NewTribe> {
                                     SizedBox(height: Constants.smallSpacing),
                                     TextFormField(
                                       focusNode: descFocus,
+                                      cursorRadius: Radius.circular(1000),
                                       textCapitalization: TextCapitalization.sentences,
                                       keyboardType: TextInputType.multiline,
                                       maxLength: Constants.tribeDescMaxLength,

@@ -83,78 +83,82 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
       );
     }
 
-    _buildDescription() {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
+    _buildChief() {
+      return Row(
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Container(
-            alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Text('Description', style: TextStyle(color: Colors.black54, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ), 
-          Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(12.0),
-            child: Text(
-              currentTribe.desc,
-              style: TextStyle(
-                color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                fontSize: 14.0,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'TribesRounded',
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Text('Chief', style: TextStyle(color: Colors.black54, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                  SizedBox(width: 12.0),
+                  StreamBuilder<UserData>(
+                    stream: DatabaseService().userData(currentTribe.founder),
+                    builder: (context, snapshot) {
+
+                      if(snapshot.hasError) {
+                        print('Error getting founder user data: ${snapshot.error.toString()}');
+                      }
+
+                      return UserAvatar(
+                        currentUserID: currentUser.uid, 
+                        user: snapshot.data, 
+                        color: currentTribe.color,
+                        radius: 12,
+                        strokeWidth: 2.0,
+                        strokeColor: Colors.white,
+                        padding: const EdgeInsets.all(6.0),
+                        withDecoration: true,
+                        textPadding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
+                        textColor: Colors.white,
+                      );
+                      
+                    }
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
             ),
           ),
         ],
       );
     }
 
-    _buildChief() {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
+    _buildDescription() {
+      return Row(
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Text('Chief', style: TextStyle(color: Colors.black54, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                StreamBuilder<UserData>(
-                  stream: DatabaseService().userData(currentTribe.founder),
-                  builder: (context, snapshot) {
-
-                    if(snapshot.hasData) {
-                      return UserAvatar(currentUserID: currentUser.uid, user: snapshot.data, color: currentTribe.color);
-                    } else if(snapshot.hasError) {
-                      print('Error getting founder user data: ${snapshot.error.toString()}');
-                      return UserAvatarPlaceholder(child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)));
-                    } else {
-                      return UserAvatarPlaceholder();
-                    }
-                    
-                  }
+          Expanded(
+            child: Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('Description', style: TextStyle(color: Colors.black54, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)), 
+                    Text(
+                      currentTribe.desc,
+                      softWrap: true,
+                      style: TextStyle(
+                        color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'TribesRounded',
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ],
@@ -162,29 +166,27 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
     }
 
     _buildPassword() {
-      return Column(
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            alignment: Alignment.center,
+            padding: const EdgeInsets.all(12.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Text('Password', style: TextStyle(color: Colors.black54, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                SizedBox(width: 8.0),
+                Text(currentTribe.password, 
+                  style: TextStyle(
+                    fontFamily: 'TribesRounded',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 24,
+                    letterSpacing: 6.0,
+                  ),
+                ),
               ],
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(12.0),
-            child: Text(currentTribe.password, 
-              style: TextStyle(
-                fontFamily: 'TribesRounded',
-                fontWeight: FontWeight.w600,
-                fontSize: 24,
-                letterSpacing: 6.0,
-              ),
             ),
           ),
         ],
@@ -194,6 +196,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
     _buildLeaveTribeButton() {
       return Container(
         alignment: Alignment.center,
+        margin: const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: () {
             if(isFounder) {
@@ -268,6 +271,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                               ),
                               TextFormField(
                                 textCapitalization: TextCapitalization.words,
+                                cursorRadius: Radius.circular(1000),
                                 decoration: Decorations.tribeDetailsInput.copyWith(
                                   hintText: currentTribe.name,
                                   labelStyle: TextStyle(
@@ -407,8 +411,8 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                   shrinkWrap: true,
                   padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
                   children: <Widget>[
-                    _buildDescription(),
                     _buildChief(),
+                    _buildDescription(),
                     _buildPassword(),
                     _buildLeaveTribeButton(),
                   ],

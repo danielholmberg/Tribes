@@ -1,22 +1,27 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/base/tribes/screens/EditPost.dart';
 import 'package:tribes/screens/base/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/shared/constants.dart' as Constants;
-import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
-import 'package:tribes/shared/widgets/CustomStrokedText.dart';
-import 'package:tribes/shared/widgets/LikeButton.dart';
+import 'package:tribes/shared/widgets/PostedDateTime.dart';
 import 'package:tribes/shared/widgets/UserAvatar.dart';
 
-class PostTileCompact extends StatelessWidget {
+class PostTileCompact extends StatefulWidget {
   final Post post;
+  final UserData user;
   final bool viewOnly;
-  PostTileCompact({@required this.post, this.viewOnly = false});
+  PostTileCompact({@required this.post, @required this.user, this.viewOnly = false});
+
+  @override
+  _PostTileCompactState createState() => _PostTileCompactState();
+}
+
+class _PostTileCompactState extends State<PostTileCompact> with TickerProviderStateMixin {
+
+  double cornerRadius = 10.0;
 
   @override
   Widget build(BuildContext context) {
@@ -24,149 +29,139 @@ class PostTileCompact extends StatelessWidget {
     print('Building Profile()...');
     print('Current user ${currentUser.uid}');
 
-    bool isAuthor = currentUser.uid == post.author;
-    bool hasImages = post.images.isNotEmpty;
+    bool currentUserIsAuthor = currentUser.uid == widget.post.author;
+    bool showUserAvatar = widget.user.uid != widget.post.author;
 
-    _postTileHeader() {
+    _postHeader() {
       return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Expanded(
-            child: StreamBuilder<UserData>(
-              stream: DatabaseService().userData(post.author),
-              builder: (context, snapshot) {
-                if(snapshot.hasData) {
+          AnimatedSize(
+            vsync: this,
+            alignment: Alignment.centerLeft,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.fastOutSlowIn,
+            child: Container(
+              margin: const EdgeInsets.only(top: 4.0, left: 4.0),
+              child: StreamBuilder<UserData>(
+                stream: DatabaseService().userData(widget.post.author),
+                builder: (context, snapshot) {
+                  if(snapshot.hasError) {
+                    print('Error retrieving author data: ${snapshot.error.toString()}');
+                  } 
+                  
                   return UserAvatar(
                     currentUserID: currentUser.uid, 
-                    user: snapshot.data,
-                    radius: 10, 
-                    nameFontSize: 9,
-                    color: DynamicTheme.of(context).data.primaryColor, 
-                    strokeWidth: hasImages ? 1.0 : 0.0,
+                    user: snapshot.data, 
+                    color: DynamicTheme.of(context).data.primaryColor,
+                    disable: widget.viewOnly,
+                    radius: 6,
+                    nameFontSize: 6,
+                    strokeWidth: 1.0,
                     strokeColor: Colors.white,
+                    padding: const EdgeInsets.all(2.0),
+                    withDecoration: true,
+                    textPadding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
+                    textColor: Colors.white,
                   );
-                } else if(snapshot.hasError) {
-                  print('Error retrieving author data: ${snapshot.error.toString()}');
-                  return UserAvatarPlaceholder(child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)));
-                } else {
-                  return UserAvatarPlaceholder();
                 }
-              }
+              ),
             ),
           ),
         ],
       );
     }
 
-    _postTileFooter() {
+    _buildDateAndTimeWidget() {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+        decoration: BoxDecoration(
+          color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(1000),
+        ),
+        child: SingleChildScrollView(
+          physics: ClampingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          child: PostedDateTime(
+            vsync: this,
+            alignment: Alignment.centerRight,
+            timestamp: widget.post.created, 
+            color: Colors.white,
+            fontSize: 6,
+            expandedHorizontalPadding: 2.0,
+          ),
+        ),
+      );
+    }
+
+    _postDetailsRow() {
       return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-            // Left Icons placeholder
-            ],
+          ConstrainedBox(
+            constraints: (BoxConstraints(maxWidth: MediaQuery.of(context).size.width/3)),
+            child: _buildDateAndTimeWidget(),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CustomStrokedText(
-                  text: '${post.likes}',
-                  textColor: DynamicTheme.of(context).data.primaryColor,
-                  strokeColor: Colors.white,
-                  minFontSize: 8,
-                  fontWeight: FontWeight.bold,
-                  strokeWidth: 4,
-                ),
-              ),
-            ],
-          ),           
         ],
       );
     }
 
-    _postTileMain() {
+    _postImagesCompactContent() {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(cornerRadius),
         child: Stack(
-          alignment: Alignment.topCenter,
+          alignment: Alignment.center,
           children: <Widget>[
-
-            // Images
-            Visibility(
-              visible: hasImages,
-              child: ImageCarousel(images: post.images, small: true),
+            ImageCarousel(
+              images: widget.post.images, 
+              color: DynamicTheme.of(context).data.primaryColor,
+              indicatorPosition: IndicatorPosition.topRight,
+              small: true,
             ),
-
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  // Header
-                  Container(
-                    padding: EdgeInsets.fromLTRB(4.0, 4.0, 0.0, 0.0),
-                    child: _postTileHeader()
-                  ),
-                  
-                  // Title
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 0.0),
-                    child: CustomStrokedText(
-                      text: post.title,
-                      textColor: hasImages ? Colors.white : Colors.black,
-                      textAlign: TextAlign.start,
-                      strokeColor: Colors.black87,
-                      strokeWidth: hasImages ? 4.0 : 0.0,
-                      letterSpacing: 1.0,
-                      maxLines: null,
-                      fontWeight: DynamicTheme.of(context).data.textTheme.title.fontWeight,
-                      minFontSize: 12,
-                    ),
-                  ),
-
-                  // Content
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.0),
-                    child: CustomStrokedText(
-                      text: post.content,
-                      textColor: hasImages ? Colors.white : Colors.black,
-                      textAlign: TextAlign.start,
-                      strokeColor: Colors.black,
-                      strokeWidth: hasImages ? 2.0 : 0.0,
-                      maxLines: 3,
-                      overflow: TextOverflow.fade,
-                      fontWeight: DynamicTheme.of(context).data.textTheme.body1.fontWeight,
-                      minFontSize: 8,
-                    ),
-                  ),
-                ],
-              ),
-
-            // Footer
             Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _postTileFooter(),
+              top: 0.0,
+              left: 0.0,
+              right: 0.0,
+              child: Visibility(
+                visible: showUserAvatar, 
+                child: _postHeader(),
+              ),
             ),
+            Positioned(
+              bottom: 4.0,
+              left: 4.0,
+              right: 4.0,
+              child: _postDetailsRow(),
+            ),            
           ],
         ),
       );
     }
 
+    _buildCompactCard() {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black54,
+              blurRadius: 2,
+              offset: Offset(0, 1),
+            ),
+          ]
+        ),
+        child: _postImagesCompactContent(),
+      );
+    }
+
     return GestureDetector(
-      onTap: viewOnly ? null : () {
-        if(isAuthor) {
+      onTap: widget.viewOnly ? null : () {
+        if(currentUserIsAuthor && !widget.viewOnly) {
           showModalBottomSheet(
             context: context,
             isDismissible: false,
@@ -181,7 +176,7 @@ class PostTileCompact extends StatelessWidget {
                       topLeft: Radius.circular(20.0),
                       topRight: Radius.circular(20.0),
                     ),
-                    child: EditPost(post: post),
+                    child: EditPost(post: widget.post),
                   ),
                 ),
               );
@@ -197,14 +192,7 @@ class PostTileCompact extends StatelessWidget {
           );
         }
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: DynamicTheme.of(context).data.backgroundColor,
-          borderRadius: BorderRadius.circular(10.0),
-          boxShadow: [Constants.defaultBoxShadow],
-        ),
-        child: _postTileMain()
-        ),
+      child: _buildCompactCard(),
     );
   }
 }

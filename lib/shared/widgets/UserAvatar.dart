@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,228 +15,172 @@ enum UserAvatarDirections {
   horizontal
 }
 
-class UserAvatarPlaceholder extends StatelessWidget {
-  final Widget child;
-  final double radius;
-  final EdgeInsets padding;
-  UserAvatarPlaceholder({
-    this.child,
-    this.radius = Constants.defaultProfilePicRadius,
-    this.padding = EdgeInsets.zero,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: radius * 2,
-      width: radius * 2,
-      padding: EdgeInsets.zero,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.transparent, width: 2.0),
-        color: Colors.transparent,
-        shape: BoxShape.circle,
-      ),
-      child: CircleAvatar(
-        radius: Constants.defaultProfilePicRadius,
-        backgroundColor: Colors.transparent,
-        child: child,
-      ),
-    );
-  }
-}
-
 class UserAvatar extends StatelessWidget {
   final String currentUserID;
   final UserData user;
   final Color color;
-  final Future addressFuture;
   final bool onlyAvatar;
   final bool withName; 
-  final bool withTextDecoration;
   final double radius;
   final double nameFontSize;
   final UserAvatarDirections direction;
   final EdgeInsets padding;
   final double strokeWidth;
   final Color strokeColor;
+  final BoxDecoration decoration;
+  final BoxShadow shadow;
+  final bool withDecoration;
+  final EdgeInsets textPadding;
+  final Color textColor;
+  final bool disable;
   UserAvatar({
     this.currentUserID,
     @required this.user,
     this.color = Constants.primaryColor, 
-    this.addressFuture, 
     this.onlyAvatar = false, 
     this.withName = false, 
-    this.withTextDecoration = false,
     this.radius = Constants.defaultProfilePicRadius,
     this.nameFontSize = Constants.defaultNameFontSize,
     this.direction = UserAvatarDirections.horizontal,
-    this.padding = EdgeInsets.zero,
-    this.strokeWidth = 0.0,
+    this.padding,
+    this.strokeWidth = 2.0,
     this.strokeColor = Colors.white,
+    this.decoration,
+    this.shadow,
+    this.withDecoration = false,
+    this.textPadding = EdgeInsets.zero,
+    this.textColor = Colors.white,
+    this.disable = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    
     bool isMapAvatar = direction == UserAvatarDirections.vertical;
 
-    _layout() {
-      return [
-        CachedNetworkImage(
-          imageUrl: user.picURL,
-          imageBuilder: (context, imageProvider) => Container(
-            decoration: strokeWidth != 0.0 ? BoxDecoration(
-              border: Border.all(color: Colors.white, width: strokeWidth),
-              shape: BoxShape.circle,
-            ) : null,
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: color, width: 2.0),
-                color: color,
-                shape: BoxShape.circle,
-                boxShadow: isMapAvatar ? [
-                  BoxShadow(
-                    offset: Offset(1, 1),
-                    blurRadius: 2.0,
-                    color: Colors.black87
-                  )
-                ] : null
-              ),
-              child: CircleAvatar(
-                radius: radius,
-                backgroundImage: imageProvider,
-                backgroundColor: Colors.transparent,
-              ),
+    _circleAvatar({ImageProvider imageProvider, Widget child}) {
+      return Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.transparent,
+          border: Border.all(color: color.withOpacity(0.8), width: strokeWidth),
+        ),
+        child: CircleAvatar(
+          radius: radius,
+          backgroundImage: imageProvider,
+          backgroundColor: Colors.transparent,
+          child: child,
+        ),
+      );
+    }
+
+    _placeholderLayout() {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          _circleAvatar(),
+        ],
+      );
+    }
+
+    _userAvatarLayout() {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          user != null ? CachedNetworkImage(
+            imageUrl: user.picURL,
+            imageBuilder: (context, imageProvider) => _circleAvatar(imageProvider: imageProvider),
+            placeholder: (context, url) => _circleAvatar(),
+            errorWidget: (context, url, error) => _circleAvatar(
+              child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
             ),
-          ),
-          placeholder: (context, url) => UserAvatarPlaceholder(radius: radius),
-          errorWidget: (context, url, error) => UserAvatarPlaceholder(
-            child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
-          ),
-        ),
-        Visibility(
-          visible: !onlyAvatar || withName,
-          child: isMapAvatar 
-            ? SizedBox(height: 0.0)
-            : SizedBox(width: Constants.mediumPadding)
-        ),
-        Visibility(
-          visible: !onlyAvatar || withName,
-          child: Expanded(
-            flex: addressFuture != null ? 1 : 0,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Visibility(
-                  visible: (withName || !onlyAvatar) && !isMapAvatar,
-                  child: CustomStrokedText(
-                    text: withName ? user.name : user.username,
-                    textColor: color,
+          ) : _circleAvatar(),
+          Visibility(
+            visible: !onlyAvatar || withName,
+            child: Padding(
+              padding: textPadding ?? EdgeInsets.symmetric(horizontal: (isMapAvatar ? 0.0 : 4.0)),
+              child: Visibility(
+                visible: (withName || !onlyAvatar) && !isMapAvatar,
+                child: AutoSizeText(
+                  user != null ? withName ? user.name : user.username : '',
+                  maxFontSize: nameFontSize,
+                  minFontSize: 6,
+                  style: TextStyle(
+                    color: textColor ?? Colors.white,
                     fontWeight: FontWeight.bold,
-                    minFontSize: nameFontSize,
-                    strokeColor: strokeColor,
-                    strokeWidth: strokeWidth,
-                  ),
+                    fontFamily: 'TribesRounded'
+                  )
                 ),
-                Visibility(
-                  visible: addressFuture != null,
-                  child: SingleChildScrollView(
-                    physics: ClampingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    child: FutureBuilder(
-                      future: addressFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          var addresses = snapshot.data;
-                          var first = addresses.first;
-                          var location = '${first.addressLine}';
-                          return CustomStrokedText(
-                            text: location,
-                            overflow: TextOverflow.fade,
-                            maxLines: 1,
-                            softWrap: false,
-                            minFontSize: 10,
-                            textColor: strokeWidth != 0.0 ? Colors.white.withOpacity(0.8) : Colors.blueGrey,
-                            fontWeight: FontWeight.normal,
-                            letterSpacing: 0.8,
-                          );
-                        } else if (snapshot.hasError) {
-                          print('Error getting address from coordinates: ${snapshot.error}');
-                          return SizedBox.shrink();
-                        } else {
-                          return SizedBox.shrink();
-                        }
-                        
-                      }
-                    ),
-                  ),
-                ),
-                
-                ],
+              ),
             ),
           ),
-        ),
-      ];
+        ],
+      );
     }
 
     return Container(
       padding: padding,
-      decoration: withTextDecoration ? BoxDecoration(
-        color: Constants.backgroundColor,
-        borderRadius: BorderRadius.circular(20.0),
+      decoration: withDecoration ? BoxDecoration(
+        color: color.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(1000.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black54,
-            blurRadius: 4.0,
-            spreadRadius: 0.0,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ) : null,
+            offset: Offset(0, 0),
+            blurRadius: 2.0,
+            color: color.withOpacity(0.5)
+          )
+        ]
+      ) : (shadow != null ? BoxDecoration(borderRadius: BorderRadius.circular(1000), boxShadow: [shadow]) : null),
       child: isMapAvatar
       ? Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: _layout(), 
-          ),
-          Container(
-            width: 30,
-            child: CustomStrokedText(
-              text: withName ? user.name : user.username,
-              minFontSize: nameFontSize, 
-              maxLines: 3,
-              strokeWidth: strokeWidth,
-            ),
+          _userAvatarLayout(),
+          CustomStrokedText(
+            text: withName ? '${user.name[0].toUpperCase()}${user.name[1]}' : '${user.username[0].toUpperCase()}${user.username[1]}',
+            minFontSize: nameFontSize, 
+            maxLines: 1,
+            letterSpacing: 2.0,
+            strokeWidth: strokeWidth,
+            strokeColor: color.withOpacity(0.8),
           ),
         ],
       ) 
-      : GestureDetector(
-        onTap: () => showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            contentPadding: EdgeInsets.zero,
-            content: Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: StreamProvider<UserData>.value(
-                  value: DatabaseService().currentUser(currentUserID),
-                  child: Profile(user: user),
+      : ClipRRect(
+        borderRadius: BorderRadius.circular(1000),
+        child: AnimatedCrossFade(
+          duration: Duration(milliseconds: 300),
+          alignment: Alignment.center,
+          firstCurve: Curves.easeOut,
+          secondCurve: Curves.easeIn,
+          crossFadeState: user == null ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+          firstChild: _placeholderLayout(),
+          secondChild: GestureDetector(
+            onTap: disable ? null : () => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                contentPadding: EdgeInsets.zero,
+                content: Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: StreamProvider<UserData>.value(
+                      value: DatabaseService().currentUser(currentUserID),
+                      child: Profile(user: user),
+                    ),
+                  ),
                 ),
               ),
             ),
+            child: _userAvatarLayout(),
           ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: _layout()),
       ),
     );
   }

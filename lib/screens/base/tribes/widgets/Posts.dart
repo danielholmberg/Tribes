@@ -59,7 +59,7 @@ class Posts extends StatelessWidget {
     return Container(
       child: FirestoreAnimatedList(
         controller: controller,
-        padding: EdgeInsets.only(top: Constants.defaultPadding, bottom: Platform.isIOS ? 94.0 : 86.0),
+        padding: EdgeInsets.only(top: Constants.defaultPadding, bottom: Platform.isIOS ? 8.0 : 4.0),
         query: DatabaseService().posts(tribe.id),
         onLoaded: (snapshot) => currentUser != null 
           ? ((snapshot.documentChanges.first.type == DocumentChangeType.added && snapshot.documents.first.data['author'] == currentUser.uid) 
@@ -73,7 +73,11 @@ class Posts extends StatelessWidget {
           int index,
         ) => FadeTransition(
           opacity: animation,
-          child: PostTile(Post.fromSnapshot(snapshot), tribe.color, this.onEditPostPress),
+          child: PostTile(
+            post: Post.fromSnapshot(snapshot), 
+            tribeColor: tribe.color, 
+            onEditPostPress: this.onEditPostPress
+          ),
         ),
         emptyChild: _buildEmptyListWidget(),
       ),

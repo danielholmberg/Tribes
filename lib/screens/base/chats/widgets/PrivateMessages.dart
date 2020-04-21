@@ -88,7 +88,12 @@ class PrivateMessages extends StatelessWidget {
                           padding: EdgeInsets.only(right: isMe || message == null ? 6.0 : 22.0),
                           child: ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
-                            leading: UserAvatar(currentUserID: currentUser.uid, user: reciever, radius: Constants.chatMessageAvatarSize, onlyAvatar: true),
+                            leading: UserAvatar(
+                              currentUserID: currentUser.uid, 
+                              user: reciever, 
+                              radius: Constants.chatMessageAvatarSize, 
+                              onlyAvatar: true,
+                            ),
                             title: Text(reciever.name,
                               style: TextStyle(
                                 fontFamily: 'TribesRounded',

@@ -5,9 +5,13 @@ import 'package:tribes/shared/constants.dart' as Constants;
 class FullscreenCarouselDialog extends StatelessWidget {
   final List<String> images;
   final Color color;
+  final int initialIndex;
+  final Function onPageChange;
   FullscreenCarouselDialog({
     @required this.images,
     this.color = Constants.primaryColor,
+    this.initialIndex = 0,
+    this.onPageChange,
   });
 
   @override
@@ -21,6 +25,8 @@ class FullscreenCarouselDialog extends StatelessWidget {
           images: images,
           color: color,
           fullscreen: true,
+          initialIndex: initialIndex,
+          onPageChange: onPageChange,
         ),
       ),
     );

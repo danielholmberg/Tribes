@@ -182,14 +182,17 @@ class _ChatRoomState extends State<ChatRoom> {
                 StreamBuilder<UserData>(
                   stream: DatabaseService().userData(message.senderID),
                   builder: (context, snapshot) {
-                    return snapshot.hasData 
-                    ? UserAvatar(
+                    if(snapshot.hasError) {
+                      print('Error retrieving sender data: ${snapshot.error.toString()}');
+                    }
+
+                    return UserAvatar(
                       currentUserID: currentUser.uid,
                       user: snapshot.data, 
                       padding: const EdgeInsets.symmetric(vertical: 6.0), 
                       radius: 14, 
                       onlyAvatar: true
-                    ) : UserAvatarPlaceholder();
+                    );
                   }
                 ),
               ],
@@ -212,17 +215,17 @@ class _ChatRoomState extends State<ChatRoom> {
               StreamBuilder<UserData>(
                 stream: DatabaseService().userData(message.senderID),
                 builder: (context, snapshot) {
-                  return snapshot.hasData 
-                  ? UserAvatar(
+                  if(snapshot.hasError) {
+                    print('Error retrieving sender data: ${snapshot.error.toString()}');
+                  }
+
+                  return UserAvatar(
                     currentUserID: currentUser.uid,
                     user: snapshot.data, 
                     padding: const EdgeInsets.symmetric(vertical: 6.0),
                     color: widget.currentTribe != null ? widget.currentTribe.color : Colors.grey, 
                     radius: 14, 
                     onlyAvatar: true
-                  ) : UserAvatarPlaceholder(
-                    padding: const EdgeInsets.symmetric(vertical: 6.0), 
-                    radius: 14
                   );
                 }
               ),
@@ -267,10 +270,19 @@ class _ChatRoomState extends State<ChatRoom> {
                 textCapitalization: TextCapitalization.sentences,
                 minLines: 1,
                 maxLines: 10,
+                cursorRadius: Radius.circular(1000),
                 cursorColor: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(12.0),
                   border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide(color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide(color: Colors.grey.withOpacity(0.2), width: 2.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide: BorderSide(color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, width: 2.0),
                   ),

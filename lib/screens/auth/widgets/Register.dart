@@ -76,6 +76,7 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
                         focusNode: nameFocus,
+                        cursorRadius: Radius.circular(1000),
                         textCapitalization: TextCapitalization.words,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Full name', 
@@ -92,6 +93,7 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
                         focusNode: usernameFocus,
+                        cursorRadius: Radius.circular(1000),
                         maxLength: Constants.profileUsernameMaxLength,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Username', 
@@ -108,6 +110,7 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: Constants.smallSpacing),
                       TextFormField(
                         focusNode: emailFocus,
+                        cursorRadius: Radius.circular(1000),
                         keyboardType: TextInputType.emailAddress,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Email', 
@@ -124,6 +127,7 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: Constants.defaultSpacing),
                       TextFormField(
                         focusNode: passwordFocus,
+                        cursorRadius: Radius.circular(1000),
                         obscureText: true,
                         decoration: Decorations.registerInput.copyWith(
                           hintText: 'Password', 

@@ -58,12 +58,16 @@ class _NewPostState extends State<NewPost> {
     List<Asset> resultList;
 
     try {
+      int remainingImages = 5 - images.length;
+      String title = remainingImages == 5 ? 
+      "Add images" : "Add $remainingImages more image${remainingImages > 1 ? 's' : ''}";
+
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 5,
+        maxImages: remainingImages,
         enableCamera: true,
         materialOptions: MaterialOptions(
-          actionBarTitle: "Add images",
-          allViewTitle: "Add images",
+          actionBarTitle: title,
+          allViewTitle: title,
           actionBarColor: "#ed217c",  // TO-DO: Change
           actionBarTitleColor: "#ffffff",  // TO-DO: Change
           lightStatusBar: false,
@@ -99,7 +103,7 @@ class _NewPostState extends State<NewPost> {
 
     if(resultList.length > 0) {
       setState(() {
-        images = resultList;
+        images = images + resultList;
         photoButtonIsDisabled = images.length == 5;
       });
     }
@@ -112,6 +116,9 @@ class _NewPostState extends State<NewPost> {
     print('Current user ${currentUser.toString()}');
 
     bool edited = title.isNotEmpty || content.isNotEmpty || images.length > 0;
+    bool step1Completed = title.trim().isNotEmpty;
+    bool step2Completed = content.trim().isNotEmpty;
+    bool step3Completed = images.length > 0;
 
     _buildAppBar() {
       return AppBar(
@@ -133,32 +140,62 @@ class _NewPostState extends State<NewPost> {
             }
           },
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: CustomAwesomeIcon(
-              icon: FontAwesomeIcons.camera,
-              color: (widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor).withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
-            ),                  
-            onPressed: photoButtonIsDisabled ? null : () async => await _loadAssets(),
+        actions: <Widget>[],
+      );
+    }
+
+    _buildNewImageIcon() {
+      return Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          CustomAwesomeIcon(
+            icon: FontAwesomeIcons.camera, 
+            size: 30,
+            color: widget.tribe.color.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+          ), 
+          Positioned(
+            left: 30,
+            top: 30,
+            child: Container(
+              child: CustomAwesomeIcon(
+                icon: FontAwesomeIcons.plus, 
+                size: 14, 
+                color: widget.tribe.color.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+                strokeWidth: 2.0,
+              ),
+            ),
           ),
-          SizedBox(width: 8.0)
         ],
       );
     }
 
-    Widget _buildGridView() {
-      return images.length == 0 ? SizedBox.shrink() : GridView.count(
+    _buildGridView() {
+      return GridView.count(
         crossAxisCount: 3,
         padding: Constants.imageGridViewPadding,
         shrinkWrap: true,
         crossAxisSpacing: Constants.imageGridViewCrossAxisSpacing,
         mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
-        children: List.generate(images.length, (index) {
+        children: <Widget>[
+          GestureDetector(
+            onTap: photoButtonIsDisabled ? null : () async => await _loadAssets(),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                  width: 2.0,
+                  color: widget.tribe.color.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+                ),
+              ),
+              child: _buildNewImageIcon(),
+            ),
+          ),
+        ] + List.generate(images.length, (index) {
+          int _imageNumber = index + 1;
           Asset asset = images[index];
           return PhotoView.customChild(
             backgroundDecoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: widget.tribe.color.withOpacity(0.4), width: 2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black54,
@@ -196,17 +233,43 @@ class _NewPostState extends State<NewPost> {
                       ),
                     ),
                   ),
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: Visibility(
+                      visible: images.length > 1,
+                      child: Container(
+                        height: 24,
+                        width: 24,
+                        decoration: BoxDecoration(
+                          color: widget.tribe.color.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(1000),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$_imageNumber',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                              fontFamily: 'TribesRounded',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           );
-        }),
+        })
       );
     }
 
     _buildPublishButton() {
       return Visibility(
-        visible: edited,
+        visible: step1Completed && step2Completed && step3Completed,
         child: CustomButton(
           icon: FontAwesomeIcons.check,
           height: 60.0, 
@@ -216,16 +279,14 @@ class _NewPostState extends State<NewPost> {
           color: Colors.green,
           iconColor: Colors.white,
           onPressed: () async {                
-            if(_formKey.currentState.validate()) {
+            if(_formKey.currentState.validate() && images.length > 0) {
               setState(() => loading = true);
               List<String> imageURLs = [];
 
-              if(images.length > 0) {
-                await Future.forEach(images, (image) async {
-                  String imageURL = await StorageService().uploadPostImage(image);
-                  imageURLs.add(imageURL);
-                });
-              }
+              await Future.forEach(images, (image) async {
+                String imageURL = await StorageService().uploadPostImage(image);
+                imageURLs.add(imageURL);
+              });
               
               DatabaseService().addNewPost(
                 currentUser.uid, 
@@ -238,6 +299,34 @@ class _NewPostState extends State<NewPost> {
               Navigator.pop(context);
             }
           },
+        ),
+      );
+    }
+
+    _buildStepIndicator(int number, {bool completed = false}) {
+      return Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: completed ? widget.tribe.color.withOpacity(0.6) : Colors.transparent,
+          borderRadius: BorderRadius.circular(1000),
+          border: Border.all(color: widget.tribe.color, width: 2.0)
+        ),
+        child: Center(
+          child: completed ? CustomAwesomeIcon(
+            icon: FontAwesomeIcons.check, 
+            size: 10, 
+            color: Colors.white) 
+          : Text(
+            '$number',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: widget.tribe.color,
+              fontFamily: 'TribesRounded',
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       );
     }
@@ -272,55 +361,87 @@ class _NewPostState extends State<NewPost> {
                   child: ScrollConfiguration(
                     behavior: CustomScrollBehavior(),
                     child: ListView(
-                      padding: EdgeInsets.only(bottom: 76.0),
+                      padding: EdgeInsets.only(bottom: 76.0, right: 16.0),
                       children: <Widget>[
                         Container(
-                          alignment: Alignment.topCenter,
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Form(
-                                key: _formKey,
-                                child: Column(
+                          alignment: Alignment.topLeft,
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
-                                    TextFormField(
-                                      focusNode: titleFocus,
-                                      textCapitalization: TextCapitalization.sentences,
-                                      style: DynamicTheme.of(context).data.textTheme.title,
-                                      cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                      decoration: Decorations.postInput.copyWith(hintText: 'Title'),
-                                      validator: (val) => val.isEmpty 
-                                        ? 'Enter a title' 
-                                        : null,
-                                      onChanged: (val) {
-                                        setState(() => title = val);
-                                      },
-                                      onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+                                      child: _buildStepIndicator(1, completed: step1Completed),
                                     ),
-                                    TextFormField(
-                                      focusNode: contentFocus,
-                                      textCapitalization: TextCapitalization.sentences,
-                                      style: DynamicTheme.of(context).data.textTheme.body1,
-                                      keyboardType: TextInputType.multiline,
-                                      maxLines: null,
-                                      cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                      decoration: Decorations.postInput.copyWith(hintText: 'Content'),
-                                      validator: (val) => val.isEmpty 
-                                        ? 'Enter some content' 
-                                        : null,
-                                      onChanged: (val) {
-                                        setState(() => content = val);
-                                      },
-                                    )
+                                    Expanded(
+                                      child: TextFormField(
+                                        focusNode: titleFocus,
+                                        cursorRadius: Radius.circular(1000),
+                                        cursorWidth: 4,
+                                        textCapitalization: TextCapitalization.sentences,
+                                        style: DynamicTheme.of(context).data.textTheme.title,
+                                        cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                        decoration: Decorations.postInput.copyWith(hintText: 'Title'),
+                                        onChanged: (val) {
+                                          setState(() => title = val);
+                                        },
+                                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
+                                      ),
+                                    ),
                                   ],
                                 ),
-                              ),
-                            ],
+                                SizedBox(height: 4.0),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      child: _buildStepIndicator(2, completed: step2Completed),
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        focusNode: contentFocus,
+                                        cursorRadius: Radius.circular(1000),
+                                        cursorWidth: 2,
+                                        textCapitalization: TextCapitalization.sentences,
+                                        style: DynamicTheme.of(context).data.textTheme.body1,
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
+                                        textAlign: TextAlign.start,
+                                        textAlignVertical: TextAlignVertical.top,
+                                        cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                        decoration: Decorations.postInput.copyWith(hintText: 'Content'),
+                                        onChanged: (val) {
+                                          setState(() => content = val);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                        _buildGridView(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                              child: _buildStepIndicator(3, completed: step3Completed),
+                            ),
+                            Expanded(child: _buildGridView())
+                          ],
+                        ),
                       ],
                     ),
                   ),

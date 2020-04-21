@@ -15,22 +15,21 @@ class LikeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     bool likedByUser = user.likedPosts.contains(postID);
     return IconButton(
-        splashColor: Colors.transparent,
-        color: Constants.backgroundColor,
-        icon: CustomAwesomeIcon(
-          icon: likedByUser ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart, 
-          color: color,
-          strokeWidth: 4,
-        ),
-        onPressed: () {
-          if (likedByUser) {
-            print('User ${user.uid} unliked Post $postID');
-            DatabaseService().unlikePost(user.uid, postID);
-          } else {
-            print('User ${user.uid} liked Post $postID');
-            DatabaseService().likePost(user.uid, postID);
-          }
-        },
-      );
+      splashColor: Colors.transparent,
+      color: Constants.backgroundColor,
+      icon: CustomAwesomeIcon(
+        icon: likedByUser ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart, 
+        color: color,
+      ),
+      onPressed: () {
+        if (likedByUser) {
+          print('User ${user.uid} unliked Post $postID');
+          DatabaseService().unlikePost(user.uid, postID);
+        } else {
+          print('User ${user.uid} liked Post $postID');
+          DatabaseService().likePost(user.uid, postID);
+        }
+      },
+    );
   }
 }

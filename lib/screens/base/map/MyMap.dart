@@ -43,7 +43,11 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
     ); 
 
     // Wait to initialize Google Map until Widget-tree has had the time to initialize.
-    Future.delayed(Duration(milliseconds: 300), () => setState(() => _showMap = true));
+    Future.delayed(Duration(milliseconds: 300), () { 
+      if(this.mounted) {
+        setState(() => _showMap = true);
+      }
+    });
 
     super.initState();
   }
@@ -115,12 +119,19 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Container(
+                              margin: const EdgeInsets.all(8.0),
                               child: UserAvatar(
                                 currentUserID: currentUser.uid,
                                 user: friendsDataList[index], 
-                                padding: const EdgeInsets.all(8.0),
                                 radius: 30, 
-                                nameFontSize: 8, 
+                                shadow: BoxShadow(
+                                  offset: Offset(1, 1),
+                                  blurRadius: 2.0,
+                                  color: Colors.black54,
+                                ),
+                                nameFontSize: 24, 
+                                strokeWidth: 2.0,
+                                strokeColor: DynamicTheme.of(context).data.primaryColor,
                                 direction: UserAvatarDirections.vertical,
                               ),
                             ),

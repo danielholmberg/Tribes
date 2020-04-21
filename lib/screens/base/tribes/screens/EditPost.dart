@@ -40,12 +40,12 @@ class _EditPostState extends State<EditPost> {
 
   String title;
   String content;
-  List<String> images;
+  List<String> oldImages = [];
   String originalTitle;
   String originalContent;
-  List<String> originalImages;
+  List<String> originalImages = [];
 
-  List<Asset> assetImages = [];
+  List<Asset> newImages = [];
 
   @override
   void dispose() {
@@ -58,11 +58,11 @@ class _EditPostState extends State<EditPost> {
   void initState() {
     originalTitle = widget.post.title;
     originalContent = widget.post.content;
-    originalImages = widget.post.images;
+    originalImages = new List<String>.from(widget.post.images);
     title = originalTitle;
     content = originalContent;
-    images = originalImages;
-    photoButtonIsDisabled = images.length == 5;
+    oldImages = new List<String>.from(originalImages);
+    photoButtonIsDisabled = oldImages.length == 5;
 
     Future.delayed(Duration(milliseconds: 650)).then((val) {
       FocusScope.of(context).requestFocus(titleFocus);
@@ -71,16 +71,20 @@ class _EditPostState extends State<EditPost> {
     super.initState();
   }
 
-  Future<void> loadAssets() async {
+  Future<void> _loadAssets() async {
     List<Asset> resultList;
 
     try {
+      int remainingImages = 5 - (oldImages.length + newImages.length);
+      String title = remainingImages == 5 ? 
+      "Add images" : "Add $remainingImages more image${remainingImages > 1 ? 's' : ''}";
+
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 5 - images.length,
+        maxImages: remainingImages,
         enableCamera: true,
         materialOptions: MaterialOptions(
-          actionBarTitle: "Add images",
-          allViewTitle: "Add images",
+          actionBarTitle: title,
+          allViewTitle: title,
           actionBarColor: "#ed217c",  // TO-DO: Change
           actionBarTitleColor: "#ffffff",  // TO-DO: Change
           lightStatusBar: false,
@@ -116,8 +120,8 @@ class _EditPostState extends State<EditPost> {
 
     if(resultList.length > 0) {
       setState(() {
-        assetImages = resultList;
-        photoButtonIsDisabled = (images.length + resultList.length) == 5;
+        newImages += resultList;
+        photoButtonIsDisabled = (oldImages.length + newImages.length) == 5;
       });
     }
   }
@@ -128,7 +132,13 @@ class _EditPostState extends State<EditPost> {
     print('Building EditPost()...');
     print('Current user ${currentUser.toString()}');
 
-    bool edited = originalTitle != title || originalContent != content || !listEquals(images, originalImages) || assetImages.length > 0;
+    print('originalImages: ${originalImages.length}');
+    print('oldImages: ${oldImages.length}');
+
+    bool edited = originalTitle != title || originalContent != content || newImages.length > 0 || (originalImages.length != oldImages.length);
+    bool step1Completed = title.trim().isNotEmpty;
+    bool step2Completed = content.trim().isNotEmpty;
+    bool step3Completed = oldImages.length + newImages.length > 0;
 
     _showDiscardDialog() {
       return showDialog(
@@ -178,13 +188,6 @@ class _EditPostState extends State<EditPost> {
           },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: CustomAwesomeIcon(
-              icon: FontAwesomeIcons.camera,
-              color: (widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor).withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
-            ),                  
-            onPressed: photoButtonIsDisabled ? null : () async => await loadAssets(),
-          ),
           IconButton(
             splashColor: Colors.transparent,
             color: DynamicTheme.of(context).data.backgroundColor,
@@ -242,88 +245,180 @@ class _EditPostState extends State<EditPost> {
       );
     }
 
-    List<Widget> _buildImages(int length, bool asset) {
-      return List.generate(length, (index) {
-        return PhotoView.customChild(
-          backgroundDecoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: widget.tribeColor.withOpacity(0.4), width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black54,
-                blurRadius: 2,
-                offset: Offset(0, 0),
+    _buildNewImageIcon() {
+      return Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          CustomAwesomeIcon(
+            icon: FontAwesomeIcons.camera, 
+            size: 30,
+            color: widget.tribeColor.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+          ), 
+          Positioned(
+            left: 30,
+            top: 30,
+            child: Container(
+              child: CustomAwesomeIcon(
+                icon: FontAwesomeIcons.plus, 
+                size: 14, 
+                color: widget.tribeColor.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+                strokeWidth: 2.0,
               ),
-            ]
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Stack(
-              children: <Widget>[
-                asset ? AssetThumb(
-                  asset: assetImages[index],
-                  width: 300,
-                  height: 300,
-                ) : CustomImage(
-                  imageURL: images[index],
-                  color: widget.tribeColor,
-                  width: 300,
-                  height: 300,
-                  margin: EdgeInsets.zero,
-                ),
-                Positioned(
-                  top: 4,
-                  left: 4,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 1.0),
-                    decoration: BoxDecoration(
-                      color: Colors.black38,
-                      borderRadius: BorderRadius.circular(1000),
-                    ),
-                    child: GestureDetector(
-                      child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
-                      onTap: () {
-                        asset ? assetImages.removeAt(index) : images.removeAt(index);
-
-                        setState(() {
-                          photoButtonIsDisabled = (images.length + assetImages.length) == 5;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
-        );
+        ],
+      );
+    }
+
+    List<Widget> _buildImages(int length, bool isNewImage) {
+      return List.generate(length, (index) {
+        int _imageNumber = index + 1 + (isNewImage ? oldImages.length : 0);
+
+        return PhotoView.customChild(
+            backgroundDecoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 2,
+                  offset: Offset(0, 0),
+                ),
+              ]
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Stack(
+                children: <Widget>[
+                  isNewImage ? AssetThumb(
+                    asset: newImages[index],
+                    width: 300,
+                    height: 300,
+                  ) : CustomImage(
+                    imageURL: oldImages[index],
+                    color: widget.tribeColor,
+                    width: 300,
+                    height: 300,
+                    margin: EdgeInsets.zero,
+                  ),
+                  Positioned(
+                    top: 4,
+                    left: 4,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 1.0),
+                      decoration: BoxDecoration(
+                        color: Colors.black38,
+                        borderRadius: BorderRadius.circular(1000),
+                      ),
+                      child: GestureDetector(
+                        child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
+                        onTap: () {
+                          isNewImage ? newImages.removeAt(index) : oldImages.removeAt(index);
+                          setState(() {
+                            photoButtonIsDisabled = (oldImages.length + newImages.length) == 5;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: Visibility(
+                      visible: oldImages.length + newImages.length > 1,
+                      child: Container(
+                        height: 24,
+                        width: 24,
+                        decoration: BoxDecoration(
+                          color: widget.tribeColor.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(1000),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$_imageNumber',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                              fontFamily: 'TribesRounded',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
       });
     }
 
-    Widget _buildGridView() {
+    _buildGridView() {
       List<Widget> children = [];
 
-      if(images.length > 0) {
-        children += _buildImages(images.length, false);
+      if(oldImages.length > 0) {
+        children += _buildImages(oldImages.length, false);
       }
 
-      if(assetImages.length > 0) {
-        children += _buildImages(assetImages.length, true);
+      if(newImages.length > 0) {
+        children += _buildImages(newImages.length, true);
       }
 
-      return children.length == 0 ? SizedBox.shrink() :
-      GridView.count(
+      return GridView.count(
         crossAxisCount: 3,
         padding: Constants.imageGridViewPadding,
         shrinkWrap: true,
         crossAxisSpacing: Constants.imageGridViewCrossAxisSpacing,
         mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
-        children: children,
+        children: <Widget>[
+          GestureDetector(
+            onTap: photoButtonIsDisabled ? null : () async => await _loadAssets(),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                  width: 2.0,
+                  color: widget.tribeColor.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+                ),
+              ),
+              child: _buildNewImageIcon(),
+            ),
+          ),
+        ] + children,
+      );
+    }
+
+    _buildStepIndicator(int number, {bool completed = false}) {
+      return Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+          color: completed ? widget.tribeColor.withOpacity(0.6) : Colors.transparent,
+          borderRadius: BorderRadius.circular(1000),
+          border: Border.all(color: widget.tribeColor, width: 2.0)
+        ),
+        child: Center(
+          child: completed ? CustomAwesomeIcon(
+            icon: FontAwesomeIcons.check, 
+            size: 10, 
+            color: Colors.white) 
+          : Text(
+            '$number',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: widget.tribeColor,
+              fontFamily: 'TribesRounded',
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       );
     }
 
     _buildSaveButton() {
       return Visibility(
-        visible: edited,
+        visible: (step1Completed && step2Completed && step3Completed) && edited,
         child: CustomButton(
           height: 60.0,
           width: MediaQuery.of(context).size.width,
@@ -334,30 +429,26 @@ class _EditPostState extends State<EditPost> {
           labelColor: Colors.white,
           onPressed: edited ? () async {
             if(_formKey.currentState.validate()) {
-              setState(() { 
-                loading = true;
-              });
+              setState(() => loading = true);
               List<String> imageURLs = [];
 
-              if(assetImages.length > 0) {
-                await Future.forEach(assetImages, (image) async {
-                  String imageURL = await StorageService().uploadPostImage(image);
-                  imageURLs.add(imageURL);
-                });
-              }
+              await Future.forEach(newImages, (image) async {
+                String imageURL = await StorageService().uploadPostImage(image);
+                imageURLs.add(imageURL);
+              });
 
               setState(() {
-                images += imageURLs;
+                oldImages += imageURLs;
               });
 
               DatabaseService().updatePostData(
                 widget.post.id, 
                 title ?? widget.post.title, 
                 content ?? widget.post.content,
-                images ?? widget.post.images,
+                oldImages ?? widget.post.images,
               );
 
-              if(assetImages.length == 0) {
+              if(newImages.length == 0) {
                 _scaffoldKey.currentState.showSnackBar(
                 SnackBar(
                     content: Text('Post saved', 
@@ -375,10 +466,10 @@ class _EditPostState extends State<EditPost> {
               setState(() {
                 loading = false;
                 edited = false;
-                assetImages = [];
+                newImages = [];
                 originalTitle = title;
                 originalContent = content;
-                originalImages = images;
+                originalImages = new List<String>.from(oldImages);
               });
             }
           } : null,
@@ -403,57 +494,98 @@ class _EditPostState extends State<EditPost> {
                   child: ScrollConfiguration(
                     behavior: CustomScrollBehavior(),
                     child: ListView(
-                      padding: EdgeInsets.only(bottom: 86.0),
+                      padding: EdgeInsets.only(bottom: 86.0, right: 16.0),
                       shrinkWrap: true,
                       children: <Widget>[
                         Container(
-                          alignment: Alignment.topCenter,
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          alignment: Alignment.topLeft,
                           child: Form(
                             key: _formKey,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                TextFormField(
-                                  focusNode: titleFocus,
-                                  initialValue: title ?? widget.post.title,
-                                  textCapitalization: TextCapitalization.sentences,
-                                  style: DynamicTheme.of(context).data.textTheme.title,
-                                  cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                  decoration: Decorations.postInput.copyWith(hintText: 'Title'),
-                                  validator: (val) => val.isEmpty 
-                                    ? 'Enter a title' 
-                                    : null,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      title = val;
-                                    });
-                                  },
-                                  onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+                                      child: _buildStepIndicator(1, completed: step1Completed),
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        focusNode: titleFocus,
+                                        cursorRadius: Radius.circular(1000),
+                                        cursorWidth: 4,
+                                        initialValue: title ?? widget.post.title,
+                                        textCapitalization: TextCapitalization.sentences,
+                                        style: DynamicTheme.of(context).data.textTheme.title,
+                                        cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                        decoration: Decorations.postInput.copyWith(hintText: 'Title'),
+                                        validator: (val) => val.isEmpty 
+                                          ? 'Enter a title' 
+                                          : null,
+                                        onChanged: (val) {
+                                          setState(() {
+                                            title = val;
+                                          });
+                                        },
+                                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                TextFormField(
-                                  focusNode: contentFocus,
-                                  initialValue: content ?? widget.post.content,
-                                  textCapitalization: TextCapitalization.sentences,
-                                  style: DynamicTheme.of(context).data.textTheme.body1,
-                                  cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
-                                  keyboardType: TextInputType.multiline,
-                                  maxLines: null,
-                                  decoration: Decorations.postInput.copyWith(hintText: 'Content'),
-                                  validator: (val) => val.isEmpty 
-                                    ? 'Enter some content' 
-                                    : null,
-                                  onChanged: (val) {
-                                    setState((){
-                                      content = val;
-                                    });
-                                  },
+                                SizedBox(height: 4.0),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      child: _buildStepIndicator(2, completed: step2Completed),
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        focusNode: contentFocus,
+                                        cursorRadius: Radius.circular(1000),
+                                        cursorWidth: 2,
+                                        initialValue: content ?? widget.post.content,
+                                        textCapitalization: TextCapitalization.sentences,
+                                        style: DynamicTheme.of(context).data.textTheme.body1,
+                                        cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                        keyboardType: TextInputType.multiline,
+                                        maxLines: null,
+                                        decoration: Decorations.postInput.copyWith(hintText: 'Content'),
+                                        validator: (val) => val.isEmpty 
+                                          ? 'Enter some content' 
+                                          : null,
+                                        onChanged: (val) {
+                                          setState((){
+                                            content = val;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 )
                               ],
                             ),
                           ),
                         ),
-                        _buildGridView(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                              child: _buildStepIndicator(3, completed: step3Completed),
+                            ),
+                            Expanded(child: _buildGridView())
+                          ],
+                        ),
                       ],
                     ),
                   ),

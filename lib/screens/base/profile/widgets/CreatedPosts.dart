@@ -39,7 +39,7 @@ class _CreatedPostsState extends State<CreatedPosts> with AutomaticKeepAliveClie
             builder: (context, snapshot) {
               if(snapshot.hasData) {
                 Post likedPost = snapshot.data;
-                return PostTileCompact(post: likedPost, viewOnly: widget.viewOnly);
+                return PostTileCompact(post: likedPost, user: widget.user, viewOnly: widget.viewOnly);
               } else if(snapshot.hasError) {
                 return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)));
               } else {

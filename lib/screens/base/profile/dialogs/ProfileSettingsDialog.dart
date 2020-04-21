@@ -230,6 +230,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                                   // Name
                                   TextFormField(
                                     focusNode: nameFocus,
+                                    cursorRadius: Radius.circular(1000),
                                     initialValue: name ?? widget.user.name,
                                     textCapitalization: TextCapitalization.words,
                                     textInputAction: TextInputAction.next,
@@ -250,6 +251,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                                   // Username
                                   TextFormField(
                                     focusNode: usernameFocus,
+                                    cursorRadius: Radius.circular(1000),
                                     initialValue: username ?? widget.user.username,
                                     maxLength: Constants.profileUsernameMaxLength,
                                     textInputAction: TextInputAction.next,
@@ -270,6 +272,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                                   // Info
                                   TextFormField(
                                     focusNode: infoFocus,
+                                    cursorRadius: Radius.circular(1000),
                                     initialValue: info ?? widget.user.info,
                                     textCapitalization: TextCapitalization.sentences,
                                     keyboardType: TextInputType.text,

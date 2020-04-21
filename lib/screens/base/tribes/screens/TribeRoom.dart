@@ -93,23 +93,32 @@ class _TribeRoomState extends State<TribeRoom> {
               ],
             ),
             Expanded(
-              child: AutoSizeText(
-                currentTribe.name,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                minFontSize: 18,
-                maxFontSize: 20,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'TribesRounded',
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(1, 1),
-                      blurRadius: 2,
-                      color: Colors.black45
+              child: GestureDetector(
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => StreamProvider<UserData>.value(
+                      value: DatabaseService().currentUser(currentUser.uid), 
+                      child: TribeDetailsDialog(tribe: currentTribe),
                     ),
-                  ],
+                ),
+                child: AutoSizeText(
+                  currentTribe.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  minFontSize: 18,
+                  maxFontSize: 20,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'TribesRounded',
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(1, 1),
+                        blurRadius: 2,
+                        color: Colors.black45
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -119,36 +128,16 @@ class _TribeRoomState extends State<TribeRoom> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget> [
                 IconButton(
-                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.infoCircle), 
+                  icon: CustomAwesomeIcon(icon: FontAwesomeIcons.edit), 
                   splashColor: Colors.transparent,
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => StreamProvider<UserData>.value(
-                          value: DatabaseService().currentUser(currentUser.uid), 
-                          child: TribeDetailsDialog(tribe: currentTribe),
-                        ),
-                    );
+                    _showModalBottomSheet(currentTribe: currentTribe, child: NewPost(tribe: currentTribe));
                   }
                 ),
               ],
             ),
           ],
         ),
-      );
-    }
-
-    _buildAddNewPostButton(Tribe currentTribe) {
-      return CustomButton(
-        height: 60.0,
-        width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.all(16.0),
-        icon: FontAwesomeIcons.plusCircle,
-        color: currentTribe.color,
-        iconColor: Colors.white,
-        label: Text('Add a post', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
-        labelColor: Colors.white,
-        onPressed: () => _showModalBottomSheet(currentTribe: currentTribe, child: NewPost(tribe: currentTribe)),
       );
     }
     
@@ -167,58 +156,47 @@ class _TribeRoomState extends State<TribeRoom> {
               backgroundColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
               body: Container(
                 color: currentTribe.color.withOpacity(0.2) ?? DynamicTheme.of(context).data.backgroundColor,
-                child: Stack(
-                  alignment: Alignment.center,
+                child: Column(
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        _buildAppBar(currentTribe),
-                        Expanded(
-                          child: Container(
-                            key: _postsKey,
-                            decoration: BoxDecoration(
-                              color: DynamicTheme.of(context).data.backgroundColor,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black54,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 0),
-                                ),
-                              ]
+                    _buildAppBar(currentTribe),
+                    Expanded(
+                      child: Container(
+                        key: _postsKey,
+                        decoration: BoxDecoration(
+                          color: DynamicTheme.of(context).data.backgroundColor,
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black54,
+                              blurRadius: 5,
+                              offset: Offset(0, 0),
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0),
-                              ),
-                              child: ScrollConfiguration(
-                                behavior: CustomScrollBehavior(),
-                                child: StreamProvider<UserData>.value(
-                                  value: DatabaseService().currentUser(currentUser.uid),
-                                  child: Posts(
-                                    tribe: currentTribe,
-                                    onEditPostPress: (Post post) => _showModalBottomSheet(
-                                      currentTribe: currentTribe, 
-                                      child: EditPost(post: post, tribeColor: currentTribe.color),
-                                    ), 
-                                    onEmptyTextPress: () => _showModalBottomSheet(
-                                      currentTribe: currentTribe, 
-                                      child: NewPost(tribe: currentTribe),
-                                    ),
-                                  ),
+                          ]
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                          child: ScrollConfiguration(
+                            behavior: CustomScrollBehavior(),
+                            child: StreamProvider<UserData>.value(
+                              value: DatabaseService().currentUser(currentUser.uid),
+                              child: Posts(
+                                tribe: currentTribe,
+                                onEditPostPress: (Post post) => _showModalBottomSheet(
+                                  currentTribe: currentTribe, 
+                                  child: EditPost(post: post, tribeColor: currentTribe.color),
+                                ), 
+                                onEmptyTextPress: () => _showModalBottomSheet(
+                                  currentTribe: currentTribe, 
+                                  child: NewPost(tribe: currentTribe),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    Positioned(
-                      bottom: Platform.isIOS ? 8.0 : 0.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: _buildAddNewPostButton(currentTribe),
+                      ),
                     ),
                   ],
                 ),
