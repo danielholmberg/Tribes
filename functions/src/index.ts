@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-admin.initializeApp();
 
-const fcm = admin.messaging();
-const db = admin.firestore();
+const firebase = admin.initializeApp();
+const fcm = firebase.messaging();
+const db = firebase.firestore();
 
 export const sendToChat = functions.firestore
   .document('chats/{roomID}/messages/{messageID}')
@@ -29,8 +29,8 @@ export const sendToChat = functions.firestore
 
     if(message) {
 
-      await db.collection('users').doc(message.senderID).get().then((snapshot) => {
-        const userData = snapshot.data();
+      await db.collection('users').doc(message.senderID).get().then((snap) => {
+        const userData = snap.data();
         console.log('userData: ' + JSON.stringify(userData));
 
         if(userData) {
