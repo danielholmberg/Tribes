@@ -304,27 +304,43 @@ class _NewPostState extends State<NewPost> {
     }
 
     _buildStepIndicator(int number, {bool completed = false}) {
-      return Container(
-        width: 24,
-        height: 24,
-        decoration: BoxDecoration(
-          color: completed ? widget.tribe.color.withOpacity(0.6) : Colors.transparent,
-          borderRadius: BorderRadius.circular(1000),
-          border: Border.all(color: widget.tribe.color, width: 2.0)
-        ),
-        child: Center(
-          child: completed ? CustomAwesomeIcon(
-            icon: FontAwesomeIcons.check, 
-            size: 10, 
-            color: Colors.white) 
-          : Text(
-            '$number',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: widget.tribe.color,
-              fontFamily: 'TribesRounded',
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+      return GestureDetector(
+        onTap: () async {
+          switch (number) {
+            case 1:
+              titleFocus.requestFocus();
+              break;
+            case 2:
+              contentFocus.requestFocus();
+              break;
+            case 3:
+              if(!photoButtonIsDisabled) await _loadAssets();
+              break;
+            default: return;
+          }
+        },
+        child: Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: completed ? widget.tribe.color.withOpacity(0.6) : Colors.transparent,
+            borderRadius: BorderRadius.circular(1000),
+            border: Border.all(color: widget.tribe.color, width: 2.0)
+          ),
+          child: Center(
+            child: completed ? CustomAwesomeIcon(
+              icon: FontAwesomeIcons.check, 
+              size: 10, 
+              color: Colors.white) 
+            : Text(
+              '$number',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: widget.tribe.color,
+                fontFamily: 'TribesRounded',
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),

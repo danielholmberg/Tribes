@@ -460,7 +460,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(cornerRadius),
           boxShadow: [
             BoxShadow(
               color: Colors.black54,
