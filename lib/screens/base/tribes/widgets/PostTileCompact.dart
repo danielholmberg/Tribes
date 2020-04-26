@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/base/tribes/screens/EditPost.dart';
+import 'package:tribes/screens/base/tribes/screens/PostRoom.dart';
 import 'package:tribes/screens/base/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
-import 'package:tribes/shared/widgets/PostedDateTime.dart';
 import 'package:tribes/shared/widgets/UserAvatar.dart';
 
 class PostTileCompact extends StatefulWidget {
@@ -74,42 +74,6 @@ class _PostTileCompactState extends State<PostTileCompact> with TickerProviderSt
       );
     }
 
-    _buildDateAndTimeWidget() {
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
-        decoration: BoxDecoration(
-          color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(1000),
-        ),
-        child: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          child: PostedDateTime(
-            vsync: this,
-            alignment: Alignment.centerRight,
-            timestamp: widget.post.created, 
-            color: Colors.white,
-            fontSize: 6,
-            expandedHorizontalPadding: 2.0,
-          ),
-        ),
-      );
-    }
-
-    _postDetailsRow() {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          ConstrainedBox(
-            constraints: (BoxConstraints(maxWidth: MediaQuery.of(context).size.width/3)),
-            child: _buildDateAndTimeWidget(),
-          ),
-        ],
-      );
-    }
-
     _postImagesCompactContent() {
       return ClipRRect(
         borderRadius: BorderRadius.circular(cornerRadius),
@@ -130,13 +94,7 @@ class _PostTileCompactState extends State<PostTileCompact> with TickerProviderSt
                 visible: showUserAvatar, 
                 child: _postHeader(),
               ),
-            ),
-            Positioned(
-              bottom: 4.0,
-              left: 4.0,
-              right: 4.0,
-              child: _postDetailsRow(),
-            ),            
+            ),          
           ],
         ),
       );
@@ -160,36 +118,18 @@ class _PostTileCompactState extends State<PostTileCompact> with TickerProviderSt
     }
 
     return GestureDetector(
-      onTap: widget.viewOnly ? null : () {
-        if(currentUserIsAuthor && !widget.viewOnly) {
-          showModalBottomSheet(
-            context: context,
-            isDismissible: false,
-            isScrollControlled: true,
-            builder: (buildContext) {
-              return StreamProvider<UserData>.value(
-                value: DatabaseService().currentUser(currentUser.uid), 
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.9,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
-                    child: EditPost(post: widget.post),
-                  ),
-                ),
-              );
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
+      onTap: () {
+        if(!widget.viewOnly) {
+          showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => StreamProvider<UserData>.value(
+            value: DatabaseService().currentUser(currentUser.uid),
+            child: PostRoom(
+              post: widget.post,
             ),
-            backgroundColor: Colors.transparent,
-            elevation: 8.0
-          );
+          ),
+        );
         }
       },
       child: _buildCompactCard(),

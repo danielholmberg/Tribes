@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +12,6 @@ import 'package:tribes/screens/base/tribes/screens/NewPost.dart';
 import 'package:tribes/screens/base/tribes/widgets/Posts.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
-import 'package:tribes/shared/widgets/CustomButton.dart';
 import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/Loading.dart';
 
@@ -40,7 +37,7 @@ class _TribeRoomState extends State<TribeRoom> {
       return postsContainer.size.height;
     }
 
-    _showModalBottomSheet({Tribe currentTribe, Widget child}) {
+    _showModalBottomSheet({Widget child}) {
       showModalBottomSheet(
         context: context,
         isDismissible: false,
@@ -131,7 +128,7 @@ class _TribeRoomState extends State<TribeRoom> {
                   icon: CustomAwesomeIcon(icon: FontAwesomeIcons.edit), 
                   splashColor: Colors.transparent,
                   onPressed: () {
-                    _showModalBottomSheet(currentTribe: currentTribe, child: NewPost(tribe: currentTribe));
+                    _showModalBottomSheet(child: NewPost(tribe: currentTribe));
                   }
                 ),
               ],
@@ -185,11 +182,9 @@ class _TribeRoomState extends State<TribeRoom> {
                               child: Posts(
                                 tribe: currentTribe,
                                 onEditPostPress: (Post post) => _showModalBottomSheet(
-                                  currentTribe: currentTribe, 
                                   child: EditPost(post: post, tribeColor: currentTribe.color),
                                 ), 
                                 onEmptyTextPress: () => _showModalBottomSheet(
-                                  currentTribe: currentTribe, 
                                   child: NewPost(tribe: currentTribe),
                                 ),
                               ),

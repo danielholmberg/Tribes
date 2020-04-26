@@ -9,7 +9,6 @@ import 'package:tribes/models/Message.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/services/storage.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class DatabaseService {
@@ -185,7 +184,7 @@ class DatabaseService {
   }
 
   Future deletePost(Post post) async {
-    if(post.images.isNotEmpty) await Future.forEach(post.images, (imageURL) async => await StorageService().deleteFile(imageURL));
+    //if(post.images.isNotEmpty) await Future.forEach(post.images, (imageURL) async => await StorageService().deleteFile(imageURL));
     usersRoot.document(post.author).updateData({'createdPosts': FieldValue.arrayRemove([post.id])});
     return postsRoot.document(post.id).delete();
   }
@@ -200,6 +199,10 @@ class DatabaseService {
     print('Updated Post data: $data');
 
     return postsRoot.document(id).updateData(data);
+  }
+
+  Stream<int> numberOfLikes(String postID) {
+    return postsRoot.document(postID).get().then((doc) => Post.fromSnapshot(doc).likes).asStream();
   }
 
   Future createNewTribe(String userID, String name, String desc, String color, String imageURL, bool secret) {

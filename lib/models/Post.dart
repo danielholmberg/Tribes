@@ -41,4 +41,32 @@ class Post {
       updated: doc.data['updated'] ?? 0,
     );
   }
+
+  Post copyWith({
+    String id,
+    String author,
+    String title,
+    String content,
+    List<String> images,
+    String tribeID,
+    double lat,
+    double lng,
+    int likes,
+    int created,
+    int updated,
+  }) {
+    return Post(
+      id: id ?? this.id,
+      author: author ?? this.author,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      tribeID: tribeID ?? this.tribeID,
+      images: images ?? this.images,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      likes: likes ?? this.likes,
+      created: created ?? this.created,
+      updated: updated ?? this.updated,
+    );
+  }
 }

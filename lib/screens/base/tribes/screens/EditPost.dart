@@ -23,7 +23,14 @@ import 'package:tribes/shared/widgets/Loading.dart';
 class EditPost extends StatefulWidget {
   final Post post;
   final Color tribeColor;
-  EditPost({@required this.post, this.tribeColor = Constants.primaryColor});
+  final Function(Post) onSave;
+  final Function onDelete;
+  EditPost({
+    @required this.post, 
+    this.tribeColor = Constants.primaryColor,
+    this.onSave,
+    this.onDelete,
+  });
 
   @override
   _EditPostState createState() => _EditPostState();
@@ -233,6 +240,10 @@ class _EditPostState extends State<EditPost> {
                         await DatabaseService().deletePost(widget.post);
                         Navigator.of(context).pop(); // Dialog: "Are you sure...?"
                         Navigator.of(context).pop(); // PostTile
+
+                        if(widget.onDelete != null) {
+                          widget.onDelete();
+                        }
                       },
                     ),
                   ],
@@ -463,6 +474,14 @@ class _EditPostState extends State<EditPost> {
                 content ?? widget.post.content,
                 oldImages ?? widget.post.images,
               );
+
+              if(widget.onSave != null) {
+                widget.onSave(widget.post.copyWith(
+                  title: title,
+                  content: content,
+                  images: oldImages,
+                ));
+              }
 
               if(newImages.length == 0) {
                 _scaffoldKey.currentState.showSnackBar(

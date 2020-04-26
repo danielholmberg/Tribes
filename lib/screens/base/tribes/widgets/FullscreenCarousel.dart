@@ -1,40 +1,27 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/screens/base/tribes/widgets/CustomImage.dart';
-import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
-enum IndicatorPosition {
-  bottomRight,
-  topRight,
-}
-
-class ImageCarousel extends StatefulWidget {
-  final Key key;
+class FullscreenCarousel extends StatefulWidget {
   final List<String> images;
   final Color color;
-  final bool small;
   final int initialIndex;
   final Function onPageChange;
-  final IndicatorPosition indicatorPosition;
-  ImageCarousel({
-    this.key,
+  final bool showOverlayWidgets;
+  FullscreenCarousel({
     @required this.images,
-    this.color = Colors.white,
-    this.small = false,
+    this.color = Constants.primaryColor,
     this.initialIndex = 0,
     this.onPageChange,
-    this.indicatorPosition = IndicatorPosition.topRight,
+    this.showOverlayWidgets = true,
   });
 
   @override
-  _ImageCarouselState createState() => _ImageCarouselState();
+  _FullscreenCarouselState createState() => _FullscreenCarouselState();
 }
 
-class _ImageCarouselState extends State<ImageCarousel> with SingleTickerProviderStateMixin {
+class _FullscreenCarouselState extends State<FullscreenCarousel> with TickerProviderStateMixin {
 
   int _current;
 
@@ -51,44 +38,49 @@ class _ImageCarouselState extends State<ImageCarousel> with SingleTickerProvider
 
     _buildImageIndicator() {
       return Container(
-        padding: EdgeInsets.symmetric(vertical: widget.small ? 2.0 : 4.0, horizontal: widget.small ? 4.0 : 6.0),
         decoration: BoxDecoration(
-          color: widget.color.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(1000),
+          color: widget.color.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(20)
         ),
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
         child: Row(
-          children: <Widget>[
-            Text(
-              '${_current+1} of ${widget.images.length}',
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(widget.images.length, (index) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6.0),
+            margin: EdgeInsets.symmetric(horizontal: 2.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _current == index ? widget.color : widget.color.withOpacity(0.6),
+            ),
+            child: Text(
+              '${index+1}',
               style: TextStyle(
-                color: Colors.white,
+                color: _current == index ? Colors.white.withOpacity(0.8) : Colors.white.withOpacity(0.5),
                 fontWeight: FontWeight.bold,
-                fontSize: widget.small ? 8 : 10,
+                fontSize: 12,
                 fontFamily: 'TribesRounded',
               ),
             ),
-          ],
-        )
+          )),
+        ),
       );
     }
-
+    
     return Stack(
-      key: widget.key,
       alignment: Alignment.center,
       children: <Widget>[
 
         // Images
-        Container(
-          width: MediaQuery.of(context).size.width,
+        Positioned.fill(
           child: CarouselSlider.builder(
+            height: MediaQuery.of(context).size.height,
             initialPage: widget.initialIndex,
             itemCount: widget.images.length,
             itemBuilder: (context, index) {
               return CustomImage(
                 imageURL: widget.images[index],
                 color: widget.color,
-                small: widget.small,
-                fullscreen: false,
+                fullscreen: true,
               );
             },
             viewportFraction: 1.0,
@@ -96,7 +88,6 @@ class _ImageCarouselState extends State<ImageCarousel> with SingleTickerProvider
             autoPlay: false,
             enableInfiniteScroll: false,
             enlargeCenterPage: false,
-            aspectRatio: 1.0,
             onPageChanged: (index) {
               setState(() {
                 _current = index;
@@ -106,22 +97,21 @@ class _ImageCarouselState extends State<ImageCarousel> with SingleTickerProvider
           ),
         ),
 
-        widget.indicatorPosition == IndicatorPosition.topRight ? 
         Positioned(
-          top: widget.small ? 4.0 : 8.0,
-          right: widget.small ? 4.0 : 8.0,
+          top: 58.0,
           child: Visibility(
-            visible: showIndicator, 
-            child: _buildImageIndicator(),
-          ),
-        ) : Positioned(
-          bottom: widget.small ? 4.0 : 8.0,
-          right: widget.small ? 4.0: 8.0,
-          child: Visibility(
-            visible: showIndicator, 
-            child: _buildImageIndicator(),
+            visible: showIndicator,
+            child: IgnorePointer(
+              ignoring: !widget.showOverlayWidgets,
+              child: AnimatedOpacity(
+                opacity: widget.showOverlayWidgets ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 500),
+                child: _buildImageIndicator(),
+              ),
+            ),
           ),
         )
+        
       ],
     );
   }

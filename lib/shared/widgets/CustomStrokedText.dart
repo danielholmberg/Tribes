@@ -66,6 +66,13 @@ class CustomStrokedText extends StatelessWidget {
             fontWeight: fontWeight,
             fontSize: maxFontSize ?? minFontSize,
             letterSpacing: letterSpacing,
+            shadows: [
+              Shadow(
+                color: strokeColor, 
+                blurRadius: 2.0, 
+                offset: Offset(1, 1),
+              ),
+            ]
           ),
         ),
       ],

@@ -28,11 +28,12 @@ class CustomImage extends StatelessWidget {
 
     _buildImage(ImageProvider imageProvider) {
       return Container(
-        color: Colors.black12,
+        color: Colors.white,
         width: fullscreen ? null : MediaQuery.of(context).size.width,
         child: Image(
-          image: imageProvider, 
-          fit: fullscreen ? BoxFit.contain : BoxFit.cover,
+          image: imageProvider,
+          width: MediaQuery.of(context).size.width,
+          fit: fullscreen ? BoxFit.fitWidth : BoxFit.cover,
         ),
       );
     }

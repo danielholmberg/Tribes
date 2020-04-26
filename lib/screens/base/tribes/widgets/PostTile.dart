@@ -1,12 +1,11 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/base/tribes/dialogs/FullscreenCarouselDialog.dart';
+import 'package:tribes/screens/base/tribes/screens/PostRoom.dart';
 import 'package:tribes/screens/base/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -19,11 +18,9 @@ import 'dart:ui' as ui;
 class PostTile extends StatefulWidget {
   final Post post;
   final Color tribeColor;
-  final Function onEditPostPress;
   PostTile({
     @required this.post, 
     this.tribeColor = Constants.primaryColor, 
-    this.onEditPostPress
   });
 
   @override
@@ -35,7 +32,6 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
   Coordinates coordinates;
   Future<List<Address>> addressFuture;
   bool expanded = false;
-  bool showLikedAnimation = false;
   bool locationContainerExpanded = false;
   int currentImageIndex = 0;
   double cornerRadius = 20.0;
@@ -44,6 +40,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
   // Liked animation
   AnimationController likedAnimationController;
   Animation likedAnimation;
+  bool showLikedAnimation = false;
 
   @override
   void initState() { 
@@ -52,7 +49,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
       addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
     }
 
-    likedAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 800));
+    likedAnimationController = new AnimationController(vsync: this, duration: Duration(milliseconds: 800));
     likedAnimation = Tween(begin: 20.0, end: 100.0).animate(CurvedAnimation(
       curve: Curves.bounceOut, parent: likedAnimationController)
     );
@@ -78,8 +75,6 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
     print('Building PostTile()...');
     print('TribeTile: ${widget.post.id}');
     print('Current user ${currentUser.toString()}');
-
-    bool isAuthor = currentUser.uid == widget.post.author;
 
     _postHeader() {
       return Row(
@@ -124,110 +119,46 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
     _postTextContent() {
       return Container(
         color: Colors.black.withOpacity(0.4),
+        foregroundDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(cornerRadius),
+          border: Border.all(color: Colors.black26, width: 2.0),
+        ),
         child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(cornerRadius),
-            topRight: Radius.circular(cornerRadius)
-          ),
+          borderRadius: BorderRadius.circular(cornerRadius),
           child: BackdropFilter(
             filter: new ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
-              margin: const EdgeInsets.fromLTRB(12.0, 52.0, 12.0, 52.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title
-                  Text(
-                    widget.post.title,
-                    maxLines: 1,
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                    style: DynamicTheme.of(context).data.textTheme.title.copyWith(color: Colors.white),
-                  ),
-
-                  // Content
-                  Expanded(
-                    child: Theme(
-                      data: DynamicTheme.of(context).data.copyWith(highlightColor: Colors.white),
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          child: Text(
-                            widget.post.content,
-                            maxLines: null,
-                            softWrap: true,
-                            overflow: TextOverflow.fade,
-                            style: DynamicTheme.of(context).data.textTheme.body2.copyWith(color: Colors.white),
-                          ),
-                        ),
+              child: Theme(
+              data: DynamicTheme.of(context).data.copyWith(highlightColor: Colors.white),
+              child: Scrollbar(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(12.0, 52.0, 12.0, 64.0),
+                  shrinkWrap: true,
+                    children: [
+                      // Title
+                      Text(
+                        widget.post.title,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                        style: DynamicTheme.of(context).data.textTheme.title.copyWith(color: Colors.white),
                       ),
-                    ),
+
+                      // Content
+                      Text(
+                        widget.post.content,
+                        maxLines: null,
+                        softWrap: true,
+                        overflow: TextOverflow.fade,
+                        style: DynamicTheme.of(context).data.textTheme.body2.copyWith(color: Colors.white),
+                      ),
+                    ]
                   ),
-                ]
+                ),
               ),
             ),
           ),
         ),
-      );
-    }
-
-    _postFooter({Color color}) {
-      return Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              IconButton(
-                splashColor: Colors.transparent,
-                color: DynamicTheme.of(context).data.backgroundColor,
-                icon: CustomAwesomeIcon(icon: FontAwesomeIcons.solidCommentDots, 
-                  color: color ?? widget.tribeColor.withOpacity(0.6)
-                ),
-                onPressed: () async {
-                  Fluttertoast.showToast(
-                    msg: 'Coming soon!',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                  );
-                },
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    '${widget.post.likes}',
-                    style: TextStyle(
-                      color: color ?? widget.tribeColor,
-                      fontFamily: 'TribesRounded',
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  LikeButton(
-                    user: currentUser, 
-                    postID: widget.post.id, 
-                    color: color ?? widget.tribeColor,
-                  ),
-                ],
-              ),
-            ],
-          ),           
-        ],
       );
     }
 
@@ -247,7 +178,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
           decoration: BoxDecoration(
-            color: widget.tribeColor.withOpacity(0.6),
+            color: widget.tribeColor.withOpacity(0.9),
             borderRadius: BorderRadius.circular(1000),
           ),
           child: SingleChildScrollView(
@@ -269,20 +200,17 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
                       if (snapshot.hasData) {
                         var addresses = snapshot.data;
                         List<String> addressArr = addresses.first.addressLine.split(",");
-                        var location = "${addressArr[0].trim()}" "${(locationContainerExpanded ? '\n${addressArr[1].trim()}, ${addresses.first.countryName}' : '')}";
-                        return Padding(
-                          padding: EdgeInsets.only(right: locationContainerExpanded ? 4.0 : 0.0),
-                          child: Text(
-                            location,
-                            overflow: TextOverflow.fade,
-                            maxLines: 2,
-                            softWrap: true,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'TribesRounded'
-                            ),
+                        var location = "${addressArr[0].trim()}" "${(locationContainerExpanded ? ', ${addressArr[1].trim()}, ${addresses.first.countryName}' : '')}";
+                        return Text(
+                          location,
+                          overflow: TextOverflow.fade,
+                          maxLines: 1,
+                          softWrap: false,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'TribesRounded'
                           ),
                         );
                       } else if (snapshot.hasError) {
@@ -305,7 +233,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
         decoration: BoxDecoration(
-          color: widget.tribeColor.withOpacity(0.6),
+          color: widget.tribeColor.withOpacity(0.9),
           borderRadius: BorderRadius.circular(1000),
         ),
         child: SingleChildScrollView(
@@ -313,11 +241,10 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
           scrollDirection: Axis.horizontal,
           child: PostedDateTime(
             vsync: this,
-            alignment: Alignment.centerRight,
+            alignment: Alignment.centerLeft,
             timestamp: widget.post.created, 
             color: Colors.white,
             fontSize: 10,
-            expandedHorizontalPadding: 4.0,
           ),
         ),
       );
@@ -329,52 +256,58 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 6.0, bottom: 8.0),
-            child: ConstrainedBox(
-              constraints: (BoxConstraints(maxWidth: MediaQuery.of(context).size.width/2)),
-              child: Visibility(visible: addressFuture != null, child: _buildLocationWidget()),
-            ),
+
+          // Left Side
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: _buildDateAndTimeWidget(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, top: 4.0),
+                child: Visibility(visible: addressFuture != null, child: _buildLocationWidget()),
+              ),
+            ],
           ),
+
+          // Right Side
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Visibility(
-                visible: isAuthor,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 2.0),
-                  child: FloatingActionButton(
-                    mini: true,
-                    backgroundColor: widget.tribeColor.withOpacity(0.8),
-                    onPressed: () => widget.onEditPostPress(widget.post),
-                    child: CustomAwesomeIcon(
-                      icon: FontAwesomeIcons.pen,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(right: 2.0),
+                child: LikeButton(
+                  user: currentUser, 
+                  postID: widget.post.id, 
+                  color: Colors.white,
+                  backgroundColor: widget.tribeColor.withOpacity(0.9),
+                  fab: true,
+                  mini: true,
+                  withNumberOfLikes: true,
+                  numberOfLikesPosition: LikeButtonTextPosition.LEFT,
+                  onLiked: () {
+                    setState(() => showLikedAnimation = true);
+                    likedAnimationController.forward();
+                  }
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 2.0),
+                padding: const EdgeInsets.only(right: 2.0, bottom: 4.0),
                 child: FloatingActionButton(
                   mini: true,
-                  backgroundColor: widget.tribeColor.withOpacity(0.8),
+                  backgroundColor: widget.tribeColor.withOpacity(0.9),
                   onPressed: () => setState(() => showTextContent = !showTextContent),
                   child: CustomAwesomeIcon(
                     icon: showTextContent ? FontAwesomeIcons.envelopeOpenText : FontAwesomeIcons.solidEnvelope,
                     color: Colors.white,
                     size: 18,
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 6.0, bottom: 8.0, top: 4.0),
-                child: ConstrainedBox(
-                  constraints: (BoxConstraints(maxWidth: MediaQuery.of(context).size.width/3)),
-                  child: _buildDateAndTimeWidget(),
                 ),
               ),
             ],
@@ -385,70 +318,41 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
 
     _postImagesContent() {
       return ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(cornerRadius),
-          topRight: Radius.circular(cornerRadius)
-        ),
-        child: Column(
+        borderRadius: BorderRadius.circular(cornerRadius),
+        child: Stack(
+          alignment: Alignment.center,
           children: <Widget>[
 
             // Images
-            Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-
-                // Images
-                GestureDetector(
-                  onTap: showTextContent ? null : () => showDialog(
-                    context: context,
-                    builder: (context) => FullscreenCarouselDialog(
-                      images: widget.post.images, 
-                      color: widget.tribeColor, 
-                      initialIndex: currentImageIndex,
-                      onPageChange: (int index) => setState(() => currentImageIndex = index),
-                    ),
-                  ),
-                  child: ImageCarousel(
-                    images: widget.post.images, 
-                    color: widget.tribeColor,
-                    onPageChange: (int index) => setState(() => currentImageIndex = index),
-                    initialIndex: currentImageIndex,
-                  ),
-                ),
-
-                // Title and Content
-                Positioned.fill(
-                  child: Visibility(
-                    visible: showTextContent, 
-                    child: _postTextContent(),
-                  ),
-                ),
-
-                // Header
-                Positioned(
-                  top: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: _postHeader(),
-                ),
-
-                // Details
-                Positioned(
-                  bottom: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: _postDetailsRow(),
-                ),
-              ],
+            ImageCarousel(
+              images: widget.post.images, 
+              color: widget.tribeColor,
+              onPageChange: (int index) => setState(() => currentImageIndex = index),
+              initialIndex: currentImageIndex,
             ),
-            
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(width: 1.0, color: Colors.black12),
-                ),
+
+            // Title and Content
+            Positioned.fill(
+              child: Visibility(
+                visible: showTextContent, 
+                child: _postTextContent(),
               ),
-              child: _postFooter(color: DynamicTheme.of(context).data.primaryColor),
+            ),
+
+            // Header
+            Positioned(
+              top: 0.0,
+              left: 0.0,
+              right: 0.0,
+              child: _postHeader(),
+            ),
+
+            // Details
+            Positioned(
+              bottom: 0.0,
+              left: 0.0,
+              right: 0.0,
+              child: _postDetailsRow(),
             ),
           ],
         ),
@@ -474,10 +378,6 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
           alignment: Alignment.center,
           children: <Widget>[
             _postImagesContent(),
-            Visibility(
-              visible: false, 
-              child: _postTextContent(),
-            ),
             Visibility(
               visible: showLikedAnimation,
               child: Align(
@@ -505,6 +405,19 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
     }
 
     return GestureDetector(
+      onTap: () => showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => StreamProvider<UserData>.value(
+          value: DatabaseService().currentUser(currentUser.uid),
+          child: PostRoom(
+            post: widget.post,
+            tribeColor: widget.tribeColor, 
+            initialImage: currentImageIndex,
+            showTextContent: showTextContent,
+          ),
+        ),
+      ),
       onDoubleTap: () {
         bool likedByUser = currentUser.likedPosts.contains(widget.post.id);
         if (!likedByUser) {

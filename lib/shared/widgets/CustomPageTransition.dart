@@ -9,6 +9,7 @@ enum CustomPageTransitionType {
   joinTribe,
   chatRoom,
   newMessage,
+  postRoom
 }
 
 class CustomPageTransition<T> extends PageRouteBuilder<T> {
@@ -81,6 +82,11 @@ class CustomPageTransition<T> extends PageRouteBuilder<T> {
               child: child,
             );
           case CustomPageTransitionType.newMessage:
+            return FadeTransition(
+              opacity: animation, 
+              child: child,
+            );
+          case CustomPageTransitionType.postRoom:
             return FadeTransition(
               opacity: animation, 
               child: child,

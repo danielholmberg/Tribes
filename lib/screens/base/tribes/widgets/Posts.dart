@@ -76,7 +76,6 @@ class Posts extends StatelessWidget {
           child: PostTile(
             post: Post.fromSnapshot(snapshot), 
             tribeColor: tribe.color, 
-            onEditPostPress: this.onEditPostPress
           ),
         ),
         emptyChild: _buildEmptyListWidget(),
