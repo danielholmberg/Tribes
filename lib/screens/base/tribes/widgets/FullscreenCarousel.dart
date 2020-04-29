@@ -46,18 +46,19 @@ class _FullscreenCarouselState extends State<FullscreenCarousel> with TickerProv
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(widget.images.length, (index) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             margin: EdgeInsets.symmetric(horizontal: 2.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: _current == index ? widget.color : widget.color.withOpacity(0.6),
+              border: Border.all(color: _current == index ? Colors.white.withOpacity(0.8) : widget.color.withOpacity(0.6), width: 2.0),
             ),
             child: Text(
               '${index+1}',
               style: TextStyle(
                 color: _current == index ? Colors.white.withOpacity(0.8) : Colors.white.withOpacity(0.5),
                 fontWeight: FontWeight.bold,
-                fontSize: 12,
+                fontSize: 10,
                 fontFamily: 'TribesRounded',
               ),
             ),
