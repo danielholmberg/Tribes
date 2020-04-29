@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
@@ -92,7 +93,7 @@ class LikeButton extends StatelessWidget {
             opacity: numberOfLikes != null ? 1.0 : 0.0,
             duration: Duration(milliseconds: 300),
             child: CustomStrokedText(
-              text: '$numberOfLikes',
+              text: numberOfLikes != null ? NumberFormat.compact().format(numberOfLikes) : '',
               minFontSize: 10,
               fontWeight: FontWeight.bold,
               strokeColor: backgroundColor,

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/services/database.dart';
@@ -83,7 +84,7 @@ class TribeTile extends StatelessWidget {
               ),
               SizedBox(width: Constants.smallSpacing),
               Text(
-                '${postsList.length}',
+                NumberFormat.compact().format(postsList.length),
                 style: TextStyle(
                   color: Constants.tribeDetailIconColor,
                   fontSize: 20.0,
@@ -101,7 +102,7 @@ class TribeTile extends StatelessWidget {
       return Row(
         children: <Widget>[
           Text(
-            '${tribe.members.length}',
+            NumberFormat.compact().format(tribe.members.length),
             style: TextStyle(
               color: Constants.tribeDetailIconColor,
               fontSize: 20.0,

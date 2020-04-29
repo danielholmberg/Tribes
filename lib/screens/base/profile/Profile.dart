@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -246,7 +247,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('${isAnotherUser ? anotherUser.createdPosts.length : currentUser.createdPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                    Text(
+                      NumberFormat.compact().format(isAnotherUser ? anotherUser.createdPosts.length : currentUser.createdPosts.length), 
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontFamily: 'TribesRounded', 
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Text('Published', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
                   ],
                 ),
@@ -256,7 +264,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('${isAnotherUser ? anotherUser.likedPosts.length : currentUser.likedPosts.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                    Text(
+                      NumberFormat.compact().format(isAnotherUser ? anotherUser.likedPosts.length : currentUser.likedPosts.length), 
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontFamily: 'TribesRounded', 
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Text('Liked', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
                   ],
                 ),
@@ -272,7 +287,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text('${tribesList.length}', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
+                        Text(
+                          NumberFormat.compact().format(tribesList.length), 
+                          style: TextStyle(
+                            color: Colors.white, 
+                            fontFamily: 'TribesRounded', 
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text('Tribes', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
                       ],
                     );
