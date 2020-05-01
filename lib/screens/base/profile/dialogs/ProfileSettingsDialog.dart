@@ -1,5 +1,6 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
@@ -150,6 +151,61 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
       );
     }
 
+    _showUnavailableUsernameDialog() {
+      showDialog(
+        context: context,
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
+          title: Text('Username already in use',
+            style: TextStyle(
+              fontFamily: 'TribesRounded',
+              fontWeight: Constants.defaultDialogTitleFontWeight,
+              fontSize: Constants.defaultDialogTitleFontSize,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK', 
+                style: TextStyle(
+                  color: DynamicTheme.of(context).data.primaryColor,
+                  fontFamily: 'TribesRounded',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Center(
+                child: RichText(
+                  maxLines: null,
+                  softWrap: true,
+                  text: TextSpan(
+                    text: 'The username ',
+                    style: DynamicTheme.of(context).data.textTheme.body1,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: username,
+                        style: DynamicTheme.of(context).data.textTheme.body1.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: ' is already in use by a fellow Tribe explorer, please try another one.',
+                        style: DynamicTheme.of(context).data.textTheme.body1,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+      );
+    }
+
     _buildSaveButton() {
       return Visibility(
         visible: edited, 
@@ -165,28 +221,37 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
             if (_formKey.currentState.validate()) {
               print('Updating profile information...');
               setState(() => loading = true);
+              bool available = true;
 
-              await DatabaseService().updateUserData(
-                currentUser.uid,
-                name ?? currentUser.name,
-                username ?? currentUser.username,
-                currentUser.email,
-                info ?? currentUser.info,
-                currentUser.lat,
-                currentUser.lng
-              );
+              if(username != originalUsername) {
+                available = await DatabaseService().checkUsernameAvailability(username);
+              }
 
-              _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text('Profile info saved'),
-                duration: Duration(milliseconds: 500),
-              ));
+              if(available) {
+                await DatabaseService().updateUserData(
+                  currentUser.uid,
+                  name ?? currentUser.name,
+                  username ?? currentUser.username,
+                  currentUser.email,
+                  info ?? currentUser.info,
+                  currentUser.lat,
+                  currentUser.lng
+                );
 
-              setState(() {
-                loading = false;
-                originalName = name;
-                originalUsername = username;
-                originalInfo = info;
-              });
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  content: Text('Profile info saved'),
+                  duration: Duration(milliseconds: 500),
+                ));
+
+                setState(() {
+                  originalName = name;
+                  originalUsername = username;
+                  originalInfo = info;
+                });
+              } else {
+                _showUnavailableUsernameDialog();
+              }
+              setState(() => loading = false);
             }
           } : null,
         ),
@@ -254,17 +319,27 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                                     cursorRadius: Radius.circular(1000),
                                     initialValue: username ?? widget.user.username,
                                     maxLength: Constants.profileUsernameMaxLength,
-                                    textInputAction: TextInputAction.next,
+                                    textInputAction: TextInputAction.done,
                                     decoration: Decorations.profileSettingsInput.copyWith(
-                                      labelText: 'Username',
+                                      labelText: 'Username', 
                                     ),
-                                    validator: (val) => val.isEmpty ? 'Your username cannot be empty' : null,
-                                    autovalidate: true,
-                                    autocorrect: false,
-                                    onChanged: (val) {
-                                      setState(() => username = val);
-                                    },
-                                    onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(infoFocus),
+                                    inputFormatters: [
+                                      new BlacklistingTextInputFormatter(new RegExp('[\\ ]')),
+                                    ],
+                                    validator: (val) => val.isEmpty ? 'Please enter a username' : null,
+                                    onChanged: (val) => setState(() => username = val),
+                                    onFieldSubmitted: (val) async {
+                                      bool available = await DatabaseService().updateUsername(
+                                        currentUser.uid,
+                                        username,
+                                      );
+
+                                      print('alreadyInUse: $available');
+
+                                      if(!available && username != originalUsername) {
+                                        _showUnavailableUsernameDialog();
+                                      }
+                                    }
                                   ),
 
                                   SizedBox(height: Constants.smallSpacing),

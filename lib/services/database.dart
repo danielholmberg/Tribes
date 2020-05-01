@@ -27,19 +27,17 @@ class DatabaseService {
   // Firebase Cloud Messaging
   final FirebaseMessaging fcm = FirebaseMessaging();
 
-  Future createUserDocument(String uid, String name, String username, String email) {
+  Future createUserDocument(String uid, String name, String email) {
     var data = {
       'name': name,
-      'username': username,
       'email': email,
-      'picURL': Constants.placeholderPicURL,
       'created': new DateTime.now().millisecondsSinceEpoch
     };
     print('Creating user with info: $data');
 
     return usersRoot
         .document(uid)
-        .setData(data);
+        .setData(data, merge: true);
   }
 
   Future saveFCMToken() async {
@@ -78,6 +76,22 @@ class DatabaseService {
     print('New profile data: $data');
 
     return usersRoot.document(uid).updateData(data);
+  }
+
+  Future<bool> updateUsername(String uid, String username) async {
+    bool available = await checkUsernameAvailability(username);
+    
+    if(available) {
+      print('New username ($uid): $username');
+      usersRoot.document(uid).updateData({'username': username}); 
+    }
+
+    return Future.value(available);
+  }
+
+  Future<bool> checkUsernameAvailability(String username) async {
+    final result = await usersRoot.where('username', isEqualTo: username).getDocuments();
+    return result.documents.isEmpty;
   }
 
   Future updateUserPicURL(String picURL) async {

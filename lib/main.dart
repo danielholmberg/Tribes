@@ -1,5 +1,6 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/User.dart';
 import 'package:tribes/screens/base/base.dart';
@@ -14,9 +15,14 @@ import 'package:tribes/shared/constants.dart' as Constants;
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
 
   // Theme Data
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   ThemeData _themeData(Brightness _brightness) {
     return ThemeData(
         brightness: _brightness,
@@ -44,7 +50,21 @@ class MyApp extends StatelessWidget {
       );
   }
 
-  // This widget is the root of your application.
+  @override
+  void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([]);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DynamicTheme(

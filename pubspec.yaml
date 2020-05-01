@@ -41,6 +41,9 @@ dependencies:
   firebase_storage: ^3.1.1
   firebase_messaging: ^6.0.9
 
+  # Google Sign In
+  google_sign_in: ^4.4.4
+
   # Toast
   fluttertoast: ^3.1.3
 
