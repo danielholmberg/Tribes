@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geocoder/model.dart';
@@ -96,6 +97,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
   void dispose() {
     fadeInController.dispose();
     likedAnimationController.dispose();
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -419,8 +421,10 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
         onTap: () {
           if(isShowingOverlayWidgets) {
             setState(() => isShowingOverlayWidgets = false);
+            SystemChrome.setEnabledSystemUIOverlays([]);
           } else {
             setState(() => isShowingOverlayWidgets = true);
+            SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
           }
         },
         child: Stack(
