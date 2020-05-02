@@ -51,18 +51,18 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
 
     _categorySelector() {
       return Container(
-        height: 80.0,
+        height: 60.0,
         color: DynamicTheme.of(context).data.primaryColor,
-        child: Center(
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: tabs.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return GestureDetector(
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: tabs.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return Center(
+              child: GestureDetector(
                 onTap: () => setState(() => _currentTab = index),
                 child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+                  margin: EdgeInsets.symmetric(horizontal: 12.0),
                   child: Text(
                     tabs[index],
                     style: TextStyle(
@@ -74,9 +74,9 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       );
     }
@@ -85,7 +85,7 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
@@ -99,9 +99,7 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
                 gravity: ToastGravity.BOTTOM,
               ),
             ),
-            Spacer(),
             _categorySelector(),
-            Spacer(),
             IconButton(
               icon: Icon(FontAwesomeIcons.commentMedical),
               iconSize: Constants.defaultIconSize,
