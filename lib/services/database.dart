@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:tribes/models/Message.dart';
 import 'package:tribes/models/Post.dart';
@@ -153,9 +154,20 @@ class DatabaseService {
     return postsRoot.where('tribeID', isEqualTo: tribeID).orderBy('created', descending: true).snapshots();
   }
 
+  String generateNewPostID() {
+    return postsRoot.document().documentID;
+  }
+
   // Add a new Post
-  Future addNewPost(String author, String title, String content, List<String> images, String tribeID) async {
-    DocumentReference postRef = postsRoot.document();
+  Future addNewPost({
+    String postID, 
+    @required String author, 
+    @required String title, 
+    @required String content, 
+    @required List<String> images, 
+    @required String tribeID
+  }) async {
+    DocumentReference postRef = postsRoot.document(postID != null ? postID : generateNewPostID());
     Position currentPosition;
 
     if(await Geolocator().isLocationServiceEnabled()) {
@@ -179,7 +191,9 @@ class DatabaseService {
       });
 
       print('Publishing post: $data');
-      return postRef.setData(data);
+      postRef.setData(data);
+
+      return postRef.documentID;
     } else {
       var data = {
         'author': author,
@@ -191,7 +205,8 @@ class DatabaseService {
       };
 
       print('Publishing post: $data');
-      return postRef.setData(data);
+      postRef.setData(data);
+      return postRef.documentID;
     }
 
     
@@ -203,16 +218,30 @@ class DatabaseService {
     return postsRoot.document(post.id).delete();
   }
 
-  Future updatePostData(String id, String title, String content, List<String> images) {
-    var data = {
-      'title': title,
-      'content': content,
-      'images': images,
+  Future updatePostData({
+    @required String postID, 
+    String title, 
+    String content, 
+    List<String> images
+  }) {
+
+    Map<String, dynamic> data = {
       'updated': new DateTime.now().millisecondsSinceEpoch,
     };
+
+    if(title != null) {
+      data.putIfAbsent('title', () => title);
+    }
+    if(content != null) {
+      data.putIfAbsent('content', () => content);
+    }
+    if(images != null) {
+      data.putIfAbsent('images', () => images);
+    }
+
     print('Updated Post data: $data');
 
-    return postsRoot.document(id).updateData(data);
+    return postsRoot.document(postID).updateData(data);
   }
 
   Stream<int> numberOfLikes(String postID) {

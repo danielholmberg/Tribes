@@ -460,7 +460,7 @@ class _EditPostState extends State<EditPost> {
               List<String> imageURLs = [];
 
               await Future.forEach(newImages, (image) async {
-                String imageURL = await StorageService().uploadPostImage(image);
+                String imageURL = await StorageService().uploadPostImage(widget.post.id, image);
                 imageURLs.add(imageURL);
               });
 
@@ -469,10 +469,10 @@ class _EditPostState extends State<EditPost> {
               });
 
               DatabaseService().updatePostData(
-                widget.post.id, 
-                title ?? widget.post.title, 
-                content ?? widget.post.content,
-                oldImages ?? widget.post.images,
+                postID: widget.post.id, 
+                title: title ?? widget.post.title, 
+                content: content ?? widget.post.content,
+                images: oldImages ?? widget.post.images,
               );
 
               if(widget.onSave != null) {

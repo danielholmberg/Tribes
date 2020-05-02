@@ -283,17 +283,20 @@ class _NewPostState extends State<NewPost> {
               setState(() => loading = true);
               List<String> imageURLs = [];
 
+              String postID = await DatabaseService().generateNewPostID();
+
               await Future.forEach(images, (image) async {
-                String imageURL = await StorageService().uploadPostImage(image);
+                String imageURL = await StorageService().uploadPostImage(postID, image);
                 imageURLs.add(imageURL);
               });
-              
+
               DatabaseService().addNewPost(
-                currentUser.uid, 
-                title, 
-                content, 
-                imageURLs, 
-                widget.tribe.id
+                postID: postID,
+                author: currentUser.uid, 
+                title: title, 
+                content: content, 
+                images: imageURLs, 
+                tribeID: widget.tribe.id
               );
 
               Navigator.pop(context);

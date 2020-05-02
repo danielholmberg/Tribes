@@ -48,7 +48,7 @@ class CustomImage extends StatelessWidget {
     _buildError() {
       return Container(
         width: fullscreen ? null : MediaQuery.of(context).size.width,
-        child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle)),
+        child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle, color: color.withOpacity(0.5),)),
       );
     }
 

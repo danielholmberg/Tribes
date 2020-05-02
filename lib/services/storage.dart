@@ -58,10 +58,10 @@ class StorageService {
     return picURL;
   }
 
-  Future<String> uploadPostImage(Asset asset) async {
+  Future<String> uploadPostImage(String postID, Asset asset) async {
     ByteData byteData = await asset.getByteData();
     List<int> imageData = byteData.buffer.asUint8List();
-    StorageReference ref = StorageService().postImagesRoot.child('${asset.name}');
+    StorageReference ref = StorageService().postImagesRoot.child(postID).child('${asset.name}');
     StorageUploadTask uploadTask = ref.putData(imageData);
 
     return await (await uploadTask.onComplete).ref.getDownloadURL();
