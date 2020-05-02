@@ -45,73 +45,70 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Container(
-              padding: EdgeInsets.only(bottom: 8, top: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: widget.backgroundColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black54,
-                    blurRadius: 5,
-                    offset: Offset(0, 0),
-                  ),
-                ]
-              ),
-              width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.max,
-                children: items.map((f) {
-                  return Expanded(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        AnimatedContainer(
-                          duration: Duration(milliseconds: 300),
-                          decoration: BoxDecoration(
-                              color: widget.currentIndex == items.indexOf(f) ? widget.selectedBackgroundColor : widget.backgroundColor, borderRadius: BorderRadius.circular(20)),
-                          child: InkWell(
-                            onTap: () {
-                              this.widget.onTap(items.indexOf(f));
-                            },
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * (100 / (items.length * 100)) - 24,
-                              padding: EdgeInsets.all(4),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  CustomAwesomeIcon(
-                                    icon: f.icon,
-                                    color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor,
-                                    size: widget.iconSize,
-                                  ),
-                                  Text(
-                                    '${f.title}',
-                                    style: TextStyle(
-                                        color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor, 
-                                        fontSize: widget.fontSize,
-                                        fontFamily: 'TribesRounded',
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.5
-                                      ),
-                                  ),
-                                ],
-                              ),
+          Container(
+            padding: EdgeInsets.only(bottom: 8, top: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              color: widget.backgroundColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 5,
+                  offset: Offset(0, 0),
+                ),
+              ]
+            ),
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.max,
+              children: items.map((f) {
+                return Expanded(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        decoration: BoxDecoration(
+                            color: widget.currentIndex == items.indexOf(f) ? widget.selectedBackgroundColor : widget.backgroundColor, borderRadius: BorderRadius.circular(20)),
+                        child: InkWell(
+                          onTap: () {
+                            this.widget.onTap(items.indexOf(f));
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * (100 / (items.length * 100)) - 24,
+                            padding: EdgeInsets.all(4),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                CustomAwesomeIcon(
+                                  icon: f.icon,
+                                  color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor,
+                                  size: widget.iconSize,
+                                ),
+                                Text(
+                                  '${f.title}',
+                                  style: TextStyle(
+                                      color: widget.currentIndex == items.indexOf(f) ? widget.selectedItemColor : widget.unselectedItemColor, 
+                                      fontSize: widget.fontSize,
+                                      fontFamily: 'TribesRounded',
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5
+                                    ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
