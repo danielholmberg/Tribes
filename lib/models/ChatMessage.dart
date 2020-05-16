@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class Message {
   final String id;
   final String message;
   final String senderID;
-  final int created;
+  final Timestamp created;
 
   Message({
     this.id,
@@ -14,11 +15,22 @@ class Message {
   });
 
   factory Message.fromSnapshot(DocumentSnapshot doc) {
+    var created = doc.data['created'];
+    
+    // Convert int-timestamp values
+    if(created.runtimeType == int) {
+      created = Timestamp.fromMillisecondsSinceEpoch(created);
+    }
+
     return Message(
       id: doc.documentID,
       message: doc.data['message'] ?? '',
       senderID: doc.data['senderID'] ?? '',
-      created: doc.data['created'] ?? 0,
+      created: created ?? FieldValue.serverTimestamp(),
     );
+  }
+
+  String formattedTime() {
+    return DateFormat('kk:mm').format(DateTime.parse(created.toDate().toString()));
   }
 }

@@ -3,12 +3,11 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firestore_ui/animated_firestore_list.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Chat.dart';
-import 'package:tribes/models/Message.dart';
+import 'package:tribes/models/ChatMessage.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/base/chats/ChatRoom.dart';
+import 'package:tribes/screens/base/chats/screens/ChatRoom.dart';
 import 'package:tribes/screens/base/chats/Chats.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
@@ -38,20 +37,18 @@ class PrivateMessages extends StatelessWidget {
             return StreamBuilder<Message>(
               stream: DatabaseService().mostRecentMessage(chatData.id),
               builder: (context, snapshot) {
-                String message;
+                Message message;
                 bool isMe = false;
-                String formattedTime = '';
+                bool isNewMessage = false;
 
                 if(snapshot.hasData) {
-                  message = snapshot.data.message;
+                  message = snapshot.data;
                   isMe = snapshot.data.senderID == currentUser.uid;
-
-                  DateTime created = DateTime.fromMillisecondsSinceEpoch(snapshot.data.created); 
-                  formattedTime = DateFormat('kk:mm').format(created);
+                  isNewMessage = !isMe && message != null;
                 }
 
                 return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                  padding: EdgeInsets.fromLTRB(10.0, 4.0, isNewMessage ? 6.0 : 10.0, 4.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(20.0),
@@ -76,13 +73,8 @@ class PrivateMessages extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: DynamicTheme.of(context).data.backgroundColor,
                             borderRadius: BorderRadius.circular(20.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black54,
-                                blurRadius: 4,
-                                offset: Offset(1, 2),
-                              ),
-                            ]
+                            boxShadow: [Constants.defaultBoxShadow],
+                            border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(isNewMessage ? 1.0 : 0.5), width: 2.0),
                           ),
                           margin: EdgeInsets.only(right: isMe || message == null ? 0.0 : 22.0),
                           padding: EdgeInsets.only(right: isMe || message == null ? 6.0 : 22.0),
@@ -91,6 +83,7 @@ class PrivateMessages extends StatelessWidget {
                             leading: UserAvatar(
                               currentUserID: currentUser.uid, 
                               user: reciever, 
+                              color: DynamicTheme.of(context).data.primaryColor.withOpacity(isNewMessage ? 1.0 : 0.5),
                               radius: Constants.chatMessageAvatarSize, 
                               onlyAvatar: true,
                             ),
@@ -115,7 +108,7 @@ class PrivateMessages extends StatelessWidget {
                                 children: <TextSpan>[
                                   message != null ? 
                                   TextSpan(
-                                    text: message,
+                                    text: message.message ?? '',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontFamily: 'TribesRounded',
@@ -139,7 +132,7 @@ class PrivateMessages extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Text(formattedTime ?? '',
+                                Text(message != null ? message.formattedTime() : '',
                                   style: TextStyle(
                                     color: Colors.black54,
                                     fontFamily: 'TribesRounded',
@@ -153,7 +146,7 @@ class PrivateMessages extends StatelessWidget {
                         ),
                       ),
                       Visibility(
-                        visible: !isMe && message != null,
+                        visible: isNewMessage,
                         child: Positioned(
                           right: 0,
                           child: FloatingActionButton(
@@ -198,7 +191,7 @@ class PrivateMessages extends StatelessWidget {
       child: ScrollConfiguration(
         behavior: CustomScrollBehavior(),
         child: FirestoreAnimatedList(
-          padding: EdgeInsets.only(top: 12.0, bottom: 80.0),
+          padding: EdgeInsets.only(top: 8.0, bottom: 72.0),
           reverse: false,
           shrinkWrap: true,
           query: DatabaseService().privateChatRooms(currentUser.uid),

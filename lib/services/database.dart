@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:tribes/models/Message.dart';
+import 'package:tribes/models/ChatMessage.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
@@ -267,7 +267,10 @@ class DatabaseService {
     };
 
     print('Creating new Tribe: $data');
-    return tribesRoot.document().setData(data);
+    DocumentReference tribeDoc = tribesRoot.document();
+    fcm.subscribeToTopic(tribeDoc.documentID);
+    
+    return tribeDoc.setData(data);
   }
 
   Future updateTribeData(String id, String name, String desc, String color, String password, String imageURL, bool secret) {
@@ -354,7 +357,7 @@ class DatabaseService {
   }
 
   Stream<QuerySnapshot> privateChatRooms(String userID) {
-    return chatsRoot.where('members', arrayContains: userID).where('hasMessages', isEqualTo: true).snapshots();
+    return chatsRoot.where('members', arrayContains: userID).where('hasMessages', isEqualTo: true).orderBy('updated', descending: true).snapshots();
   }
 
   Future<String> createNewPrivateChatRoom(String userID, String friendID) async {
@@ -377,18 +380,22 @@ class DatabaseService {
     return Future.value(roomID);
   }
 
-  Future sendMessage(String roomID, String userID, String message) {
+  Future sendChatMessage(String roomID, String userID, String message) {
     var data = {
       'message': message,
       'senderID': userID,
-      'created': new DateTime.now().millisecondsSinceEpoch,
+      'created': FieldValue.serverTimestamp(),
     };
     print('Sending message data: $data');
 
-    DocumentReference messageRef = chatsRoot.document(roomID).collection('messages').document();
-    chatsRoot.document(roomID).updateData({'hasMessages': true});
+    DocumentReference roomRef = chatsRoot.document(roomID);
+    DocumentReference messageRef = roomRef.collection('messages').document();
 
-    return Firestore.instance.runTransaction((transaction) => transaction.set(messageRef, data));
+    return Firestore.instance.runTransaction((transaction) {
+      return transaction.set(messageRef, data).then((onValue) {
+        transaction.update(roomRef, {'hasMessages': true, 'updated': FieldValue.serverTimestamp()});
+      });
+    });
   }
 
   Future<List<Tribe>> joinedTribesFuture(String userID) async {

@@ -1,17 +1,14 @@
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:firestore_ui/firestore_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:tribes/models/Message.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
+import 'package:tribes/screens/base/chats/widgets/ChatMessages.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/UserAvatar.dart';
@@ -81,6 +78,7 @@ class _ChatRoomState extends State<ChatRoom> {
                     currentUserID: currentUser.uid,
                     user: snapshot.data, 
                     color: Colors.white,
+                    radius: 14,
                     onlyAvatar: true,
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   ),
@@ -123,121 +121,6 @@ class _ChatRoomState extends State<ChatRoom> {
               msg: 'Coming soon!',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
-            ),
-          ),
-        ],
-      );
-    }
-
-    _buildMessage(Message message) {
-      bool isMe = message.senderID == currentUser.uid;
-
-      DateTime created = DateTime.fromMillisecondsSinceEpoch(message.created); 
-      String formattedTime = DateFormat('kk:mm').format(created);
-
-      final Container msg = Container(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
-        margin: EdgeInsets.all(6.0),
-        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-        decoration: BoxDecoration(
-          color: isMe 
-          ? DynamicTheme.of(context).data.primaryColor.withOpacity(0.7)
-          : (widget.currentTribe != null ? widget.currentTribe.color : Colors.grey).withOpacity(0.7),
-          borderRadius: BorderRadius.circular(20.0)
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(message.message,
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'TribesRounded',
-                fontSize: 14.0,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      );
-
-      if(isMe) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Text(formattedTime,
-              style: TextStyle(
-                color: Colors.black26,
-                fontFamily: 'TribesRounded',
-                fontSize: 12.0,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                msg,
-                StreamBuilder<UserData>(
-                  stream: DatabaseService().userData(message.senderID),
-                  builder: (context, snapshot) {
-                    if(snapshot.hasError) {
-                      print('Error retrieving sender data: ${snapshot.error.toString()}');
-                    }
-
-                    return UserAvatar(
-                      currentUserID: currentUser.uid,
-                      user: snapshot.data, 
-                      padding: const EdgeInsets.symmetric(vertical: 6.0), 
-                      radius: 14, 
-                      onlyAvatar: true
-                    );
-                  }
-                ),
-              ],
-            ),
-            SizedBox(width: Constants.defaultPadding)
-          ],
-        );
-      }
-
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          SizedBox(width: Constants.defaultPadding),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              StreamBuilder<UserData>(
-                stream: DatabaseService().userData(message.senderID),
-                builder: (context, snapshot) {
-                  if(snapshot.hasError) {
-                    print('Error retrieving sender data: ${snapshot.error.toString()}');
-                  }
-
-                  return UserAvatar(
-                    currentUserID: currentUser.uid,
-                    user: snapshot.data, 
-                    padding: const EdgeInsets.symmetric(vertical: 6.0),
-                    color: widget.currentTribe != null ? widget.currentTribe.color : Colors.grey, 
-                    radius: 14, 
-                    onlyAvatar: true
-                  );
-                }
-              ),
-              msg, 
-            ],
-          ),
-          Text(formattedTime,
-            style: TextStyle(
-              color: Colors.black26,
-              fontFamily: 'TribesRounded',
-              fontSize: 12.0,
-              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -301,7 +184,8 @@ class _ChatRoomState extends State<ChatRoom> {
               onPressed: message.isEmpty ? null : () {
                 controller.clear();
                 FocusScope.of(context).unfocus();
-                DatabaseService().sendMessage(widget.roomID, currentUser.uid, message);
+                DatabaseService().sendChatMessage(widget.roomID, currentUser.uid, message);
+                setState(() => message = '');
                 listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
               },
             ),
@@ -342,30 +226,10 @@ class _ChatRoomState extends State<ChatRoom> {
                         topLeft: Radius.circular(30.0),
                         topRight: Radius.circular(30.0),
                       ),
-                      child: FirestoreAnimatedList(
-                        controller: listScrollController,
-                        reverse: true,
-                        shrinkWrap: false,
-                        duration: Duration(milliseconds: 500),
-                        query: DatabaseService().allMessages(widget.roomID),
-                        itemBuilder: (
-                          BuildContext context,
-                          DocumentSnapshot snapshot,
-                          Animation<double> animation,
-                          int index,
-                        ) => FadeTransition(
-                          opacity: animation,
-                          child: _buildMessage(Message.fromSnapshot(snapshot)),
-                        ),
-                        emptyChild: Center(
-                          child: Text('No messages',
-                            style: TextStyle(
-                              fontFamily: 'TribesRounded',
-                              color: Colors.black26,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
+                      child: ChatMessages(
+                        roomID: widget.roomID,
+                        scrollController: listScrollController,
+                        color: widget.currentTribe != null ? widget.currentTribe.color : Constants.primaryColor,
                       ),
                     ),
                   ),
