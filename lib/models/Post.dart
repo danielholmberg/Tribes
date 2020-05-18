@@ -10,8 +10,8 @@ class Post {
   final double lat;
   final double lng;
   final int likes;
-  final int created;
-  final int updated;
+  final Timestamp created;
+  final Timestamp updated;
 
   Post(
       {this.id,
@@ -27,6 +27,17 @@ class Post {
       this.updated});
 
   factory Post.fromSnapshot(DocumentSnapshot doc) {
+    var created = doc.data['created'];
+    var updated = doc.data['updated'];
+    
+    // Convert int-timestamp values
+    if(created.runtimeType == int) {
+      created = Timestamp.fromMillisecondsSinceEpoch(created);
+    }
+    if(updated.runtimeType == int) {
+      updated = Timestamp.fromMillisecondsSinceEpoch(updated);
+    }
+
     return Post(
       id: doc.documentID,
       author: doc.data['author'] ?? '',
@@ -37,8 +48,8 @@ class Post {
       lat: doc.data['lat'] ?? 0, // value 0 is used for fail-safe check for a location
       lng: doc.data['lng'] ?? 0, // value 0 is used for fail-safe check for a location
       likes: doc.data['likes'] ?? 0,
-      created: doc.data['created'] ?? 0,
-      updated: doc.data['updated'] ?? 0,
+      created: created,
+      updated: updated,
     );
   }
 
@@ -52,8 +63,8 @@ class Post {
     double lat,
     double lng,
     int likes,
-    int created,
-    int updated,
+    Timestamp created,
+    Timestamp updated,
   }) {
     return Post(
       id: id ?? this.id,

@@ -26,7 +26,7 @@ class Message {
       id: doc.documentID,
       message: doc.data['message'] ?? '',
       senderID: doc.data['senderID'] ?? '',
-      created: created ?? FieldValue.serverTimestamp(),
+      created: created,
     );
   }
 

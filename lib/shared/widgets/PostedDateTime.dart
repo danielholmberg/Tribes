@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class PostedDateTime extends StatefulWidget {
-  final int timestamp;
+  final DateTime timestamp;
   final double fontSize;
   final Color color;
   final TickerProvider vsync;
@@ -39,13 +39,12 @@ class _PostedDateTimeState extends State<PostedDateTime> {
   @override
   void initState() {
     Future.delayed(widget.duration).then((onValue) {
-      DateTime created = DateTime.fromMillisecondsSinceEpoch(widget.timestamp); 
 
       if(this.mounted){
         setState(() {
-          date = DateFormat.MMMd().format(created);
-          time = DateFormat.Hm().format(created);
-          year = created.year.toString();
+          date = DateFormat.MMMd().format(widget.timestamp);
+          time = DateFormat.Hm().format(widget.timestamp);
+          year = widget.timestamp.year.toString();
         });
       }
       

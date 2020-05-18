@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -230,21 +231,27 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
     }
 
     _buildDateAndTimeWidget() {
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
-        decoration: BoxDecoration(
-          color: widget.tribeColor.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(1000),
-        ),
-        child: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          child: PostedDateTime(
-            vsync: this,
-            alignment: Alignment.centerLeft,
-            timestamp: widget.post.created, 
-            color: Colors.white,
-            fontSize: 10,
+      Timestamp timestamp = widget.post.created;
+      
+      return AnimatedOpacity(
+        duration: const Duration(milliseconds: 300),
+        opacity: timestamp != null ? 1.0 : 0.0,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
+          decoration: BoxDecoration(
+            color: widget.tribeColor.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(1000),
+          ),
+          child: SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: timestamp != null ? PostedDateTime(
+              vsync: this,
+              alignment: Alignment.centerLeft,
+              timestamp: DateTime.parse(timestamp.toDate().toString()), 
+              color: Colors.white,
+              fontSize: 10,
+            ) : SizedBox.shrink(),
           ),
         ),
       );

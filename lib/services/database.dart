@@ -10,7 +10,6 @@ import 'package:tribes/models/ChatMessage.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/shared/constants.dart' as Constants;
 
 class DatabaseService {
   // Users Ref
@@ -32,13 +31,11 @@ class DatabaseService {
     var data = {
       'name': name,
       'email': email,
-      'created': new DateTime.now().millisecondsSinceEpoch
+      'created': FieldValue.serverTimestamp(),
     };
     print('Creating user with info: $data');
 
-    return usersRoot
-        .document(uid)
-        .setData(data, merge: true);
+    return usersRoot.document(uid).setData(data, merge: true);
   }
 
   Future saveFCMToken() async {
@@ -182,7 +179,7 @@ class DatabaseService {
         'likes': 1,
         'lat': currentPosition.latitude,
         'lng': currentPosition.longitude,
-        'created': new DateTime.now().millisecondsSinceEpoch,
+        'created': FieldValue.serverTimestamp(),
       };
 
       usersRoot.document(author).updateData({
@@ -201,7 +198,7 @@ class DatabaseService {
         'content': content,
         'tribeID': tribeID,
         'images': images,
-        'created': new DateTime.now().millisecondsSinceEpoch,
+        'created': FieldValue.serverTimestamp(),
       };
 
       print('Publishing post: $data');
@@ -226,7 +223,7 @@ class DatabaseService {
   }) {
 
     Map<String, dynamic> data = {
-      'updated': new DateTime.now().millisecondsSinceEpoch,
+      'updated': FieldValue.serverTimestamp(),
     };
 
     if(title != null) {
@@ -262,8 +259,8 @@ class DatabaseService {
       'color': color,
       'imageURL': imageURL,
       'secret': secret,
-      'updated': new DateTime.now().millisecondsSinceEpoch,
-      'created': new DateTime.now().millisecondsSinceEpoch,
+      'created': FieldValue.serverTimestamp(),
+      'updated': FieldValue.serverTimestamp(),
     };
 
     print('Creating new Tribe: $data');
@@ -281,7 +278,7 @@ class DatabaseService {
       'password': password,
       'imageURL': imageURL,
       'secret': secret,
-      'updated': new DateTime.now().millisecondsSinceEpoch,
+      'updated': FieldValue.serverTimestamp(),
     };
 
     print('New profile data: $data');

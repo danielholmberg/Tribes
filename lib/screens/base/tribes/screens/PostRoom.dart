@@ -327,7 +327,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
           child: PostedDateTime(
             vsync: this,
             alignment: Alignment.centerLeft,
-            timestamp: post.created, 
+            timestamp: DateTime.parse(post.created.toDate().toString()), 
             color: Colors.white,
             fontSize: 10,
             fullscreen: true,

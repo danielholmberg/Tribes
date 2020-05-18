@@ -13,24 +13,36 @@ class Tribe {
   final Color color;
   final String imageURL;
   final bool secret;
-  final int updated;
-  final int created;
+  final Timestamp created;
+  final Timestamp updated;
 
-  Tribe(
-      {this.id,
-      this.name,
-      this.desc,
-      this.members,
-      this.founder,
-      this.password,
-      this.imageURL,
-      this.color,
-      this.secret,
-      this.updated,
-      this.created});
+  Tribe({
+    this.id,
+    this.name,
+    this.desc,
+    this.members,
+    this.founder,
+    this.password,
+    this.imageURL,
+    this.color,
+    this.secret,
+    this.created,
+    this.updated
+  });
 
   factory Tribe.fromSnapshot(DocumentSnapshot doc) {
     String fallbackColor = Constants.primaryColor.value.toRadixString(16);
+    var created = doc.data['created'];
+    var updated = doc.data['updated'];
+    
+    // Convert int-timestamp values
+    if(created.runtimeType == int) {
+      created = Timestamp.fromMillisecondsSinceEpoch(created);
+    }
+    if(updated.runtimeType == int) {
+      updated = Timestamp.fromMillisecondsSinceEpoch(updated);
+    }
+
     return Tribe(
       id: doc.documentID,
       name: doc.data['name'] ?? '',
@@ -41,8 +53,8 @@ class Tribe {
       color: Color(int.parse('0x${doc.data['color'] ?? fallbackColor}')),
       imageURL: doc.data['imageURL'] ?? 'tribe-placeholder.jpg',
       secret: doc.data['secret'] ?? false,
-      updated: doc.data['updated'] ?? 0,
-      created: doc.data['created'] ?? 0,
+      created: created,
+      updated: updated,
     );
   }
 
@@ -56,8 +68,8 @@ class Tribe {
     Color color,
     String imageURL,
     bool secret,
-    int updated,
-    int created,
+    Timestamp created,
+    Timestamp updated,
   }) {
     return Tribe(
       id: id ?? this.id,
@@ -69,13 +81,13 @@ class Tribe {
       color: color ?? this.color,
       imageURL: imageURL ?? this.imageURL,
       secret: secret ?? this.secret,
-      updated: updated ?? this.updated,
       created: created ?? this.created,
+      updated: updated ?? this.updated,
     );
   }
 
   @override
   String toString() {
-    return '[$id, $name, $desc, $members, $founder, $color, $imageURL, $secret, $updated, $created]';
+    return '[$id, $name, $desc, $members, $founder, $color, $imageURL, $secret, $created, $updated]';
   }
 }
