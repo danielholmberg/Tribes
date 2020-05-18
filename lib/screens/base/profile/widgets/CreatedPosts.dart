@@ -21,10 +21,12 @@ class _CreatedPostsState extends State<CreatedPosts> with AutomaticKeepAliveClie
   Widget build(BuildContext context) {
     super.build(context);
 
+    List<String> createdPosts = widget.user.createdPosts.reversed.toList();
+
     return ScrollConfiguration(
       behavior: CustomScrollBehavior(),
       child: GridView.builder(
-        itemCount: widget.user.createdPosts.length,
+        itemCount: createdPosts.length,
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 80.0),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -35,12 +37,13 @@ class _CreatedPostsState extends State<CreatedPosts> with AutomaticKeepAliveClie
         ),
         itemBuilder: (context, index) {
           return StreamBuilder<Post>(
-            stream: DatabaseService().post(widget.user.uid, widget.user.createdPosts[index]),
+            stream: DatabaseService().post(widget.user.uid, createdPosts[index]),
             builder: (context, snapshot) {
               if(snapshot.hasData) {
-                Post likedPost = snapshot.data;
-                return PostTileCompact(post: likedPost, user: widget.user, viewOnly: widget.viewOnly);
+                Post createdPost = snapshot.data;
+                return PostTileCompact(post: createdPost, user: widget.user, viewOnly: widget.viewOnly);
               } else if(snapshot.hasError) {
+                print('Error retrieving CreatedPost (${widget.user.createdPosts[index]}): ${snapshot.error.toString()}');
                 return Container(padding: EdgeInsets.all(16), child: Center(child: Icon(FontAwesomeIcons.exclamationCircle)));
               } else {
                 return Loading();

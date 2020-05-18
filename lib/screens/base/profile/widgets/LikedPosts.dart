@@ -20,12 +20,13 @@ class _LikedPostsState extends State<LikedPosts> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print('Building LikedPosts()...');
+
+    List<String> likedPosts = widget.user.likedPosts.reversed.toList();
 
     return ScrollConfiguration(
       behavior: CustomScrollBehavior(),
       child: GridView.builder(
-        itemCount: widget.user.likedPosts.length,
+        itemCount: likedPosts.length,
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 80.0),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -36,7 +37,7 @@ class _LikedPostsState extends State<LikedPosts> with AutomaticKeepAliveClientMi
         ),
         itemBuilder: (context, index) {
           return StreamBuilder<Post>(
-            stream: DatabaseService().post(widget.user.uid, widget.user.likedPosts[index]),
+            stream: DatabaseService().post(widget.user.uid, likedPosts[index]),
             builder: (context, snapshot) {
               if(snapshot.hasData) {
                 Post likedPost = snapshot.data;
