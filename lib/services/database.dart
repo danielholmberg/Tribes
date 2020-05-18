@@ -10,6 +10,7 @@ import 'package:tribes/models/ChatMessage.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/Tribe.dart';
 import 'package:tribes/models/User.dart';
+import 'package:tribes/services/storage.dart';
 
 class DatabaseService {
   // Users Ref
@@ -195,8 +196,8 @@ class DatabaseService {
     return postRef.documentID;
   }
 
-  Future deletePost(Post post) async {
-    //if(post.images.isNotEmpty) await Future.forEach(post.images, (imageURL) async => await StorageService().deleteFile(imageURL));
+  Future deletePost(Post post) {
+    if(post.images.isNotEmpty) StorageService().deletePostImages(post.id);
     usersRoot.document(post.author).updateData({'createdPosts': FieldValue.arrayRemove([post.id])});
     return postsRoot.document(post.id).delete();
   }

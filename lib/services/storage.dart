@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -70,10 +71,18 @@ class StorageService {
   Future deleteFile(String fileURL) async {
     StorageReference fileRef = await getReferenceFromUrl(fileURL);
     if(fileRef != null) {
-      return fileRef.delete();
+      return fileRef.delete().then((onValue) => print('Deleted image with URL: $fileURL'));
     } else {
       print('Unable to delete file: $fileURL');
-      return null;
+      return Future.value(null);
     }
+  }
+
+  Future deletePostImages(String postID) {
+    return CloudFunctions.instance.getHttpsCallable(
+      functionName: 'deletePostImages'
+    ).call({
+      'postID': postID,
+    });
   }
 }

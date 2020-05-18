@@ -40,6 +40,7 @@ dependencies:
   firestore_ui: ^1.7.2
   firebase_storage: ^3.1.1
   firebase_messaging: ^6.0.9
+  cloud_functions: ^0.5.0
 
   # Google Sign In
   google_sign_in: ^4.4.4
