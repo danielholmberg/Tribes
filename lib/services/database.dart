@@ -166,47 +166,33 @@ class DatabaseService {
   }) async {
     DocumentReference postRef = postsRoot.document(postID != null ? postID : generateNewPostID());
     Position currentPosition;
+    
+    var data = {
+      'author': author,
+      'title': title,
+      'content': content,
+      'tribeID': tribeID,
+      'images': images,
+      'likes': 1,
+      'created': FieldValue.serverTimestamp(),
+    };
 
     if(await Geolocator().isLocationServiceEnabled()) {
       currentPosition = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
 
-      var data = {
-        'author': author,
-        'title': title,
-        'content': content,
-        'tribeID': tribeID,
-        'images': images,
-        'likes': 1,
-        'lat': currentPosition.latitude,
-        'lng': currentPosition.longitude,
-        'created': FieldValue.serverTimestamp(),
-      };
+      data.putIfAbsent('lat', () => currentPosition.latitude);
+      data.putIfAbsent('lng', () => currentPosition.longitude);
+    } 
 
-      usersRoot.document(author).updateData({
-        'createdPosts': FieldValue.arrayUnion([postRef.documentID]),
-        'likedPosts': FieldValue.arrayUnion([postRef.documentID]),
-      });
+    usersRoot.document(author).updateData({
+      'createdPosts': FieldValue.arrayUnion([postRef.documentID]),
+      'likedPosts': FieldValue.arrayUnion([postRef.documentID]),
+    });
 
-      print('Publishing post: $data');
-      postRef.setData(data);
+    print('Publishing post: $data');
+    postRef.setData(data);
 
-      return postRef.documentID;
-    } else {
-      var data = {
-        'author': author,
-        'title': title,
-        'content': content,
-        'tribeID': tribeID,
-        'images': images,
-        'created': FieldValue.serverTimestamp(),
-      };
-
-      print('Publishing post: $data');
-      postRef.setData(data);
-      return postRef.documentID;
-    }
-
-    
+    return postRef.documentID;
   }
 
   Future deletePost(Post post) async {

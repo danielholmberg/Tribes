@@ -275,7 +275,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
                 child: _buildDateAndTimeWidget(),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, top: 4.0),
+                padding: EdgeInsets.only(left: 8.0, bottom: addressFuture != null ? 8.0 : 4.0, top: 4.0),
                 child: Visibility(visible: addressFuture != null, child: _buildLocationWidget()),
               ),
             ],

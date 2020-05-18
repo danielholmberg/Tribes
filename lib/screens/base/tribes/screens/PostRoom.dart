@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -315,22 +316,28 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
     }
 
     _buildDateAndTimeWidget() {
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
-        decoration: BoxDecoration(
-          color: widget.tribeColor.withOpacity(opacity),
-          borderRadius: BorderRadius.circular(1000),
-        ),
-        child: SingleChildScrollView(
-          physics: ClampingScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          child: PostedDateTime(
-            vsync: this,
-            alignment: Alignment.centerLeft,
-            timestamp: DateTime.parse(post.created.toDate().toString()), 
-            color: Colors.white,
-            fontSize: 10,
-            fullscreen: true,
+      Timestamp timestamp = post.created;
+
+      return AnimatedOpacity(
+        duration: const Duration(milliseconds: 300),
+        opacity: timestamp != null ? 1.0 : 0.0,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
+          decoration: BoxDecoration(
+            color: widget.tribeColor.withOpacity(opacity),
+            borderRadius: BorderRadius.circular(1000),
+          ),
+          child: SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: timestamp != null ? PostedDateTime(
+              vsync: this,
+              alignment: Alignment.centerLeft,
+              timestamp: DateTime.parse(timestamp.toDate().toString()), 
+              color: Colors.white,
+              fontSize: 10,
+              fullscreen: true,
+            ) : SizedBox.shrink(),
           ),
         ),
       );
@@ -359,7 +366,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
                     child: _buildDateAndTimeWidget(),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 8.0, bottom: 8.0, top: 4.0),
+                    padding: EdgeInsets.only(left: 8.0, bottom: addressFuture != null ? 8.0 : 4.0, top: 4.0),
                     child: Visibility(visible: addressFuture != null, child: _buildLocationWidget()),
                   ),
                 ],
