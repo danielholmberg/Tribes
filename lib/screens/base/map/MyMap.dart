@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -65,17 +66,17 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
     print('Building Map()...');
     print('Current user ${currentUser.toString()}');
 
+    // StatusBar Color
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4)
+    ));
+
     _buildMap(List<String> friendsList, Set<Marker> markers) {
       return _showMap ? AnimatedOpacity(
         duration: Duration(milliseconds: 500),
         opacity: _isMapLoading ? 0.0 : 1.0,
         child: GoogleMap(
-          padding: EdgeInsets.fromLTRB(
-            6.0, 
-            friendsList.isEmpty ? MediaQuery.of(context).padding.top : 108.0, 
-            6.0, 
-            Platform.isIOS ? 80 : 0.0
-          ),
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
           onMapCreated: _onMapCreated,
           myLocationButtonEnabled: true,
           myLocationEnabled: true,
@@ -90,7 +91,7 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
 
     _buildUserAvatarsList(List<String> friendsList, List<UserData> friendsDataList) {
       return Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         child: Container(
           height: 92,
           child: Row(
@@ -131,7 +132,8 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                                 ),
                                 nameFontSize: 24, 
                                 strokeWidth: 2.0,
-                                strokeColor: DynamicTheme.of(context).data.primaryColor,
+                                color: Colors.black54,
+                                strokeColor: Colors.black54,
                                 direction: UserAvatarDirections.vertical,
                               ),
                             ),
@@ -181,21 +183,11 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                   );
                   
                   return Stack(
+                    alignment: Alignment.bottomCenter,
                     children: <Widget>[
                       
                       // Google Map Stack Widget
                       _buildMap(friendsList, markers),
-
-                      // Statusbar background
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.5),
-                          height: MediaQuery.of(context).padding.top,
-                        ),
-                      ),
 
                       // Users List Widget
                       _buildUserAvatarsList(friendsList, friendsDataList),
