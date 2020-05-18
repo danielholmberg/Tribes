@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -65,11 +63,6 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
     final currentUser = Provider.of<UserData>(context);
     print('Building Map()...');
     print('Current user ${currentUser.toString()}');
-
-    // StatusBar Color
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: DynamicTheme.of(context).data.primaryColor.withOpacity(0.4)
-    ));
 
     _buildMap(List<String> friendsList, Set<Marker> markers) {
       return _showMap ? AnimatedOpacity(
@@ -188,6 +181,17 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
                       
                       // Google Map Stack Widget
                       _buildMap(friendsList, markers),
+
+                      // Statusbar background
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          color: DynamicTheme.of(context).data.primaryColor,
+                          height: MediaQuery.of(context).padding.top,
+                        ),
+                      ),
 
                       // Users List Widget
                       _buildUserAvatarsList(friendsList, friendsDataList),

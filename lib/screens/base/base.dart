@@ -104,6 +104,11 @@ class _BaseState extends State<Base> with SingleTickerProviderStateMixin{
       _tabController.animateTo(widget.tabIndex);
     }
 
+    // StatusBar Color
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: Colors.transparent
+    ));
+
     _setUpFCM();
 
     super.initState();
