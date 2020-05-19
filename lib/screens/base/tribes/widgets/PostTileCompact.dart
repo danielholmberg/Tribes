@@ -120,16 +120,29 @@ class _PostTileCompactState extends State<PostTileCompact> with TickerProviderSt
     return GestureDetector(
       onTap: () {
         if(!widget.viewOnly) {
-          showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => StreamProvider<UserData>.value(
-            value: DatabaseService().currentUser(currentUser.uid),
-            child: PostRoom(
-              post: widget.post,
-            ),
-          ),
-        );
+          showGeneralDialog(
+            context: context,
+            pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
+              return StreamProvider<UserData>.value(
+                  value: DatabaseService().currentUser(currentUser.uid),
+                  child: PostRoom(
+                    post: widget.post,
+                  ),
+                );
+            },
+            barrierDismissible: false,
+            transitionDuration: const Duration(milliseconds: 300),
+            transitionBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+              return FadeTransition(
+                opacity: CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeIn,
+                  reverseCurve: Curves.easeOut
+                ),
+                child: child,
+              );
+            },
+          );
         }
       },
       child: _buildCompactCard(),

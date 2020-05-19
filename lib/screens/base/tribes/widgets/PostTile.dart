@@ -412,18 +412,31 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
     }
 
     return GestureDetector(
-      onTap: () => showDialog(
+      onTap: () => showGeneralDialog(
         context: context,
+        pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
+          return StreamProvider<UserData>.value(
+              value: DatabaseService().currentUser(currentUser.uid),
+              child: PostRoom(
+                post: widget.post,
+                tribeColor: widget.tribeColor, 
+                initialImage: currentImageIndex,
+                showTextContent: showTextContent,
+              ),
+            );
+        },
         barrierDismissible: false,
-        builder: (context) => StreamProvider<UserData>.value(
-          value: DatabaseService().currentUser(currentUser.uid),
-          child: PostRoom(
-            post: widget.post,
-            tribeColor: widget.tribeColor, 
-            initialImage: currentImageIndex,
-            showTextContent: showTextContent,
-          ),
-        ),
+        transitionDuration: const Duration(milliseconds: 300),
+        transitionBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+          return FadeTransition(
+            opacity: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeIn,
+              reverseCurve: Curves.easeOut
+            ),
+            child: child,
+          );
+        },
       ),
       onDoubleTap: () {
         bool likedByUser = currentUser.likedPosts.contains(widget.post.id);

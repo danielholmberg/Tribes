@@ -99,7 +99,7 @@ class _FullscreenCarouselState extends State<FullscreenCarousel> with TickerProv
         ),
 
         Positioned(
-          top: 58.0,
+          top: MediaQuery.of(context).padding.top + 58.0,
           child: Visibility(
             visible: showIndicator,
             child: IgnorePointer(

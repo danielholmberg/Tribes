@@ -16,7 +16,6 @@ import 'package:tribes/screens/base/tribes/widgets/FullscreenCarousel.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
-import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/LikeButton.dart';
 import 'package:tribes/shared/widgets/PostedDateTime.dart';
 import 'dart:ui' as ui;
@@ -99,6 +98,9 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
     fadeInController.dispose();
     likedAnimationController.dispose();
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: Colors.transparent
+    ));
     super.dispose();
   }
 
@@ -108,6 +110,11 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
     print('Building PostRoom()...');
     print('TribeTile: ${widget.post.id}');
     print('Current user ${currentUser.toString()}');
+
+    // StatusBar Color
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: widget.tribeColor.withOpacity(0.6)
+    ));
     
     bool isAuthor = currentUser.uid == post.author;
 
@@ -229,7 +236,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
               data: DynamicTheme.of(context).data.copyWith(highlightColor: Colors.white),
               child: Scrollbar(
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(12.0, 52.0, 12.0, 64.0),
+                  padding: EdgeInsets.fromLTRB(12.0, MediaQuery.of(context).padding.top + 52.0, 12.0, 64.0),
                   shrinkWrap: true,
                   children: [
                     // Title
@@ -461,7 +468,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
 
                 // Dismiss Button
                 Positioned(
-                  top: 0,
+                  top: MediaQuery.of(context).padding.top,
                   left: 0,
                   right: 0,
                   child: IgnorePointer(
@@ -509,14 +516,9 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
 
     return FadeTransition(
       opacity: fadeInAnimation,
-      child: Container(
-        child: SafeArea(
-          bottom: false,
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: _buildBody(),
-          ),
-        ),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: _buildBody(),
       ),
     );
   }
