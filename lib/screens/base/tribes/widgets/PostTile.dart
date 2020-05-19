@@ -128,36 +128,66 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
           borderRadius: BorderRadius.circular(cornerRadius),
           child: BackdropFilter(
             filter: new ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-            child: Container(
-              child: Theme(
-              data: DynamicTheme.of(context).data.copyWith(highlightColor: Colors.white),
-              child: Scrollbar(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(12.0, 52.0, 12.0, 64.0),
-                  shrinkWrap: true,
-                    children: [
-                      // Title
-                      Text(
-                        widget.post.title,
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
-                        style: DynamicTheme.of(context).data.textTheme.title.copyWith(color: Colors.white),
-                      ),
-
-                      // Content
-                      Text(
-                        widget.post.content,
-                        maxLines: null,
-                        softWrap: true,
-                        overflow: TextOverflow.fade,
-                        style: DynamicTheme.of(context).data.textTheme.body2.copyWith(color: Colors.white),
-                      ),
-                    ]
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(12.0, 52.0, 12.0, 12.0),
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+                children: [
+                  // Title
+                  Text(
+                    widget.post.title,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                    style: DynamicTheme.of(context).data.textTheme.title.copyWith(color: Colors.white),
                   ),
-                ),
+
+                  // Content
+                  LayoutBuilder(builder: (context, size) {
+                    // Build the textspan
+                    var span = TextSpan(
+                      text: widget.post.content,
+                      style: DynamicTheme.of(context).data.textTheme.body2.copyWith(color: Colors.white),
+                    );
+
+                    // Use a textpainter to determine if it will exceed max lines
+                    var tp = TextPainter(
+                      maxLines: 10,
+                      textAlign: TextAlign.left,
+                      textDirection: TextDirection.ltr,
+                      text: span,
+                    );
+
+                    // trigger it to layout
+                    tp.layout(maxWidth: size.maxWidth);
+
+                    // whether the text overflowed or not
+                    var exceeded = tp.didExceedMaxLines;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text.rich(
+                          span,
+                          overflow: TextOverflow.fade,
+                          maxLines: 10,
+                        ),
+                        SizedBox(height: Constants.defaultPadding),
+                        Visibility(
+                          visible: exceeded,
+                          child: Text(
+                            'See more',
+                            style: DynamicTheme.of(context).data.textTheme.body2.copyWith(
+                              color: Colors.white, 
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ]
+                    );
+                  }),
+                ]
               ),
-            ),
           ),
         ),
       );

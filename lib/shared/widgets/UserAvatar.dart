@@ -163,7 +163,13 @@ class UserAvatar extends StatelessWidget {
             onTap: disable ? null : () => showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: Colors.black.withOpacity(0.7),
+                    width: 2.0
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                ),
                 contentPadding: EdgeInsets.zero,
                 content: Container(
                   height: MediaQuery.of(context).size.height,

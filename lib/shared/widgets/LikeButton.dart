@@ -96,7 +96,7 @@ class LikeButton extends StatelessWidget {
               text: numberOfLikes != null ? NumberFormat.compact().format(numberOfLikes) : '',
               minFontSize: 10,
               fontWeight: FontWeight.bold,
-              strokeColor: backgroundColor,
+              strokeColor: Colors.black54,
               strokeWidth: 2.0,
             ),
           );

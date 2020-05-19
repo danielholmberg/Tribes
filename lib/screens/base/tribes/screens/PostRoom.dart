@@ -16,6 +16,7 @@ import 'package:tribes/screens/base/tribes/widgets/FullscreenCarousel.dart';
 import 'package:tribes/services/database.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/CustomAwesomeIcon.dart';
+import 'package:tribes/shared/widgets/CustomScrollBehavior.dart';
 import 'package:tribes/shared/widgets/LikeButton.dart';
 import 'package:tribes/shared/widgets/PostedDateTime.dart';
 import 'dart:ui' as ui;
@@ -45,10 +46,11 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
   Coordinates coordinates;
   Future<List<Address>> addressFuture;
 
-  bool showTextContent = false;
+  bool isShowingTextContent = false;
   bool isShowingOverlayWidgets = true;
   Post post;
   double opacity = 0.9;
+  Duration overlayAnimDuration = const Duration(milliseconds: 300);
 
   // Fade-in animation
   AnimationController fadeInController;
@@ -87,8 +89,13 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
       }
     });
 
-    showTextContent = widget.showTextContent;
+    isShowingTextContent = widget.showTextContent;
     post = widget.post;
+
+    // StatusBar Color
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: widget.tribeColor.withOpacity(0.6)
+    ));
 
     super.initState();
   }
@@ -110,11 +117,6 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
     print('Building PostRoom()...');
     print('TribeTile: ${widget.post.id}');
     print('Current user ${currentUser.toString()}');
-
-    // StatusBar Color
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: widget.tribeColor.withOpacity(0.6)
-    ));
     
     bool isAuthor = currentUser.uid == post.author;
 
@@ -231,21 +233,28 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
         color: Colors.black.withOpacity(0.4),
         child: BackdropFilter(
           filter: new ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-          child: Container(
-            child: Theme(
-              data: DynamicTheme.of(context).data.copyWith(highlightColor: Colors.white),
-              child: Scrollbar(
+          child: Theme(
+            data: DynamicTheme.of(context).data.copyWith(highlightColor: Colors.white),
+            child: Scrollbar(
+              child: ScrollConfiguration(
+                behavior: CustomScrollBehavior(),
                 child: ListView(
-                  padding: EdgeInsets.fromLTRB(12.0, MediaQuery.of(context).padding.top + 52.0, 12.0, 64.0),
+                  padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 64.0),
                   shrinkWrap: true,
                   children: [
+                    SizedBox(height: isShowingOverlayWidgets ? MediaQuery.of(context).padding.top : 12.0),
+
                     // Title
-                    Text(
-                      post.title,
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.fade,
-                      style: DynamicTheme.of(context).data.textTheme.title.copyWith(color: Colors.white),
+                    AnimatedPadding(
+                      duration: const Duration(milliseconds: 300),
+                      padding: EdgeInsets.only(top: isShowingOverlayWidgets ? 52.0 : 0.0),
+                      child: Text(
+                        post.title,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                        style: DynamicTheme.of(context).data.textTheme.title.copyWith(color: Colors.white),
+                      ),
                     ),
 
                     // Content
@@ -280,7 +289,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
             child: AnimatedSize(
               vsync: this,
               alignment: Alignment.centerLeft,
-              duration: Duration(milliseconds: 500),
+              duration: overlayAnimDuration,
               curve: Curves.fastOutSlowIn,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -362,7 +371,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
             ignoring: !isShowingOverlayWidgets,
             child: AnimatedOpacity(
               opacity: isShowingOverlayWidgets ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 500),
+              duration: overlayAnimDuration,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +395,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
             ignoring: !isShowingOverlayWidgets,
             child: AnimatedOpacity(
               opacity: isShowingOverlayWidgets ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 500),
+              duration: overlayAnimDuration,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -414,9 +423,9 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
                     child: FloatingActionButton(
                       mini: true,
                       backgroundColor: widget.tribeColor.withOpacity(opacity),
-                      onPressed: () => setState(() => showTextContent = !showTextContent),
+                      onPressed: () => setState(() => isShowingTextContent = !isShowingTextContent),
                       child: CustomAwesomeIcon(
-                        icon: showTextContent ? FontAwesomeIcons.envelopeOpenText : FontAwesomeIcons.solidEnvelope,
+                        icon: isShowingTextContent ? FontAwesomeIcons.envelopeOpenText : FontAwesomeIcons.solidEnvelope,
                         color: Colors.white,
                         size: 18,
                       ),
@@ -454,14 +463,15 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
                     images: post.images,
                     color: widget.tribeColor,
                     initialIndex: widget.initialImage,
-                    showOverlayWidgets: isShowingOverlayWidgets,
+                    showOverlayWidgets: !isShowingTextContent && isShowingOverlayWidgets,
+                    overlayAnimDuration: overlayAnimDuration,
                   ),
                 ),
 
                 // Title and Content
                 Positioned.fill(
                   child: Visibility(
-                    visible: showTextContent, 
+                    visible: isShowingTextContent, 
                     child: _postTextContent(),
                   ),
                 ),
@@ -475,7 +485,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
                     ignoring: !isShowingOverlayWidgets,
                     child: AnimatedOpacity(
                       opacity: isShowingOverlayWidgets ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 500),
+                      duration: overlayAnimDuration,
                       child: _buildDismissButton(),
                     ),
                   ),

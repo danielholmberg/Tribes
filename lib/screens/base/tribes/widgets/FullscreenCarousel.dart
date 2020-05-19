@@ -9,12 +9,14 @@ class FullscreenCarousel extends StatefulWidget {
   final int initialIndex;
   final Function onPageChange;
   final bool showOverlayWidgets;
+  final Duration overlayAnimDuration;
   FullscreenCarousel({
     @required this.images,
     this.color = Constants.primaryColor,
     this.initialIndex = 0,
     this.onPageChange,
     this.showOverlayWidgets = true,
+    this.overlayAnimDuration = const Duration(milliseconds: 300),
   });
 
   @override
@@ -106,7 +108,7 @@ class _FullscreenCarouselState extends State<FullscreenCarousel> with TickerProv
               ignoring: !widget.showOverlayWidgets,
               child: AnimatedOpacity(
                 opacity: widget.showOverlayWidgets ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 500),
+                duration: widget.overlayAnimDuration,
                 child: _buildImageIndicator(),
               ),
             ),
