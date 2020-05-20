@@ -82,7 +82,7 @@ class _ChatRoomState extends State<ChatRoom> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   ),
                 ),
-                AutoSizeText(snapshot.hasData ? snapshot.data.name : 'No name',
+                AutoSizeText(snapshot.hasData ? snapshot.data.username : 'No name',
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   minFontSize: 10.0,

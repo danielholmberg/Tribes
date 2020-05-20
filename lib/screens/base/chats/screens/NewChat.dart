@@ -68,6 +68,8 @@ class _NewChatState extends State<NewChat> {
           user: friend, 
           radius: 20, 
           withName: true,
+          withUsername: true,
+          cornerRadius: 0.0,
           color: DynamicTheme.of(context).data.primaryColor,
           textColor: DynamicTheme.of(context).data.primaryColor,
           textPadding: const EdgeInsets.only(left: 8.0),

@@ -86,7 +86,7 @@ class PrivateMessages extends StatelessWidget {
                               radius: Constants.chatMessageAvatarSize, 
                               onlyAvatar: true,
                             ),
-                            title: Text(reciever.name,
+                            title: Text(reciever.username,
                               style: TextStyle(
                                 fontFamily: 'TribesRounded',
                                 fontWeight: FontWeight.bold

@@ -21,6 +21,7 @@ class UserAvatar extends StatelessWidget {
   final Color color;
   final bool onlyAvatar;
   final bool withName; 
+  final bool withUsername;
   final double radius;
   final double nameFontSize;
   final UserAvatarDirections direction;
@@ -33,12 +34,14 @@ class UserAvatar extends StatelessWidget {
   final EdgeInsets textPadding;
   final Color textColor;
   final bool disable;
+  final double cornerRadius;
   UserAvatar({
     this.currentUserID,
     @required this.user,
     this.color = Constants.primaryColor, 
-    this.onlyAvatar = false, 
+    this.onlyAvatar = false,
     this.withName = false, 
+    this.withUsername = true,
     this.radius = Constants.defaultProfilePicRadius,
     this.nameFontSize = Constants.defaultNameFontSize,
     this.direction = UserAvatarDirections.horizontal,
@@ -51,6 +54,7 @@ class UserAvatar extends StatelessWidget {
     this.textPadding = EdgeInsets.zero,
     this.textColor = Colors.white,
     this.disable = false,
+    this.cornerRadius = 1000,
   });
 
   @override
@@ -101,19 +105,40 @@ class UserAvatar extends StatelessWidget {
           ) : _circleAvatar(),
           Visibility(
             visible: !onlyAvatar || withName,
-            child: Padding(
+            child: Container(
               padding: textPadding ?? EdgeInsets.symmetric(horizontal: (isMapAvatar ? 0.0 : 4.0)),
               child: Visibility(
-                visible: (withName || !onlyAvatar) && !isMapAvatar,
-                child: AutoSizeText(
-                  user != null ? withName ? user.name : user.username : '',
-                  maxFontSize: nameFontSize,
-                  minFontSize: 6,
-                  style: TextStyle(
-                    color: textColor ?? Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'TribesRounded'
-                  )
+                visible: (withName || withUsername || !onlyAvatar) && !isMapAvatar,
+                child: Wrap(
+                  direction: Axis.vertical,
+                  children: <Widget>[
+                    Visibility(
+                      visible: withUsername,
+                      child: AutoSizeText(
+                        user != null ? withUsername ? user.username : '' : '',
+                        maxFontSize: nameFontSize,
+                        minFontSize: 6,
+                        style: TextStyle(
+                          color: textColor ?? Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'TribesRounded'
+                        )
+                      ),
+                    ),
+                    Visibility(
+                      visible: withName,
+                      child: AutoSizeText(
+                        user != null ? user.name : '',
+                        maxFontSize: nameFontSize - 2.0,
+                        minFontSize: 6,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'TribesRounded'
+                        )
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -141,7 +166,7 @@ class UserAvatar extends StatelessWidget {
         children: <Widget>[
           _userAvatarLayout(),
           CustomStrokedText(
-            text: withName ? '${user.name[0].toUpperCase()}${user.name[1]}' : '${user.username[0].toUpperCase()}${user.username[1]}',
+            text: '${user.username[0].toUpperCase()}${user.username[1]}',
             minFontSize: nameFontSize, 
             maxLines: 1,
             letterSpacing: 2.0,
@@ -151,7 +176,12 @@ class UserAvatar extends StatelessWidget {
         ],
       ) 
       : ClipRRect(
-        borderRadius: BorderRadius.circular(1000),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(1000),
+          bottomLeft: Radius.circular(1000),
+          topRight: Radius.circular(radius ?? 1000),
+          bottomRight: Radius.circular(radius ?? 1000)
+        ),
         child: AnimatedCrossFade(
           duration: Duration(milliseconds: 300),
           alignment: Alignment.center,

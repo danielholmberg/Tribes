@@ -412,4 +412,14 @@ class DatabaseService {
 
   }
 
+  Future<List<UserData>> tribeMembersList(List<String> members) async {
+    List<UserData> membersList = [];
+
+    for(String memberID in members) {
+      await usersRoot.document(memberID).get().then((doc) => membersList.add(UserData.fromSnapshot(doc)));
+    }
+
+    return membersList;
+  }
+
 }

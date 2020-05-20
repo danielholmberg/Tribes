@@ -23,6 +23,10 @@ class TribeDetailsDialog extends StatefulWidget {
 
 class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<UserData> _membersList = [];
+  List<UserData> _searchResult = [];
+  TextEditingController controller = new TextEditingController();
+  Future membersFuture;
   bool loading = false;
 
   Tribe currentTribe;
@@ -30,6 +34,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
   @override
   void initState() {
     currentTribe = widget.tribe;
+    membersFuture = DatabaseService().tribeMembersList(currentTribe.members);
     super.initState();
   }
   
@@ -387,6 +392,148 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
       );
     }
 
+    _onSearchTextChanged(String text) async {
+      _searchResult.clear();
+      if (text.isEmpty) {
+        setState(() {});
+        return;
+      }
+
+      _membersList.forEach((friend) {
+        if (friend.name.toLowerCase().contains(text.toLowerCase()) || 
+        friend.username.toLowerCase().contains(text.toLowerCase())) {
+          _searchResult.add(friend);
+        }
+      });
+
+      setState(() {});
+    }
+
+    _buildSearchField() {
+      return Container(
+        margin: EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0),
+          border: Border.all(color: Colors.black54, width: 2.0),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+
+            SizedBox(width: Constants.largePadding),
+
+            // Leading Actions
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(FontAwesomeIcons.search, color: Colors.black54, size: Constants.smallIconSize),
+              ],
+            ),
+
+            SizedBox(width: Constants.largePadding),
+
+            // Center Widget
+            Expanded(
+              child: TextField(
+                controller: controller,
+                autofocus: false,
+                decoration: InputDecoration(
+                  hintText: 'Find tribe member', 
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(
+                    fontFamily: 'TribesRounded',
+                    fontSize: 16,
+                    color: Colors.black54.withOpacity(0.3),
+                  ),
+                ),
+                onChanged: _onSearchTextChanged,
+              )
+            ),
+
+            // Trailing Actions
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    FontAwesomeIcons.solidTimesCircle,
+                    color: controller.text.isEmpty ? Colors.grey : DynamicTheme.of(context).data.primaryColor,
+                  ), 
+                  onPressed: () {
+                    controller.clear();
+                    _onSearchTextChanged('');
+                  },
+                ),
+              ],
+            ),
+
+          ],
+        ),
+      );
+    }
+
+    _friendTile(UserData friend) {
+      return ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+        leading: UserAvatar(
+          currentUserID: currentUser.uid, 
+          user: friend, 
+          radius: 20, 
+          withName: true,
+          withUsername: true,
+          cornerRadius: 0.0,
+          color: DynamicTheme.of(context).data.primaryColor,
+          textColor: DynamicTheme.of(context).data.primaryColor,
+          textPadding: const EdgeInsets.only(left: 8.0),
+        ),
+      );
+    }
+
+    _buildTribeMembers() {
+      return FutureBuilder<List<UserData>>(
+        future: membersFuture,
+        builder: (context, snapshot) {
+
+          if(snapshot.hasData) {
+            _membersList = snapshot.data;
+
+            final EdgeInsets listPadding = const EdgeInsets.symmetric(horizontal: 12.0);
+
+            return Container(
+              child: ScrollConfiguration(
+                behavior: CustomScrollBehavior(), 
+                child: _searchResult.length != 0 || controller.text.isNotEmpty
+                ? ListView.builder(
+                  padding: listPadding,
+                  itemCount: _searchResult.length,
+                  shrinkWrap: true,
+                  physics: ClampingScrollPhysics(),
+                  itemBuilder: (context, i) {
+                    return _friendTile(_searchResult[i]); 
+                  }
+                )
+                : ListView.builder(
+                  padding: listPadding,
+                  itemCount: _membersList.length,
+                  shrinkWrap: true,
+                  physics: ClampingScrollPhysics(),
+                  itemBuilder: (context, i) {
+                    return _friendTile(_membersList[i]);
+                  },
+                ),
+              ),
+            );
+          } else if(snapshot.hasError){
+            print('Error retrieving friends: ${snapshot.error.toString()}');
+            return Center(child: Text('Unable to retrieve friends'));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        }
+      );
+    }
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
       contentPadding: EdgeInsets.zero,
@@ -414,6 +561,8 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                     _buildDescription(),
                     _buildPassword(),
                     _buildLeaveTribeButton(),
+                    _buildSearchField(),
+                    _buildTribeMembers(),
                   ],
                 ),
               ),
