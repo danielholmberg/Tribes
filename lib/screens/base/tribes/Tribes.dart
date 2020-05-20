@@ -58,7 +58,6 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
     super.build(context);
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building Tribes()...');
-    print('Current user ${currentUser.toString()}');
 
     _showNewTribePage() {
       Navigator.push(context, CustomPageTransition(
@@ -202,7 +201,6 @@ class _TribesState extends State<Tribes> with AutomaticKeepAliveClientMixin {
                       margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: verticalMargin),
                       child: GestureDetector(
                         onTap: () {
-                          print('Tapped tribe: ${currentTribe.name}');
                           Navigator.push(context, CustomPageTransition(
                             type: CustomPageTransitionType.tribeRoom,
                             child: StreamProvider<UserData>.value(

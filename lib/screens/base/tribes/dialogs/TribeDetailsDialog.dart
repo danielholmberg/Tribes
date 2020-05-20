@@ -37,7 +37,6 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building TribesDetailsDialog()...');
-    print('Current user ${currentUser.toString()}');
 
     bool isFounder = currentTribe != null ? currentUser.uid == currentTribe.founder : false;
     

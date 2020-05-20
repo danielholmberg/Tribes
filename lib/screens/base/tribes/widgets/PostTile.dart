@@ -73,9 +73,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
-    print('Building PostTile()...');
-    print('TribeTile: ${widget.post.id}');
-    print('Current user ${currentUser.toString()}');
+    print('Building PostTile(${widget.post.id})...');
 
     _postHeader() {
       return Row(

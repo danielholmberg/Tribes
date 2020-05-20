@@ -19,7 +19,6 @@ class TribeMessages extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building TribeMessages()...');
-    print('Current user ${currentUser.toString()}');
 
     _buildTribeTile(Tribe currentTribe) {
       return GestureDetector(

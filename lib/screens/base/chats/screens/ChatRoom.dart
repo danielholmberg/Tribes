@@ -52,8 +52,7 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
-    print('Building TribeMessages()...');
-    print('Current user ${currentUser.toString()}');
+    print('Building ChatRoom(${widget.roomID})...');
 
     _buildAppBar() {
       return AppBar(

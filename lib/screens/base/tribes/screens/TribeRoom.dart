@@ -29,8 +29,7 @@ class _TribeRoomState extends State<TribeRoom> {
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
-    print('Building TribeRoom()...');
-    print('Current user ${currentUser.toString()}');
+    print('Building TribeRoom(${widget.tribeID})...');
 
     double _calculatePostsHeight() {
       RenderBox postsContainer = _postsKey.currentContext.findRenderObject();

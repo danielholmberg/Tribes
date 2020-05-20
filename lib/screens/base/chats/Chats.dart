@@ -30,13 +30,11 @@ class _ChatsState extends State<Chats> with AutomaticKeepAliveClientMixin {
     super.build(context);
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building Chats()...');
-    print('Current user ${currentUser.toString()}');
 
     final NotificationData notificationData = firstBuild ? ModalRoute.of(context).settings.arguments : null;
     if(firstBuild) firstBuild = false;
 
     if(notificationData != null) {
-      print(notificationData.toString());
       switch (notificationData.tab) {
         case 'Private':
           _currentTab = 0;

@@ -137,7 +137,6 @@ class _EditPostState extends State<EditPost> {
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building EditPost()...');
-    print('Current user ${currentUser.toString()}');
 
     print('originalImages: ${originalImages.length}');
     print('oldImages: ${oldImages.length}');

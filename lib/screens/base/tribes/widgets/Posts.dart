@@ -23,9 +23,7 @@ class Posts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
-    print('Building Posts()...');
-    print('Current user ${currentUser.toString()}');
-    print('Tribe id: ${tribe.id}');
+    print('Building Posts(${tribe.id})...');
 
     _buildEmptyListWidget() {
       return Center(

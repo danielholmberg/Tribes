@@ -58,7 +58,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     UserData currentUser = Provider.of<UserData>(context);
     print('Building Profile()...');
-    print('Current user ${currentUser.uid}');
 
     bool isAnotherUser = widget.user != null;
     UserData anotherUser = widget.user;
@@ -368,8 +367,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             var addresses = snapshot.data;
                             var first = addresses.first;
                             var location = '${first.addressLine}';
-                            print('lat ${isAnotherUser ? anotherUser.lat : currentUser.lat}, lng ${isAnotherUser ? anotherUser.lng : currentUser.lng}');
-                            print('location: $location');
                             return Text(location,
                               style: TextStyle(
                                 color: Colors.blueGrey,

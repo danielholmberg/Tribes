@@ -67,7 +67,6 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building ProfileSettings()...');
-    print('Current user ${currentUser.toString()}');
 
     edited = originalName != name || originalUsername != username || originalInfo != info;
 
@@ -333,8 +332,6 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                                         currentUser.uid,
                                         username,
                                       );
-
-                                      print('alreadyInUse: $available');
 
                                       if(!available && username != originalUsername) {
                                         _showUnavailableUsernameDialog();

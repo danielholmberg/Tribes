@@ -46,7 +46,6 @@ class _NewTribeState extends State<NewTribe> {
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building NewTribe()...');
-    print('Current user ${currentUser.toString()}');
 
     edited = name.isNotEmpty || desc.isNotEmpty || secret || tribeColor != null;
 

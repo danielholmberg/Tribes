@@ -14,8 +14,7 @@ class TribeTileCompact extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Building TribeTile()...');
-    print('TribeTile: ${tribe.id}');
+    print('Building TribeTileCompact(${tribe.id})...');
 
     _buildTribeName() {
       return AutoSizeText(

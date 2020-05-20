@@ -25,8 +25,7 @@ class _PostTileCompactState extends State<PostTileCompact> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
-    print('Building Profile()...');
-    print('Current user ${currentUser.uid}');
+    print('Building PostTileCompact(${widget.post.id})...');
 
     bool showUserAvatar = widget.user.uid != widget.post.author;
 

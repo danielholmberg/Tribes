@@ -114,9 +114,7 @@ class _PostRoomState extends State<PostRoom> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
-    print('Building PostRoom()...');
-    print('TribeTile: ${widget.post.id}');
-    print('Current user ${currentUser.toString()}');
+    print('Building PostRoom(${widget.post.id})...');
     
     bool isAuthor = currentUser.uid == post.author;
 

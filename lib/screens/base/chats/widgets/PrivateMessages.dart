@@ -23,7 +23,6 @@ class PrivateMessages extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building PrivateMessages()...');
-    print('Current user ${currentUser.toString()}');
 
     _chatRoomListItem(ChatData chatData) {
       String notMyID = chatData.members.where((memberID) => memberID != currentUser.uid).toList()[0];

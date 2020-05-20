@@ -62,7 +62,6 @@ class _MyMapState extends State<MyMap> with AutomaticKeepAliveClientMixin {
     super.build(context);
     final currentUser = Provider.of<UserData>(context);
     print('Building Map()...');
-    print('Current user ${currentUser.toString()}');
 
     _buildMap(List<String> friendsList, Set<Marker> markers) {
       return _showMap ? AnimatedOpacity(

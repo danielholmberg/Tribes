@@ -9,7 +9,6 @@ class ChatData {
   });
 
   factory ChatData.fromSnapshot(DocumentSnapshot doc) {
-    print('doc: ${doc.data.toString()}');
     return ChatData(
       id: doc.documentID,
       members: doc.data['members'] ?? [],

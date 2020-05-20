@@ -34,7 +34,6 @@ class _JoinTribeState extends State<JoinTribe> {
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building JoinTribe()...');
-    print('Current user ${currentUser.toString()}');
 
     _onSearchTextChanged(String text) async {
       _searchResult.clear();

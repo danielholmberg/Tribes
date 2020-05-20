@@ -47,7 +47,6 @@ class _BaseState extends State<Base> with SingleTickerProviderStateMixin{
   void _setUpFCM() {
     if (Platform.isIOS) {
       iosSubscription = DatabaseService().fcm.onIosSettingsRegistered.listen((data) {
-        print(data);
         DatabaseService().saveFCMToken();
       });
 
@@ -58,13 +57,11 @@ class _BaseState extends State<Base> with SingleTickerProviderStateMixin{
 
     DatabaseService().fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
         var messageData = message['data'];
         
         // Do nothing as of now. TODO: Show a badge in BottomNavBar on Chat-tab, indicating a new chat message.
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
         var messageData = message['data'];
 
         // TODO: Fix bug when navigating to route.
@@ -78,7 +75,6 @@ class _BaseState extends State<Base> with SingleTickerProviderStateMixin{
         ); */
       },
       onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
         var messageData = message['data'];
 
         // TODO: Fix bug when navigating to route.
@@ -122,7 +118,6 @@ class _BaseState extends State<Base> with SingleTickerProviderStateMixin{
   }
 
   void _onTabTap(int currentIndex) {
-    print('$currentIndex');
     _tabController.animateTo(currentIndex);
     setState(() {
       _currentIndex = currentIndex;
@@ -268,8 +263,6 @@ class _BaseState extends State<Base> with SingleTickerProviderStateMixin{
                       username,
                     );
 
-                    print('alreadyInUse: $available');
-
                     if(!available) {
                       _showUnavailableUsernameDialog();
                     }
@@ -293,8 +286,6 @@ class _BaseState extends State<Base> with SingleTickerProviderStateMixin{
                           currentUser.uid,
                           username,
                         );
-
-                        print('alreadyInUse: $available');
 
                         if(!available) {
                           _showUnavailableUsernameDialog();

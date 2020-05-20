@@ -113,7 +113,6 @@ class _NewPostState extends State<NewPost> {
   Widget build(BuildContext context) {
     final UserData currentUser = Provider.of<UserData>(context);
     print('Building NewPost()...');
-    print('Current user ${currentUser.toString()}');
 
     bool edited = title.isNotEmpty || content.isNotEmpty || images.length > 0;
     bool step1Completed = title.trim().isNotEmpty;
