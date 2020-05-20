@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribes/models/Post.dart';
 import 'package:tribes/models/User.dart';
-import 'package:tribes/screens/base/tribes/screens/EditPost.dart';
 import 'package:tribes/screens/base/tribes/screens/PostRoom.dart';
 import 'package:tribes/screens/base/tribes/widgets/ImageCarousel.dart';
 import 'package:tribes/services/database.dart';
@@ -29,7 +28,6 @@ class _PostTileCompactState extends State<PostTileCompact> with TickerProviderSt
     print('Building Profile()...');
     print('Current user ${currentUser.uid}');
 
-    bool currentUserIsAuthor = currentUser.uid == widget.post.author;
     bool showUserAvatar = widget.user.uid != widget.post.author;
 
     _postHeader() {
@@ -118,33 +116,29 @@ class _PostTileCompactState extends State<PostTileCompact> with TickerProviderSt
     }
 
     return GestureDetector(
-      onTap: () {
-        if(!widget.viewOnly) {
-          showGeneralDialog(
-            context: context,
-            pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
-              return StreamProvider<UserData>.value(
-                  value: DatabaseService().currentUser(currentUser.uid),
-                  child: PostRoom(
-                    post: widget.post,
-                  ),
-                );
-            },
-            barrierDismissible: false,
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-              return FadeTransition(
-                opacity: CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeIn,
-                  reverseCurve: Curves.easeOut
-                ),
-                child: child,
-              );
-            },
+      onTap: () => showGeneralDialog(
+        context: context,
+        pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
+          return StreamProvider<UserData>.value(
+              value: DatabaseService().currentUser(currentUser.uid),
+              child: PostRoom(
+                post: widget.post,
+              ),
+            );
+        },
+        barrierDismissible: false,
+        transitionDuration: const Duration(milliseconds: 300),
+        transitionBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+          return FadeTransition(
+            opacity: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeIn,
+              reverseCurve: Curves.easeOut
+            ),
+            child: child,
           );
-        }
-      },
+        },
+      ),
       child: _buildCompactCard(),
     );
   }
