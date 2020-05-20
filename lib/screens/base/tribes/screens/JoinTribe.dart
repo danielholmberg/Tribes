@@ -121,7 +121,7 @@ class _JoinTribeState extends State<JoinTribe> {
                   IconButton(
                     icon: Icon(
                       FontAwesomeIcons.solidTimesCircle,
-                      color: DynamicTheme.of(context).data.primaryColor,
+                      color: controller.text.isEmpty ? Colors.grey : DynamicTheme.of(context).data.primaryColor,
                     ), 
                     onPressed: () {
                       controller.clear();

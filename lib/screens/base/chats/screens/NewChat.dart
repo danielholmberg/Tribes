@@ -103,7 +103,7 @@ class _NewChatState extends State<NewChat> {
     
     return loading ? Loading() : Scaffold(
       key: _scaffoldKey,
-      backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+      backgroundColor: DynamicTheme.of(context).data.primaryColor,
       body: SafeArea(
         child: Container(
           color: DynamicTheme.of(context).data.backgroundColor,
@@ -208,7 +208,7 @@ class _NewChatState extends State<NewChat> {
                           IconButton(
                             icon: Icon(
                               FontAwesomeIcons.solidTimesCircle,
-                              color: DynamicTheme.of(context).data.primaryColor,
+                              color: controller.text.isEmpty ? Colors.grey : DynamicTheme.of(context).data.primaryColor,
                             ), 
                             onPressed: () {
                               controller.clear();
