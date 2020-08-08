@@ -28,10 +28,16 @@ dependencies:
   font_awesome_flutter: ^8.5.0
 
   # Provider
-  provider: ^3.1.0
+  provider: ^4.1.3
+  # Get it
+  get_it: ^4.0.2
+  # Stacked (MVVM architecture)
+  stacked: ^1.5.8
+  # Responsive
+  responsive_builder: ^0.2.0+2
 
   # Loading Widget
-  flutter_spinkit: ^4.0.0
+  flutter_spinkit: ^4.1.2
 
   # Firebase
   firebase_core: ^0.4.0+9
@@ -52,7 +58,7 @@ dependencies:
   dynamic_theme: ^1.0.0
 
   # Google Maps
-  google_maps_flutter: ^0.5.21+15
+  google_maps_flutter: ^0.5.29
 
   # Location
   geolocator: ^5.2.0

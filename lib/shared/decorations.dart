@@ -1,3 +1,4 @@
+// ignore: library_names
 library Decorations;
 
 import 'package:flutter/material.dart';
@@ -7,7 +8,8 @@ const signInInput = InputDecoration(
   fillColor: Colors.white,
   filled: true,
   hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
-  errorStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontStyle: FontStyle.italic),
+  errorStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+  errorMaxLines: 2,
   enabledBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
   ),
@@ -27,7 +29,8 @@ const registerInput = InputDecoration(
   filled: true,
   counterStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded'),
   hintStyle: TextStyle(color: Colors.grey, fontFamily: 'TribesRounded'),
-  errorStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontStyle: FontStyle.italic),
+  errorStyle: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+  errorMaxLines: 2,
   enabledBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Constants.inputEnabledColor, width: 2.0),
   ),

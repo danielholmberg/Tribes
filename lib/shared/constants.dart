@@ -1,6 +1,14 @@
+// ignore: library_names
 library Constants;
 
 import 'package:flutter/material.dart';
+
+// Route names
+const AuthViewRoute = 'AuthView';
+const HomeViewRoute = 'HomeView';
+const MapViewRoute = 'MapView';
+const ChatViewRoute = 'ChatView';
+const ProfileViewRoute = 'ProfileView';
 
 // Core
 const primaryColor = Color(0xFFed217c);

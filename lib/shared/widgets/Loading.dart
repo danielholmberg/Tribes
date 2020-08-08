@@ -1,22 +1,21 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class Loading extends StatelessWidget {
   final Color color;
-  Loading({this.color = Constants.primaryColor});
+  final double size;
+  Loading({this.color = Constants.primaryColor, this.size = 50});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: DynamicTheme.of(context).data.backgroundColor,
-      child: Center(
-        child: SpinKitChasingDots(
-          color: color,
-          size: 50.0,
-        ),
-      ),
+    return Center(
+      child: SpinKitWave(
+        type: SpinKitWaveType.center,
+        color: color,
+        itemCount: 9,
+        size: size,
+      )
     );
   }
 }
