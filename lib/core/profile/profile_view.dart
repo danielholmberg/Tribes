@@ -10,21 +10,14 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tribes/core/profile/dialogs/profile_settings_dialog.dart';
 import 'package:tribes/core/profile/profile_view_model.dart';
-import 'package:tribes/core/profile/widgets/created_posts/created_posts_view.dart';
-import 'package:tribes/core/profile/widgets/joined_tribes/joined_tribes_view.dart';
-import 'package:tribes/core/profile/widgets/liked_posts/liked_posts_view.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
-import 'package:tribes/shared/widgets/loading.dart';
 
-part 'profile_view_mobile.dart';
+part 'profile_view_[mobile].dart';
 
 class ProfileView extends StatefulWidget {
-  static const routeName = '/profile';
-
   final MyUser user;
   ProfileView({this.user});
 
@@ -37,13 +30,11 @@ class _ProfileViewState extends State<ProfileView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print('ProfileView');
     return ViewModelBuilder<ProfileViewModel>.reactive(
-      viewModelBuilder: () => ProfileViewModel(user: widget.user),
-      onModelReady: (viewModel) => viewModel.initState(this),
-      disposeViewModel: false,
+      viewModelBuilder: () => ProfileViewModel(),
+      onModelReady: (viewModel) => viewModel.initState(widget.user, this),
       builder: (context, viewModel, child) => ScreenTypeLayout.builder(
-        mobile: (BuildContext context) => _ProfileViewMobile(viewModel),
+        mobile: (BuildContext context) => _ProfileViewMobile(),
       ),
     );
   }

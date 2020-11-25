@@ -1,11 +1,8 @@
 part of profile_view;
 
-class _ProfileViewMobile extends StatelessWidget {
-  final ProfileViewModel viewModel;
-  _ProfileViewMobile(this.viewModel);
-
+class _ProfileViewMobile extends ViewModelWidget<ProfileViewModel> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ProfileViewModel model) {
     ThemeData themeData = Theme.of(context);
 
     _profileHeader() {
@@ -22,7 +19,7 @@ class _ProfileViewMobile extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () => viewModel.isAnotherUser ? null : (viewModel.isBusy ? null : viewModel.chooseNewProfilePic()),
+                  onTap: model.isAnotherUser ? null : () => (model.isBusy ? null : model.chooseNewProfilePic()),
                   child: Stack(
                     alignment: Alignment.centerLeft,
                     children: <Widget>[
@@ -34,7 +31,7 @@ class _ProfileViewMobile extends StatelessWidget {
                           ),
                           child: Platform.isAndroid
                           ? FutureBuilder<void>(
-                            future: viewModel.retrieveLostData(),
+                            future: model.retrieveLostData(),
                             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
                               // TODO:
                               /* switch (snapshot.connectionState) {
@@ -47,12 +44,12 @@ class _ProfileViewMobile extends StatelessWidget {
                                   if(snapshot.hasError) print(snapshot.error.toString());
                                   return _profilePicture();
                               } */
-                              return viewModel.profilePicture();
+                              return model.profilePicture();
                             },
-                          ) : viewModel.profilePicture(),
+                          ) : model.profilePicture(),
                       ),
                       
-                      viewModel.isAnotherUser ? SizedBox.shrink() 
+                      model.isAnotherUser ? SizedBox.shrink() 
                       : Positioned(
                         bottom: 2, 
                         right: 2, 
@@ -84,7 +81,7 @@ class _ProfileViewMobile extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      NumberFormat.compact().format(viewModel.isAnotherUser ? viewModel.otherUser.createdPosts.length : viewModel.currentUser.createdPosts.length), 
+                      NumberFormat.compact().format(model.isAnotherUser ? model.profileUser.createdPosts.length : model.currentUser.createdPosts.length), 
                       style: TextStyle(
                         color: Colors.white, 
                         fontFamily: 'TribesRounded', 
@@ -101,7 +98,7 @@ class _ProfileViewMobile extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      NumberFormat.compact().format(viewModel.isAnotherUser ? viewModel.otherUser.likedPosts.length : viewModel.currentUser.likedPosts.length), 
+                      NumberFormat.compact().format(model.isAnotherUser ? model.profileUser.likedPosts.length : model.currentUser.likedPosts.length), 
                       style: TextStyle(
                         color: Colors.white, 
                         fontFamily: 'TribesRounded', 
@@ -111,9 +108,9 @@ class _ProfileViewMobile extends StatelessWidget {
                     Text('Liked', style: TextStyle(color: Colors.white, fontFamily: 'TribesRounded', fontWeight: FontWeight.normal)),
                   ],
                 ),
-                Spacer(),
-                StreamBuilder<List<Tribe>>(
-                  stream: DatabaseService().joinedTribes(viewModel.isAnotherUser ? viewModel.otherUser.id : viewModel.currentUser.id),
+                if(!model.isAnotherUser) Spacer(),
+                if(!model.isAnotherUser) StreamBuilder<List<Tribe>>(
+                  stream: model.joinedTribes,
                   builder: (context, snapshot) {
                     List<Tribe> tribesList =
                         snapshot.hasData ? snapshot.data : [];
@@ -161,7 +158,7 @@ class _ProfileViewMobile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(viewModel.isAnotherUser ? viewModel.otherUser.name : viewModel.currentUser.name,
+                  Text(model.isAnotherUser ? model.profileUser.name : model.currentUser.name,
                     style: TextStyle(
                       color: Colors.blueGrey,
                       fontFamily: 'TribesRounded',
@@ -178,7 +175,7 @@ class _ProfileViewMobile extends StatelessWidget {
                         size: Constants.tinyIconSize,
                       ),
                       SizedBox(width: Constants.defaultPadding),
-                      Text(viewModel.isAnotherUser ? viewModel.otherUser.email : viewModel.currentUser.email,
+                      Text(model.isAnotherUser ? model.profileUser.email : model.currentUser.email,
                         style: TextStyle(
                           color: Colors.blueGrey,
                           fontFamily: 'TribesRounded',
@@ -198,7 +195,7 @@ class _ProfileViewMobile extends StatelessWidget {
                       ),
                       SizedBox(width: Constants.defaultPadding),
                       FutureBuilder(
-                        future: viewModel.addressFuture,
+                        future: model.addressFuture,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             var addresses = snapshot.data;
@@ -226,14 +223,14 @@ class _ProfileViewMobile extends StatelessWidget {
                 ],
               ),
               Visibility(
-                visible: viewModel.isAnotherUser ? viewModel.otherUser.info.isNotEmpty : viewModel.currentUser.info.isNotEmpty,
+                visible: model.isAnotherUser ? model.profileUser.info.isNotEmpty : model.currentUser.info.isNotEmpty,
                 child: Divider(),
               ),
               Visibility(
-                visible: viewModel.isAnotherUser ? viewModel.otherUser.info.isNotEmpty : viewModel.currentUser.info.isNotEmpty,
+                visible: model.isAnotherUser ? model.profileUser.info.isNotEmpty : model.currentUser.info.isNotEmpty,
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  child: AutoSizeText(viewModel.isAnotherUser ? viewModel.otherUser.info : viewModel.currentUser.info,
+                  child: AutoSizeText(model.isAnotherUser ? model.profileUser.info : model.currentUser.info,
                     maxLines: 2,
                     overflow: TextOverflow.fade,
                     textAlign: TextAlign.center,
@@ -259,26 +256,25 @@ class _ProfileViewMobile extends StatelessWidget {
       body: SafeArea(
         bottom: false,
           child: Container(
-          child: !viewModel.dataReady ? Center(child: Loading(color: Constants.accentColor)) : DefaultTabController(
-            length: viewModel.tabController.length,
+          child: DefaultTabController(
+            length: model.tabController.length,
             child: NestedScrollView(
               headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
-                    expandedHeight: viewModel.isAnotherUser ? (viewModel.otherUser.info.isNotEmpty ? 330 : 280): (viewModel.currentUser.info.isNotEmpty ? 330 : 280),
+                    expandedHeight: model.isAnotherUser ? (model.profileUser.info.isNotEmpty ? 330 : 280): (model.currentUser.info.isNotEmpty ? 330 : 280),
                     floating: false,
                     pinned: false,
                     elevation: 4.0,
                     backgroundColor: themeData.primaryColor,
-                    leading: !viewModel.isAnotherUser ? SizedBox.shrink() 
-                    : GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
+                    leading: model.isDialogView ? GestureDetector(
+                      onTap: model.onCloseProfile,
                       child: CustomAwesomeIcon(
                         icon: FontAwesomeIcons.times, 
                         color: Colors.white,
                         padding: const EdgeInsets.only(left: 16, top: 12),
                       ),
-                    ),
+                    ) :  SizedBox.shrink(),
                     flexibleSpace: FlexibleSpaceBar(
                       background: SafeArea(
                         child: Padding(
@@ -294,7 +290,7 @@ class _ProfileViewMobile extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.max,
                                     children: <Widget>[
-                                      Text(viewModel.isAnotherUser ? viewModel.otherUser.username : viewModel.currentUser.username,
+                                      Text(model.isAnotherUser ? model.profileUser.username : model.currentUser.username,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontFamily: 'TribesRounded',
@@ -305,17 +301,17 @@ class _ProfileViewMobile extends StatelessWidget {
                                     ],
                                   ),
 
-                                  viewModel.isAnotherUser ? SizedBox.shrink() 
+                                  model.isAnotherUser ? SizedBox.shrink() 
                                   : Positioned(right: 0, 
                                     child: IconButton(
                                       color: themeData.buttonColor,
                                       icon: Icon(FontAwesomeIcons.cog, color: Constants.buttonIconColor),
                                       splashColor: Colors.transparent,
-                                      onPressed: viewModel.isAnotherUser ? null : () {
+                                      onPressed: model.isAnotherUser ? null : () {
                                         showDialog(
                                           context: context,
                                           barrierDismissible: false,
-                                          builder: (context) => ProfileSettingsDialog(user: viewModel.currentUser),
+                                          builder: (context) => ProfileSettingsView(),
                                         );
                                       },
                                     ),
@@ -343,20 +339,12 @@ class _ProfileViewMobile extends StatelessWidget {
                         labelColor: Constants.buttonIconColor,
                         indicatorColor: Constants.buttonIconColor,
                         unselectedLabelColor: Constants.buttonIconColor.withOpacity(0.7),
-                        tabs: [
-                          Tab(icon: Icon(Icons.dashboard)),
-                          Tab(icon: Icon(FontAwesomeIcons.solidHeart)),
-                          Tab(icon: Icon(FontAwesomeIcons.home))
-                        ],
+                        tabs: model.tabs,
                       ),
                     ),
                     Expanded(
                       child: TabBarView(
-                        children: [
-                          CreatedPosts(user: viewModel.otherUser ?? viewModel.currentUser, viewOnly: viewModel.isAnotherUser),
-                          LikedPosts(user: viewModel.otherUser ?? viewModel.currentUser, viewOnly: viewModel.isAnotherUser),
-                          JoinedTribes(user: viewModel.otherUser ?? viewModel.currentUser, showSecrets: !viewModel.isAnotherUser),
-                        ],
+                        children: model.tabBarViews,
                       ),
                     ),
                   ],

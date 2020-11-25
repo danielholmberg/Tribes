@@ -50,7 +50,7 @@ class DatabaseService with ReactiveServiceMixin {
   }
 
   Future saveFCMToken() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final User currentUser = FirebaseAuth.instance.currentUser;
 
     // Get the token for this device
     String fcmToken = await fcm.getToken();
@@ -142,19 +142,21 @@ class DatabaseService with ReactiveServiceMixin {
   }
 
   Stream<List<MyUser>> get users {
-    return usersRoot.snapshots().map((list) => list.docs
-        .map((userData) => MyUser.fromSnapshot(userData))
-        .toList());
+    return usersRoot.snapshots().map((list) {
+      return list.docs
+          .map((userData) => MyUser.fromSnapshot(userData))
+          .toList();
+    });
   }
 
-  // Get joined Tribes Stream
-  Stream<List<Tribe>> joinedTribes(String userID) {
+  Stream<List<Tribe>> get joinedTribes {
     return tribesRoot
-        .where('members', arrayContains: userID)
+        .where('members', arrayContains: currentUserData.id)
         .orderBy('created', descending: true)
         .snapshots()
-        .map(
-            (list) => list.docs.map((doc) => Tribe.fromSnapshot(doc)).toList());
+        .map((list) {
+      return list.docs.map((doc) => Tribe.fromSnapshot(doc)).toList();
+    });
   }
 
   // Get not yet joined Tribes Stream
@@ -321,9 +323,9 @@ class DatabaseService with ReactiveServiceMixin {
         .map((doc) => Tribe.fromSnapshot(doc));
   }
 
-  Stream<MyUser> currentUserDataStream({String firebaseUserID}) {
+  Stream<MyUser> get currentUserDataStream {
     return usersRoot
-        .doc(firebaseUserID ?? currentUserData.id)
+        .doc(currentUserData.id)
         .snapshots()
         .map((snapshot) {
       _currentUserData.value = MyUser.fromSnapshot(snapshot);
@@ -451,12 +453,14 @@ class DatabaseService with ReactiveServiceMixin {
 
     return FirebaseFirestore.instance.runTransaction((transaction) {
       return Future.value(transaction.set(messageRef, data));
-    }).then((transaction) {
-      transaction.update(roomRef, {
-        'hasMessages': true,
-        'updated': FieldValue.serverTimestamp(),
-      });
-    },);
+    }).then(
+      (transaction) {
+        transaction.update(roomRef, {
+          'hasMessages': true,
+          'updated': FieldValue.serverTimestamp(),
+        });
+      },
+    );
   }
 
   Future<List<Tribe>> joinedTribesFuture(String userID) async {
@@ -513,7 +517,13 @@ class DatabaseService with ReactiveServiceMixin {
   }
 
   Future fetchCurrentUserData(String uid) async {
-    _currentUserData.value = MyUser.fromSnapshot(await usersRoot.doc(uid).get());
+    _currentUserData.value = MyUser.fromSnapshot(
+      await usersRoot.doc(uid).get(),
+    );
     notifyListeners();
+  }
+
+  void resetCurrentUser() {
+    _currentUserData.value = null;
   }
 }

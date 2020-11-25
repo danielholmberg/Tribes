@@ -40,14 +40,19 @@ class AuthService with ReactiveServiceMixin {
 
   void initListener() {
     print('Initializing Auth listener...');
-    _firebaseUserStreamSub =
-        _auth.authStateChanges().listen((User firebaseUser) async {
-      if (firebaseUser != null) {
-        await locator<DatabaseService>().fetchCurrentUserData(firebaseUser.uid);
-      }
+    _firebaseUserStreamSub = _auth.authStateChanges().listen(
+      (User firebaseUser) async {
+        if (firebaseUser != null) {
+          await locator<DatabaseService>().fetchCurrentUserData(
+            firebaseUser.uid,
+          );
+        } else {
+          locator<DatabaseService>().resetCurrentUser();
+        }
 
-      _currentFirebaseUser.value = firebaseUser;
-    });
+        _currentFirebaseUser.value = firebaseUser;
+      },
+    );
     print('Success!');
   }
 
