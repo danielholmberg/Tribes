@@ -1,8 +1,6 @@
 library foundation_view;
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:stacked/stacked.dart';
@@ -16,7 +14,7 @@ import 'package:tribes/shared/widgets/custom_raised_button.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
 import 'package:tribes/shared/widgets/loading.dart';
 
-part 'foundation_view_mobile.dart';
+part 'foundation_view_[mobile].dart';
 
 class FoundationView extends StatefulWidget {
   static const routeName = '/foundation';
@@ -28,12 +26,13 @@ class FoundationView extends StatefulWidget {
 class _FoundationViewState extends State<FoundationView> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+
     return ViewModelBuilder<FoundationViewModel>.reactive(
       viewModelBuilder: () => FoundationViewModel(),
-      onModelReady: (viewModel) => viewModel.initState(this, 0),
-      disposeViewModel: false,
+      onModelReady: (viewModel) => viewModel.initialise(this, themeData),
       builder: (context, viewModel, child) => ScreenTypeLayout.builder(
-        mobile: (BuildContext context) => _FoundationViewMobile(viewModel),
+        mobile: (BuildContext context) => _FoundationViewMobile(),
       ),
     );
   }

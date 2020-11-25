@@ -3,11 +3,9 @@ library profile_view;
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tribes/core/profile/dialogs/profile_settings_dialog.dart';
@@ -17,7 +15,7 @@ import 'package:tribes/core/profile/widgets/joined_tribes/joined_tribes_view.dar
 import 'package:tribes/core/profile/widgets/liked_posts/liked_posts_view.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/loading.dart';
@@ -27,7 +25,7 @@ part 'profile_view_mobile.dart';
 class ProfileView extends StatefulWidget {
   static const routeName = '/profile';
 
-  final UserData user;
+  final MyUser user;
   ProfileView({this.user});
 
   @override

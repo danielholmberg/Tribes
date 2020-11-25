@@ -18,22 +18,26 @@ class CustomImage extends StatelessWidget {
     this.color = Constants.primaryColor,
     this.small = false,
     this.fullscreen = false,
-    this.width, 
+    this.width,
     this.height,
     this.margin = EdgeInsets.zero,
   });
 
   @override
   Widget build(BuildContext context) {
-
     _buildImage(ImageProvider imageProvider) {
       return Container(
         color: Colors.white,
         width: fullscreen ? null : MediaQuery.of(context).size.width,
-        child: Image(
-          image: imageProvider,
-          width: MediaQuery.of(context).size.width,
-          fit: fullscreen ? BoxFit.fitWidth : BoxFit.cover,
+        child: InteractiveViewer(
+          minScale: 1.0,
+          maxScale: 10.0,
+          scaleEnabled: fullscreen,
+          child: Image(
+            image: imageProvider,
+            width: MediaQuery.of(context).size.width,
+            fit: fullscreen ? BoxFit.fitWidth : BoxFit.cover,
+          ),
         ),
       );
     }
@@ -41,14 +45,21 @@ class CustomImage extends StatelessWidget {
     _buildPlaceholder() {
       return Container(
         width: fullscreen ? null : MediaQuery.of(context).size.width,
-        child: fullscreen ? Center(child: Loading(size: 100)) : Loading(color: color),
+        child: fullscreen
+            ? Center(child: Loading(size: 100))
+            : Loading(color: color),
       );
     }
 
     _buildError() {
       return Container(
         width: fullscreen ? null : MediaQuery.of(context).size.width,
-        child: Center(child: CustomAwesomeIcon(icon: FontAwesomeIcons.exclamationCircle, color: color.withOpacity(0.5),)),
+        child: Center(
+          child: CustomAwesomeIcon(
+            icon: FontAwesomeIcons.exclamationCircle,
+            color: color.withOpacity(0.5),
+          ),
+        ),
       );
     }
 

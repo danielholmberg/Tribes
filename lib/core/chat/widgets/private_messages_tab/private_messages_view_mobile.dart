@@ -1,19 +1,20 @@
 part of private_messages_view;
 
-class _PrivateMessagesViewMobile extends StatelessWidget {
-  final PrivateMessagesViewModel viewModel;
-  _PrivateMessagesViewMobile(this.viewModel);
+class _PrivateMessagesViewMobile extends ViewModelWidget<PrivateMessagesViewModel> {
+  _PrivateMessagesViewMobile();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, PrivateMessagesViewModel model) {
+    ThemeData themeData = Theme.of(context);
+    
     _chatRoomListItem(ChatData chatData) {
-      viewModel.setNotMyId(chatData.members.where((memberID) => memberID != viewModel.currentUserData.id).toList()[0]);
+      model.setNotMyId(chatData.members.where((memberID) => memberID != model.currentUserData.id).toList()[0]);
 
-      return StreamBuilder<UserData>(
-        stream: DatabaseService().userData(viewModel.notMyId),
+      return StreamBuilder<MyUser>(
+        stream: DatabaseService().userData(model.notMyId),
         builder: (context, snapshot) {
           if(snapshot.hasData) {
-            UserData reciever = snapshot.data;
+            MyUser reciever = snapshot.data;
 
             return StreamBuilder<Message>(
               stream: DatabaseService().mostRecentMessage(chatData.id),
@@ -24,7 +25,7 @@ class _PrivateMessagesViewMobile extends StatelessWidget {
 
                 if(snapshot.hasData) {
                   message = snapshot.data;
-                  isMe = snapshot.data.senderID == viewModel.currentUserData.id;
+                  isMe = snapshot.data.senderID == model.currentUserData.id;
                   isNewMessage = !isMe && message != null;
                 }
 
@@ -49,19 +50,19 @@ class _PrivateMessagesViewMobile extends StatelessWidget {
                         ),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: DynamicTheme.of(context).data.backgroundColor,
+                            color: themeData.backgroundColor,
                             borderRadius: BorderRadius.circular(20.0),
                             boxShadow: [Constants.defaultBoxShadow],
-                            border: Border.all(color: DynamicTheme.of(context).data.primaryColor.withOpacity(isNewMessage ? 1.0 : 0.5), width: 2.0),
+                            border: Border.all(color: themeData.primaryColor.withOpacity(isNewMessage ? 1.0 : 0.5), width: 2.0),
                           ),
                           margin: EdgeInsets.only(right: isMe || message == null ? 0.0 : 22.0),
                           padding: EdgeInsets.only(right: isMe || message == null ? 6.0 : 22.0),
                           child: ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
                             leading: UserAvatar(
-                              currentUserID: viewModel.currentUserData.id, 
+                              currentUserID: model.currentUserData.id, 
                               user: reciever, 
-                              color: DynamicTheme.of(context).data.primaryColor.withOpacity(isNewMessage ? 1.0 : 0.5),
+                              color: themeData.primaryColor.withOpacity(isNewMessage ? 1.0 : 0.5),
                               radius: Constants.chatMessageAvatarSize, 
                               onlyAvatar: true,
                             ),
@@ -132,7 +133,7 @@ class _PrivateMessagesViewMobile extends StatelessWidget {
                             elevation: 4.0,
                             mini: true,
                             child: CustomAwesomeIcon(icon: FontAwesomeIcons.reply, size: Constants.smallIconSize),
-                            backgroundColor: DynamicTheme.of(context).data.primaryColor,
+                            backgroundColor: themeData.primaryColor,
                             onPressed: () => Navigator.push(context, 
                               CustomPageTransition(
                                 type: CustomPageTransitionType.chatRoom, 
@@ -169,7 +170,7 @@ class _PrivateMessagesViewMobile extends StatelessWidget {
           padding: EdgeInsets.only(top: 8.0, bottom: 72.0),
           reverse: false,
           shrinkWrap: true,
-          query: DatabaseService().privateChatRooms(viewModel.currentUserData.id),
+          query: model.privateChatRooms,
           itemBuilder: (
             BuildContext context,
             DocumentSnapshot snapshot,

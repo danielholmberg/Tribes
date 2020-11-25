@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/block_picker.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
@@ -44,8 +43,10 @@ class _NewTribeViewState extends State<NewTribeView> {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building NewTribe()...');
+
+    ThemeData themeData = Theme.of(context);
 
     edited = name.isNotEmpty || desc.isNotEmpty || secret || tribeColor != null;
 
@@ -62,7 +63,7 @@ class _NewTribeViewState extends State<NewTribeView> {
           margin: EdgeInsets.all(12.0),
           padding: const EdgeInsets.all(4.0),
           decoration: BoxDecoration(
-            color: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+            color: tribeColor ?? themeData.primaryColor,
             borderRadius: BorderRadius.circular(20.0),
             border: Border.all(color: Colors.black26, width: 2.0),
             boxShadow: [
@@ -226,7 +227,7 @@ class _NewTribeViewState extends State<NewTribeView> {
                           content: SingleChildScrollView(
                             child: BlockPicker(
                               availableColors: Constants.defaultTribeColors,
-                              pickerColor: tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                              pickerColor: tribeColor ?? themeData.primaryColor,
                               onColorChanged: _changeColor,
                             ),
                           ),
@@ -287,11 +288,11 @@ class _NewTribeViewState extends State<NewTribeView> {
         return;
       },
         child: Container(
-        color: DynamicTheme.of(context).data.primaryColor,
+        color: themeData.primaryColor,
         child: SafeArea(
           bottom: false,
           child: loading ? Loading(color: tribeColor ?? Constants.primaryColor) : Scaffold(
-            backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+            backgroundColor: themeData.backgroundColor,
             body: Stack(
               children: <Widget>[
                 Positioned.fill(

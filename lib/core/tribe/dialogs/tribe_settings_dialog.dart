@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_colorpicker/block_picker.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/models/tribe_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
@@ -73,6 +72,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
 
     edited = originalName != name || originalDesc != desc || originalPassword != password || originalTribeColor != tribeColor || originalSecret != secret;
 
@@ -92,7 +92,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
     _buildAppBar(Tribe currentTribe) {
       return AppBar(
         elevation: 0.0,
-        backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+        backgroundColor: themeData.backgroundColor,
         leading: IconButton(
           icon: CustomAwesomeIcon(
             icon: Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft, 
@@ -114,7 +114,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
         title: Text(
           'Settings',
           style: TextStyle(
-            color: tribeColor != null ? tribeColor : currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+            color: tribeColor != null ? tribeColor : currentTribe.color ?? themeData.primaryColor,
             fontFamily: 'TribesRounded',
             fontSize: Constants.defaultDialogTitleFontSize,
             fontWeight: Constants.defaultDialogTitleFontWeight
@@ -318,7 +318,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
                         FlatButton(
                           child: Text('Cancel', 
                             style: TextStyle(
-                              color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                              color: currentTribe.color ?? themeData.primaryColor,
                               fontFamily: 'TribesRounded',
                             ),
                           ),
@@ -432,7 +432,7 @@ class _TribeSettingsDialogState extends State<TribeSettingsDialog> {
               return loading ? Loading(color: currentTribe.color ?? widget.tribe.color) 
               : Scaffold(
                 key: _scaffoldKey,
-                backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+                backgroundColor: themeData.backgroundColor,
                 appBar: _buildAppBar(currentTribe),
                 body: ScrollConfiguration(
                   behavior: CustomScrollBehavior(),

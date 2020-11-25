@@ -15,7 +15,7 @@ enum UserAvatarDirections {
 
 class UserAvatar extends StatelessWidget {
   final String currentUserID;
-  final UserData user;
+  final MyUser user;
   final Color color;
   final bool onlyAvatar;
   final bool withName; 

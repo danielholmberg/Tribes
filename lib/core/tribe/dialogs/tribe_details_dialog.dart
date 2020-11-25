@@ -1,11 +1,10 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/core/tribe/dialogs/tribe_settings_dialog.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
@@ -23,8 +22,8 @@ class TribeDetailsDialog extends StatefulWidget {
 
 class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<UserData> _membersList = [];
-  List<UserData> _searchResult = [];
+  List<MyUser> _membersList = [];
+  List<MyUser> _searchResult = [];
   TextEditingController controller = new TextEditingController();
   Future membersFuture;
   bool loading = false;
@@ -40,24 +39,26 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
   
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building TribesDetailsDialog()...');
+
+    ThemeData themeData = Theme.of(context);
 
     bool isFounder = currentTribe != null ? currentUser.id == currentTribe.founder : false;
     
     _buildAppBar() {
       return AppBar(
         elevation: 0.0,
-        backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+        backgroundColor: themeData.backgroundColor,
         leading: IconButton(
-          icon: Icon(FontAwesomeIcons.times, color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+          icon: Icon(FontAwesomeIcons.times, color: currentTribe.color ?? themeData.primaryColor),
           splashColor: Colors.transparent,
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Tribe Details',
           style: TextStyle(
-            color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+            color: currentTribe.color ?? themeData.primaryColor,
             fontFamily: 'TribesRounded',
             fontSize: Constants.defaultDialogTitleFontSize,
             fontWeight: Constants.defaultDialogTitleFontWeight
@@ -101,7 +102,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                 children: <Widget>[
                   Text('Chief', style: TextStyle(color: Colors.black54, fontFamily: 'TribesRounded', fontWeight: FontWeight.bold)),
                   SizedBox(width: 12.0),
-                  StreamBuilder<UserData>(
+                  StreamBuilder<MyUser>(
                     stream: DatabaseService().userData(currentTribe.founder),
                     builder: (context, snapshot) {
 
@@ -154,7 +155,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                       currentTribe.desc,
                       softWrap: true,
                       style: TextStyle(
-                        color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                        color: currentTribe.color ?? themeData.primaryColor,
                         fontSize: 14.0,
                         fontWeight: FontWeight.normal,
                         fontFamily: 'TribesRounded',
@@ -213,7 +214,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                     builder: (context, setState) {
                       return AlertDialog(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                        backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+                        backgroundColor: themeData.backgroundColor,
                         title: Text('Leaving Tribe', 
                           style: TextStyle(
                             fontFamily: 'TribesRounded', 
@@ -310,7 +311,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                             child: Text('Cancel', 
                               style: TextStyle(
                                 fontFamily: 'TribesRounded', 
-                                color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                color: currentTribe.color ?? themeData.primaryColor,
                               ),
                             ),
                             onPressed: () {
@@ -356,7 +357,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                       child: Text('No', 
                         style: TextStyle(
                           fontFamily: 'TribesRounded', 
-                          color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor
+                          color: currentTribe.color ?? themeData.primaryColor
                         ),
                       ),
                       onPressed: () {
@@ -458,7 +459,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
                 IconButton(
                   icon: Icon(
                     FontAwesomeIcons.solidTimesCircle,
-                    color: controller.text.isEmpty ? Colors.grey : DynamicTheme.of(context).data.primaryColor,
+                    color: controller.text.isEmpty ? Colors.grey : themeData.primaryColor,
                   ), 
                   onPressed: () {
                     controller.clear();
@@ -473,7 +474,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
       );
     }
 
-    _friendTile(UserData friend) {
+    _friendTile(MyUser friend) {
       return ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
         leading: UserAvatar(
@@ -483,15 +484,15 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
           withName: true,
           withUsername: true,
           cornerRadius: 0.0,
-          color: DynamicTheme.of(context).data.primaryColor,
-          textColor: DynamicTheme.of(context).data.primaryColor,
+          color: themeData.primaryColor,
+          textColor: themeData.primaryColor,
           textPadding: const EdgeInsets.only(left: 8.0),
         ),
       );
     }
 
     _buildTribeMembers() {
-      return FutureBuilder<List<UserData>>(
+      return FutureBuilder<List<MyUser>>(
         future: membersFuture,
         builder: (context, snapshot) {
 
@@ -545,7 +546,7 @@ class _TribeDetailsDialogState extends State<TribeDetailsDialog> {
           alignment: Alignment.topCenter,
           child: Scaffold(
             key: _scaffoldKey,
-            backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+            backgroundColor: themeData.backgroundColor,
             appBar: _buildAppBar(),
             body: loading ? Loading(color: currentTribe.color) 
             : ScrollConfiguration(

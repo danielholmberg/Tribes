@@ -6,11 +6,12 @@ class _HomeViewMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
     
     _buildAppBar() {
       return Container(
         padding: const EdgeInsets.all(4.0),
-        color: DynamicTheme.of(context).data.primaryColor,
+        color: themeData.primaryColor,
         child: Stack(
           alignment: Alignment.center,
           children: <Widget> [
@@ -134,19 +135,19 @@ class _HomeViewMobile extends StatelessWidget {
 
     return !viewModel.dataReady ? Loading()
     : Container(
-      color: DynamicTheme.of(context).data.primaryColor,
+      color: themeData.primaryColor,
       child: SafeArea(
         bottom: false,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: DynamicTheme.of(context).data.primaryColor,
+          backgroundColor: themeData.primaryColor,
           body: Column(
             children: <Widget>[
               _buildAppBar(),
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: DynamicTheme.of(context).data.backgroundColor,
+                    color: themeData.backgroundColor,
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                     boxShadow: [
                       BoxShadow(

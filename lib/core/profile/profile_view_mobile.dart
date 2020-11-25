@@ -6,6 +6,8 @@ class _ProfileViewMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
+
     _profileHeader() {
       return Container(
         padding: EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 12.0),
@@ -26,7 +28,7 @@ class _ProfileViewMobile extends StatelessWidget {
                     children: <Widget>[
                       Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: DynamicTheme.of(context).data.backgroundColor, width: 2.0),
+                            border: Border.all(color: themeData.backgroundColor, width: 2.0),
                             color: Colors.blue,
                             shape: BoxShape.circle,
                           ),
@@ -172,7 +174,7 @@ class _ProfileViewMobile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Icon(FontAwesomeIcons.at, 
-                        color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.7),
+                        color: themeData.primaryColor.withOpacity(0.7),
                         size: Constants.tinyIconSize,
                       ),
                       SizedBox(width: Constants.defaultPadding),
@@ -191,7 +193,7 @@ class _ProfileViewMobile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Icon(Platform.isIOS ? FontAwesomeIcons.locationArrow : FontAwesomeIcons.mapMarkerAlt, 
-                        color: DynamicTheme.of(context).data.primaryColor.withOpacity(0.7),
+                        color: themeData.primaryColor.withOpacity(0.7),
                         size: Constants.tinyIconSize,
                       ),
                       SizedBox(width: Constants.defaultPadding),
@@ -253,7 +255,7 @@ class _ProfileViewMobile extends StatelessWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: DynamicTheme.of(context).data.primaryColor,
+      backgroundColor: themeData.primaryColor,
       body: SafeArea(
         bottom: false,
           child: Container(
@@ -267,7 +269,7 @@ class _ProfileViewMobile extends StatelessWidget {
                     floating: false,
                     pinned: false,
                     elevation: 4.0,
-                    backgroundColor: DynamicTheme.of(context).data.primaryColor,
+                    backgroundColor: themeData.primaryColor,
                     leading: !viewModel.isAnotherUser ? SizedBox.shrink() 
                     : GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
@@ -306,7 +308,7 @@ class _ProfileViewMobile extends StatelessWidget {
                                   viewModel.isAnotherUser ? SizedBox.shrink() 
                                   : Positioned(right: 0, 
                                     child: IconButton(
-                                      color: DynamicTheme.of(context).data.buttonColor,
+                                      color: themeData.buttonColor,
                                       icon: Icon(FontAwesomeIcons.cog, color: Constants.buttonIconColor),
                                       splashColor: Colors.transparent,
                                       onPressed: viewModel.isAnotherUser ? null : () {
@@ -336,7 +338,7 @@ class _ProfileViewMobile extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      color: DynamicTheme.of(context).data.primaryColor,
+                      color: themeData.primaryColor,
                       child: TabBar(
                         labelColor: Constants.buttonIconColor,
                         indicatorColor: Constants.buttonIconColor,

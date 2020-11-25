@@ -15,7 +15,7 @@ class Message {
   });
 
   factory Message.fromSnapshot(DocumentSnapshot doc) {
-    var created = doc.data['created'];
+    var created = doc.data()['created'];
     
     // Convert int-timestamp values
     if(created.runtimeType == int) {
@@ -23,9 +23,9 @@ class Message {
     }
 
     return Message(
-      id: doc.documentID,
-      message: doc.data['message'] ?? '',
-      senderID: doc.data['senderID'] ?? '',
+      id: doc.id,
+      message: doc.data()['message'] ?? '',
+      senderID: doc.data()['senderID'] ?? '',
       created: created,
     );
   }

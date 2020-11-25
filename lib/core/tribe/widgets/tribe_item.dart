@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/tribe_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 
@@ -66,8 +66,8 @@ class TribeItem extends StatelessWidget {
 
     _buildNumberOfPosts() {
       return StreamBuilder<List<Post>>(
-        stream: DatabaseService().posts(tribe.id)
-          .map((list) => list.documents
+        stream: DatabaseService().posts(tribe.id).snapshots()
+          .map((list) => list.docs
           .map((doc) => Post.fromSnapshot(doc))
           .toList()
         ),

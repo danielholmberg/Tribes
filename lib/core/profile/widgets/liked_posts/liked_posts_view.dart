@@ -3,12 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/core/tribe/widgets/post_item_compact.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
 import 'package:tribes/shared/widgets/loading.dart';
 
 class LikedPosts extends StatefulWidget {
-  final UserData user;
+  final MyUser user;
   final bool viewOnly;
   LikedPosts({@required this.user, this.viewOnly = false});
 

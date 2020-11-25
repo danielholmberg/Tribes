@@ -1,13 +1,12 @@
 import 'dart:io';
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/core/tribe/widgets/tribe_item_compact.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
@@ -32,8 +31,10 @@ class _JoinTribeViewState extends State<JoinTribeView> {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building JoinTribe()...');
+
+    ThemeData themeData = Theme.of(context);
 
     _onSearchTextChanged(String text) async {
       _searchResult.clear();
@@ -86,7 +87,7 @@ class _JoinTribeViewState extends State<JoinTribeView> {
                   IconButton(
                     icon: Icon(
                       Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
-                      color: DynamicTheme.of(context).data.primaryColor
+                      color: themeData.primaryColor
                     ), 
                     onPressed: () => Navigator.of(context).pop(),
                   ),
@@ -121,7 +122,7 @@ class _JoinTribeViewState extends State<JoinTribeView> {
                   IconButton(
                     icon: Icon(
                       FontAwesomeIcons.solidTimesCircle,
-                      color: controller.text.isEmpty ? Colors.grey : DynamicTheme.of(context).data.primaryColor,
+                      color: controller.text.isEmpty ? Colors.grey : themeData.primaryColor,
                     ), 
                     onPressed: () {
                       controller.clear();
@@ -184,7 +185,7 @@ class _JoinTribeViewState extends State<JoinTribeView> {
               return AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
               contentPadding: EdgeInsets.all(0.0),
-              backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+              backgroundColor: themeData.backgroundColor,
               content: ScrollConfiguration(
                 behavior: CustomScrollBehavior(),
                 child: ClipRRect(
@@ -229,8 +230,8 @@ class _JoinTribeViewState extends State<JoinTribeView> {
                                     maxLength: 1,
                                     obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                    cursorColor: activeTribe.color ?? themeData.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -277,10 +278,10 @@ class _JoinTribeViewState extends State<JoinTribeView> {
                                     maxLength: 1,
                                     obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                    cursorColor: activeTribe.color ?? themeData.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
-                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                      labelStyle: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                         borderSide: BorderSide(color: two.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
@@ -326,10 +327,10 @@ class _JoinTribeViewState extends State<JoinTribeView> {
                                     maxLength: 1,
                                     obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                    cursorColor: activeTribe.color ?? themeData.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
-                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                      labelStyle: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                         borderSide: BorderSide(color: three.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
@@ -375,10 +376,10 @@ class _JoinTribeViewState extends State<JoinTribeView> {
                                     maxLength: 1,
                                     obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                    cursorColor: activeTribe.color ?? themeData.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
-                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                      labelStyle: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                         borderSide: BorderSide(color: four.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
@@ -424,10 +425,10 @@ class _JoinTribeViewState extends State<JoinTribeView> {
                                     maxLength: 1,
                                     obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                    cursorColor: activeTribe.color ?? themeData.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
-                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                      labelStyle: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                         borderSide: BorderSide(color: five.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
@@ -473,10 +474,10 @@ class _JoinTribeViewState extends State<JoinTribeView> {
                                     maxLength: 1,
                                     obscureText: true,
                                     buildCounter: (BuildContext context, { int currentLength, int maxLength, bool isFocused }) => null,
-                                    cursorColor: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor,
-                                    style: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                    cursorColor: activeTribe.color ?? themeData.primaryColor,
+                                    style: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                     decoration: Decorations.tribePasswordInput.copyWith(
-                                      labelStyle: TextStyle(color: activeTribe.color ?? DynamicTheme.of(context).data.primaryColor),
+                                      labelStyle: TextStyle(color: activeTribe.color ?? themeData.primaryColor),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                                         borderSide: BorderSide(color: six.isEmpty ? Colors.black26 : activeTribe.color ?? Constants.inputEnabledColor, width: 2.0),
@@ -552,11 +553,11 @@ class _JoinTribeViewState extends State<JoinTribeView> {
     return loading ? Loading() : Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
-      backgroundColor: DynamicTheme.of(context).data.primaryColor,
+      backgroundColor: themeData.primaryColor,
       body: SafeArea(
         bottom: false,
         child: Container(
-          color: DynamicTheme.of(context).data.backgroundColor,
+          color: themeData.backgroundColor,
           child: Stack(
             children: <Widget>[
               Positioned.fill(

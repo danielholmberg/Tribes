@@ -134,3 +134,7 @@ const profileUsernameMaxLength = 20;
 const profileInfoMaxLength = 100;
 
 const placeholderPicURL = 'https://picsum.photos/id/237/200/300';
+
+
+const confirmButtonColor = Colors.green;
+const declineButtonColor = Colors.red;

@@ -5,23 +5,23 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path/path.dart' as Path;
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 
 class StorageService {
   // User Image Ref
-  final StorageReference userImagesRoot =
-      FirebaseStorage().ref().child('userImages');
+  final Reference userImagesRoot =
+      FirebaseStorage.instance.ref().child('userImages');
 
   // User Image Ref
-  final StorageReference postImagesRoot =
-      FirebaseStorage().ref().child('postImages');
+  final Reference postImagesRoot =
+      FirebaseStorage.instance.ref().child('postImages');
 
   // Tribe Image Ref
-  final StorageReference tribeImagesRoot =
-      FirebaseStorage().ref().child('tribeImages');
+  final Reference tribeImagesRoot =
+      FirebaseStorage.instance.ref().child('tribeImages');
 
-  Future<StorageReference> getReferenceFromUrl(String fullUrl) async {
-    final StorageReference ref = await FirebaseStorage.instance.getReferenceFromUrl(fullUrl);
+  Future<Reference> getReferenceFromUrl(String fullUrl) async {
+    final Reference ref = await FirebaseStorage.instance.getReferenceFromUrl(fullUrl);
     if (ref != null) {
       return ref;
     } else {
@@ -30,7 +30,7 @@ class StorageService {
   }
 
   Future deleteOldFile(String oldImageURL) async {
-    StorageReference imageRef = await getReferenceFromUrl(oldImageURL);
+    Reference imageRef = await getReferenceFromUrl(oldImageURL);
     if(imageRef != null) {
       return imageRef.delete();
     } else {
@@ -40,13 +40,13 @@ class StorageService {
   }
 
   Future<String> uploadUserImage(File newImageFile, String oldImageURL) async {    
-    StorageReference storageReference = userImagesRoot.child('${Path.basename(newImageFile.path)}');    
-    StorageUploadTask uploadTask = storageReference.putFile(newImageFile);    
-    await uploadTask.onComplete; 
+    Reference storageRef = userImagesRoot.child('${Path.basename(newImageFile.path)}');    
+    
+    await storageRef.putFile(newImageFile);    
 
     print('File Uploaded');    
 
-    String picURL = await storageReference.getDownloadURL();
+    String picURL = await storageRef.getDownloadURL();
     if(oldImageURL != null) {
       try {
         await deleteOldFile(oldImageURL);
@@ -62,14 +62,15 @@ class StorageService {
   Future<String> uploadPostImage(String postID, Asset asset) async {
     ByteData byteData = await asset.getByteData();
     List<int> imageData = byteData.buffer.asUint8List();
-    StorageReference ref = StorageService().postImagesRoot.child(postID).child('${asset.name}');
-    StorageUploadTask uploadTask = ref.putData(imageData);
+    Reference ref = StorageService().postImagesRoot.child(postID).child('${asset.name}');
+    
+    await ref.putData(imageData);
 
-    return await (await uploadTask.onComplete).ref.getDownloadURL();
+    return await ref.getDownloadURL();
   }
 
   Future deleteFile(String fileURL) async {
-    StorageReference fileRef = await getReferenceFromUrl(fileURL);
+    Reference fileRef = await getReferenceFromUrl(fileURL);
     if(fileRef != null) {
       return fileRef.delete().then((onValue) => print('Deleted image with URL: $fileURL'));
     } else {

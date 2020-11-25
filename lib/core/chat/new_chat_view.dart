@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/core/chat/chat_room_view.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/custom_page_transition.dart';
@@ -26,8 +25,8 @@ class NewChatView extends StatefulWidget {
 class _NewChatViewState extends State<NewChatView> {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<UserData> _friendsList = [];
-  List<UserData> _searchResult = [];
+  List<MyUser> _friendsList = [];
+  List<MyUser> _searchResult = [];
   bool loading = false;
   String error = '';
   TextEditingController controller = new TextEditingController();
@@ -43,6 +42,7 @@ class _NewChatViewState extends State<NewChatView> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
 
     _onSearchTextChanged(String text) async {
       _searchResult.clear();
@@ -61,7 +61,7 @@ class _NewChatViewState extends State<NewChatView> {
       setState(() {});
     }
     
-    _friendTile(UserData friend) {
+    _friendTile(MyUser friend) {
       return ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
         leading: UserAvatar(
@@ -71,8 +71,8 @@ class _NewChatViewState extends State<NewChatView> {
           withName: true,
           withUsername: true,
           cornerRadius: 0.0,
-          color: DynamicTheme.of(context).data.primaryColor,
-          textColor: DynamicTheme.of(context).data.primaryColor,
+          color: themeData.primaryColor,
+          textColor: themeData.primaryColor,
           textPadding: const EdgeInsets.only(left: 8.0),
         ),
         trailing: FloatingActionButton(
@@ -83,7 +83,7 @@ class _NewChatViewState extends State<NewChatView> {
             icon: FontAwesomeIcons.pen,
             size: Constants.smallIconSize,
           ),
-          backgroundColor: DynamicTheme.of(context).data.primaryColor,
+          backgroundColor: themeData.primaryColor,
           onPressed: () async {
            String roomID = await DatabaseService().createNewPrivateChatRoom(widget.currentUserID, friend.id);
 
@@ -101,14 +101,14 @@ class _NewChatViewState extends State<NewChatView> {
     
     return loading ? Loading() : Scaffold(
       key: _scaffoldKey,
-      backgroundColor: DynamicTheme.of(context).data.primaryColor,
+      backgroundColor: themeData.primaryColor,
       body: SafeArea(
         child: Container(
-          color: DynamicTheme.of(context).data.backgroundColor,
+          color: themeData.backgroundColor,
           child: Stack(
             children: <Widget>[
               Positioned.fill(
-                child: FutureBuilder<List<UserData>>(
+                child: FutureBuilder<List<MyUser>>(
                   future: friendsFuture,
                   builder: (context, snapshot) {
 
@@ -171,7 +171,7 @@ class _NewChatViewState extends State<NewChatView> {
                           IconButton(
                             icon: Icon(
                               Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
-                              color: DynamicTheme.of(context).data.primaryColor
+                              color: themeData.primaryColor
                             ), 
                             onPressed: () => Navigator.of(context).pop(),
                           ),
@@ -206,7 +206,7 @@ class _NewChatViewState extends State<NewChatView> {
                           IconButton(
                             icon: Icon(
                               FontAwesomeIcons.solidTimesCircle,
-                              color: controller.text.isEmpty ? Colors.grey : DynamicTheme.of(context).data.primaryColor,
+                              color: controller.text.isEmpty ? Colors.grey : themeData.primaryColor,
                             ), 
                             onPressed: () {
                               controller.clear();

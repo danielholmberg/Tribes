@@ -1,7 +1,6 @@
 import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoder/geocoder.dart';
@@ -10,7 +9,7 @@ import 'package:tribes/core/tribe/widgets/image_carousel.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/like_button.dart';
@@ -73,8 +72,10 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building PostTile(${widget.post.id})...');
+
+    ThemeData themeData = Theme.of(context);
 
     _postHeader() {
       return Row(
@@ -89,7 +90,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
             curve: Curves.fastOutSlowIn,
             child: Container(
               margin: const EdgeInsets.only(top: 8.0, left: 6.0),
-              child: StreamBuilder<UserData>(
+              child: StreamBuilder<MyUser>(
                 stream: DatabaseService().userData(widget.post.author),
                 builder: (context, snapshot) {
                   if(snapshot.hasError) {
@@ -138,7 +139,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
                     maxLines: 1,
                     softWrap: false,
                     overflow: TextOverflow.fade,
-                    style: DynamicTheme.of(context).data.textTheme.headline6.copyWith(color: Colors.white),
+                    style: themeData.textTheme.headline6.copyWith(color: Colors.white),
                   ),
 
                   // Content
@@ -146,7 +147,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
                     // Build the textspan
                     var span = TextSpan(
                       text: widget.post.content,
-                      style: DynamicTheme.of(context).data.textTheme.bodyText1.copyWith(color: Colors.white),
+                      style: themeData.textTheme.bodyText1.copyWith(color: Colors.white),
                     );
 
                     // Use a textpainter to determine if it will exceed max lines
@@ -176,7 +177,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
                           visible: exceeded,
                           child: Text(
                             'See more',
-                            style: DynamicTheme.of(context).data.textTheme.bodyText1.copyWith(
+                            style: themeData.textTheme.bodyText1.copyWith(
                               color: Colors.white, 
                               fontWeight: FontWeight.bold,
                             ),
@@ -424,7 +425,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
                   builder: (context, child) => CustomAwesomeIcon(
                     icon: FontAwesomeIcons.solidHeart, 
                     size: likedAnimation.value, 
-                    color: DynamicTheme.of(context).data.primaryColor,
+                    color: themeData.primaryColor,
                     shadows: [
                       Shadow(
                         offset: Offset(0, 0),

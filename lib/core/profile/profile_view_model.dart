@@ -9,9 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
-import 'package:tribes/services/firebase_auth_service.dart';
-import 'package:tribes/services/storage_service.dart';
+import 'package:tribes/services/firebase/auth_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/services/firebase/storage_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/loading.dart';
 
@@ -19,12 +19,12 @@ import 'package:tribes/shared/widgets/loading.dart';
 * Handels all logic. 
 * Utilizes Services to provide functionality.
 */
-class ProfileViewModel extends StreamViewModel<UserData> {
-  final UserData user;
+class ProfileViewModel extends StreamViewModel<MyUser> {
+  final MyUser user;
   ProfileViewModel({this.user});
 
   // -------------- Services [START] --------------- //
-  final FirebaseAuthService _authService = locator<FirebaseAuthService>();
+  final AuthService _authService = locator<AuthService>();
   final DatabaseService _databaseService = locator<DatabaseService>();
   final StorageService _storageService = locator<StorageService>();
   // -------------- Services [END] --------------- //
@@ -70,12 +70,12 @@ class ProfileViewModel extends StreamViewModel<UserData> {
   // -------------- Input [END] --------------- //
 
   // -------------- Output [START] --------------- //
-  UserData get currentUser => _databaseService.currentUserData;
+  MyUser get currentUser => _databaseService.currentUserData;
   File get imageFile => _imageFile;
   File get croppedImageFile => _croppedImageFile;
   String get retrieveDataError => _retrieveDataError;
   bool get isAnotherUser => user != null;
-  UserData get otherUser => user;
+  MyUser get otherUser => user;
   TabController get tabController => _tabController;
   // -------------- Output [END] --------------- //
 
@@ -97,7 +97,7 @@ class ProfileViewModel extends StreamViewModel<UserData> {
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false,
-            activeWidgetColor: Constants.primaryColor,
+            //activeWidgetColor: Constants.primaryColor,
             activeControlsWidgetColor: Constants.primaryColor,
             backgroundColor: Constants.primaryColor,
             dimmedLayerColor: Colors.black54,
@@ -108,7 +108,7 @@ class ProfileViewModel extends StreamViewModel<UserData> {
         );
 
         if(_croppedImageFile != null) {
-          await _storageService.uploadUserImage(_croppedImageFile, currentUser.hasUserPic() ? currentUser.picURL : null);
+          await _storageService.uploadUserImage(_croppedImageFile, currentUser.hasUserPic ? currentUser.picURL : null);
           setCroppedImageFile(_croppedImageFile);
         }
       }
@@ -171,12 +171,12 @@ class ProfileViewModel extends StreamViewModel<UserData> {
   // -------------- Logic [END] --------------- //
 
   @override
-  void onData(UserData data) {
+  void onData(MyUser data) {
     print('data: ${data.toString()}');
     super.onData(data);
   }
 
   @override
-  Stream<UserData> get stream => _databaseService.currentUserDataStream();
+  Stream<MyUser> get stream => _databaseService.currentUserDataStream();
 
 }

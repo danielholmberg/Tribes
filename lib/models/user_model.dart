@@ -1,16 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 // User class to check Authentication status
-class User {
-
-  final String id;
-  User({this.id});
-
-}
-
-// UserData class to provide User information throughout the application
-class UserData {
+class MyUser {
 
   final String id;
   final String name;
@@ -23,8 +16,8 @@ class UserData {
   final List<String> createdPosts;
   final List<String> likedPosts;
 
-  UserData({
-    this.id, 
+  MyUser({
+    @required this.id, 
     this.name, 
     this.username, 
     this.email,
@@ -36,28 +29,23 @@ class UserData {
     this.likedPosts
   });
 
-  factory UserData.fromSnapshot(DocumentSnapshot doc) {
-    return UserData(
-      id: doc.documentID,
-      name: doc.data['name'] ?? '',
-      username: doc.data['username'] ?? '',
-      email: doc.data['email'] ?? '',
-      info: doc.data['info'] ?? '',
-      picURL: doc.data['picURL'] ?? Constants.placeholderPicURL,
-      lat: doc.data['lat'] ?? Constants.initialLat,
-      lng: doc.data['lng'] ?? Constants.initialLng,
-      createdPosts: List.from(doc.data['createdPosts'] ?? []),
-      likedPosts: List.from(doc.data['likedPosts'] ?? []),
+  factory MyUser.fromSnapshot(DocumentSnapshot doc) {
+    return MyUser(
+      id: doc.id,
+      name: doc.data()['name'] ?? '',
+      username: doc.data()['username'] ?? '',
+      email: doc.data()['email'] ?? '',
+      info: doc.data()['info'] ?? '',
+      picURL: doc.data()['picURL'] ?? Constants.placeholderPicURL,
+      lat: doc.data()['lat'] ?? Constants.initialLat,
+      lng: doc.data()['lng'] ?? Constants.initialLng,
+      createdPosts: List.from(doc.data()['createdPosts'] ?? []),
+      likedPosts: List.from(doc.data()['likedPosts'] ?? []),
     );
   }
 
-  bool hasUserPic() {
-    return picURL != Constants.placeholderPicURL;
-  }
-
-  bool hasUsername() {
-    return username.trim().isNotEmpty;
-  }
+  bool get hasUserPic => picURL != Constants.placeholderPicURL;
+  bool get hasUsername => username.trim().isNotEmpty;
 
   @override
   String toString() {
@@ -66,17 +54,17 @@ class UserData {
 
 }
 
-class UserLocationMarker {
+class MyUserLocationMarker {
 
   final double lat;
   final double lng;
 
-  UserLocationMarker({this.lat, this.lng});
+  MyUserLocationMarker({this.lat, this.lng});
 
-  factory UserLocationMarker.fromSnapshot(DocumentSnapshot doc) {
-    return UserLocationMarker(
-      lat: doc.data['lat'],
-      lng: doc.data['lng'],
+  factory MyUserLocationMarker.fromSnapshot(DocumentSnapshot doc) {
+    return MyUserLocationMarker(
+      lat: doc.data()['lat'],
+      lng: doc.data()['lng'],
     );
   }
 

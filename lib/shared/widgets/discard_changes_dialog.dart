@@ -1,4 +1,3 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
@@ -8,9 +7,11 @@ class DiscardChangesDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
+    
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-      backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+      backgroundColor: themeData.backgroundColor,
       title: Text('Are your sure you want to discard changes?',
         style: TextStyle(
           fontFamily: 'TribesRounded',

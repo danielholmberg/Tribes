@@ -6,10 +6,12 @@ class _ChatViewMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
+    
     _categorySelector() {
       return Container(
         height: 60.0,
-        color: DynamicTheme.of(context).data.primaryColor,
+        color: themeData.primaryColor,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: viewModel.tabs.length,
@@ -75,19 +77,19 @@ class _ChatViewMobile extends StatelessWidget {
     }
 
     return Container(
-      color: DynamicTheme.of(context).data.primaryColor,
+      color: themeData.primaryColor,
       child: SafeArea(
         bottom: false,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: DynamicTheme.of(context).data.primaryColor,
+          backgroundColor: themeData.primaryColor,
           body: Column(
             children: <Widget>[
               _buildAppBar(),
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: DynamicTheme.of(context).data.backgroundColor,
+                    color: themeData.backgroundColor,
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                     boxShadow: [
                       BoxShadow(

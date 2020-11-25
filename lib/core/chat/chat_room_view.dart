@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,7 +8,7 @@ import 'package:tribes/core/chat/widgets/chat_messages.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/user_avatar.dart';
 
@@ -36,7 +35,6 @@ class _ChatRoomViewState extends State<ChatRoomView> {
 
   String message = '';
   final TextEditingController controller = new TextEditingController();
-  final ScrollController listScrollController = new ScrollController();
   FocusNode textFieldFocus;
 
   @override
@@ -53,8 +51,10 @@ class _ChatRoomViewState extends State<ChatRoomView> {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building ChatRoom(${widget.roomID})...');
+
+    ThemeData themeData = Theme.of(context);
 
     _buildAppBar() {
       return AppBar(
@@ -65,7 +65,7 @@ class _ChatRoomViewState extends State<ChatRoomView> {
           color: Constants.buttonIconColor, 
           onPressed: () => Navigator.of(context).pop()
         ),
-        title: widget.members != null ? StreamBuilder<UserData>(
+        title: widget.members != null ? StreamBuilder<MyUser>(
           stream: DatabaseService().userData(widget.members.where((memberID) => memberID != currentUser.id).toList()[0]),
           builder: (context, snapshot) {                
             return Row(
@@ -139,7 +139,7 @@ class _ChatRoomViewState extends State<ChatRoomView> {
             IconButton(
               icon: Icon(FontAwesomeIcons.paperclip),
               iconSize: Constants.defaultIconSize,
-              color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
+              color: widget.currentTribe != null ? widget.currentTribe.color : themeData.primaryColor,
               onPressed: () => Fluttertoast.showToast(
                 msg: 'Coming soon!',
                 toastLength: Toast.LENGTH_SHORT,
@@ -155,12 +155,12 @@ class _ChatRoomViewState extends State<ChatRoomView> {
                 minLines: 1,
                 maxLines: 10,
                 cursorRadius: Radius.circular(1000),
-                cursorColor: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
+                cursorColor: widget.currentTribe != null ? widget.currentTribe.color : themeData.primaryColor,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(12.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                    borderSide: BorderSide(color: widget.currentTribe != null ? widget.currentTribe.color : themeData.primaryColor, width: 2.0),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
@@ -168,7 +168,7 @@ class _ChatRoomViewState extends State<ChatRoomView> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor, width: 2.0),
+                    borderSide: BorderSide(color: widget.currentTribe != null ? widget.currentTribe.color : themeData.primaryColor, width: 2.0),
                   ),
                   hintText: 'Type a message...',
                   hintStyle: TextStyle(
@@ -181,13 +181,12 @@ class _ChatRoomViewState extends State<ChatRoomView> {
             IconButton(
               icon: Icon(FontAwesomeIcons.solidPaperPlane),
               iconSize: Constants.defaultIconSize,
-              color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
+              color: widget.currentTribe != null ? widget.currentTribe.color : themeData.primaryColor,
               onPressed: message.isEmpty ? null : () {
                 controller.clear();
                 FocusScope.of(context).unfocus();
                 DatabaseService().sendChatMessage(widget.roomID, currentUser.id, message);
                 setState(() => message = '');
-                listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
               },
             ),
           ],
@@ -196,11 +195,11 @@ class _ChatRoomViewState extends State<ChatRoomView> {
     }
 
     return Container(
-      color: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
+      color: widget.currentTribe != null ? widget.currentTribe.color : themeData.primaryColor,
       child: SafeArea(
         bottom: false,
         child: Scaffold(
-          backgroundColor: widget.currentTribe != null ? widget.currentTribe.color : DynamicTheme.of(context).data.primaryColor,
+          backgroundColor: widget.currentTribe != null ? widget.currentTribe.color : themeData.primaryColor,
           appBar: _buildAppBar(),
           body: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
@@ -229,7 +228,6 @@ class _ChatRoomViewState extends State<ChatRoomView> {
                       ),
                       child: ChatMessages(
                         roomID: widget.roomID,
-                        scrollController: listScrollController,
                         color: widget.currentTribe != null ? widget.currentTribe.color : Constants.primaryColor,
                       ),
                     ),

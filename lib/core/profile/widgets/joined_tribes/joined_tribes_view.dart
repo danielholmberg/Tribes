@@ -1,4 +1,3 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/core/tribe/join_tribe_view.dart';
@@ -7,7 +6,7 @@ import 'package:tribes/core/tribe/widgets/tribe_item.dart';
 import 'package:tribes/core/tribe/widgets/tribe_item_compact.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/custom_page_transition.dart';
@@ -17,7 +16,7 @@ import 'package:tribes/shared/widgets/loading.dart';
 // ToDo - Change to Stateless widget and move all state and business-logic to related [viewName]_view_model.dart file.
 
 class JoinedTribes extends StatefulWidget {
-  final UserData user;
+  final MyUser user;
   final bool showSecrets;
   JoinedTribes({@required this.user, this.showSecrets});
 
@@ -29,6 +28,8 @@ class _JoinedTribesState extends State<JoinedTribes> with AutomaticKeepAliveClie
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    ThemeData themeData = Theme.of(context);
 
     _showJoinTribePage() {
       Navigator.push(context, CustomPageTransition(
@@ -105,7 +106,7 @@ class _JoinedTribesState extends State<JoinedTribes> with AutomaticKeepAliveClie
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(1000.0)
                         ),
-                        color: DynamicTheme.of(context).data.primaryColor,
+                        color: themeData.primaryColor,
                         icon: CustomAwesomeIcon(icon: FontAwesomeIcons.plus, color: Colors.white, size: Constants.smallIconSize),
                         label: Text('Create'),
                         textColor: Colors.white,

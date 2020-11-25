@@ -9,7 +9,7 @@ import 'package:tribes/locator.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class PostList extends StatelessWidget {
@@ -22,7 +22,7 @@ class PostList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building Posts(${tribe.id})...');
 
     _buildEmptyListWidget() {
@@ -55,16 +55,23 @@ class PostList extends StatelessWidget {
     }
 
     _scrollToNewPostIfAuthor(QuerySnapshot snapshot) {
-      List<DocumentChange> listChanges = snapshot.documentChanges;
-      return (listChanges.isNotEmpty && listChanges.first.type == DocumentChangeType.added && snapshot.documents.first.data['author'] == currentUser.id)
-        ? controller.animateTo(0, duration: Duration(milliseconds: 1000), curve: Curves.easeIn) : null;
+      List<DocumentChange> listChanges = snapshot.docChanges;
+      if (listChanges.isNotEmpty &&
+          listChanges.first.type == DocumentChangeType.added &&
+          snapshot.docs.first.data()['author'] == currentUser.id) {
+        if (controller.hasClients)
+          controller.animateTo(0,
+              duration: Duration(milliseconds: 1000), curve: Curves.easeIn);
+      }
     }
 
     return Container(
       child: FirestoreAnimatedList(
         controller: controller,
         padding: EdgeInsets.only(
-            top: Constants.defaultPadding, bottom: Platform.isIOS ? 8.0 : 4.0),
+          top: Constants.defaultPadding,
+          bottom: Platform.isIOS ? 8.0 : 4.0,
+        ),
         query: DatabaseService().posts(tribe.id),
         onLoaded: _scrollToNewPostIfAuthor,
         itemBuilder: (
@@ -72,14 +79,15 @@ class PostList extends StatelessWidget {
           DocumentSnapshot snapshot,
           Animation<double> animation,
           int index,
-        ) =>
-            FadeTransition(
-          opacity: animation,
-          child: PostTile(
-            post: Post.fromSnapshot(snapshot),
-            tribeColor: tribe.color,
-          ),
-        ),
+        ) {
+          return FadeTransition(
+            opacity: animation,
+            child: PostTile(
+              post: Post.fromSnapshot(snapshot),
+              tribeColor: tribe.color,
+            ),
+          );
+        },
         emptyChild: _buildEmptyListWidget(),
       ),
     );

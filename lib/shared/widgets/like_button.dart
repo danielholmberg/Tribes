@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/custom_stroked_text.dart';
@@ -13,7 +13,7 @@ enum LikeButtonTextPosition {
 }
 
 class LikeButton extends StatelessWidget {
-  final UserData currentUser;
+  final MyUser currentUser;
   final String postID;
   final Color color;
   final bool withNumberOfLikes;

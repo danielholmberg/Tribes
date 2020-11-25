@@ -1,9 +1,7 @@
 library sign_in_view;
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:stacked/stacked.dart';
@@ -16,13 +14,14 @@ import 'package:tribes/shared/widgets/custom_raised_button.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
 import 'package:tribes/shared/widgets/loading.dart';
 
-part 'sign_in_view_mobile.dart';
+part 'sign_in_view_[mobile].dart';
 
 class SignInView extends ViewModelWidget<AuthViewModel> {
   @override
   Widget build(BuildContext context, AuthViewModel parentViewModel) {
     return ViewModelBuilder<SignInViewModel>.reactive(
       viewModelBuilder: () => SignInViewModel(),
+      onModelReady: (model) => model.initialise(context),
       disposeViewModel: false,
       builder: (context, viewModel, child) => ScreenTypeLayout(
         mobile: _SignInViewMobile(parentViewModel),

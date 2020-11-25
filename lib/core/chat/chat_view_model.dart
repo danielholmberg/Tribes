@@ -3,7 +3,7 @@ import 'package:stacked/stacked.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/notification_data_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 
 /* 
 * Handels all logic. 
@@ -34,7 +34,7 @@ class ChatViewModel extends BaseViewModel {
   // -------------- Input [END] --------------- //
 
   // -------------- Output [START] --------------- //
-  UserData get currentUserData => _databaseService.currentUserData;
+  MyUser get currentUserData => _databaseService.currentUserData;
   int get currentTab => _currentTab;
   // -------------- Output [END] --------------- //
 

@@ -1,16 +1,15 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tribes/core/tribe/post_room_view.dart';
 import 'package:tribes/core/tribe/widgets/image_carousel.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/widgets/user_avatar.dart';
 
 class PostItemCompact extends StatefulWidget {
   final Post post;
-  final UserData user;
+  final MyUser user;
   final bool viewOnly;
   PostItemCompact({@required this.post, @required this.user, this.viewOnly = false});
 
@@ -24,8 +23,10 @@ class _PostItemCompactState extends State<PostItemCompact> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building PostTileCompact(${widget.post.id})...');
+
+    ThemeData themeData = Theme.of(context);
 
     bool showUserAvatar = widget.user.id != widget.post.author;
 
@@ -42,7 +43,7 @@ class _PostItemCompactState extends State<PostItemCompact> with TickerProviderSt
             curve: Curves.fastOutSlowIn,
             child: Container(
               margin: const EdgeInsets.only(top: 4.0, left: 4.0),
-              child: StreamBuilder<UserData>(
+              child: StreamBuilder<MyUser>(
                 stream: DatabaseService().userData(widget.post.author),
                 builder: (context, snapshot) {
                   if(snapshot.hasError) {
@@ -52,7 +53,7 @@ class _PostItemCompactState extends State<PostItemCompact> with TickerProviderSt
                   return UserAvatar(
                     currentUserID: currentUser.id, 
                     user: snapshot.data, 
-                    color: DynamicTheme.of(context).data.primaryColor,
+                    color: themeData.primaryColor,
                     disable: widget.viewOnly,
                     radius: 6,
                     nameFontSize: 6,
@@ -79,7 +80,7 @@ class _PostItemCompactState extends State<PostItemCompact> with TickerProviderSt
           children: <Widget>[
             ImageCarousel(
               images: widget.post.images, 
-              color: DynamicTheme.of(context).data.primaryColor,
+              color: themeData.primaryColor,
               indicatorPosition: IndicatorPosition.topRight,
               small: true,
             ),

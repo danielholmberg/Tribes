@@ -14,87 +14,53 @@ description: A social platform for connecting family and friends in their privat
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
-
-  # Font Awesome Icons
-  font_awesome_flutter: ^8.5.0
-
-  # Provider
-  provider: ^4.1.3
-  # Get it
-  get_it: ^4.0.2
-  # Stacked (MVVM architecture)
-  stacked: ^1.5.8
-  # Responsive
-  responsive_builder: ^0.2.0+2
-
-  # Loading Widget
-  flutter_spinkit: ^4.1.2
-
   # Firebase
-  firebase_core: ^0.4.0+9
-  firebase_auth: ^0.14.0+5
-  cloud_firestore: ^0.12.9+4
-  firestore_ui: ^1.7.2
-  firebase_storage: ^3.1.1
-  firebase_messaging: ^6.0.9
-  cloud_functions: ^0.5.0
+  firebase_core: ^0.5.0
+  firebase_auth: ^0.18.1+2
+  cloud_firestore: ^0.14.3
+  firestore_ui: ^1.12.0
+  firebase_storage: ^5.0.1
+  firebase_messaging: ^7.0.3
+  cloud_functions: ^0.7.0+1
 
-  # Google Sign In
-  google_sign_in: ^4.4.4
-
-  # Toast
-  fluttertoast: ^3.1.3
-
-  # Dynamic Theme
-  dynamic_theme: ^1.0.0
-
-  # Google Maps
-  google_maps_flutter: ^0.5.29
-
-  # Location
-  geolocator: ^5.2.0
-
-  # Colorpicker
-  flutter_colorpicker: ^0.2.6
-
-  # Auto Size Text
-  auto_size_text: ^2.1.0
-
-  # Image Picker
-  image_picker: ^0.6.3+1
-
-  # Multi Image Picker
-  multi_image_picker: ^4.6.1
-
-  # Zoomable PhotoView
-  photo_view: ^0.9.2
-
-  # Image Carousel
-  carousel_slider: ^1.4.1
+  google_sign_in: ^4.5.6
+  google_maps_flutter: ^1.0.6
   
-  # Cached Network Images
-  cached_network_image: ^2.0.0
-  
-  # Geocoder
+  geolocator: ^6.1.7
   geocoder: ^0.2.1
 
-  # Internalization and Localization
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.1+1
+  flutter_launcher_icons: ^0.8.1 
+  font_awesome_flutter: ^8.10.0
+
+  provider: ^4.3.2+2
+  get_it: ^5.0.1
+  stacked: ^1.7.6
+  stacked_services: ^0.5.4+5
+  stacked_hooks: ^0.1.3+1
+  flutter_hooks: ^0.14.1
+  observable_ish: ^2.1.4
+
+  responsive_builder: ^0.3.0
+  adaptive_theme: ^1.1.0
+  flutter_spinkit: ^4.1.2+1
+  fluttertoast: ^7.1.3
+  flutter_colorpicker: ^0.3.4
+  auto_size_text: ^2.1.0
+  image_picker: ^0.6.7+14
+  multi_image_picker: ^4.7.14
+  carousel_slider: ^2.3.1
+  cached_network_image: ^2.3.3
   intl: ^0.16.1
-
-  # Image Cropper
-  image_cropper: ^1.2.1
-
-  # Launcher icons
-  flutter_launcher_icons: ^0.7.4  
+  image_cropper: ^1.3.1
 
 dev_dependencies:
   flutter_test:

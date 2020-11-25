@@ -1,4 +1,3 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
@@ -21,9 +20,11 @@ class CustomRaisedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
+
     return RaisedButton(
       focusNode: focusNode,
-      color: inverse ? DynamicTheme.of(context).data.backgroundColor : color ?? DynamicTheme.of(context).data.primaryColor,
+      color: inverse ? themeData.backgroundColor : color ?? themeData.primaryColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -34,8 +35,8 @@ class CustomRaisedButton extends StatelessWidget {
           Visibility(visible: icon != null, child: SizedBox(width: Constants.smallSpacing)),
           Text(
             text, 
-            style: DynamicTheme.of(context).data.textTheme.button.copyWith(
-              color: inverse ? DynamicTheme.of(context).data.primaryColor : Constants.buttonIconColor,
+            style: themeData.textTheme.button.copyWith(
+              color: inverse ? themeData.primaryColor : Constants.buttonIconColor,
               fontWeight: FontWeight.bold,
             )
           ),

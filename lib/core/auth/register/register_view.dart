@@ -1,6 +1,5 @@
 library register_view;
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,13 +13,14 @@ import 'package:tribes/shared/widgets/custom_raised_button.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
 import 'package:tribes/shared/widgets/loading.dart';
 
-part 'register_view_mobile.dart';
+part 'register_view_[mobile].dart';
 
 class RegisterView extends ViewModelWidget<AuthViewModel> {
   @override
   Widget build(BuildContext context, AuthViewModel parentViewModel) {
-    return ViewModelBuilder.nonReactive(
+    return ViewModelBuilder<RegisterViewModel>.nonReactive(
       viewModelBuilder: () => RegisterViewModel(),
+      onModelReady: (model) => model.initialise(context),
       disposeViewModel: false,
       builder: (context, viewModel, child) => ScreenTypeLayout.builder(
         mobile: (BuildContext context) => _RegisterViewMobile(parentViewModel),

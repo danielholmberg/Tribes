@@ -1,11 +1,10 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
-import 'package:tribes/services/firebase_auth_service.dart';
+import 'package:tribes/services/firebase/auth_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_button.dart';
@@ -14,7 +13,7 @@ import 'package:tribes/shared/widgets/discard_changes_dialog.dart';
 import 'package:tribes/shared/widgets/loading.dart';
 
 class ProfileSettingsDialog extends StatefulWidget {
-  final UserData user;
+  final MyUser user;
   ProfileSettingsDialog({@required this.user});
 
   @override
@@ -22,7 +21,7 @@ class ProfileSettingsDialog extends StatefulWidget {
 }
 
 class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
-  final FirebaseAuthService _auth = FirebaseAuthService();
+  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final FocusNode nameFocus = new FocusNode();
   final FocusNode usernameFocus = new FocusNode();
@@ -64,17 +63,19 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building ProfileSettings()...');
+    
+    ThemeData themeData = Theme.of(context);
 
     edited = originalName != name || originalUsername != username || originalInfo != info;
 
     _buildAppBar() {
       return AppBar(
         elevation: 0.0,
-        backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+        backgroundColor: themeData.backgroundColor,
         leading: IconButton(
-          icon: Icon(FontAwesomeIcons.times, color: DynamicTheme.of(context).data.primaryColor),
+          icon: Icon(FontAwesomeIcons.times, color: themeData.primaryColor),
           onPressed: () {
             bool edited = originalName != name || originalUsername != username || originalInfo != info;
             if(edited) {
@@ -90,7 +91,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
         title: Text(
           'Profile Settings',
           style: TextStyle(
-            color: DynamicTheme.of(context).data.primaryColor,
+            color: themeData.primaryColor,
             fontFamily: 'TribesRounded',
             fontSize: Constants.defaultDialogTitleFontSize,
             fontWeight: Constants.defaultDialogTitleFontWeight
@@ -99,7 +100,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            icon: Icon(FontAwesomeIcons.signOutAlt, color: DynamicTheme.of(context).data.primaryColor), 
+            icon: Icon(FontAwesomeIcons.signOutAlt, color: themeData.primaryColor), 
             onPressed: () => showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -119,7 +120,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                     child: Text(
                       'No',
                       style: TextStyle(
-                        color: DynamicTheme.of(context).data.primaryColor,
+                        color: themeData.primaryColor,
                         fontFamily: 'TribesRounded',
                       ),
                     ),
@@ -165,7 +166,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
             FlatButton(
               child: Text('OK', 
                 style: TextStyle(
-                  color: DynamicTheme.of(context).data.primaryColor,
+                  color: themeData.primaryColor,
                   fontFamily: 'TribesRounded',
                   fontWeight: FontWeight.bold,
                 ),
@@ -184,15 +185,15 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
                   softWrap: true,
                   text: TextSpan(
                     text: 'The username ',
-                    style: DynamicTheme.of(context).data.textTheme.bodyText2,
+                    style: themeData.textTheme.bodyText2,
                     children: <TextSpan>[
                       TextSpan(
                         text: username,
-                        style: DynamicTheme.of(context).data.textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold),
+                        style: themeData.textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold),
                       ),
                       TextSpan(
                         text: ' is already in use by a fellow Tribe explorer, please try another one.',
-                        style: DynamicTheme.of(context).data.textTheme.bodyText2,
+                        style: themeData.textTheme.bodyText2,
                       ),
                     ],
                   ),
@@ -268,7 +269,7 @@ class _ProfileSettingsDialogState extends State<ProfileSettingsDialog> {
           child: currentUser == null ? Loading() 
           : Scaffold(
             key: _scaffoldKey,
-            backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+            backgroundColor: themeData.backgroundColor,
             appBar: _buildAppBar(),
             body: SafeArea(
               child: loading

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,7 +13,7 @@ import 'package:tribes/core/tribe/widgets/fullscreen_carousel.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
@@ -114,8 +113,10 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = _databaseService.currentUserData;
+    final MyUser currentUser = _databaseService.currentUserData;
     print('Building PostRoom(${widget.post.id})...');
+
+    ThemeData themeData = Theme.of(context);
     
     bool isAuthor = currentUser.id == post.author;
 
@@ -173,7 +174,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
             curve: Curves.fastOutSlowIn,
             child: Container(
               margin: const EdgeInsets.only(top: 4.0),
-              child: StreamBuilder<UserData>(
+              child: StreamBuilder<MyUser>(
                 stream: DatabaseService().userData(widget.post.author),
                 builder: (context, snapshot) {
                   if(snapshot.hasError) {
@@ -230,7 +231,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
         child: BackdropFilter(
           filter: new ui.ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
           child: Theme(
-            data: DynamicTheme.of(context).data.copyWith(highlightColor: Colors.white),
+            data: themeData.copyWith(highlightColor: Colors.white),
             child: Scrollbar(
               child: ScrollConfiguration(
                 behavior: CustomScrollBehavior(),
@@ -249,7 +250,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                         maxLines: 1,
                         softWrap: false,
                         overflow: TextOverflow.fade,
-                        style: DynamicTheme.of(context).data.textTheme.headline6.copyWith(color: Colors.white),
+                        style: themeData.textTheme.headline6.copyWith(color: Colors.white),
                       ),
                     ),
 
@@ -259,7 +260,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                       maxLines: null,
                       softWrap: true,
                       overflow: TextOverflow.fade,
-                      style: DynamicTheme.of(context).data.textTheme.bodyText1.copyWith(color: Colors.white),
+                      style: themeData.textTheme.bodyText1.copyWith(color: Colors.white),
                     ),
                   ]
                 ),
@@ -504,7 +505,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                 builder: (context, child) => CustomAwesomeIcon(
                   icon: FontAwesomeIcons.solidHeart, 
                   size: likedAnimation.value, 
-                  color: DynamicTheme.of(context).data.primaryColor,
+                  color: themeData.primaryColor,
                   shadows: [
                     Shadow(
                       offset: Offset(0, 0),

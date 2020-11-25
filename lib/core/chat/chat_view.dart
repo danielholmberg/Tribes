@@ -1,18 +1,14 @@
 library chat_view;
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tribes/core/chat/chat_view_model.dart';
 import 'package:tribes/core/chat/new_chat_view.dart';
 import 'package:tribes/core/chat/widgets/private_messages_tab/private_messages_view.dart';
 import 'package:tribes/core/chat/widgets/tribe_messages_tab/tribe_messages_view.dart';
-import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_page_transition.dart';
 

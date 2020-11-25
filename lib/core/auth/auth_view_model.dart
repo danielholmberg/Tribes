@@ -1,31 +1,15 @@
 import 'package:stacked/stacked.dart';
 import 'package:tribes/locator.dart';
-import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/firebase_auth_service.dart';
+import 'package:tribes/services/firebase/auth_service.dart';
 
-class AuthViewModel extends StreamViewModel<User> {
+class AuthViewModel extends ReactiveViewModel {
+  final AuthService _authService = locator<AuthService>();
 
-  // -------------- Services [START] --------------- //
-  final FirebaseAuthService _authService = locator<FirebaseAuthService>();
-  // -------------- Services [END] --------------- //
-
-  // -------------- Models [START] --------------- //
-  // -------------- Models [END] --------------- //
-
-  // -------------- State [START] --------------- //
   int _currentViewIndex = 0;
-  // -------------- State [END] --------------- //
 
-  // -------------- Input [START] --------------- //
-  // -------------- Input [END] --------------- //
-
-  // -------------- Output [START] --------------- //
   int get currentViewIndex => _currentViewIndex;
+  bool get isAuthenticated => _authService.currentFirebaseUser != null;
 
-  get isAuthenticated => this.dataReady;
-  // -------------- Output [END] --------------- //
-
-  // -------------- Logic [START] --------------- //
   void showSignInView() {
     _currentViewIndex = 0;
     notifyListeners();
@@ -37,13 +21,6 @@ class AuthViewModel extends StreamViewModel<User> {
   }
 
   @override
-  void onData(User user) async {
-    print('AuthViewModel user: $user');
-    super.onData(data);
-  }
-
-  @override
-  Stream<User> get stream => _authService.user;
-  // -------------- Logic [END] --------------- //
+  List<ReactiveServiceMixin> get reactiveServices => [_authService];
 
 }

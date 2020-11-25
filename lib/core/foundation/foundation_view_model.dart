@@ -5,118 +5,169 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'package:tribes/core/chat/chat_view.dart';
 import 'package:tribes/core/home/home_view.dart';
 import 'package:tribes/core/map/map_view.dart';
 import 'package:tribes/core/profile/profile_view.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
-import 'package:tribes/services/firebase_auth_service.dart';
+import 'package:tribes/services/firebase/auth_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 
-/* 
-* Handels all logic. 
-* Utilizes Services to provide functionality.
-*/
-class FoundationViewModel extends StreamViewModel<UserData> {
-
-  // -------------- Services [START] --------------- //
-  final FirebaseAuthService _authService = locator<FirebaseAuthService>();
+class FoundationViewModel extends ReactiveViewModel {
+  final AuthService _authService = locator<AuthService>();
   final DatabaseService _databaseService = locator<DatabaseService>();
-  // -------------- Services [END] --------------- //
+  final DialogService _dialogService = locator<DialogService>();
 
-  // -------------- Models [START] --------------- //
-  final List<Widget> _tabList = [HomeView(), MapView(), ChatView(), ProfileView()];
+  final List<Widget> _tabList = [
+    HomeView(),
+    MapView(),
+    ChatView(),
+    ProfileView()
+  ];
   TabController _tabController;
   StreamSubscription iosSubscription;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  // -------------- Models [END] --------------- //
 
-  // -------------- State [START] --------------- //
+  ThemeData _themeData;
   int _currentIndex = 0;
   String _username = '';
   String _name = '';
-  bool _showUnavailableUsernameDialog = false;
-  // -------------- State [END] --------------- //
+  bool _usernameAlreadyInUse = false;
 
-  // -------------- Input [START] --------------- //
+  GlobalKey<FormState> get formKey => _formKey;
+  MyUser get currentUser => _databaseService.currentUserData;
+  String get username => currentUser.username;
+  String get name =>
+      currentUser != null ? currentUser.name.split(' ')[0] : _name;
+  TabController get tabController => _tabController;
+  List<Widget> get tabList => _tabList;
+  int get currentTabIndex => _currentIndex;
+  bool get usernameAlreadyInUse => _usernameAlreadyInUse;
+  bool get currentUserHasUsername => currentUser.hasUsername;
+
+  List<TextInputFormatter> get inputFormatters =>
+      [new FilteringTextInputFormatter.deny(new RegExp('[\\ ]'))];
+
+  initialise(TickerProvider vsync, ThemeData themeData) async {
+    _themeData = themeData;
+
+    _tabController = TabController(length: _tabList.length, vsync: vsync);
+    _tabController.animateTo(0);
+    setCurrentTab(0);
+
+    await initFCM();
+  }
+
   void setCurrentTab(int index) {
     _currentIndex = index;
     notifyListeners();
   }
+
   void setUsername(String username) => _username = username;
-  void toggleUnavailableUsernameDialog() {
-    _showUnavailableUsernameDialog = !_showUnavailableUsernameDialog;
-    notifyListeners();
-  }
-  // -------------- Input [END] --------------- //
 
-  // -------------- Output [START] --------------- //
-  GlobalKey<FormState> get formKey => _formKey;
-  UserData get currentUser => data;
-  String get username => currentUser.username;
-  String get name => currentUser != null ? currentUser.name.split(' ')[0] : _name;
-  TabController get tabController => _tabController;
-  List<Widget> get tabList => _tabList;
-  int get currentTabIndex => _currentIndex;
-  bool get showUnavailableUsernameDialog => _showUnavailableUsernameDialog;
-  // -------------- Output [END] --------------- //
-
-  // -------------- Logic [START] --------------- //
-
-  void onUsernameSubmitted() async {
-    if(_formKey.currentState.validate()) {
-      bool available = await _databaseService.updateUsername(
+  Future onUsernameSubmitted(String value) async {
+    if (_formKey.currentState.validate()) {
+      _usernameAlreadyInUse = await _databaseService.updateUsername(
         currentUser.id,
         _username,
       );
-
-      toggleUnavailableUsernameDialog();
+      notifyListeners();
     }
   }
 
-  void initFCM() {
+  Future showUnavailableUsernameDialog() async {
+    await _dialogService.showCustomDialog(
+      title: 'Username already in use',
+      customData: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Center(
+            child: RichText(
+              maxLines: null,
+              softWrap: true,
+              text: TextSpan(
+                text: 'The username ',
+                style: _themeData.textTheme.bodyText2,
+                children: <TextSpan>[
+                  TextSpan(
+                    text: _username,
+                    style: _themeData.textTheme.bodyText2
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text:
+                        ' is already in use by a fellow Tribe explorer, please try another one.',
+                    style: _themeData.textTheme.bodyText2,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  initFCM() async {
     if (Platform.isIOS) {
-      iosSubscription = _databaseService.fcm.onIosSettingsRegistered.listen((data) {
+      iosSubscription =
+          _databaseService.fcm.onIosSettingsRegistered.listen((data) {
         _databaseService.saveFCMToken();
       });
 
-      _databaseService.fcm.requestNotificationPermissions(IosNotificationSettings());
+      _databaseService.fcm
+          .requestNotificationPermissions(IosNotificationSettings());
     } else {
       _databaseService.saveFCMToken();
     }
 
     _databaseService.fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
-        // var messageData = message['data'];
-        
-        // Do nothing as of now. TODO: Show a badge in BottomNavBar on Chat-tab, indicating a new chat message.
+        print('onMessage: ${message.toString()}');
+        var messageData = message['data'];
+        var routeName = messageData['routeName'];
+        var tab = messageData['tab'];
+        var senderID = messageData['senderID'];
+
+        if (routeName == '/home/chats') {
+          /* locator<NavigationService>().navigateTo(ChatView.routeName, arguments: NotificationData(
+            routeName: routeName,
+            tab: tab,
+            senderID: senderID,
+          )); */
+        }
       },
       onLaunch: (Map<String, dynamic> message) async {
-        // var messageData = message['data'];
-
-        // TODO: Fix bug when navigating to route.
-        /* Navigator.of(context).pushNamed(
-          messageData['routeName'], 
-          arguments: NotificationData(
-            routeName: messageData['routeName'],
-            tab: messageData['tab'],
-            senderID: messageData['senderID'],
-          ),
-        ); */
+        print('onLaunch: ${message.toString()}');
+        /* var messageData = message['data'];
+        var routeName = messageData['routeName'];
+        var tab = messageData['tab'];
+        var senderID = messageData['senderID'];
+        
+        if(routeName == '/home/chats') {
+          await locator<NavigationService>().navigateTo(ChatView.routeName, arguments: NotificationData(
+            routeName: routeName,
+            tab: tab,
+            senderID: senderID,
+          ));
+        } */
       },
       onResume: (Map<String, dynamic> message) async {
-        // var messageData = message['data'];
+        print('onResume: ${message.toString()}');
+        var messageData = message['data'];
+        var routeName = messageData['routeName'];
+        var tab = messageData['tab'];
+        var senderID = messageData['senderID'];
 
-        // TODO: Fix bug when navigating to route.
-        /* Navigator.of(context).pushNamed(
-          messageData['routeName'], 
-          arguments: NotificationData(
-            routeName: messageData['routeName'],
-            tab: messageData['tab'],
-            senderID: messageData['senderID'],
-          ),
-        ); */
+        if (routeName == '/home/chats') {
+          /* locator<NavigationService>().navigateTo(ChatView.routeName, arguments: NotificationData(
+            routeName: routeName,
+            tab: tab,
+            senderID: senderID,
+          )); */
+        }
       },
     );
 
@@ -128,24 +179,6 @@ class FoundationViewModel extends StreamViewModel<UserData> {
     setCurrentTab(index);
     return index;
   }
-  // -------------- Logic [END] --------------- //
-
-  void initState(TickerProvider vsync, int index) {
-    //_authService.signOut();
-
-    _tabController = TabController(length: _tabList.length, vsync: vsync);
-    if(index != null) {
-      _tabController.animateTo(index);
-      setCurrentTab(index);
-    }
-
-    // StatusBar Color
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.transparent
-    ));
-
-    initFCM();
-  }
 
   @override
   void dispose() {
@@ -155,5 +188,11 @@ class FoundationViewModel extends StreamViewModel<UserData> {
   }
 
   @override
-  Stream<UserData> get stream => _databaseService.currentUserDataStream(firebaseUserID: _authService.currentFirebaseUser.id);
+  List<ReactiveServiceMixin> get reactiveServices => [_databaseService];
+
+  String usernameValidator(String value) {
+    return value.toString().trim().isEmpty
+        ? 'Oops, you need to enter a username'
+        : null;
+  }
 }

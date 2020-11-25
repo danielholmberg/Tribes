@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/chat_message_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/user_avatar.dart';
 
@@ -21,7 +21,7 @@ class ChatMessageItem extends StatefulWidget {
 class _ChatMessageItemState extends State<ChatMessageItem> {
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     bool isMe = widget.message.senderID == currentUser.id;
 
     final Container msg = Container(
@@ -68,7 +68,7 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               msg,
-              StreamBuilder<UserData>(
+              StreamBuilder<MyUser>(
                 stream: DatabaseService().userData(widget.message.senderID),
                 builder: (context, snapshot) {
                   if(snapshot.hasError) {
@@ -103,7 +103,7 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            StreamBuilder<UserData>(
+            StreamBuilder<MyUser>(
               stream: DatabaseService().userData(widget.message.senderID),
               builder: (context, snapshot) {
                 if(snapshot.hasError) {

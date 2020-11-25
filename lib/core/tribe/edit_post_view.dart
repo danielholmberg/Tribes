@@ -1,15 +1,13 @@
 import 'dart:io';
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:tribes/core/tribe/widgets/custom_image.dart';
 import 'package:tribes/models/post_model.dart';
-import 'package:tribes/services/database_service.dart';
-import 'package:tribes/services/storage_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/services/firebase/storage_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
@@ -136,6 +134,8 @@ class _EditPostViewState extends State<EditPostView> {
     //final UserData currentUser = locator<DatabaseService>().currentUserData;
     print('Building EditPost()...');
 
+    ThemeData themeData = Theme.of(context);
+
     print('originalImages: ${originalImages.length}');
     print('oldImages: ${oldImages.length}');
 
@@ -153,10 +153,10 @@ class _EditPostViewState extends State<EditPostView> {
 
     _buildAppBar() {
       return AppBar(
-        backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+        backgroundColor: themeData.backgroundColor,
         elevation: 0.0,
         iconTheme: IconThemeData(
-          color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+          color: widget.tribeColor ?? themeData.primaryColor,
         ),
         centerTitle: true,
         title: Row(
@@ -168,7 +168,7 @@ class _EditPostViewState extends State<EditPostView> {
               style: TextStyle(
                 fontFamily: 'TribesRounded',
                 fontWeight: FontWeight.bold,
-                color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+                color: widget.tribeColor ?? themeData.primaryColor
               ),
             ),
             SizedBox(width: Constants.defaultPadding),
@@ -179,14 +179,14 @@ class _EditPostViewState extends State<EditPostView> {
                   fontFamily: 'TribesRounded',
                   fontStyle: FontStyle.normal,
                   fontSize: 12,
-                  color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+                  color: widget.tribeColor ?? themeData.primaryColor
                 ),
               ),
             ),
           ],
         ),
         leading: IconButton(icon: Icon(FontAwesomeIcons.times), 
-          color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+          color: widget.tribeColor ?? themeData.primaryColor,
           onPressed: () {
             edited ? _showDiscardDialog() : Navigator.of(context).pop();
           },
@@ -194,10 +194,10 @@ class _EditPostViewState extends State<EditPostView> {
         actions: <Widget>[
           IconButton(
             splashColor: Colors.transparent,
-            color: DynamicTheme.of(context).data.backgroundColor,
+            color: themeData.backgroundColor,
             icon: CustomAwesomeIcon(
               icon: FontAwesomeIcons.solidTrashAlt, 
-              color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor
+              color: widget.tribeColor ?? themeData.primaryColor
             ),
             onPressed: () {
               showDialog(
@@ -217,7 +217,7 @@ class _EditPostViewState extends State<EditPostView> {
                     FlatButton(
                       child: Text('No', 
                         style: TextStyle(
-                          color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                          color: widget.tribeColor ?? themeData.primaryColor,
                           fontFamily: 'TribesRounded',
                         ),
                       ),
@@ -282,8 +282,8 @@ class _EditPostViewState extends State<EditPostView> {
       return List.generate(length, (index) {
         int _imageNumber = index + 1 + (isNewImage ? oldImages.length : 0);
 
-        return PhotoView.customChild(
-            backgroundDecoration: BoxDecoration(
+        return Container(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
@@ -512,12 +512,12 @@ class _EditPostViewState extends State<EditPostView> {
     return WillPopScope(
       onWillPop: () => edited ? _showDiscardDialog() : Future.value(true),
       child: Container(
-        color: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+        color: widget.tribeColor ?? themeData.primaryColor,
         child: SafeArea(
           bottom: false,
           child: loading ? Loading(color: widget.tribeColor) : Scaffold(
             key: _scaffoldKey,
-            backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+            backgroundColor: themeData.backgroundColor,
             appBar: _buildAppBar(),
             body: Stack(
               fit: StackFit.expand,
@@ -552,8 +552,8 @@ class _EditPostViewState extends State<EditPostView> {
                                         cursorWidth: 4,
                                         initialValue: title ?? widget.post.title,
                                         textCapitalization: TextCapitalization.sentences,
-                                        style: DynamicTheme.of(context).data.textTheme.headline6,
-                                        cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                        style: themeData.textTheme.headline6,
+                                        cursorColor: widget.tribeColor ?? themeData.primaryColor,
                                         decoration: Decorations.postInput.copyWith(hintText: 'Title'),
                                         validator: (val) => val.isEmpty 
                                           ? 'Enter a title' 
@@ -585,8 +585,8 @@ class _EditPostViewState extends State<EditPostView> {
                                         cursorWidth: 2,
                                         initialValue: content ?? widget.post.content,
                                         textCapitalization: TextCapitalization.sentences,
-                                        style: DynamicTheme.of(context).data.textTheme.bodyText2,
-                                        cursorColor: widget.tribeColor ?? DynamicTheme.of(context).data.primaryColor,
+                                        style: themeData.textTheme.bodyText2,
+                                        cursorColor: widget.tribeColor ?? themeData.primaryColor,
                                         keyboardType: TextInputType.multiline,
                                         maxLines: null,
                                         decoration: Decorations.postInput.copyWith(hintText: 'Content'),

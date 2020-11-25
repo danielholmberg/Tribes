@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tribes/core/tribe/dialogs/tribe_details_dialog.dart';
@@ -10,7 +9,7 @@ import 'package:tribes/locator.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
 import 'package:tribes/shared/widgets/loading.dart';
@@ -31,8 +30,10 @@ class _TribeRoomViewState extends State<TribeRoomView> {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building TribeRoom(${widget.tribeID})...');
+
+    ThemeData themeData = Theme.of(context);
 
     double _calculatePostsHeight() {
       RenderBox postsContainer = _postsKey.currentContext.findRenderObject();
@@ -70,7 +71,7 @@ class _TribeRoomViewState extends State<TribeRoomView> {
     _buildAppBar(Tribe currentTribe) {
       return Container(
         padding: const EdgeInsets.all(4.0),
-        color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+        color: currentTribe.color ?? themeData.primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -141,14 +142,14 @@ class _TribeRoomViewState extends State<TribeRoomView> {
 
         return currentUser == null || currentTribe == null ? Loading()
         : Container(
-          color: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+          color: currentTribe.color ?? themeData.primaryColor,
           child: SafeArea(
             bottom: false,
             child: Scaffold(
               resizeToAvoidBottomInset: false,
-              backgroundColor: currentTribe.color ?? DynamicTheme.of(context).data.primaryColor,
+              backgroundColor: currentTribe.color ?? themeData.primaryColor,
               body: Container(
-                color: currentTribe.color.withOpacity(0.2) ?? DynamicTheme.of(context).data.backgroundColor,
+                color: currentTribe.color.withOpacity(0.2) ?? themeData.backgroundColor,
                 child: Column(
                   children: <Widget>[
                     _buildAppBar(currentTribe),
@@ -156,7 +157,7 @@ class _TribeRoomViewState extends State<TribeRoomView> {
                       child: Container(
                         key: _postsKey,
                         decoration: BoxDecoration(
-                          color: DynamicTheme.of(context).data.backgroundColor,
+                          color: themeData.backgroundColor,
                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
                           boxShadow: [
                             BoxShadow(

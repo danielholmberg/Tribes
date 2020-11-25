@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
-import 'package:tribes/services/storage_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/services/firebase/storage_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
@@ -111,8 +109,10 @@ class _NewPostViewState extends State<NewPostView> {
 
   @override
   Widget build(BuildContext context) {
-    final UserData currentUser = locator<DatabaseService>().currentUserData;
+    final MyUser currentUser = locator<DatabaseService>().currentUserData;
     print('Building NewPost()...');
+
+    ThemeData themeData = Theme.of(context);
 
     bool edited = title.isNotEmpty || content.isNotEmpty || images.length > 0;
     bool step1Completed = title.trim().isNotEmpty;
@@ -122,11 +122,11 @@ class _NewPostViewState extends State<NewPostView> {
     _buildAppBar() {
       return AppBar(
         elevation: 0.0,
-        backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+        backgroundColor: themeData.backgroundColor,
         leading: IconButton(
           icon: CustomAwesomeIcon(
             icon: FontAwesomeIcons.times, 
-            color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+            color: widget.tribe.color ?? themeData.primaryColor,
           ), 
           onPressed: () {
             if(edited) {
@@ -144,7 +144,7 @@ class _NewPostViewState extends State<NewPostView> {
           maxLines: 1,
           softWrap: false,
           overflow: TextOverflow.fade,
-          style: DynamicTheme.of(context).data.textTheme.headline6.copyWith(fontWeight: FontWeight.bold),
+          style: themeData.textTheme.headline6.copyWith(fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[],
       );
@@ -199,8 +199,9 @@ class _NewPostViewState extends State<NewPostView> {
         ] + List.generate(images.length, (index) {
           int _imageNumber = index + 1;
           Asset asset = images[index];
-          return PhotoView.customChild(
-            backgroundDecoration: BoxDecoration(
+
+          return Container(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
@@ -371,12 +372,12 @@ class _NewPostViewState extends State<NewPostView> {
         }
       },
       child: Container(
-        color: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+        color: widget.tribe.color ?? themeData.primaryColor,
         child: SafeArea(
           bottom: false,
           child: loading ? Loading(color: widget.tribe.color) 
           : Scaffold(
-            backgroundColor: DynamicTheme.of(context).data.backgroundColor,
+            backgroundColor: themeData.backgroundColor,
             extendBody: true,
             appBar: _buildAppBar(),
             body: Stack(
@@ -410,8 +411,8 @@ class _NewPostViewState extends State<NewPostView> {
                                         cursorRadius: Radius.circular(1000),
                                         cursorWidth: 4,
                                         textCapitalization: TextCapitalization.sentences,
-                                        style: DynamicTheme.of(context).data.textTheme.headline6,
-                                        cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                        style: themeData.textTheme.headline6,
+                                        cursorColor: widget.tribe.color ?? themeData.primaryColor,
                                         decoration: Decorations.postInput.copyWith(hintText: 'Title'),
                                         onChanged: (val) {
                                           setState(() => title = val);
@@ -437,12 +438,12 @@ class _NewPostViewState extends State<NewPostView> {
                                         cursorRadius: Radius.circular(1000),
                                         cursorWidth: 2,
                                         textCapitalization: TextCapitalization.sentences,
-                                        style: DynamicTheme.of(context).data.textTheme.bodyText2,
+                                        style: themeData.textTheme.bodyText2,
                                         keyboardType: TextInputType.multiline,
                                         maxLines: null,
                                         textAlign: TextAlign.start,
                                         textAlignVertical: TextAlignVertical.top,
-                                        cursorColor: widget.tribe.color ?? DynamicTheme.of(context).data.primaryColor,
+                                        cursorColor: widget.tribe.color ?? themeData.primaryColor,
                                         decoration: Decorations.postInput.copyWith(hintText: 'Content'),
                                         onChanged: (val) {
                                           setState(() => content = val);

@@ -10,8 +10,8 @@ class ChatData {
 
   factory ChatData.fromSnapshot(DocumentSnapshot doc) {
     return ChatData(
-      id: doc.documentID,
-      members: doc.data['members'] ?? [],
+      id: doc.id,
+      members: doc.data()['members'] ?? [],
     );
   }
 }

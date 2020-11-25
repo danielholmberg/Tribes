@@ -6,8 +6,8 @@ import 'package:tribes/core/tribe/tribe_room_view.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/database_service.dart';
-import 'package:tribes/services/firebase_auth_service.dart';
+import 'package:tribes/services/firebase/auth_service.dart';
+import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/widgets/custom_page_transition.dart';
 
 /* 
@@ -19,7 +19,7 @@ class HomeViewModel extends StreamViewModel<List<Tribe>> {
   HomeViewModel({this.context});
 
   // -------------- Services [START] --------------- //
-  final FirebaseAuthService _authService = locator<FirebaseAuthService>();
+  final AuthService _authService = locator<AuthService>();
   final DatabaseService _databaseService = locator<DatabaseService>();
   // -------------- Services [END] --------------- //
   
@@ -41,7 +41,7 @@ class HomeViewModel extends StreamViewModel<List<Tribe>> {
   // -------------- Input [END] --------------- //
 
   // -------------- Output [START] --------------- //
-  UserData get currentUser => _databaseService.currentUserData;
+  MyUser get currentUser => _databaseService.currentUserData;
   List<Tribe> get joinedTribes => data;
   int get currentPage => _currentPageIndex;
   PageController get tribeItemController => _tribeItemController;
