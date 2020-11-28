@@ -1,59 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/notification_data_model.dart';
 import 'package:tribes/models/user_model.dart';
+import 'package:tribes/router.dart';
 import 'package:tribes/services/firebase/database_service.dart';
 
-/* 
-* Handels all logic. 
-* Utilizes Services to provide functionality.
-*/
-class ChatViewModel extends BaseViewModel {
-  final BuildContext context;
-  ChatViewModel({this.context});
-
-  // -------------- Services [START] --------------- //
+class ChatViewModel extends ReactiveViewModel {
   final DatabaseService _databaseService = locator<DatabaseService>();
-  // -------------- Services [END] --------------- //
-  
-  // -------------- Models [START] --------------- //
-  NotificationData notificationData; 
-  // -------------- Models [END] --------------- //
+  final NavigationService _navigationService = locator<NavigationService>();
 
-  // -------------- State [START] --------------- //
-  int _currentTab = 0;
-  final List<String> tabs = ['Private', 'Tribes'];
-  // -------------- State [END] --------------- //
+  final List<String> _tabs = ['Private', 'Tribes'];
 
-  // -------------- Input [START] --------------- //
-  void setCurrentTab(int index) {
-    _currentTab = index;
-    notifyListeners();
-  }
-  // -------------- Input [END] --------------- //
+  NotificationData _notificationData;
 
-  // -------------- Output [START] --------------- //
-  MyUser get currentUserData => _databaseService.currentUserData;
-  int get currentTab => _currentTab;
-  // -------------- Output [END] --------------- //
+  int _currentTabIndex = 0;
 
-  // -------------- Logic [START] --------------- //
-  // -------------- Logic [END] --------------- //
+  MyUser get currentUser => _databaseService.currentUserData;
+  int get currentTabIndex => _currentTabIndex;
 
-  void initialise() {
-    notificationData = ModalRoute.of(context).settings.arguments;
+  List<String> get tabs => _tabs;
+  int get tabsCount => _tabs.length;
 
-    switch (notificationData.tab) {
-      case 'Private':
-        setCurrentTab(0);
-        break;
-      case 'Tribes':
-        setCurrentTab(1);
-        break;
-      default:
-        setCurrentTab(_currentTab);
+  void initState({@required BuildContext context}) {
+    _notificationData = ModalRoute.of(context).settings.arguments;
+
+    if (_notificationData != null) {
+      switch (_notificationData.tab) {
+        case 'Private':
+          setCurrentTab(0);
+          break;
+        case 'Tribes':
+          setCurrentTab(1);
+          break;
+        default:
+          setCurrentTab(_currentTabIndex);
+      }
     }
   }
 
+  void setCurrentTab(int index) {
+    _currentTabIndex = index;
+    notifyListeners();
+  }
+
+  String getTab(int index) {
+    return _tabs[index];
+  }
+
+  void onStartNewChat() {
+    _navigationService.navigateTo(MyRouter.newChatRoute);
+  }
+
+  @override
+  List<ReactiveServiceMixin> get reactiveServices => [_databaseService];
 }

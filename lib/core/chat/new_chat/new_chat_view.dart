@@ -1,14 +1,13 @@
-library private_messages_view;
+library new_chat_view;
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firestore_ui/animated_firestore_list.dart';
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:stacked/stacked.dart';
-import 'package:tribes/core/chat/widgets/private_messages_tab/private_messages_view_model.dart';
-import 'package:tribes/models/chat_message_model.dart';
-import 'package:tribes/models/chat_model.dart';
+import 'package:tribes/core/chat/new_chat/new_chat_view_model.dart';
 import 'package:tribes/models/user_model.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
@@ -16,17 +15,17 @@ import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
 import 'package:tribes/shared/widgets/loading.dart';
 import 'package:tribes/shared/widgets/user_avatar.dart';
 
-part 'private_messages_view_[mobile].dart';
+part 'new_chat_view_[mobile].dart';
 
-class PrivateMessagesView extends StatelessWidget {
+class NewChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<PrivateMessagesViewModel>.reactive(
-      viewModelBuilder: () => PrivateMessagesViewModel(),
-      disposeViewModel: false,
+    return ViewModelBuilder.reactive(
+      viewModelBuilder: () => NewChatViewModel(),
+      onModelReady: (model) => model.initState(),
       builder: (context, model, child) {
         return ScreenTypeLayout.builder(
-          mobile: (context) => _PrivateMessagesViewMobile(),
+          mobile: (context) => _NewChatViewMobile(),
         );
       },
     );

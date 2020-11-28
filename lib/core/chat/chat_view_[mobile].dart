@@ -1,31 +1,30 @@
 part of chat_view;
 
-class _ChatViewMobile extends StatelessWidget {
-  final ChatViewModel viewModel;
-  _ChatViewMobile(this.viewModel);
-
+class _ChatViewMobile extends ViewModelWidget<ChatViewModel> {
   @override
-  Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    
-    _categorySelector() {
+  Widget build(BuildContext context, ChatViewModel model) {
+    final ThemeData themeData = Theme.of(context);
+
+    _buildCategorySelector() {
       return Container(
         height: 60.0,
         color: themeData.primaryColor,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: viewModel.tabs.length,
+          itemCount: model.tabsCount,
           shrinkWrap: true,
           itemBuilder: (context, index) {
             return Center(
               child: GestureDetector(
-                onTap: () => viewModel.setCurrentTab(index),
+                onTap: () => model.setCurrentTab(index),
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 12.0),
                   child: Text(
-                    viewModel.tabs[index],
+                    model.getTab(index),
                     style: TextStyle(
-                      color: index == viewModel.currentTab ? Colors.white : Colors.white60,
+                      color: index == model.currentTabIndex
+                          ? Colors.white
+                          : Colors.white60,
                       fontFamily: 'TribesRounded',
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
@@ -58,18 +57,12 @@ class _ChatViewMobile extends StatelessWidget {
                 gravity: ToastGravity.BOTTOM,
               ),
             ),
-            _categorySelector(),
+            _buildCategorySelector(),
             IconButton(
               icon: Icon(FontAwesomeIcons.commentMedical),
               iconSize: Constants.defaultIconSize,
               color: Colors.white,
-              onPressed: () => Navigator.push(context, 
-                CustomPageTransition(
-                  type: CustomPageTransitionType.newMessage, 
-                  duration: Constants.pageTransition600, 
-                  child: NewChatView(currentUserID: viewModel.currentUserData.id),
-                )
-              ),
+              onPressed: model.onStartNewChat,
             ),
           ],
         ),
@@ -90,16 +83,21 @@ class _ChatViewMobile extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: themeData.backgroundColor,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black54,
                         blurRadius: 5,
                         offset: Offset(0, 0),
                       ),
-                    ]
+                    ],
                   ),
-                  child: viewModel.currentTab == 0 ? PrivateMessagesView() : TribeMessagesView(), 
+                  child: model.currentTabIndex == 0
+                      ? PrivateMessagesView()
+                      : TribeMessagesView(),
                 ),
               ),
             ],

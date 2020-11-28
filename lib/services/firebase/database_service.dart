@@ -131,8 +131,11 @@ class DatabaseService with ReactiveServiceMixin {
     bool available = await checkUsernameAvailability(username);
 
     if (available) {
-      print('New username (${locator<AuthService>().currentFirebaseUser.uid}): $username');
-      usersRoot.doc(locator<AuthService>().currentFirebaseUser.uid).update({'username': username});
+      print(
+          'New username (${locator<AuthService>().currentFirebaseUser.uid}): $username');
+      usersRoot
+          .doc(locator<AuthService>().currentFirebaseUser.uid)
+          .update({'username': username});
     } else {
       print('Username \'$username\' is already taken!');
     }
@@ -189,7 +192,8 @@ class DatabaseService with ReactiveServiceMixin {
 
   Stream<List<Tribe>> get joinedTribes {
     return tribesRoot
-        .where('members', arrayContains: locator<AuthService>().currentFirebaseUser.uid)
+        .where('members',
+            arrayContains: locator<AuthService>().currentFirebaseUser.uid)
         .orderBy('created', descending: true)
         .snapshots()
         .map((list) {
@@ -201,7 +205,8 @@ class DatabaseService with ReactiveServiceMixin {
   Stream<List<Tribe>> get notYetJoinedTribes {
     return tribesRoot.snapshots().map((list) => list.docs
         .map((doc) => Tribe.fromSnapshot(doc))
-        .where((tribe) => !tribe.members.contains(locator<AuthService>().currentFirebaseUser.uid))
+        .where((tribe) => !tribe.members
+            .contains(locator<AuthService>().currentFirebaseUser.uid))
         .toList());
   }
 
@@ -358,7 +363,10 @@ class DatabaseService with ReactiveServiceMixin {
   }
 
   Stream<MyUser> get currentUserDataStream {
-    return usersRoot.doc(locator<AuthService>().currentFirebaseUser.uid).snapshots().map((snapshot) {
+    return usersRoot
+        .doc(locator<AuthService>().currentFirebaseUser.uid)
+        .snapshots()
+        .map((snapshot) {
       _currentUserData.value = MyUser.fromSnapshot(snapshot);
       return currentUserData;
     });
@@ -400,14 +408,16 @@ class DatabaseService with ReactiveServiceMixin {
   Future addUserToTribe(String tribeID) {
     fcm.subscribeToTopic(tribeID);
     return tribesRoot.doc(tribeID).update({
-      'members': FieldValue.arrayUnion([locator<AuthService>().currentFirebaseUser.uid])
+      'members': FieldValue.arrayUnion(
+          [locator<AuthService>().currentFirebaseUser.uid])
     });
   }
 
   Future leaveTribe(String tribeID) {
     fcm.unsubscribeFromTopic(tribeID);
     return tribesRoot.doc(tribeID).update({
-      'members': FieldValue.arrayRemove([locator<AuthService>().currentFirebaseUser.uid])
+      'members': FieldValue.arrayRemove(
+          [locator<AuthService>().currentFirebaseUser.uid])
     });
   }
 
@@ -438,28 +448,25 @@ class DatabaseService with ReactiveServiceMixin {
         .orderBy('created', descending: true);
   }
 
-  Query privateChatRooms(String userID) {
+  Query get privateChatRooms {
     return chatsRoot
-        .where('members', arrayContains: userID)
+        .where('members', arrayContains: locator<AuthService>().currentFirebaseUser.uid)
         .where('hasMessages', isEqualTo: true)
         .orderBy('updated', descending: true);
   }
 
-  Future<String> createNewPrivateChatRoom(
-      String userID, String friendID) async {
-    String roomID = userID.hashCode <= friendID.hashCode
-        ? '$userID-$friendID'
-        : '$friendID-$userID';
+  Future<String> createNewPrivateChatRoom(String friendID) async {
+    String currentUserId = locator<AuthService>().currentFirebaseUser.uid;
+    String roomID = currentUserId.hashCode <= friendID.hashCode
+        ? '$currentUserId-$friendID'
+        : '$friendID-$currentUserId';
 
-    bool roomAlreadyExists = false;
-    await chatsRoot
-        .doc(roomID)
-        .get()
-        .then((onValue) => roomAlreadyExists = onValue.exists);
+    DocumentSnapshot roomRef = await chatsRoot.doc(roomID).get();
+    bool roomAlreadyExists = roomRef.exists;
 
     if (!roomAlreadyExists) {
       var data = {
-        'members': [userID, friendID],
+        'members': [currentUserId, friendID],
       };
 
       print('Creating new chat room data: $data');
@@ -468,10 +475,10 @@ class DatabaseService with ReactiveServiceMixin {
 
     fcm.subscribeToTopic(roomID);
 
-    return Future.value(roomID);
+    return roomID;
   }
 
-  Future sendChatMessage(String roomID, String userID, String message) {
+  Future sendChatMessage(String roomID, String userID, String message) async {
     var data = {
       'message': message,
       'senderID': userID,
@@ -482,16 +489,14 @@ class DatabaseService with ReactiveServiceMixin {
     DocumentReference roomRef = chatsRoot.doc(roomID);
     DocumentReference messageRef = roomRef.collection('messages').doc();
 
-    return FirebaseFirestore.instance.runTransaction((transaction) {
-      return Future.value(transaction.set(messageRef, data));
-    }).then(
-      (transaction) {
-        transaction.update(roomRef, {
-          'hasMessages': true,
-          'updated': FieldValue.serverTimestamp(),
-        });
-      },
-    );
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      return transaction.set(messageRef, data);
+    });
+
+    return roomRef.update({
+      'hasMessages': true,
+      'updated': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<List<Tribe>> joinedTribesFuture(String userID) async {

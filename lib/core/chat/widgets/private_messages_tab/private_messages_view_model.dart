@@ -1,37 +1,44 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'package:tribes/locator.dart';
+import 'package:tribes/models/chat_message_model.dart';
+import 'package:tribes/models/chat_model.dart';
 import 'package:tribes/models/user_model.dart';
+import 'package:tribes/router.dart';
 import 'package:tribes/services/firebase/database_service.dart';
 
-const _OtherUserDataKey = 'otherUser-stream';
-const _MessagesKey = 'messages-stream';
-
-class PrivateMessagesViewModel extends BaseViewModel {
-
-  // -------------- Services [START] --------------- //
+class PrivateMessagesViewModel extends ReactiveViewModel {
   final DatabaseService _databaseService = locator<DatabaseService>();
-  // -------------- Services [END] --------------- //
-  
-  // -------------- Models [START] --------------- //
-  // -------------- Models [END] --------------- //
+  final NavigationService _navigationService = locator<NavigationService>();
 
-  // -------------- State [START] --------------- //
   String _notMyId;
-  // -------------- State [END] --------------- //
 
-  // -------------- Input [START] --------------- //
-  void setNotMyId(String uid) => _notMyId = uid;
-  // -------------- Input [END] --------------- //
-
-  // -------------- Output [START] --------------- //
-  MyUser get currentUserData => _databaseService.currentUserData;
-  Stream<MyUser> get otherUserDataStream => _databaseService.userData(_notMyId);
-  Query get privateChatRooms => _databaseService.privateChatRooms(currentUserData.id);
   String get notMyId => _notMyId;
-  // -------------- Output [END] --------------- //
 
-  // -------------- Logic [START] --------------- //
-  // -------------- Logic [END] --------------- //
+  MyUser get currentUser => _databaseService.currentUserData;
+  Stream<MyUser> get friendDataStream => _databaseService.userData(_notMyId);
+  Query get privateChatRooms =>
+      _databaseService.privateChatRooms;
 
+  Stream<Message> getMostRecentMessageStream(String messageId) {
+    return _databaseService.mostRecentMessage(messageId);
+  }
+
+  void onPrivateChatPress(ChatData data, {bool reply = false}) {
+    _navigationService.navigateTo(
+      MyRouter.chatRoomRoute,
+      arguments: ChatRoomArguments(
+        roomId: data.id,
+        members: data.members,
+      ),
+    );
+  }
+
+  void setNotMyId(String id) {
+    _notMyId = id;
+  }
+
+  @override
+  List<ReactiveServiceMixin> get reactiveServices => [_databaseService];
 }

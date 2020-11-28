@@ -40,6 +40,6 @@ class TribeMessagesViewModel extends StreamViewModel<List<Tribe>> {
   }
 
   @override
-  Stream<List<Tribe>> get stream => _databaseService.joinedTribes(_databaseService.currentUserData.id);
+  Stream<List<Tribe>> get stream => _databaseService.joinedTribes;
 
 }

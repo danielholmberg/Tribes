@@ -25,19 +25,21 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
     bool isMe = widget.message.senderID == currentUser.id;
 
     final Container msg = Container(
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.6,
+      ),
       margin: EdgeInsets.all(4.0),
       padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
       decoration: BoxDecoration(
-        color: isMe 
-        ? widget.color.withOpacity(0.7)
-        : Colors.grey.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(10.0)
+        color:
+            isMe ? widget.color.withOpacity(0.7) : Colors.grey.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(widget.message.message,
+          Text(
+            widget.message.message,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'TribesRounded',
@@ -49,13 +51,14 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
       ),
     );
 
-    if(isMe) {
+    if (isMe) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Text(widget.message.formattedTime(),
+          Text(
+            widget.message.formattedTime(),
             style: TextStyle(
               color: Colors.black26,
               fontFamily: 'TribesRounded',
@@ -71,24 +74,24 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
               StreamBuilder<MyUser>(
                 stream: DatabaseService().userData(widget.message.senderID),
                 builder: (context, snapshot) {
-                  if(snapshot.hasError) {
-                    print('Error retrieving sender data: ${snapshot.error.toString()}');
+                  if (snapshot.hasError) {
+                    print(
+                        'Error retrieving sender data: ${snapshot.error.toString()}');
                   }
 
                   return UserAvatar(
-                    currentUserID: currentUser.id,
-                    user: snapshot.data, 
-                    padding: const EdgeInsets.symmetric(vertical: 6.0),
-                    color: widget.color,  
-                    radius: 10, 
-                    strokeWidth: 1.0,
-                    onlyAvatar: true
-                  );
-                }
+                      currentUserID: currentUser.id,
+                      user: snapshot.data,
+                      padding: const EdgeInsets.symmetric(vertical: 6.0),
+                      color: widget.color,
+                      radius: 10,
+                      strokeWidth: 1.0,
+                      onlyAvatar: true);
+                },
               ),
             ],
           ),
-          SizedBox(width: Constants.defaultPadding)
+          SizedBox(width: Constants.defaultPadding),
         ],
       );
     }
@@ -104,27 +107,29 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             StreamBuilder<MyUser>(
-              stream: DatabaseService().userData(widget.message.senderID),
+              stream:
+                  locator<DatabaseService>().userData(widget.message.senderID),
               builder: (context, snapshot) {
-                if(snapshot.hasError) {
-                  print('Error retrieving sender data: ${snapshot.error.toString()}');
+                if (snapshot.hasError) {
+                  print(
+                      'Error retrieving sender data: ${snapshot.error.toString()}');
                 }
 
                 return UserAvatar(
-                  currentUserID: currentUser.id,
-                  user: snapshot.data, 
-                  padding: const EdgeInsets.symmetric(vertical: 6.0),
-                  color: widget.color, 
-                  radius: 10, 
-                  strokeWidth: 1.0,
-                  onlyAvatar: true
-                );
-              }
+                    currentUserID: currentUser.id,
+                    user: snapshot.data,
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    color: widget.color,
+                    radius: 10,
+                    strokeWidth: 1.0,
+                    onlyAvatar: true);
+              },
             ),
-            msg, 
+            msg,
           ],
         ),
-        Text(widget.message.formattedTime(),
+        Text(
+          widget.message.formattedTime(),
           style: TextStyle(
             color: Colors.black26,
             fontFamily: 'TribesRounded',
