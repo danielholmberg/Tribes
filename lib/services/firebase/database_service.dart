@@ -9,10 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:observable_ish/observable_ish.dart';
 import 'package:stacked/stacked.dart';
+import 'package:tribes/locator.dart';
 import 'package:tribes/models/chat_message_model.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
+import 'package:tribes/services/firebase/auth_service.dart';
 import 'package:tribes/services/firebase/storage_service.dart';
 
 class DatabaseService with ReactiveServiceMixin {
@@ -129,8 +131,8 @@ class DatabaseService with ReactiveServiceMixin {
     bool available = await checkUsernameAvailability(username);
 
     if (available) {
-      print('New username (${currentUserData.id}): $username');
-      usersRoot.doc(currentUserData.id).update({'username': username});
+      print('New username (${locator<AuthService>().currentFirebaseUser.uid}): $username');
+      usersRoot.doc(locator<AuthService>().currentFirebaseUser.uid).update({'username': username});
     } else {
       print('Username \'$username\' is already taken!');
     }
@@ -187,7 +189,7 @@ class DatabaseService with ReactiveServiceMixin {
 
   Stream<List<Tribe>> get joinedTribes {
     return tribesRoot
-        .where('members', arrayContains: currentUserData.id)
+        .where('members', arrayContains: locator<AuthService>().currentFirebaseUser.uid)
         .orderBy('created', descending: true)
         .snapshots()
         .map((list) {
@@ -199,7 +201,7 @@ class DatabaseService with ReactiveServiceMixin {
   Stream<List<Tribe>> get notYetJoinedTribes {
     return tribesRoot.snapshots().map((list) => list.docs
         .map((doc) => Tribe.fromSnapshot(doc))
-        .where((tribe) => !tribe.members.contains(currentUserData.id))
+        .where((tribe) => !tribe.members.contains(locator<AuthService>().currentFirebaseUser.uid))
         .toList());
   }
 
@@ -226,7 +228,7 @@ class DatabaseService with ReactiveServiceMixin {
     Position currentPosition;
 
     var data = {
-      'author': currentUserData.id,
+      'author': locator<AuthService>().currentFirebaseUser.uid,
       'title': title,
       'content': content,
       'tribeID': tribeID,
@@ -243,7 +245,7 @@ class DatabaseService with ReactiveServiceMixin {
       data.putIfAbsent('lng', () => currentPosition.longitude);
     }
 
-    await usersRoot.doc(currentUserData.id).update({
+    await usersRoot.doc(locator<AuthService>().currentFirebaseUser.uid).update({
       'createdPosts': FieldValue.arrayUnion([postDoc.id]),
       'likedPosts': FieldValue.arrayUnion([postDoc.id]),
     });
@@ -323,7 +325,7 @@ class DatabaseService with ReactiveServiceMixin {
       'created': now,
     }, SetOptions(merge: true));
 
-    fcm.subscribeToTopic(tribeDoc.documentID);
+    fcm.subscribeToTopic(tribeDoc.id);
 
     return tribeDoc.set(data);
   }
@@ -356,7 +358,7 @@ class DatabaseService with ReactiveServiceMixin {
   }
 
   Stream<MyUser> get currentUserDataStream {
-    return usersRoot.doc(currentUserData.id).snapshots().map((snapshot) {
+    return usersRoot.doc(locator<AuthService>().currentFirebaseUser.uid).snapshots().map((snapshot) {
       _currentUserData.value = MyUser.fromSnapshot(snapshot);
       return currentUserData;
     });
@@ -398,14 +400,14 @@ class DatabaseService with ReactiveServiceMixin {
   Future addUserToTribe(String tribeID) {
     fcm.subscribeToTopic(tribeID);
     return tribesRoot.doc(tribeID).update({
-      'members': FieldValue.arrayUnion([currentUserData.id])
+      'members': FieldValue.arrayUnion([locator<AuthService>().currentFirebaseUser.uid])
     });
   }
 
   Future leaveTribe(String tribeID) {
     fcm.unsubscribeFromTopic(tribeID);
     return tribesRoot.doc(tribeID).update({
-      'members': FieldValue.arrayRemove([currentUserData.id])
+      'members': FieldValue.arrayRemove([locator<AuthService>().currentFirebaseUser.uid])
     });
   }
 
