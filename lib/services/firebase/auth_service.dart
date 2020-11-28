@@ -19,18 +19,12 @@ class AuthService with ReactiveServiceMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  StreamSubscription _firebaseUserStreamSub;
-
   RxValue<User> _currentFirebaseUser = RxValue<User>(
     initial: FirebaseAuth.instance.currentUser,
   );
   User get currentFirebaseUser => _currentFirebaseUser.value;
 
-  AuthService() {
-    listenToReactiveValues([
-      _currentFirebaseUser,
-    ]);
-  }
+  StreamSubscription _firebaseUserStreamSub;
 
   // ignore: close_sinks
   final StreamController<MyUser> userStreamController =
@@ -38,12 +32,19 @@ class AuthService with ReactiveServiceMixin {
   Stream<MyUser> get userStream =>
       userStreamController.stream.asBroadcastStream();
 
+  AuthService() {
+    initListener();
+    listenToReactiveValues([
+      _currentFirebaseUser,
+    ]);
+  }
+
   void initListener() {
     print('Initializing Auth listener...');
     _firebaseUserStreamSub = _auth.authStateChanges().listen(
-      (User firebaseUser) async {
+      (User firebaseUser) {
         if (firebaseUser != null) {
-          await locator<DatabaseService>().fetchCurrentUserData(
+          locator<DatabaseService>().initListener(
             firebaseUser.uid,
           );
         } else {

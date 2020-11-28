@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -37,6 +38,41 @@ class DatabaseService with ReactiveServiceMixin {
   // Current User Data
   RxValue<MyUser> _currentUserData = RxValue<MyUser>(initial: null);
   MyUser get currentUserData => _currentUserData.value;
+
+  StreamSubscription _userStreamSub;
+
+  // ignore: close_sinks
+  final StreamController<MyUser> userStreamController =
+      StreamController<MyUser>.broadcast();
+  Stream<MyUser> get userStream =>
+      userStreamController.stream.asBroadcastStream();
+
+  DatabaseService() {
+    listenToReactiveValues([
+      _currentUserData,
+    ]);
+  }
+
+  void initListener(String userId) {
+    print('Initializing Database listener...');
+    _userStreamSub = usersRoot.doc(userId).snapshots().listen(
+      (DocumentSnapshot userDoc) {
+        _currentUserData.value = MyUser.fromSnapshot(userDoc);
+        notifyListeners();
+      },
+    );
+    print('Success!');
+  }
+
+  void disposeListener() {
+    print('Dispose Database listener...');
+    _userStreamSub.cancel();
+    print('Success!');
+  }
+
+  void resetCurrentUser() {
+    _currentUserData.value = null;
+  }
 
   Future createUserDocument(String uid, String name, String email) {
     var data = {
@@ -160,10 +196,10 @@ class DatabaseService with ReactiveServiceMixin {
   }
 
   // Get not yet joined Tribes Stream
-  Stream<List<Tribe>> notYetJoinedTribes(String userID) {
+  Stream<List<Tribe>> get notYetJoinedTribes {
     return tribesRoot.snapshots().map((list) => list.docs
         .map((doc) => Tribe.fromSnapshot(doc))
-        .where((tribe) => !tribe.members.contains(userID))
+        .where((tribe) => !tribe.members.contains(currentUserData.id))
         .toList());
   }
 
@@ -177,24 +213,20 @@ class DatabaseService with ReactiveServiceMixin {
         .orderBy('created', descending: true);
   }
 
-  String generateNewPostID() {
-    return postsRoot.doc().documentID;
-  }
+  String get newPostId => postsRoot.doc().id;
 
   // Add a new Post
   Future addNewPost(
       {String postID,
-      @required String author,
       @required String title,
       @required String content,
       @required List<String> images,
       @required String tribeID}) async {
-    DocumentReference postDoc =
-        postsRoot.doc(postID != null ? postID : generateNewPostID());
+    DocumentReference postDoc = postsRoot.doc(postID ?? newPostId);
     Position currentPosition;
 
     var data = {
-      'author': author,
+      'author': currentUserData.id,
       'title': title,
       'content': content,
       'tribeID': tribeID,
@@ -211,7 +243,7 @@ class DatabaseService with ReactiveServiceMixin {
       data.putIfAbsent('lng', () => currentPosition.longitude);
     }
 
-    usersRoot.doc(author).update({
+    await usersRoot.doc(currentUserData.id).update({
       'createdPosts': FieldValue.arrayUnion([postDoc.id]),
       'likedPosts': FieldValue.arrayUnion([postDoc.id]),
     });
@@ -324,10 +356,7 @@ class DatabaseService with ReactiveServiceMixin {
   }
 
   Stream<MyUser> get currentUserDataStream {
-    return usersRoot
-        .doc(currentUserData.id)
-        .snapshots()
-        .map((snapshot) {
+    return usersRoot.doc(currentUserData.id).snapshots().map((snapshot) {
       _currentUserData.value = MyUser.fromSnapshot(snapshot);
       return currentUserData;
     });
@@ -366,17 +395,17 @@ class DatabaseService with ReactiveServiceMixin {
     });
   }
 
-  Future addUserToTribe(String userID, String tribeID) {
+  Future addUserToTribe(String tribeID) {
     fcm.subscribeToTopic(tribeID);
     return tribesRoot.doc(tribeID).update({
-      'members': FieldValue.arrayUnion([userID])
+      'members': FieldValue.arrayUnion([currentUserData.id])
     });
   }
 
-  Future leaveTribe(String userID, String tribeID) {
+  Future leaveTribe(String tribeID) {
     fcm.unsubscribeFromTopic(tribeID);
     return tribesRoot.doc(tribeID).update({
-      'members': FieldValue.arrayRemove([userID])
+      'members': FieldValue.arrayRemove([currentUserData.id])
     });
   }
 
@@ -514,16 +543,5 @@ class DatabaseService with ReactiveServiceMixin {
 
   Future<MyUser> getUserData(String uid) {
     return usersRoot.doc(uid).get().then((doc) => MyUser.fromSnapshot(doc));
-  }
-
-  Future fetchCurrentUserData(String uid) async {
-    _currentUserData.value = MyUser.fromSnapshot(
-      await usersRoot.doc(uid).get(),
-    );
-    notifyListeners();
-  }
-
-  void resetCurrentUser() {
-    _currentUserData.value = null;
   }
 }

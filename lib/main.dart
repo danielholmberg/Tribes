@@ -55,7 +55,6 @@ class _MainState extends State<Main> {
               : SystemUiOverlayStyle.light)
           .copyWith(statusBarColor: Colors.transparent),
     );
-    _authService.initListener();
     super.initState();
   }
 

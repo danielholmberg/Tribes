@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tribes/core/tribe/post_room_view.dart';
+import 'package:tribes/core/tribe/post_room/post_room_view.dart';
 import 'package:tribes/core/tribe/widgets/image_carousel.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/post_model.dart';

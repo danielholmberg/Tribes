@@ -1,124 +1,9 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:ui' as ui;
+part of post_room_view;
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geocoder/geocoder.dart';
-import 'package:geocoder/model.dart';
-import 'package:tribes/core/tribe/edit_post_view.dart';
-import 'package:tribes/core/tribe/widgets/fullscreen_carousel.dart';
-import 'package:tribes/locator.dart';
-import 'package:tribes/models/post_model.dart';
-import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/firebase/database_service.dart';
-import 'package:tribes/shared/constants.dart' as Constants;
-import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
-import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
-import 'package:tribes/shared/widgets/like_button.dart';
-import 'package:tribes/shared/widgets/posted_date_time.dart';
-import 'package:tribes/shared/widgets/user_avatar.dart';
-
-class PostRoomView extends StatefulWidget {
-  final Post post;
-  final Color tribeColor;
-  final int initialImage;
-  final bool showTextContent;
-  final Function onEditPostPress;
-  PostRoomView({
-    @required this.post,
-    this.tribeColor = Constants.primaryColor,
-    this.initialImage = 0,
-    this.showTextContent = false,
-    this.onEditPostPress,
-  });
-
+class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
   @override
-  _PostRoomViewState createState() => _PostRoomViewState();
-}
-
-class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMixin {
-
-  final DatabaseService _databaseService = locator<DatabaseService>();
-
-  Coordinates coordinates;
-  Future<List<Address>> addressFuture;
-
-  bool isShowingTextContent = false;
-  bool isShowingOverlayWidgets = true;
-  Post post;
-  double opacity = 0.9;
-  Duration overlayAnimDuration = const Duration(milliseconds: 300);
-
-  // Fade-in animation
-  AnimationController fadeInController;
-  Animation<double> fadeInAnimation;
-
-  // Liked animation
-  AnimationController likedAnimationController;
-  Animation likedAnimation;
-  bool showLikedAnimation = false;
-  
-  @override
-  void initState() { 
-    if((widget.post.lat != 0 && widget.post.lng != 0)) {
-      coordinates = Coordinates(widget.post.lat, widget.post.lng);
-      addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
-    }
-
-    fadeInController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    fadeInAnimation = CurvedAnimation(parent: fadeInController, curve: Curves.easeIn);
-
-    fadeInController.addListener(() {
-      if(this.mounted) setState(() {});
-    });
-
-    fadeInController.forward();
-
-    likedAnimationController = new AnimationController(vsync: this, duration: Duration(milliseconds: 800));
-    likedAnimation = Tween(begin: 20.0, end: 100.0).animate(CurvedAnimation(
-      curve: Curves.bounceOut, parent: likedAnimationController)
-    );
-
-    likedAnimationController.addStatusListener((AnimationStatus status) {
-      if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
-        setState(() => showLikedAnimation = false);
-        likedAnimationController.reset();
-      }
-    });
-
-    isShowingTextContent = widget.showTextContent;
-    post = widget.post;
-
-    // StatusBar Color
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: widget.tribeColor.withOpacity(0.6)
-    ));
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    fadeInController.dispose();
-    likedAnimationController.dispose();
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.transparent
-    ));
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final MyUser currentUser = _databaseService.currentUserData;
-    print('Building PostRoom(${widget.post.id})...');
-
-    ThemeData themeData = Theme.of(context);
-    
-    bool isAuthor = currentUser.id == post.author;
+  Widget build(BuildContext context, PostRoomViewModel model) {
+    final ThemeData themeData = Theme.of(context);
 
     _showModalBottomSheet({Widget child}) {
       showModalBottomSheet(
@@ -163,28 +48,28 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                 color: Colors.white,
               ),
               splashColor: Colors.transparent,
-              backgroundColor: widget.tribeColor.withOpacity(opacity),
+              backgroundColor: model.tribeColor.withOpacity(model.opacity),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
           AnimatedSize(
-            vsync: this,
+            vsync: model.vsync,
             alignment: Alignment.centerLeft,
             duration: Duration(milliseconds: 500),
             curve: Curves.fastOutSlowIn,
             child: Container(
               margin: const EdgeInsets.only(top: 4.0),
               child: StreamBuilder<MyUser>(
-                stream: DatabaseService().userData(widget.post.author),
+                stream: DatabaseService().userData(model.authorId),
                 builder: (context, snapshot) {
                   if(snapshot.hasError) {
                     print('Error retrieving author data: ${snapshot.error.toString()}');
                   } 
                   
                   return UserAvatar(
-                    currentUserID: currentUser.id, 
+                    currentUserID: model.currentUserId, 
                     user: snapshot.data, 
-                    color: widget.tribeColor,
+                    color: model.tribeColor.withOpacity(model.opacity),
                     radius: 12,
                     strokeWidth: 2.0,
                     strokeColor: Colors.white,
@@ -198,24 +83,24 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
             ),
           ),
           IgnorePointer(
-            ignoring: !isAuthor,
+            ignoring: !model.isAuthor,
             child: Padding(
               padding: const EdgeInsets.only(right: 4.0),
               child: FloatingActionButton(
                 mini: true,
-                backgroundColor: isAuthor ? widget.tribeColor.withOpacity(0.8) : Colors.transparent,
-                elevation: isAuthor ? null : 0.0,
+                backgroundColor: model.isAuthor ? model.tribeColor.withOpacity(0.8) : Colors.transparent,
+                elevation: model.isAuthor ? null : 0.0,
                 onPressed: () => _showModalBottomSheet(
                   child: EditPostView(
-                    post: post, 
-                    tribeColor: widget.tribeColor, 
-                    onSave: (Post updatedPost) => setState(() => post = updatedPost),
+                    post: model.post, 
+                    tribeColor: model.tribeColor, 
+                    onSave: model.onSavePost,
                     onDelete: () => Navigator.pop(context),
                   ),
                 ),
                 child: CustomAwesomeIcon(
                   icon: FontAwesomeIcons.pen,
-                  color: isAuthor ? Colors.white : Colors.transparent,
+                  color: model.isAuthor ? Colors.white : Colors.transparent,
                   size: 16,
                 ),
               ),
@@ -239,14 +124,14 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                   padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 64.0),
                   shrinkWrap: true,
                   children: [
-                    SizedBox(height: isShowingOverlayWidgets ? MediaQuery.of(context).padding.top : 12.0),
+                    SizedBox(height: model.isShowingOverlayWidgets ? MediaQuery.of(context).padding.top : 12.0),
 
                     // Title
                     AnimatedPadding(
                       duration: const Duration(milliseconds: 300),
-                      padding: EdgeInsets.only(top: isShowingOverlayWidgets ? 52.0 : 0.0),
+                      padding: EdgeInsets.only(top: model.isShowingOverlayWidgets ? 52.0 : 0.0),
                       child: Text(
-                        post.title,
+                        model.post.title,
                         maxLines: 1,
                         softWrap: false,
                         overflow: TextOverflow.fade,
@@ -256,7 +141,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
 
                     // Content
                     Text(
-                      post.content,
+                      model.post.content,
                       maxLines: null,
                       softWrap: true,
                       overflow: TextOverflow.fade,
@@ -275,18 +160,18 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
         decoration: BoxDecoration(
-          color: widget.tribeColor.withOpacity(opacity),
+          color: model.tribeColor.withOpacity(model.opacity),
           borderRadius: BorderRadius.circular(1000),
         ),
         child: SingleChildScrollView(
           physics: ClampingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           child: IgnorePointer(
-            ignoring: !isShowingOverlayWidgets,
+            ignoring: !model.isShowingOverlayWidgets,
             child: AnimatedSize(
-              vsync: this,
+              vsync: model.vsync,
               alignment: Alignment.centerLeft,
-              duration: overlayAnimDuration,
+              duration: model.overlayAnimDuration,
               curve: Curves.fastOutSlowIn,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -294,7 +179,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                   CustomAwesomeIcon(icon: FontAwesomeIcons.mapMarkerAlt, color: Colors.white, size: 12,),
                   SizedBox(width: Constants.defaultPadding),
                   FutureBuilder(
-                    future: addressFuture,
+                    future: model.addressFuture,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         var addresses = snapshot.data;
@@ -329,7 +214,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
     }
 
     _buildDateAndTimeWidget() {
-      Timestamp timestamp = post.created;
+      Timestamp timestamp = model.post.created;
 
       return AnimatedOpacity(
         duration: const Duration(milliseconds: 300),
@@ -337,14 +222,14 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 6.0),
           decoration: BoxDecoration(
-            color: widget.tribeColor.withOpacity(opacity),
+            color: model.tribeColor.withOpacity(model.opacity),
             borderRadius: BorderRadius.circular(1000),
           ),
           child: SingleChildScrollView(
             physics: ClampingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             child: timestamp != null ? PostedDateTime(
-              vsync: this,
+              vsync: model.vsync,
               alignment: Alignment.centerLeft,
               timestamp: DateTime.parse(timestamp.toDate().toString()), 
               color: Colors.white,
@@ -365,10 +250,10 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
 
           // Left Side
           IgnorePointer(
-            ignoring: !isShowingOverlayWidgets,
+            ignoring: !model.isShowingOverlayWidgets,
             child: AnimatedOpacity(
-              opacity: isShowingOverlayWidgets ? 1.0 : 0.0,
-              duration: overlayAnimDuration,
+              opacity: model.isShowingOverlayWidgets ? 1.0 : 0.0,
+              duration: model.overlayAnimDuration,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,8 +264,8 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                     child: _buildDateAndTimeWidget(),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 8.0, bottom: addressFuture != null ? 8.0 : 4.0, top: 4.0),
-                    child: Visibility(visible: addressFuture != null, child: _buildLocationWidget()),
+                    padding: EdgeInsets.only(left: 8.0, bottom: model.addressFuture != null ? 8.0 : 4.0, top: 4.0),
+                    child: Visibility(visible: model.addressFuture != null, child: _buildLocationWidget()),
                   ),
                 ],
               ),
@@ -389,10 +274,10 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
 
           // Right Side
           IgnorePointer(
-            ignoring: !isShowingOverlayWidgets,
+            ignoring: !model.isShowingOverlayWidgets,
             child: AnimatedOpacity(
-              opacity: isShowingOverlayWidgets ? 1.0 : 0.0,
-              duration: overlayAnimDuration,
+              opacity: model.isShowingOverlayWidgets ? 1.0 : 0.0,
+              duration: model.overlayAnimDuration,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -401,28 +286,25 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0),
                     child: LikeButton(
-                      currentUser: currentUser, 
-                      postID: widget.post.id, 
+                      currentUser: model.currentUser, 
+                      postID: model.post.id, 
                       color: Colors.white,
-                      backgroundColor: widget.tribeColor.withOpacity(opacity),
+                      backgroundColor: model.tribeColor.withOpacity(model.opacity),
                       fab: true,
                       mini: true,
                       withNumberOfLikes: true,
                       numberOfLikesPosition: LikeButtonTextPosition.LEFT,
-                      onLiked: () {
-                        setState(() => showLikedAnimation = true);
-                        likedAnimationController.forward();
-                      }
+                      onLiked: model.onLike,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0, bottom: 4.0),
                     child: FloatingActionButton(
                       mini: true,
-                      backgroundColor: widget.tribeColor.withOpacity(opacity),
-                      onPressed: () => setState(() => isShowingTextContent = !isShowingTextContent),
+                      backgroundColor: model.tribeColor.withOpacity(model.opacity),
+                      onPressed: model.onShowTextContent,
                       child: CustomAwesomeIcon(
-                        icon: isShowingTextContent ? FontAwesomeIcons.envelopeOpenText : FontAwesomeIcons.solidEnvelope,
+                        icon: model.isShowingTextContent ? FontAwesomeIcons.envelopeOpenText : FontAwesomeIcons.solidEnvelope,
                         color: Colors.white,
                         size: 18,
                       ),
@@ -438,15 +320,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
 
     _buildBody() {
       return GestureDetector(
-        onTap: () {
-          if(isShowingOverlayWidgets) {
-            setState(() => isShowingOverlayWidgets = false);
-            SystemChrome.setEnabledSystemUIOverlays([]);
-          } else {
-            setState(() => isShowingOverlayWidgets = true);
-            SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-          }
-        },
+        onTap: model.onBodyPress,
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
@@ -457,18 +331,18 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                 // Images
                 Positioned.fill(child: 
                   FullscreenCarousel(
-                    images: post.images,
-                    color: widget.tribeColor,
-                    initialIndex: widget.initialImage,
-                    showOverlayWidgets: !isShowingTextContent && isShowingOverlayWidgets,
-                    overlayAnimDuration: overlayAnimDuration,
+                    images: model.post.images,
+                    color: model.tribeColor,
+                    initialIndex: model.initialImage,
+                    showOverlayWidgets: !model.isShowingTextContent && model.isShowingOverlayWidgets,
+                    overlayAnimDuration: model.overlayAnimDuration,
                   ),
                 ),
 
                 // Title and Content
                 Positioned.fill(
                   child: Visibility(
-                    visible: isShowingTextContent, 
+                    visible: model.isShowingTextContent, 
                     child: _postTextContent(),
                   ),
                 ),
@@ -479,10 +353,10 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
                   left: 0,
                   right: 0,
                   child: IgnorePointer(
-                    ignoring: !isShowingOverlayWidgets,
+                    ignoring: !model.isShowingOverlayWidgets,
                     child: AnimatedOpacity(
-                      opacity: isShowingOverlayWidgets ? 1.0 : 0.0,
-                      duration: overlayAnimDuration,
+                      opacity: model.isShowingOverlayWidgets ? 1.0 : 0.0,
+                      duration: model.overlayAnimDuration,
                       child: _buildDismissButton(),
                     ),
                   ),
@@ -499,12 +373,12 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
               ],
             ),
             Visibility(
-              visible: showLikedAnimation,
+              visible: model.showLikedAnimation,
               child: AnimatedBuilder(
-                animation: likedAnimationController,
+                animation: model.likedAnimationController,
                 builder: (context, child) => CustomAwesomeIcon(
                   icon: FontAwesomeIcons.solidHeart, 
-                  size: likedAnimation.value, 
+                  size: model.likedAnimation.value, 
                   color: themeData.primaryColor,
                   shadows: [
                     Shadow(
@@ -522,7 +396,7 @@ class _PostRoomViewState extends State<PostRoomView> with TickerProviderStateMix
     }
 
     return FadeTransition(
-      opacity: fadeInAnimation,
+      opacity: model.fadeInAnimation,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: _buildBody(),

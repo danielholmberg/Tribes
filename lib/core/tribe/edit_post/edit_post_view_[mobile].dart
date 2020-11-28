@@ -1,153 +1,14 @@
-import 'dart:io';
+part of edit_post_view;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:tribes/core/tribe/widgets/custom_image.dart';
-import 'package:tribes/models/post_model.dart';
-import 'package:tribes/services/firebase/database_service.dart';
-import 'package:tribes/services/firebase/storage_service.dart';
-import 'package:tribes/shared/constants.dart' as Constants;
-import 'package:tribes/shared/decorations.dart' as Decorations;
-import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
-import 'package:tribes/shared/widgets/custom_button.dart';
-import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
-import 'package:tribes/shared/widgets/discard_changes_dialog.dart';
-import 'package:tribes/shared/widgets/loading.dart';
-
-class EditPostView extends StatefulWidget {
-  final Post post;
-  final Color tribeColor;
-  final Function(Post) onSave;
-  final Function onDelete;
-  EditPostView({
-    @required this.post, 
-    this.tribeColor = Constants.primaryColor,
-    this.onSave,
-    this.onDelete,
-  });
-
+class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
   @override
-  _EditPostViewState createState() => _EditPostViewState();
-}
-
-class _EditPostViewState extends State<EditPostView> {
-
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _formKey = GlobalKey<FormState>();
-  final FocusNode titleFocus = new FocusNode();
-  final FocusNode contentFocus = new FocusNode();
-  bool loading = false;
-  bool photoButtonIsDisabled;
-
-  String title;
-  String content;
-  List<String> oldImages = [];
-  String originalTitle;
-  String originalContent;
-  List<String> originalImages = [];
-
-  List<Asset> newImages = [];
-
-  @override
-  void dispose() {
-    titleFocus.dispose();
-    contentFocus.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    originalTitle = widget.post.title;
-    originalContent = widget.post.content;
-    originalImages = new List<String>.from(widget.post.images);
-    title = originalTitle;
-    content = originalContent;
-    oldImages = new List<String>.from(originalImages);
-    photoButtonIsDisabled = oldImages.length == 5;
-
-    Future.delayed(Duration(milliseconds: 650)).then((val) {
-      FocusScope.of(context).requestFocus(titleFocus);
-    });
-    
-    super.initState();
-  }
-
-  Future<void> _loadAssets() async {
-    List<Asset> resultList;
-
-    try {
-      int remainingImages = 5 - (oldImages.length + newImages.length);
-      String title = remainingImages == 5 ? 
-      "Add images" : "Add $remainingImages more image${remainingImages > 1 ? 's' : ''}";
-
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: remainingImages,
-        enableCamera: true,
-        materialOptions: MaterialOptions(
-          actionBarTitle: title,
-          allViewTitle: title,
-          actionBarColor: "#ed217c",  // TO-DO: Change
-          actionBarTitleColor: "#ffffff",  // TO-DO: Change
-          lightStatusBar: false,
-          statusBarColor: '#ed217c',  // TO-DO: Change
-          startInAllView: true,
-          selectCircleStrokeColor: "#ed217c", // TO-DO: Change
-          selectionLimitReachedText: "You can't add any more.",
-      ),
-      cupertinoOptions: CupertinoOptions(
-        selectionFillColor: "#ed217c",  // TO-DO: Change
-        selectionTextColor: "#ffffff",  // TO-DO: Change
-        selectionCharacter: "✓",
-      ),
-    );
-    } on PermissionDeniedException catch (e) {
-      // User has denied image permission
-      print(e.toString());
-    } on PermissionPermanentlyDeniedExeption catch (e) {
-      // User has denied image permission permanently
-      print(e.toString());
-    } on NoImagesSelectedException catch (e) {
-      // User pressed cancel
-      print(e.toString());
-    } on Exception catch (e) {
-      // Generic error
-      print(e.toString());
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    if(resultList.length > 0) {
-      setState(() {
-        newImages += resultList;
-        photoButtonIsDisabled = (oldImages.length + newImages.length) == 5;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    //final UserData currentUser = locator<DatabaseService>().currentUserData;
-    print('Building EditPost()...');
-
-    ThemeData themeData = Theme.of(context);
-
-    print('originalImages: ${originalImages.length}');
-    print('oldImages: ${oldImages.length}');
-
-    bool edited = originalTitle != title || originalContent != content || newImages.length > 0 || (originalImages.length != oldImages.length);
-    bool step1Completed = title.trim().isNotEmpty;
-    bool step2Completed = content.trim().isNotEmpty;
-    bool step3Completed = oldImages.length + newImages.length > 0;
+  Widget build(BuildContext context, EditPostViewModel model) {
+    final ThemeData themeData = Theme.of(context);
 
     _showDiscardDialog() {
       return showDialog(
         context: context,
-        builder: (context) => DiscardChangesDialog(color: widget.tribeColor)
+        builder: (context) => DiscardChangesDialog(color: model.tribeColor)
       );
     }
 
@@ -156,7 +17,7 @@ class _EditPostViewState extends State<EditPostView> {
         backgroundColor: themeData.backgroundColor,
         elevation: 0.0,
         iconTheme: IconThemeData(
-          color: widget.tribeColor ?? themeData.primaryColor,
+          color: model.tribeColor,
         ),
         centerTitle: true,
         title: Row(
@@ -168,27 +29,27 @@ class _EditPostViewState extends State<EditPostView> {
               style: TextStyle(
                 fontFamily: 'TribesRounded',
                 fontWeight: FontWeight.bold,
-                color: widget.tribeColor ?? themeData.primaryColor
+                color: model.tribeColor,
               ),
             ),
             SizedBox(width: Constants.defaultPadding),
             Visibility(
-              visible: edited,
+              visible: model.edited,
               child: Text('| edited', 
                 style: TextStyle(
                   fontFamily: 'TribesRounded',
                   fontStyle: FontStyle.normal,
                   fontSize: 12,
-                  color: widget.tribeColor ?? themeData.primaryColor
+                  color: model.tribeColor,
                 ),
               ),
             ),
           ],
         ),
         leading: IconButton(icon: Icon(FontAwesomeIcons.times), 
-          color: widget.tribeColor ?? themeData.primaryColor,
+          color: model.tribeColor,
           onPressed: () {
-            edited ? _showDiscardDialog() : Navigator.of(context).pop();
+            model.edited ? _showDiscardDialog() : model.back();
           },
         ),
         actions: <Widget>[
@@ -197,7 +58,7 @@ class _EditPostViewState extends State<EditPostView> {
             color: themeData.backgroundColor,
             icon: CustomAwesomeIcon(
               icon: FontAwesomeIcons.solidTrashAlt, 
-              color: widget.tribeColor ?? themeData.primaryColor
+              color: model.tribeColor,
             ),
             onPressed: () {
               showDialog(
@@ -217,7 +78,7 @@ class _EditPostViewState extends State<EditPostView> {
                     FlatButton(
                       child: Text('No', 
                         style: TextStyle(
-                          color: widget.tribeColor ?? themeData.primaryColor,
+                          color: model.tribeColor,
                           fontFamily: 'TribesRounded',
                         ),
                       ),
@@ -233,15 +94,7 @@ class _EditPostViewState extends State<EditPostView> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onPressed: () async {
-                        await DatabaseService().deletePost(widget.post);
-                        Navigator.of(context).pop(); // Dialog: "Are you sure...?"
-                        Navigator.of(context).pop(); // PostTile
-
-                        if(widget.onDelete != null) {
-                          widget.onDelete();
-                        }
-                      },
+                      onPressed: model.onDeletePostConfirm,
                     ),
                   ],
                 ),
@@ -260,7 +113,7 @@ class _EditPostViewState extends State<EditPostView> {
           CustomAwesomeIcon(
             icon: FontAwesomeIcons.camera, 
             size: 30,
-            color: widget.tribeColor.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+            color: model.tribeColor.withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
           ), 
           Positioned(
             left: 30,
@@ -269,7 +122,7 @@ class _EditPostViewState extends State<EditPostView> {
               child: CustomAwesomeIcon(
                 icon: FontAwesomeIcons.plus, 
                 size: 14, 
-                color: widget.tribeColor.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+                color: model.tribeColor.withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
                 strokeWidth: 2.0,
               ),
             ),
@@ -280,7 +133,7 @@ class _EditPostViewState extends State<EditPostView> {
 
     List<Widget> _buildImages(int length, bool isNewImage) {
       return List.generate(length, (index) {
-        int _imageNumber = index + 1 + (isNewImage ? oldImages.length : 0);
+        int _imageNumber = index + 1 + (isNewImage ? model.oldImagesCount : 0);
 
         return Container(
             decoration: BoxDecoration(
@@ -298,12 +151,12 @@ class _EditPostViewState extends State<EditPostView> {
               child: Stack(
                 children: <Widget>[
                   isNewImage ? AssetThumb(
-                    asset: newImages[index],
+                    asset: model.newImages[index],
                     width: 300,
                     height: 300,
                   ) : CustomImage(
-                    imageURL: oldImages[index],
-                    color: widget.tribeColor,
+                    imageURL: model.oldImages[index],
+                    color: model.tribeColor,
                     width: 300,
                     height: 300,
                     margin: EdgeInsets.zero,
@@ -319,12 +172,7 @@ class _EditPostViewState extends State<EditPostView> {
                       ),
                       child: GestureDetector(
                         child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
-                        onTap: () {
-                          isNewImage ? newImages.removeAt(index) : oldImages.removeAt(index);
-                          setState(() {
-                            photoButtonIsDisabled = (oldImages.length + newImages.length) == 5;
-                          });
-                        },
+                        onTap: () => model.onRemoveImage(index, isNewImage),
                       ),
                     ),
                   ),
@@ -332,12 +180,12 @@ class _EditPostViewState extends State<EditPostView> {
                     top: 4,
                     right: 4,
                     child: Visibility(
-                      visible: oldImages.length + newImages.length > 1,
+                      visible: model.oldImagesCount + model.newImagesCount > 1,
                       child: Container(
                         height: 24,
                         width: 24,
                         decoration: BoxDecoration(
-                          color: widget.tribeColor.withOpacity(0.6),
+                          color: model.tribeColor.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(1000),
                         ),
                         child: Center(
@@ -364,12 +212,12 @@ class _EditPostViewState extends State<EditPostView> {
     _buildGridView() {
       List<Widget> children = [];
 
-      if(oldImages.length > 0) {
-        children += _buildImages(oldImages.length, false);
+      if(model.oldImagesCount > 0) {
+        children += _buildImages(model.oldImagesCount, false);
       }
 
-      if(newImages.length > 0) {
-        children += _buildImages(newImages.length, true);
+      if(model.newImagesCount > 0) {
+        children += _buildImages(model.newImagesCount, true);
       }
 
       return GridView.count(
@@ -380,13 +228,13 @@ class _EditPostViewState extends State<EditPostView> {
         mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
         children: <Widget>[
           GestureDetector(
-            onTap: photoButtonIsDisabled ? null : () async => await _loadAssets(),
+            onTap: model. photoButtonIsDisabled ? null : model.onNewImage,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(
                   width: 2.0,
-                  color: widget.tribeColor.withOpacity(photoButtonIsDisabled ? 0.4 : 1.0),
+                  color: model.tribeColor.withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
                 ),
               ),
               child: _buildNewImageIcon(),
@@ -398,27 +246,14 @@ class _EditPostViewState extends State<EditPostView> {
 
     _buildStepIndicator(int number, {bool completed = false}) {
       return GestureDetector(
-        onTap: () async {
-          switch (number) {
-            case 1:
-              titleFocus.requestFocus();
-              break;
-            case 2:
-              contentFocus.requestFocus();
-              break;
-            case 3:
-              if(!photoButtonIsDisabled) await _loadAssets();
-              break;
-            default: return;
-          }
-        },
+        onTap: () async => await model.onStepIndicatorPress(number),
         child: Container(
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: completed ? widget.tribeColor.withOpacity(0.6) : Colors.transparent,
+            color: completed ? model.tribeColor.withOpacity(0.6) : Colors.transparent,
             borderRadius: BorderRadius.circular(1000),
-            border: Border.all(color: widget.tribeColor, width: 2.0)
+            border: Border.all(color: model.tribeColor, width: 2.0)
           ),
           child: Center(
             child: completed ? CustomAwesomeIcon(
@@ -429,7 +264,7 @@ class _EditPostViewState extends State<EditPostView> {
               '$number',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: widget.tribeColor,
+                color: model.tribeColor,
                 fontFamily: 'TribesRounded',
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -442,81 +277,27 @@ class _EditPostViewState extends State<EditPostView> {
 
     _buildSaveButton() {
       return Visibility(
-        visible: (step1Completed && step2Completed && step3Completed) && edited,
+        visible: model.completed && model.edited,
         child: CustomButton(
           height: 60.0,
           width: MediaQuery.of(context).size.width,
           margin: EdgeInsets.all(16.0),
-          color: widget.tribeColor,
+          color: model.tribeColor,
           icon: FontAwesomeIcons.check,
           label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
           labelColor: Colors.white,
-          onPressed: edited ? () async {
-            if(_formKey.currentState.validate()) {
-              setState(() => loading = true);
-              List<String> imageURLs = [];
-
-              await Future.forEach(newImages, (image) async {
-                String imageURL = await StorageService().uploadPostImage(widget.post.id, image);
-                imageURLs.add(imageURL);
-              });
-
-              setState(() {
-                oldImages += imageURLs;
-              });
-
-              DatabaseService().updatePostData(
-                postID: widget.post.id, 
-                title: title ?? widget.post.title, 
-                content: content ?? widget.post.content,
-                images: oldImages ?? widget.post.images,
-              );
-
-              if(widget.onSave != null) {
-                widget.onSave(widget.post.copyWith(
-                  title: title,
-                  content: content,
-                  images: oldImages,
-                ));
-              }
-
-              if(newImages.length == 0) {
-                _scaffoldKey.currentState.showSnackBar(
-                SnackBar(
-                    content: Text('Post saved', 
-                      style: TextStyle(
-                        fontFamily: 'TribesRounded'
-                      ),
-                    ),
-                    duration: Duration(milliseconds: 500),
-                  )
-                );
-              }
-
-              FocusScope.of(context).unfocus();
-
-              setState(() {
-                loading = false;
-                edited = false;
-                newImages = [];
-                originalTitle = title;
-                originalContent = content;
-                originalImages = new List<String>.from(oldImages);
-              });
-            }
-          } : null,
+          onPressed: model.edited ? model.onSavePost : null,
         ),
       );
     }
 
     return WillPopScope(
-      onWillPop: () => edited ? _showDiscardDialog() : Future.value(true),
+      onWillPop: () => model.edited ? _showDiscardDialog() : Future.value(true),
       child: Container(
-        color: widget.tribeColor ?? themeData.primaryColor,
+        color: model.tribeColor,
         child: SafeArea(
           bottom: false,
-          child: loading ? Loading(color: widget.tribeColor) : Scaffold(
-            key: _scaffoldKey,
+          child: model.isBusy ? Loading(color: model.tribeColor) : Scaffold(
             backgroundColor: themeData.backgroundColor,
             appBar: _buildAppBar(),
             body: Stack(
@@ -532,7 +313,7 @@ class _EditPostViewState extends State<EditPostView> {
                         Container(
                           alignment: Alignment.topLeft,
                           child: Form(
-                            key: _formKey,
+                            key: model.formKey,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -543,27 +324,21 @@ class _EditPostViewState extends State<EditPostView> {
                                   children: <Widget>[
                                     Padding(
                                       padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
-                                      child: _buildStepIndicator(1, completed: step1Completed),
+                                      child: _buildStepIndicator(1, completed: model.step1Completed),
                                     ),
                                     Expanded(
                                       child: TextFormField(
-                                        focusNode: titleFocus,
+                                        focusNode: model.titleFocus,
                                         cursorRadius: Radius.circular(1000),
                                         cursorWidth: 4,
-                                        initialValue: title ?? widget.post.title,
+                                        initialValue: model.title,
                                         textCapitalization: TextCapitalization.sentences,
                                         style: themeData.textTheme.headline6,
-                                        cursorColor: widget.tribeColor ?? themeData.primaryColor,
+                                        cursorColor: model.tribeColor,
                                         decoration: Decorations.postInput.copyWith(hintText: 'Title'),
-                                        validator: (val) => val.isEmpty 
-                                          ? 'Enter a title' 
-                                          : null,
-                                        onChanged: (val) {
-                                          setState(() {
-                                            title = val;
-                                          });
-                                        },
-                                        onFieldSubmitted: (val) => FocusScope.of(context).requestFocus(contentFocus),
+                                        validator: model.titleValidator,
+                                        onChanged: model.onTitleChanged,
+                                        onFieldSubmitted: model.onTitleSubmitted,
                                       ),
                                     ),
                                   ],
@@ -576,28 +351,22 @@ class _EditPostViewState extends State<EditPostView> {
                                   children: <Widget>[
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                      child: _buildStepIndicator(2, completed: step2Completed),
+                                      child: _buildStepIndicator(2, completed: model.step2Completed),
                                     ),
                                     Expanded(
                                       child: TextFormField(
-                                        focusNode: contentFocus,
+                                        focusNode: model.contentFocus,
                                         cursorRadius: Radius.circular(1000),
                                         cursorWidth: 2,
-                                        initialValue: content ?? widget.post.content,
+                                        initialValue: model.content,
                                         textCapitalization: TextCapitalization.sentences,
                                         style: themeData.textTheme.bodyText2,
-                                        cursorColor: widget.tribeColor ?? themeData.primaryColor,
+                                        cursorColor: model.tribeColor,
                                         keyboardType: TextInputType.multiline,
                                         maxLines: null,
                                         decoration: Decorations.postInput.copyWith(hintText: 'Content'),
-                                        validator: (val) => val.isEmpty 
-                                          ? 'Enter some content' 
-                                          : null,
-                                        onChanged: (val) {
-                                          setState((){
-                                            content = val;
-                                          });
-                                        },
+                                        validator: model.contentValidator,
+                                        onChanged: model.onContentChanged,
                                       ),
                                     ),
                                   ],
@@ -613,7 +382,7 @@ class _EditPostViewState extends State<EditPostView> {
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                              child: _buildStepIndicator(3, completed: step3Completed),
+                              child: _buildStepIndicator(3, completed: model.step3Completed),
                             ),
                             Expanded(child: _buildGridView())
                           ],

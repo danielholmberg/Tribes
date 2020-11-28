@@ -4,8 +4,8 @@ import 'package:tribes/core/chat/chat_view.dart';
 import 'package:tribes/core/foundation/foundation_view.dart';
 import 'package:tribes/core/map/map_view.dart';
 import 'package:tribes/core/profile/profile_view.dart';
-import 'package:tribes/core/tribe/join_tribe_view.dart';
-import 'package:tribes/core/tribe/new_tribe_view.dart';
+import 'package:tribes/core/tribe/join_tribe/join_tribe_view.dart';
+import 'package:tribes/core/tribe/new_tribe/new_tribe_view.dart';
 import 'package:tribes/shared/widgets/custom_page_transition.dart';
 
 class MyRouter {
