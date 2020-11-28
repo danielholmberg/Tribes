@@ -12,11 +12,9 @@ import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
 import 'package:tribes/shared/widgets/loading.dart';
 
-part 'home_view_mobile.dart';
+part 'home_view_[mobile].dart';
 
 class HomeView extends StatefulWidget {
-  static const routeName = '/home';
-
   @override
   _HomeViewState createState() => _HomeViewState();
 }
@@ -25,14 +23,15 @@ class _HomeViewState extends State<HomeView>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    print('HomeView');
     super.build(context);
-    return ViewModelBuilder.reactive(
-      viewModelBuilder: () => HomeViewModel(context: context),
-      disposeViewModel: false,
-      builder: (context, viewModel, child) => ScreenTypeLayout.builder(
-        mobile: (BuildContext context) => _HomeViewMobile(viewModel),
-      ),
+    return ViewModelBuilder<HomeViewModel>.reactive(
+      viewModelBuilder: () => HomeViewModel(),
+      onModelReady: (model) => model.initState(),
+      builder: (context, model, child) {
+        return ScreenTypeLayout.builder(
+          mobile: (context) => _HomeViewMobile(),
+        );
+      },
     );
   }
 

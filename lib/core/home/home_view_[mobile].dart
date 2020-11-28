@@ -1,12 +1,9 @@
 part of home_view;
 
-class _HomeViewMobile extends StatelessWidget {
-  final HomeViewModel viewModel;
-  _HomeViewMobile(this.viewModel);
-
+class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
   @override
-  Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
+  Widget build(BuildContext context, HomeViewModel model) {
+    final ThemeData themeData = Theme.of(context);
     
     _buildAppBar() {
       return Container(
@@ -38,7 +35,7 @@ class _HomeViewMobile extends StatelessWidget {
                     icon: CustomAwesomeIcon(icon: FontAwesomeIcons.search),
                     iconSize: Constants.defaultIconSize,
                     splashColor: Colors.transparent,
-                    onPressed: () => viewModel.showJoinTribePage(),
+                    onPressed: model.showJoinTribePage,
                   ),
 
                 ],
@@ -55,7 +52,7 @@ class _HomeViewMobile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             GestureDetector(
-              onTap: () => viewModel.showNewTribePage(),
+              onTap: model.showNewTribePage,
               child: Text(
                 'Create',
                 style: TextStyle(
@@ -76,7 +73,7 @@ class _HomeViewMobile extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () => viewModel.showJoinTribePage(),
+              onTap: model.showJoinTribePage,
               child: Text(
                 'Join',
                 style: TextStyle(
@@ -104,36 +101,43 @@ class _HomeViewMobile extends StatelessWidget {
     _buildTribesList() {
       return ScrollConfiguration(
         behavior: CustomScrollBehavior(),
-        child: viewModel.joinedTribes.isEmpty ? _buildEmptyListWidget() 
-        : Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: PageView.builder(
-            reverse: false,
-            scrollDirection: Axis.horizontal,
-            controller: viewModel.tribeItemController,
-            itemCount: viewModel.joinedTribes.length,
-            itemBuilder: (context, index) {
-              Tribe currentTribe = viewModel.joinedTribes[index];
-              double padding = MediaQuery.of(context).size.height * 0.08;
-              double verticalMargin = index == viewModel.currentPage ? 0.0 : MediaQuery.of(context).size.height * 0.04;
+        child: StreamBuilder<List<Tribe>>(
+          initialData: [],
+          stream: model.joinedTribes,
+          builder: (context, snapshot) {
+            List<Tribe> joinedTribes = snapshot.data;
 
-              return AnimatedContainer(
-                duration: Duration(milliseconds: 1000),
-                curve: Curves.easeOutQuint,
-                padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight + padding, top: padding),
-                margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: verticalMargin),
-                child: GestureDetector(
-                  onTap: () => viewModel.showTribeRoom(),
-                  child: TribeItem(tribe: currentTribe),
-                ),
-              );
-            },
-          ),
+            return joinedTribes.isEmpty ? _buildEmptyListWidget() : Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: PageView.builder(
+                reverse: false,
+                scrollDirection: Axis.horizontal,
+                controller: model.tribeItemController,
+                itemCount: joinedTribes.length,
+                itemBuilder: (context, index) {
+                  Tribe currentTribe = joinedTribes[index];
+                  double padding = MediaQuery.of(context).size.height * 0.08;
+                  double verticalMargin = index == model.currentPageIndex ? 0.0 : MediaQuery.of(context).size.height * 0.04;
+
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.easeOutQuint,
+                    padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight + padding, top: padding),
+                    margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: verticalMargin),
+                    child: GestureDetector(
+                      onTap: () => model.showTribeRoom(joinedTribes[index].id),
+                      child: TribeItem(tribe: currentTribe),
+                    ),
+                  );
+                },
+              ),
+            );
+          }
         ),
       );
     }
 
-    return !viewModel.dataReady ? Loading()
+    return model.isBusy ? Loading()
     : Container(
       color: themeData.primaryColor,
       child: SafeArea(

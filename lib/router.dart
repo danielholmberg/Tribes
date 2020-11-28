@@ -6,6 +6,7 @@ import 'package:tribes/core/map/map_view.dart';
 import 'package:tribes/core/profile/profile_view.dart';
 import 'package:tribes/core/tribe/join_tribe/join_tribe_view.dart';
 import 'package:tribes/core/tribe/new_tribe/new_tribe_view.dart';
+import 'package:tribes/core/tribe/tribe_room/tribe_room_view.dart';
 import 'package:tribes/shared/widgets/custom_page_transition.dart';
 
 class MyRouter {
@@ -17,6 +18,7 @@ class MyRouter {
   static const String profileRoute = 'profile';
   static const String newTribeRoute = 'newTribeRoute';
   static const String joinTribeRoute = 'joinTribeRoute';
+  static const String tribeRoomRoute = 'tribeRoute';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -39,6 +41,12 @@ class MyRouter {
         return CustomPageTransition(
           type: CustomPageTransitionType.joinTribe,
           child: JoinTribeView(),
+        );
+      case tribeRoomRoute:
+        String tribeId = settings.arguments;
+        return CustomPageTransition(
+          type: CustomPageTransitionType.tribeRoom,
+          child: TribeRoomView(tribeId: tribeId),
         );
       default:
         return MaterialPageRoute(
