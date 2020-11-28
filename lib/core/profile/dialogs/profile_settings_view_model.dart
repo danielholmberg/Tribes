@@ -209,7 +209,6 @@ class ProfileSettingsViewModel extends ReactiveViewModel {
 
   onUsernameSubmitted(String value) async {
     bool available = await DatabaseService().updateUsername(
-      currentUser.id,
       username,
     );
 

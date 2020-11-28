@@ -125,12 +125,12 @@ class DatabaseService with ReactiveServiceMixin {
     return usersRoot.doc(uid).update(data);
   }
 
-  Future<bool> updateUsername(String uid, String username) async {
+  Future<bool> updateUsername(String username) async {
     bool available = await checkUsernameAvailability(username);
 
     if (available) {
-      print('New username ($uid): $username');
-      usersRoot.doc(uid).update({'username': username});
+      print('New username (${currentUserData.id}): $username');
+      usersRoot.doc(currentUserData.id).update({'username': username});
     } else {
       print('Username \'$username\' is already taken!');
     }

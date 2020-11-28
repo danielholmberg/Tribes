@@ -17,8 +17,6 @@ import 'package:tribes/shared/widgets/loading.dart';
 part 'foundation_view_[mobile].dart';
 
 class FoundationView extends StatefulWidget {
-  static const routeName = '/foundation';
-
   @override
   _FoundationViewState createState() => _FoundationViewState();
 }
@@ -26,11 +24,9 @@ class FoundationView extends StatefulWidget {
 class _FoundationViewState extends State<FoundationView> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-
     return ViewModelBuilder<FoundationViewModel>.reactive(
       viewModelBuilder: () => FoundationViewModel(),
-      onModelReady: (viewModel) => viewModel.initialise(this, themeData),
+      onModelReady: (viewModel) => viewModel.initState(vsync: this),
       builder: (context, viewModel, child) => ScreenTypeLayout.builder(
         mobile: (BuildContext context) => _FoundationViewMobile(),
       ),

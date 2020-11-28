@@ -7,6 +7,68 @@ class _FoundationViewMobile extends ViewModelWidget<FoundationViewModel> {
   Widget build(BuildContext context, FoundationViewModel model) {
     ThemeData themeData = Theme.of(context);
 
+    _showUnavailableUsernameDialog() {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(Constants.dialogCornerRadius),
+            ),
+          ),
+          title: Text(
+            'Username already in use',
+            style: TextStyle(
+              fontFamily: 'TribesRounded',
+              fontWeight: Constants.defaultDialogTitleFontWeight,
+              fontSize: Constants.defaultDialogTitleFontSize,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: themeData.primaryColor,
+                  fontFamily: 'TribesRounded',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: model.back,
+            ),
+          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Center(
+                child: RichText(
+                  maxLines: null,
+                  softWrap: true,
+                  text: TextSpan(
+                    text: 'The username ',
+                    style: themeData.textTheme.bodyText2,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: model.username,
+                        style: themeData.textTheme.bodyText2.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                            ' is already in use by a fellow Tribe explorer, please try another one.',
+                        style: themeData.textTheme.bodyText2,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     _buildIntro() {
       return Scaffold(
         resizeToAvoidBottomInset: true,
@@ -99,8 +161,14 @@ class _FoundationViewMobile extends ViewModelWidget<FoundationViewModel> {
                     ),
                     inputFormatters: model.inputFormatters,
                     validator: model.usernameValidator,
-                    onChanged: (val) => model.setUsername(val),
-                    onFieldSubmitted: model.onUsernameSubmitted,
+                    onChanged: (val) => model.onUsernameChanged(val),
+                    onFieldSubmitted: (String value) async {
+                      await model.onUsernameSubmitted(value);
+
+                      if (!model.usernameAlreadyInUse) {
+                        _showUnavailableUsernameDialog();
+                      }
+                    },
                   ),
                 ),
                 Padding(
@@ -116,7 +184,13 @@ class _FoundationViewMobile extends ViewModelWidget<FoundationViewModel> {
                       ),
                       text: 'Submit',
                       inverse: true,
-                      onPressed: model.onUsernameSubmitted,
+                      onPressed: () async {
+                        await model.onUsernameSubmitted(model.username);
+
+                        if (!model.usernameAlreadyInUse) {
+                          _showUnavailableUsernameDialog();
+                        }
+                      },
                     ),
                   ),
                 ),
@@ -141,7 +215,9 @@ class _FoundationViewMobile extends ViewModelWidget<FoundationViewModel> {
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
             color: themeData.primaryColor,
           ),
           child: CustomBottomNavBar(

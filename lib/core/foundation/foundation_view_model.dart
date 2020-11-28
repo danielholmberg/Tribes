@@ -12,13 +12,11 @@ import 'package:tribes/core/map/map_view.dart';
 import 'package:tribes/core/profile/profile_view.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/firebase/auth_service.dart';
 import 'package:tribes/services/firebase/database_service.dart';
 
 class FoundationViewModel extends ReactiveViewModel {
-  final AuthService _authService = locator<AuthService>();
   final DatabaseService _databaseService = locator<DatabaseService>();
-  final DialogService _dialogService = locator<DialogService>();
+  final NavigationService _navigationService = locator<NavigationService>();
 
   final List<Widget> _tabList = [
     HomeView(),
@@ -27,10 +25,9 @@ class FoundationViewModel extends ReactiveViewModel {
     ProfileView()
   ];
   TabController _tabController;
-  StreamSubscription iosSubscription;
+  StreamSubscription _iosSubscription;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  ThemeData _themeData;
   int _currentIndex = 0;
   String _username = '';
   String _name = '';
@@ -50,69 +47,17 @@ class FoundationViewModel extends ReactiveViewModel {
   List<TextInputFormatter> get inputFormatters =>
       [new FilteringTextInputFormatter.deny(new RegExp('[\\ ]'))];
 
-  initialise(TickerProvider vsync, ThemeData themeData) async {
-    _themeData = themeData;
-
+  void initState({@required TickerProvider vsync}) {
     _tabController = TabController(length: _tabList.length, vsync: vsync);
     _tabController.animateTo(0);
     setCurrentTab(0);
 
-    await initFCM();
+    _initFCM();
   }
 
-  void setCurrentTab(int index) {
-    _currentIndex = index;
-    notifyListeners();
-  }
-
-  void setUsername(String username) => _username = username;
-
-  Future onUsernameSubmitted(String value) async {
-    if (_formKey.currentState.validate()) {
-      _usernameAlreadyInUse = await _databaseService.updateUsername(
-        currentUser.id,
-        _username,
-      );
-      notifyListeners();
-    }
-  }
-
-  Future showUnavailableUsernameDialog() async {
-    await _dialogService.showCustomDialog(
-      title: 'Username already in use',
-      customData: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Center(
-            child: RichText(
-              maxLines: null,
-              softWrap: true,
-              text: TextSpan(
-                text: 'The username ',
-                style: _themeData.textTheme.bodyText2,
-                children: <TextSpan>[
-                  TextSpan(
-                    text: _username,
-                    style: _themeData.textTheme.bodyText2
-                        .copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(
-                    text:
-                        ' is already in use by a fellow Tribe explorer, please try another one.',
-                    style: _themeData.textTheme.bodyText2,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  initFCM() async {
+  void _initFCM() {
     if (Platform.isIOS) {
-      iosSubscription =
+      _iosSubscription =
           _databaseService.fcm.onIosSettingsRegistered.listen((data) {
         _databaseService.saveFCMToken();
       });
@@ -174,6 +119,35 @@ class FoundationViewModel extends ReactiveViewModel {
     print('FCM configured!');
   }
 
+  void back() {
+    _navigationService.back();
+  }
+
+  String usernameValidator(String value) {
+    return value.toString().trim().isEmpty
+        ? 'Oops, you need to enter a username'
+        : null;
+  }
+
+  void onUsernameChanged(String value) {
+    _username = value;
+    notifyListeners();
+  }
+
+  Future onUsernameSubmitted(String value) async {
+    if (_formKey.currentState.validate()) {
+      _usernameAlreadyInUse = await _databaseService.updateUsername(
+        _username,
+      );
+      notifyListeners();
+    }
+  }
+
+  void setCurrentTab(int index) {
+    _currentIndex = index;
+    notifyListeners();
+  }
+
   int onTabTap(int index) {
     _tabController.animateTo(index);
     setCurrentTab(index);
@@ -183,16 +157,10 @@ class FoundationViewModel extends ReactiveViewModel {
   @override
   void dispose() {
     _tabController.dispose();
-    if (iosSubscription != null) iosSubscription.cancel();
+    if (_iosSubscription != null) _iosSubscription.cancel();
     super.dispose();
   }
 
   @override
   List<ReactiveServiceMixin> get reactiveServices => [_databaseService];
-
-  String usernameValidator(String value) {
-    return value.toString().trim().isEmpty
-        ? 'Oops, you need to enter a username'
-        : null;
-  }
 }
