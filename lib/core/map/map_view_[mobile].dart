@@ -99,13 +99,13 @@ class _MapViewMobile extends ViewModelWidget<MapViewModel> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: StreamBuilder<List<Tribe>>(
-          stream: DatabaseService().joinedTribes,
+          stream: model.joinedTribes,
           builder: (context, snapshot) {
             List<Tribe> tribesList = snapshot.hasData ? snapshot.data : [];
 
             // TO-DO: Change to only listen to a stream of relevant users instead of ALL users.
             return StreamBuilder<List<MyUser>>(
-              stream: DatabaseService().users,
+              stream: model.allUsers,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List<MyUser> usersList = snapshot.data;

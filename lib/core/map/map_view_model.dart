@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tribes/locator.dart';
+import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
 import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
@@ -30,6 +31,8 @@ class MapViewModel extends ReactiveViewModel {
   bool get showMap => _showMap;
 
   MyUser get currentUser => _databaseService.currentUserData;
+  Stream<List<Tribe>> get joinedTribes => _databaseService.joinedTribes;
+  Stream<List<MyUser>> get allUsers => _databaseService.users;
 
   void initState({@required bool isMounted}) {
     _positionStream = Geolocator.getPositionStream(
