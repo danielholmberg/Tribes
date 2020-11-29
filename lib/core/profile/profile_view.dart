@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:stacked/stacked.dart';
-import 'package:tribes/core/profile/dialogs/profile_settings_dialog.dart';
+import 'package:tribes/core/profile/dialogs/profile_settings_view.dart';
 import 'package:tribes/core/profile/profile_view_model.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';

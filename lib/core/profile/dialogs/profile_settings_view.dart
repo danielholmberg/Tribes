@@ -20,11 +20,13 @@ class ProfileSettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     return ViewModelBuilder<ProfileSettingsViewModel>.reactive(
-        viewModelBuilder: () => ProfileSettingsViewModel(),
-        onModelReady: (model) => model.initState(context, themeData),
-        builder: (context, model, child) {
-          return ScreenTypeLayout.builder(
-              mobile: (context) => _ProfileSettingsViewMobile());
-        },);
+      viewModelBuilder: () => ProfileSettingsViewModel(),
+      onModelReady: (model) => model.initState(context, themeData),
+      builder: (context, model, child) {
+        return ScreenTypeLayout.builder(
+          mobile: (context) => _ProfileSettingsViewMobile(),
+        );
+      },
+    );
   }
 }

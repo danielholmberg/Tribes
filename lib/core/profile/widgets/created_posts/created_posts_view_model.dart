@@ -11,7 +11,7 @@ class CreatedPostsViewModel extends ReactiveViewModel {
 
   final DatabaseService _databaseService = locator<DatabaseService>();
 
-  List<String> get createdPostsList => _databaseService.currentUserData.createdPosts.reversed.toList();
+  List<String> get createdPostsList => user.createdPosts.reversed.toList();
   int get createdPostsCount => createdPostsList.length;
 
   Stream<Post> getCreatedPost(int index) => _databaseService.post(user.id, createdPostsList[index]);
