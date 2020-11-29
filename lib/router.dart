@@ -10,6 +10,7 @@ import 'package:tribes/core/tribe/join_tribe/join_tribe_view.dart';
 import 'package:tribes/core/tribe/new_tribe/new_tribe_view.dart';
 import 'package:tribes/core/tribe/tribe_room/tribe_room_view.dart';
 import 'package:tribes/models/chat_model.dart';
+import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_page_transition.dart';
 
@@ -49,10 +50,13 @@ class MyRouter {
           child: JoinTribeView(),
         );
       case tribeRoomRoute:
-        String tribeId = settings.arguments;
+        TribeRoomArguments args = settings.arguments;
         return CustomPageTransition(
           type: CustomPageTransitionType.tribeRoom,
-          child: TribeRoomView(tribeId: tribeId),
+          child: TribeRoomView(
+            tribeId: args.tribeId,
+            tribeColor: args.tribeColor,
+          ),
         );
       case newChatRoute:
         return CustomPageTransition(
@@ -63,13 +67,11 @@ class MyRouter {
       case chatRoomRoute:
         ChatRoomArguments args = settings.arguments;
         return CustomPageTransition(
-            type: CustomPageTransitionType.chatRoom,
-            duration: Constants.pageTransition600,
-            child: ChatRoomView(
-                roomID: args.roomId,
-                members: args.members, 
-                reply: true),
-          );
+          type: CustomPageTransitionType.chatRoom,
+          duration: Constants.pageTransition600,
+          child: ChatRoomView(
+              roomID: args.roomId, members: args.members, reply: true),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

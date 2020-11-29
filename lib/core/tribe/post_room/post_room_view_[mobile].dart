@@ -7,30 +7,29 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
 
     _showModalBottomSheet({Widget child}) {
       showModalBottomSheet(
-        context: context,
-        isDismissible: false,
-        isScrollControlled: true,
-        builder: (buildContext) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.9,
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
+          context: context,
+          isDismissible: false,
+          isScrollControlled: true,
+          builder: (buildContext) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+                child: child,
               ),
-              child: child,
+            );
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
             ),
-          );
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
           ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 8.0
-      );
+          backgroundColor: Colors.transparent,
+          elevation: 8.0);
     }
 
     _buildDismissButton() {
@@ -38,18 +37,20 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
-        children: <Widget> [
+        children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 4.0, left: 4.0),
             child: FloatingActionButton(
               mini: true,
               child: CustomAwesomeIcon(
-                icon: Platform.isIOS ? FontAwesomeIcons.chevronLeft : FontAwesomeIcons.arrowLeft,
+                icon: Platform.isIOS
+                    ? FontAwesomeIcons.chevronLeft
+                    : FontAwesomeIcons.arrowLeft,
                 color: Colors.white,
               ),
               splashColor: Colors.transparent,
               backgroundColor: model.tribeColor.withOpacity(model.opacity),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: model.onExitPress,
             ),
           ),
           AnimatedSize(
@@ -60,26 +61,26 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
             child: Container(
               margin: const EdgeInsets.only(top: 4.0),
               child: StreamBuilder<MyUser>(
-                stream: DatabaseService().userData(model.authorId),
-                builder: (context, snapshot) {
-                  if(snapshot.hasError) {
-                    print('Error retrieving author data: ${snapshot.error.toString()}');
-                  } 
-                  
-                  return UserAvatar(
-                    currentUserID: model.currentUserId, 
-                    user: snapshot.data, 
-                    color: model.tribeColor.withOpacity(model.opacity),
-                    radius: 12,
-                    strokeWidth: 2.0,
-                    strokeColor: Colors.white,
-                    padding: const EdgeInsets.all(6.0),
-                    withDecoration: true,
-                    textPadding: const EdgeInsets.symmetric(horizontal: 6.0),
-                    textColor: Colors.white,
-                  );
-                }
-              ),
+                  stream: model.authorData,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      print(
+                          'Error retrieving author data: ${snapshot.error.toString()}');
+                    }
+
+                    return UserAvatar(
+                      currentUserID: model.currentUserId,
+                      user: snapshot.data,
+                      color: model.tribeColor.withOpacity(model.opacity),
+                      radius: 12,
+                      strokeWidth: 2.0,
+                      strokeColor: Colors.white,
+                      padding: const EdgeInsets.all(6.0),
+                      withDecoration: true,
+                      textPadding: const EdgeInsets.symmetric(horizontal: 6.0),
+                      textColor: Colors.white,
+                    );
+                  }),
             ),
           ),
           IgnorePointer(
@@ -88,12 +89,14 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
               padding: const EdgeInsets.only(right: 4.0),
               child: FloatingActionButton(
                 mini: true,
-                backgroundColor: model.isAuthor ? model.tribeColor.withOpacity(0.8) : Colors.transparent,
+                backgroundColor: model.isAuthor
+                    ? model.tribeColor.withOpacity(0.8)
+                    : Colors.transparent,
                 elevation: model.isAuthor ? null : 0.0,
                 onPressed: () => _showModalBottomSheet(
                   child: EditPostView(
-                    post: model.post, 
-                    tribeColor: model.tribeColor, 
+                    post: model.post,
+                    tribeColor: model.tribeColor,
                     onSave: model.onSavePost,
                     onDelete: () => Navigator.pop(context),
                   ),
@@ -121,34 +124,39 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
               child: ScrollConfiguration(
                 behavior: CustomScrollBehavior(),
                 child: ListView(
-                  padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 64.0),
-                  shrinkWrap: true,
-                  children: [
-                    SizedBox(height: model.isShowingOverlayWidgets ? MediaQuery.of(context).padding.top : 12.0),
+                    padding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 64.0),
+                    shrinkWrap: true,
+                    children: [
+                      SizedBox(
+                          height: model.isShowingOverlayWidgets
+                              ? MediaQuery.of(context).padding.top
+                              : 12.0),
 
-                    // Title
-                    AnimatedPadding(
-                      duration: const Duration(milliseconds: 300),
-                      padding: EdgeInsets.only(top: model.isShowingOverlayWidgets ? 52.0 : 0.0),
-                      child: Text(
-                        model.post.title,
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
-                        style: themeData.textTheme.headline6.copyWith(color: Colors.white),
+                      // Title
+                      AnimatedPadding(
+                        duration: const Duration(milliseconds: 300),
+                        padding: EdgeInsets.only(
+                            top: model.isShowingOverlayWidgets ? 52.0 : 0.0),
+                        child: Text(
+                          model.post.title,
+                          maxLines: 1,
+                          softWrap: false,
+                          overflow: TextOverflow.fade,
+                          style: themeData.textTheme.headline6
+                              .copyWith(color: Colors.white),
+                        ),
                       ),
-                    ),
 
-                    // Content
-                    Text(
-                      model.post.content,
-                      maxLines: null,
-                      softWrap: true,
-                      overflow: TextOverflow.fade,
-                      style: themeData.textTheme.bodyText1.copyWith(color: Colors.white),
-                    ),
-                  ]
-                ),
+                      // Content
+                      Text(
+                        model.post.content,
+                        maxLines: null,
+                        softWrap: true,
+                        overflow: TextOverflow.fade,
+                        style: themeData.textTheme.bodyText1
+                            .copyWith(color: Colors.white),
+                      ),
+                    ]),
               ),
             ),
           ),
@@ -173,40 +181,42 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
               alignment: Alignment.centerLeft,
               duration: model.overlayAnimDuration,
               curve: Curves.fastOutSlowIn,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  CustomAwesomeIcon(icon: FontAwesomeIcons.mapMarkerAlt, color: Colors.white, size: 12,),
-                  SizedBox(width: Constants.defaultPadding),
-                  FutureBuilder(
+              child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                CustomAwesomeIcon(
+                  icon: FontAwesomeIcons.mapMarkerAlt,
+                  color: Colors.white,
+                  size: 12,
+                ),
+                SizedBox(width: Constants.defaultPadding),
+                FutureBuilder(
                     future: model.addressFuture,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         var addresses = snapshot.data;
-                        List<String> addressArr = addresses.first.addressLine.split(",");
-                        var location = "${addressArr[0].trim()}, ${addressArr[1].trim()}, ${addresses.first.countryName}";
+                        List<String> addressArr =
+                            addresses.first.addressLine.split(",");
+                        var location =
+                            "${addressArr[0].trim()}, ${addressArr[1].trim()}, ${addresses.first.countryName}";
                         return Text(
                           location,
                           overflow: TextOverflow.fade,
                           maxLines: 2,
                           softWrap: true,
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'TribesRounded'
-                          ),
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'TribesRounded'),
                         );
                       } else if (snapshot.hasError) {
-                        print('Error getting address from coordinates: ${snapshot.error}');
+                        print(
+                            'Error getting address from coordinates: ${snapshot.error}');
                         return SizedBox.shrink();
                       } else {
                         return SizedBox.shrink();
                       }
-                    }
-                  ),
-                ]
-              ),
+                    }),
+              ]),
             ),
           ),
         ),
@@ -228,14 +238,16 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
           child: SingleChildScrollView(
             physics: ClampingScrollPhysics(),
             scrollDirection: Axis.horizontal,
-            child: timestamp != null ? PostedDateTime(
-              vsync: model.vsync,
-              alignment: Alignment.centerLeft,
-              timestamp: DateTime.parse(timestamp.toDate().toString()), 
-              color: Colors.white,
-              fontSize: 10,
-              fullscreen: true,
-            ) : SizedBox.shrink(),
+            child: timestamp != null
+                ? PostedDateTime(
+                    vsync: model.vsync,
+                    alignment: Alignment.centerLeft,
+                    timestamp: DateTime.parse(timestamp.toDate().toString()),
+                    color: Colors.white,
+                    fontSize: 10,
+                    fullscreen: true,
+                  )
+                : SizedBox.shrink(),
           ),
         ),
       );
@@ -247,7 +259,6 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-
           // Left Side
           IgnorePointer(
             ignoring: !model.isShowingOverlayWidgets,
@@ -264,8 +275,13 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
                     child: _buildDateAndTimeWidget(),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 8.0, bottom: model.addressFuture != null ? 8.0 : 4.0, top: 4.0),
-                    child: Visibility(visible: model.addressFuture != null, child: _buildLocationWidget()),
+                    padding: EdgeInsets.only(
+                        left: 8.0,
+                        bottom: model.addressFuture != null ? 8.0 : 4.0,
+                        top: 4.0),
+                    child: Visibility(
+                        visible: model.addressFuture != null,
+                        child: _buildLocationWidget()),
                   ),
                 ],
               ),
@@ -286,10 +302,11 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0),
                     child: LikeButton(
-                      currentUser: model.currentUser, 
-                      postID: model.post.id, 
+                      currentUser: model.currentUser,
+                      postID: model.post.id,
                       color: Colors.white,
-                      backgroundColor: model.tribeColor.withOpacity(model.opacity),
+                      backgroundColor:
+                          model.tribeColor.withOpacity(model.opacity),
                       fab: true,
                       mini: true,
                       withNumberOfLikes: true,
@@ -301,10 +318,13 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
                     padding: const EdgeInsets.only(right: 4.0, bottom: 4.0),
                     child: FloatingActionButton(
                       mini: true,
-                      backgroundColor: model.tribeColor.withOpacity(model.opacity),
+                      backgroundColor:
+                          model.tribeColor.withOpacity(model.opacity),
                       onPressed: model.onShowTextContent,
                       child: CustomAwesomeIcon(
-                        icon: model.isShowingTextContent ? FontAwesomeIcons.envelopeOpenText : FontAwesomeIcons.solidEnvelope,
+                        icon: model.isShowingTextContent
+                            ? FontAwesomeIcons.envelopeOpenText
+                            : FontAwesomeIcons.solidEnvelope,
                         color: Colors.white,
                         size: 18,
                       ),
@@ -327,14 +347,14 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
             Stack(
               alignment: Alignment.center,
               children: <Widget>[
-
                 // Images
-                Positioned.fill(child: 
-                  FullscreenCarousel(
+                Positioned.fill(
+                  child: FullscreenCarousel(
                     images: model.post.images,
                     color: model.tribeColor,
                     initialIndex: model.initialImage,
-                    showOverlayWidgets: !model.isShowingTextContent && model.isShowingOverlayWidgets,
+                    showOverlayWidgets: !model.isShowingTextContent &&
+                        model.isShowingOverlayWidgets,
                     overlayAnimDuration: model.overlayAnimDuration,
                   ),
                 ),
@@ -342,7 +362,7 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
                 // Title and Content
                 Positioned.fill(
                   child: Visibility(
-                    visible: model.isShowingTextContent, 
+                    visible: model.isShowingTextContent,
                     child: _postTextContent(),
                   ),
                 ),
@@ -369,7 +389,6 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
                   bottom: 0,
                   child: _postDetailsRow(),
                 ),
-                
               ],
             ),
             Visibility(
@@ -377,8 +396,8 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
               child: AnimatedBuilder(
                 animation: model.likedAnimationController,
                 builder: (context, child) => CustomAwesomeIcon(
-                  icon: FontAwesomeIcons.solidHeart, 
-                  size: model.likedAnimation.value, 
+                  icon: FontAwesomeIcons.solidHeart,
+                  size: model.likedAnimation.value,
                   color: themeData.primaryColor,
                   shadows: [
                     Shadow(
@@ -395,11 +414,14 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
       );
     }
 
-    return FadeTransition(
-      opacity: model.fadeInAnimation,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: _buildBody(),
+    return WillPopScope(
+      onWillPop: model.onWillPop,
+      child: FadeTransition(
+        opacity: model.fadeInAnimation,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: _buildBody(),
+        ),
       ),
     );
   }

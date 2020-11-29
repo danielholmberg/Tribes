@@ -64,6 +64,8 @@ class PostRoomViewModel extends ReactiveViewModel {
   Animation get likedAnimation => _likedAnimation;
   bool get showLikedAnimation => _showLikedAnimation;
 
+  Stream<MyUser> get authorData => _databaseService.userData(authorId);
+
   void initState({
     @required Post post,
     Color tribeColor = Constants.primaryColor,
@@ -79,6 +81,13 @@ class PostRoomViewModel extends ReactiveViewModel {
     _showTextContent = showTextContent;
     _onEditPostPress = onEditPostPress;
     _vsync = vsync;
+
+    // StatusBar Color
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: tribeColor.withOpacity(0.6),
+      ),
+    );
 
     if ((post.lat != 0 && post.lng != 0)) {
       _coordinates = Coordinates(post.lat, post.lng);
@@ -112,10 +121,6 @@ class PostRoomViewModel extends ReactiveViewModel {
     });
 
     _isShowingTextContent = showTextContent;
-
-    // StatusBar Color
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
-        .copyWith(statusBarColor: tribeColor.withOpacity(0.6)));
   }
 
   void onSavePost(Post updatedPost) {
@@ -134,18 +139,22 @@ class PostRoomViewModel extends ReactiveViewModel {
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    _fadeInController.dispose();
-    _likedAnimationController.dispose();
+  void _resetStatusBar() {
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
-        .copyWith(statusBarColor: Colors.transparent));
-    super.dispose();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: tribeColor,
+    ));
   }
 
-  @override
-  List<ReactiveServiceMixin> get reactiveServices => [_databaseService];
+  void onExitPress() {
+    _resetStatusBar();
+    _navigationService.back();
+  }
+
+  Future<bool> onWillPop() {
+    _resetStatusBar();
+    return Future.value(true);
+  }
 
   void onBodyPress() {
     if (_isShowingOverlayWidgets) {
@@ -157,4 +166,15 @@ class PostRoomViewModel extends ReactiveViewModel {
     }
     notifyListeners();
   }
+
+  @override
+  void dispose() {
+    _fadeInController.dispose();
+    _likedAnimationController.dispose();
+    _resetStatusBar();
+    super.dispose();
+  }
+
+  @override
+  List<ReactiveServiceMixin> get reactiveServices => [_databaseService];
 }

@@ -10,6 +10,7 @@ import 'package:tribes/services/dialog_service.dart';
 import 'package:tribes/theme.dart';
 
 import 'services/firebase/auth_service.dart';
+import 'shared/constants.dart' as Constants;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,10 +51,9 @@ class _MainState extends State<Main> {
       DeviceOrientation.portraitDown,
     ]);
     SystemChrome.setSystemUIOverlayStyle(
-      (widget.savedThemeMode.isDark
-              ? SystemUiOverlayStyle.dark
-              : SystemUiOverlayStyle.light)
-          .copyWith(statusBarColor: Colors.transparent),
+      SystemUiOverlayStyle(
+        statusBarColor: Constants.primaryColor,
+      ),
     );
     super.initState();
   }

@@ -212,40 +212,40 @@ class _FoundationViewMobile extends ViewModelWidget<FoundationViewModel> {
           children: model.tabList,
         ),
         extendBody: true, // In order to show screen behind navigation bar
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+        bottomNavigationBar: CustomBottomNavBar(
+          currentIndex: model.currentTabIndex,
+          backgroundColor: themeData.primaryColor,
+          selectedItemColor: themeData.primaryColor,
+          iconSize: 20.0,
+          fontSize: 12.0,
+          items: [
+            CustomNavBarItem(
+              icon: FontAwesomeIcons.home,
+              title: 'Tribes',
             ),
-            color: themeData.primaryColor,
-          ),
-          child: CustomBottomNavBar(
-            currentIndex: model.currentTabIndex,
-            backgroundColor: themeData.primaryColor,
-            selectedItemColor: themeData.primaryColor,
-            iconSize: 20.0,
-            fontSize: 12.0,
-            items: [
-              CustomNavBarItem(
-                icon: FontAwesomeIcons.home,
-                title: 'Tribes',
+            CustomNavBarItem(
+              icon: FontAwesomeIcons.mapMarkedAlt,
+              title: 'Map',
+            ),
+            CustomNavBarItem(
+              icon: FontAwesomeIcons.solidComments,
+              title: 'Chat',
+            ),
+            CustomNavBarItem(
+              icon: FontAwesomeIcons.solidUser,
+              title: 'Profile',
+              avatar: UserAvatar(
+                currentUserID: model.currentUser.id,
+                user: model.currentUser,
+                radius: 12,
+                color: themeData.backgroundColor,
+                strokeWidth: 1.0,
+                onlyAvatar: true,
+                disable: true,
               ),
-              CustomNavBarItem(
-                icon: FontAwesomeIcons.mapMarkedAlt,
-                title: 'Map',
-              ),
-              CustomNavBarItem(
-                icon: FontAwesomeIcons.solidComments,
-                title: 'Chat',
-              ),
-              CustomNavBarItem(
-                icon: FontAwesomeIcons.solidUser,
-                title: 'Profile',
-              ),
-            ],
-            onTap: model.onTabTap,
-          ),
+            ),
+          ],
+          onTap: model.onTabTap,
         ),
       );
     }

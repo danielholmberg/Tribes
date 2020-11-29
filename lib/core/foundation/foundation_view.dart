@@ -13,6 +13,7 @@ import 'package:tribes/shared/widgets/custom_nav_bar_item.dart';
 import 'package:tribes/shared/widgets/custom_raised_button.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';
 import 'package:tribes/shared/widgets/loading.dart';
+import 'package:tribes/shared/widgets/user_avatar.dart';
 
 part 'foundation_view_[mobile].dart';
 

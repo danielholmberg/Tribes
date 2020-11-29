@@ -116,78 +116,82 @@ class _TribeRoomViewMobile extends ViewModelWidget<TribeRoomViewModel> {
       );
     }
 
-    return StreamBuilder<Tribe>(
-      stream: model.tribeStream,
-      builder: (context, snapshot) {
-        final Tribe currentTribe = snapshot.hasData ? snapshot.data : null;
+    return WillPopScope(
+      onWillPop: model.onWillPop,
+      child: StreamBuilder<Tribe>(
+        stream: model.tribeStream,
+        builder: (context, snapshot) {
+          final Tribe currentTribe = snapshot.hasData ? snapshot.data : null;
 
-        return currentTribe == null
-            ? Loading()
-            : Container(
-                color: currentTribe.color ?? themeData.primaryColor,
-                child: SafeArea(
-                  bottom: false,
-                  child: Scaffold(
-                    resizeToAvoidBottomInset: false,
-                    backgroundColor:
-                        currentTribe.color ?? themeData.primaryColor,
-                    body: Container(
-                      color: currentTribe.color.withOpacity(0.2) ??
-                          themeData.backgroundColor,
-                      child: Column(
-                        children: <Widget>[
-                          _buildAppBar(currentTribe),
-                          Expanded(
-                            child: Container(
-                              key: model.postsKey,
-                              decoration: BoxDecoration(
-                                color: themeData.backgroundColor,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20.0),
-                                  topRight: Radius.circular(20.0),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black54,
-                                    blurRadius: 5,
-                                    offset: Offset(0, 0),
+          return Container(
+            color: currentTribe.color ?? themeData.primaryColor,
+            child: SafeArea(
+              bottom: false,
+              child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                backgroundColor: currentTribe != null
+                    ? currentTribe.color
+                    : themeData.primaryColor,
+                body: currentTribe == null
+                    ? Loading()
+                    : Container(
+                        color: currentTribe.color.withOpacity(0.2) ??
+                            themeData.backgroundColor,
+                        child: Column(
+                          children: <Widget>[
+                            _buildAppBar(currentTribe),
+                            Expanded(
+                              child: Container(
+                                key: model.postsKey,
+                                decoration: BoxDecoration(
+                                  color: themeData.backgroundColor,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.0),
+                                    topRight: Radius.circular(20.0),
                                   ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20.0),
-                                  topRight: Radius.circular(20.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black54,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 0),
+                                    ),
+                                  ],
                                 ),
-                                child: ScrollConfiguration(
-                                  behavior: CustomScrollBehavior(),
-                                  child: PostList(
-                                    tribe: currentTribe,
-                                    onEditPostPress: (Post post) {
-                                      return _showModalBottomSheet(
-                                        child: EditPostView(
-                                          post: post,
-                                          tribeColor: currentTribe.color,
-                                        ),
-                                      );
-                                    },
-                                    onEmptyTextPress: () {
-                                      return _showModalBottomSheet(
-                                        child: NewPostView(tribe: currentTribe),
-                                      );
-                                    },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.0),
+                                    topRight: Radius.circular(20.0),
+                                  ),
+                                  child: ScrollConfiguration(
+                                    behavior: CustomScrollBehavior(),
+                                    child: PostList(
+                                      tribe: currentTribe,
+                                      onEditPostPress: (Post post) {
+                                        return _showModalBottomSheet(
+                                          child: EditPostView(
+                                            post: post,
+                                            tribeColor: currentTribe.color,
+                                          ),
+                                        );
+                                      },
+                                      onEmptyTextPress: () {
+                                        return _showModalBottomSheet(
+                                          child: NewPostView(tribe: currentTribe),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              );
-      },
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

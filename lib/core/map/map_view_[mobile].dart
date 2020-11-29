@@ -11,8 +11,10 @@ class _MapViewMobile extends ViewModelWidget<MapViewModel> {
               duration: Duration(milliseconds: 500),
               opacity: model.isMapLoading ? 0.0 : 1.0,
               child: GoogleMap(
-                padding:
-                    EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                padding: EdgeInsets.only(
+                  left: 12,
+                  bottom: kBottomNavigationBarHeight + 92,
+                ),
                 onMapCreated: model.onMapCreated,
                 myLocationButtonEnabled: true,
                 myLocationEnabled: true,
@@ -96,81 +98,74 @@ class _MapViewMobile extends ViewModelWidget<MapViewModel> {
     }
 
     return Container(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: StreamBuilder<List<Tribe>>(
-          stream: model.joinedTribes,
-          builder: (context, snapshot) {
-            List<Tribe> tribesList = snapshot.hasData ? snapshot.data : [];
+      child: SafeArea(
+        bottom: false,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: StreamBuilder<List<Tribe>>(
+            stream: model.joinedTribes,
+            builder: (context, snapshot) {
+              List<Tribe> tribesList = snapshot.hasData ? snapshot.data : [];
 
-            // TO-DO: Change to only listen to a stream of relevant users instead of ALL users.
-            return StreamBuilder<List<MyUser>>(
-              stream: model.allUsers,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<MyUser> usersList = snapshot.data;
-                  List<String> friendsList = [];
-                  List<MyUser> friendsDataList = [];
-                  Set<Marker> markers = Set<Marker>();
+              // TO-DO: Change to only listen to a stream of relevant users instead of ALL users.
+              return StreamBuilder<List<MyUser>>(
+                stream: model.allUsers,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List<MyUser> usersList = snapshot.data;
+                    List<String> friendsList = [];
+                    List<MyUser> friendsDataList = [];
+                    Set<Marker> markers = Set<Marker>();
 
-                  tribesList.forEach((tribe) => friendsList.addAll(tribe.members
-                      .where((memberID) => (!friendsList.contains(memberID) &&
-                          model.currentUser.id != memberID))));
+                    tribesList.forEach((tribe) => friendsList.addAll(tribe
+                        .members
+                        .where((memberID) => (!friendsList.contains(memberID) &&
+                            model.currentUser.id != memberID))));
 
-                  friendsList.forEach((friendID) => friendsDataList.add(
-                      usersList.singleWhere((user) => user.id == friendID)));
-                  friendsDataList.forEach(
-                    (friendData) => markers.add(
-                      Marker(
-                        markerId: MarkerId(friendData.id),
-                        position: LatLng(friendData.lat, friendData.lng),
-                        icon: BitmapDescriptor.defaultMarkerWithHue(
-                          Constants.primaryColorHueValue,
-                        ),
-                        infoWindow: InfoWindow(
-                          title: friendData.username,
-                          snippet: friendData.name,
-                        ),
-                      ),
-                    ),
-                  );
-
-                  return Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: <Widget>[
-                      // Google Map Stack Widget
-                      _buildMap(friendsList, markers),
-
-                      // Statusbar background
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          color: themeData.primaryColor,
-                          height: MediaQuery.of(context).padding.top,
+                    friendsList.forEach((friendID) => friendsDataList.add(
+                        usersList.singleWhere((user) => user.id == friendID)));
+                    friendsDataList.forEach(
+                      (friendData) => markers.add(
+                        Marker(
+                          markerId: MarkerId(friendData.id),
+                          position: LatLng(friendData.lat, friendData.lng),
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                            Constants.primaryColorHueValue,
+                          ),
+                          infoWindow: InfoWindow(
+                            title: friendData.username,
+                            snippet: friendData.name,
+                          ),
                         ),
                       ),
+                    );
 
-                      // Users List Widget
-                      _buildUserAvatarsList(friendsList, friendsDataList),
+                    return Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: <Widget>[
+                        // Google Map Stack Widget
+                        _buildMap(friendsList, markers),
 
-                      // Map Loading indicator
-                      Opacity(
-                          opacity: model.isMapLoading ? 1.0 : 0.0,
-                          child: Center(child: Loading()))
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  print(
-                      'Error retrieving users for Map: ${snapshot.error.toString()}');
-                  return Center(child: Text('Unable to retrieve users'));
-                } else {
-                  return Center(child: Loading());
-                }
-              },
-            );
-          },
+                        // Users List Widget
+                        _buildUserAvatarsList(friendsList, friendsDataList),
+
+                        // Map Loading indicator
+                        Opacity(
+                            opacity: model.isMapLoading ? 1.0 : 0.0,
+                            child: Center(child: Loading()))
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    print(
+                        'Error retrieving users for Map: ${snapshot.error.toString()}');
+                    return Center(child: Text('Unable to retrieve users'));
+                  } else {
+                    return Center(child: Loading());
+                  }
+                },
+              );
+            },
+          ),
         ),
       ),
     );

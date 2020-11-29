@@ -4,45 +4,35 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
   @override
   Widget build(BuildContext context, HomeViewModel model) {
     final ThemeData themeData = Theme.of(context);
-    
+
     _buildAppBar() {
-      return Container(
-        padding: const EdgeInsets.all(4.0),
-        color: themeData.primaryColor,
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget> [
-            Text(
-              'Tribes',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'OleoScriptSwashCaps',
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget> [
-
-                  // Join Tribe Icon Widget
-                  IconButton(
-                    icon: CustomAwesomeIcon(icon: FontAwesomeIcons.search),
-                    iconSize: Constants.defaultIconSize,
-                    splashColor: Colors.transparent,
-                    onPressed: model.showJoinTribePage,
-                  ),
-
-                ],
-              ),
-            ),
-          ],
+      return AppBar(
+        toolbarHeight: kToolbarHeight + Constants.largePadding,
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: themeData.backgroundColor,
+        title: Text(
+          'Tribes',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: themeData.primaryColor,
+            fontFamily: 'OleoScriptSwashCaps',
+            fontWeight: FontWeight.bold,
+            fontSize: 30,
+          ),
         ),
+        actions: [
+          IconButton(
+            icon: CustomAwesomeIcon(
+              icon: FontAwesomeIcons.search,
+              color: themeData.primaryColor,
+            ),
+            iconSize: Constants.defaultIconSize,
+            splashColor: Colors.transparent,
+            onPressed: model.showJoinTribePage,
+          ),
+          SizedBox(width: Constants.defaultPadding),
+        ],
       );
     }
 
@@ -59,7 +49,7 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
                   color: Colors.blueGrey,
                   fontSize: 24.0,
                   fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -69,7 +59,7 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
                 color: Colors.blueGrey,
                 fontSize: 24.0,
                 fontFamily: 'TribesRounded',
-                fontWeight: FontWeight.normal
+                fontWeight: FontWeight.normal,
               ),
             ),
             GestureDetector(
@@ -80,7 +70,7 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
                   color: Colors.blueGrey,
                   fontSize: 24.0,
                   fontFamily: 'TribesRounded',
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -90,7 +80,7 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
                 color: Colors.blueGrey,
                 fontSize: 24.0,
                 fontFamily: 'TribesRounded',
-                fontWeight: FontWeight.normal
+                fontWeight: FontWeight.normal,
               ),
             ),
           ],
@@ -107,72 +97,61 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
           builder: (context, snapshot) {
             List<Tribe> joinedTribes = snapshot.data;
 
-            return joinedTribes.isEmpty ? _buildEmptyListWidget() : Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: PageView.builder(
-                reverse: false,
-                scrollDirection: Axis.horizontal,
-                controller: model.tribeItemController,
-                itemCount: joinedTribes.length,
-                itemBuilder: (context, index) {
-                  Tribe currentTribe = joinedTribes[index];
-                  double padding = MediaQuery.of(context).size.height * 0.08;
-                  double verticalMargin = index == model.currentPageIndex ? 0.0 : MediaQuery.of(context).size.height * 0.04;
+            return joinedTribes.isEmpty
+                ? _buildEmptyListWidget()
+                : PageView.builder(
+                    reverse: false,
+                    scrollDirection: Axis.horizontal,
+                    controller: model.tribeItemController,
+                    itemCount: joinedTribes.length,
+                    itemBuilder: (context, index) {
+                      Tribe currentTribe = joinedTribes[index];
+                      double padding =
+                          MediaQuery.of(context).size.height * 0.08;
+                      double verticalMargin = index == model.currentPageIndex
+                          ? 0.0
+                          : MediaQuery.of(context).size.height * 0.04;
 
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 1000),
-                    curve: Curves.easeOutQuint,
-                    padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight + padding, top: padding),
-                    margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: verticalMargin),
-                    child: GestureDetector(
-                      onTap: () => model.showTribeRoom(joinedTribes[index].id),
-                      child: TribeItem(tribe: currentTribe),
-                    ),
+                      return AnimatedContainer(
+                        duration: Duration(milliseconds: 1000),
+                        curve: Curves.easeOutQuint,
+                        padding: EdgeInsets.only(
+                          bottom: kBottomNavigationBarHeight + padding,
+                          top: 20.0,
+                        ),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                          vertical: verticalMargin,
+                        ),
+                        child: GestureDetector(
+                          onTap: () => model.showTribeRoom(
+                            joinedTribes[index],
+                          ),
+                          child: TribeItem(tribe: currentTribe),
+                        ),
+                      );
+                    },
                   );
-                },
-              ),
-            );
-          }
+          },
         ),
       );
     }
 
-    return model.isBusy ? Loading()
-    : Container(
-      color: themeData.primaryColor,
-      child: SafeArea(
-        bottom: false,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: themeData.primaryColor,
-          body: Column(
-            children: <Widget>[
-              _buildAppBar(),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: themeData.backgroundColor,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black54,
-                        blurRadius: 5,
-                        offset: Offset(0, 0),
-                      ),
-                    ]
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
+    return SafeArea(
+      bottom: false,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: themeData.backgroundColor,
+        appBar: _buildAppBar(),
+        body: model.isBusy
+            ? Loading()
+            : Column(
+                children: <Widget>[
+                  Expanded(
                     child: _buildTribesList(),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
       ),
     );
   }

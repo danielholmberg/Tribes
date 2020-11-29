@@ -47,10 +47,13 @@ class HomeViewModel extends ReactiveViewModel {
     _navigationService.navigateTo(MyRouter.joinTribeRoute);
   }
 
-  void showTribeRoom(String tribeId) {
+  void showTribeRoom(Tribe tribe) {
     _navigationService.navigateTo(
       MyRouter.tribeRoomRoute,
-      arguments: tribeId,
+      arguments: TribeRoomArguments(
+        tribeId: tribe.id,
+        tribeColor: tribe.color,
+      ),
     );
   }
 

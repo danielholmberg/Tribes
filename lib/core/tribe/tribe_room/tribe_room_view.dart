@@ -22,20 +22,30 @@ part 'tribe_room_view_[mobile].dart';
 
 class TribeRoomView extends StatefulWidget {
   final String tribeId;
-  TribeRoomView({@required this.tribeId});
+  final Color tribeColor;
+  TribeRoomView({
+    @required this.tribeId,
+    @required this.tribeColor,
+  });
 
   @override
   _TribeRoomViewState createState() => _TribeRoomViewState();
 }
 
 class _TribeRoomViewState extends State<TribeRoomView> {
-
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<TribeRoomViewModel>.reactive(
-      viewModelBuilder: () => TribeRoomViewModel(tribeId: widget.tribeId),
+      viewModelBuilder: () => TribeRoomViewModel(
+        tribeId: widget.tribeId,
+        tribeColor: widget.tribeColor,
+      ),
+      onModelReady: (model) => model.initState(),
       builder: (context, model, child) {
-      return ScreenTypeLayout.builder(mobile: (context) => _TribeRoomViewMobile());
-    });
+        return ScreenTypeLayout.builder(
+          mobile: (context) => _TribeRoomViewMobile(),
+        );
+      },
+    );
   }
 }

@@ -16,30 +16,29 @@ class Tribe {
   final Timestamp created;
   final Timestamp updated;
 
-  Tribe({
-    this.id,
-    this.name,
-    this.desc,
-    this.members,
-    this.founder,
-    this.password,
-    this.imageURL,
-    this.color,
-    this.secret,
-    this.created,
-    this.updated
-  });
+  Tribe(
+      {this.id,
+      this.name,
+      this.desc,
+      this.members,
+      this.founder,
+      this.password,
+      this.imageURL,
+      this.color,
+      this.secret,
+      this.created,
+      this.updated});
 
   factory Tribe.fromSnapshot(DocumentSnapshot doc) {
     String fallbackColor = Constants.primaryColor.value.toRadixString(16);
     var created = doc.data()['created'];
     var updated = doc.data()['updated'];
-    
+
     // Convert int-timestamp values
-    if(created.runtimeType == int) {
+    if (created.runtimeType == int) {
       created = Timestamp.fromMillisecondsSinceEpoch(created);
     }
-    if(updated.runtimeType == int) {
+    if (updated.runtimeType == int) {
       updated = Timestamp.fromMillisecondsSinceEpoch(updated);
     }
 
@@ -90,4 +89,13 @@ class Tribe {
   String toString() {
     return '[$id, $name, $desc, $members, $founder, $color, $imageURL, $secret, $created, $updated]';
   }
+}
+
+class TribeRoomArguments {
+  final String tribeId;
+  final Color tribeColor;
+  TribeRoomArguments({
+    this.tribeId,
+    this.tribeColor,
+  });
 }
