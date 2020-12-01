@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:stacked/stacked.dart';
@@ -13,6 +13,7 @@ import 'package:tribes/core/profile/profile_view.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/user_model.dart';
 import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/services/util_service.dart';
 
 class FoundationViewModel extends ReactiveViewModel {
   final DatabaseService _databaseService = locator<DatabaseService>();
@@ -52,11 +53,12 @@ class FoundationViewModel extends ReactiveViewModel {
     _tabController.animateTo(0);
     setCurrentTab(0);
 
-    _initFCM();
+
+    if(!kIsWeb) _initFCM();
   }
 
   void _initFCM() {
-    if (Platform.isIOS) {
+    if (UtilService().isIOS) {
       _iosSubscription =
           _databaseService.fcm.onIosSettingsRegistered.listen((data) {
         _databaseService.saveFCMToken();

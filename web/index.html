@@ -26,6 +26,8 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
+  <meta name="google-signin-client_id" content="905764618540-6fn595438rn0a36m5umkuvvnlu12m0kg.apps.googleusercontent.com" />
+
   <title>tribes</title>
   <link rel="manifest" href="manifest.json">
 </head>
@@ -41,5 +43,35 @@
     }
   </script>
   <script src="main.dart.js" type="application/javascript"></script>
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+
+  <!-- Add SDKs for Firebase products that you want to use
+      https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-functions.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-messaging.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-storage.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+      apiKey: "AIzaSyDmwrB-8VZ_Nd2JFFuFPV47AVc3539_2-c",
+      authDomain: "tribes-fe811.firebaseapp.com",
+      databaseURL: "https://tribes-fe811.firebaseio.com",
+      projectId: "tribes-fe811",
+      storageBucket: "tribes-fe811.appspot.com",
+      messagingSenderId: "905764618540",
+      appId: "1:905764618540:web:da29aab73419f3417aec89",
+      measurementId: "G-SRY2RZ3EF6"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
 </body>
 </html>

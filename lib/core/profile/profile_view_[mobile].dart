@@ -29,7 +29,7 @@ class _ProfileViewMobile extends ViewModelWidget<ProfileViewModel> {
                             color: Colors.blue,
                             shape: BoxShape.circle,
                           ),
-                          child: Platform.isAndroid
+                          child: UtilService().isAndroid
                           ? FutureBuilder<void>(
                             future: model.retrieveLostData(),
                             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -189,7 +189,7 @@ class _ProfileViewMobile extends ViewModelWidget<ProfileViewModel> {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Icon(Platform.isIOS ? FontAwesomeIcons.locationArrow : FontAwesomeIcons.mapMarkerAlt, 
+                      Icon(UtilService().isIOS ? FontAwesomeIcons.locationArrow : FontAwesomeIcons.mapMarkerAlt, 
                         color: themeData.primaryColor.withOpacity(0.7),
                         size: Constants.tinyIconSize,
                       ),

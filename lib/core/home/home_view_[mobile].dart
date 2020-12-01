@@ -95,7 +95,7 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
           initialData: [],
           stream: model.joinedTribes,
           builder: (context, snapshot) {
-            List<Tribe> joinedTribes = snapshot.data;
+            List<Tribe> joinedTribes = snapshot.data ?? [];
 
             return joinedTribes.isEmpty
                 ? _buildEmptyListWidget()

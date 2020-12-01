@@ -12,6 +12,7 @@ import 'package:tribes/core/profile/dialogs/profile_settings_view.dart';
 import 'package:tribes/core/profile/profile_view_model.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
+import 'package:tribes/services/util_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 

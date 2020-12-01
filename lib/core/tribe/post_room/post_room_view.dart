@@ -1,6 +1,5 @@
 library post_room_view;
 
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +12,7 @@ import 'package:tribes/core/tribe/post_room/post_room_view_model.dart';
 import 'package:tribes/core/tribe/widgets/fullscreen_carousel.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/services/util_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';

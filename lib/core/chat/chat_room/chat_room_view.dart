@@ -1,6 +1,5 @@
 library chat_room_view;
 
-import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import 'package:tribes/core/chat/chat_room/chat_room_view_model.dart';
 import 'package:tribes/core/chat/widgets/chat_messages.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/services/util_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/widgets/user_avatar.dart';
 

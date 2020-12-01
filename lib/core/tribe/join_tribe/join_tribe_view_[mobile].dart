@@ -32,7 +32,7 @@ class _JoinTribeViewMobile extends ViewModelWidget<JoinTribeViewModel> {
                 children: <Widget>[
                   IconButton(
                     icon: Icon(
-                        Platform.isIOS
+                        UtilService().isIOS
                             ? FontAwesomeIcons.chevronLeft
                             : FontAwesomeIcons.arrowLeft,
                         color: themeData.primaryColor),

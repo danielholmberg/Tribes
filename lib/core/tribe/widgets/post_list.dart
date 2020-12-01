@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_ui/animated_firestore_list.dart';
@@ -10,6 +9,7 @@ import 'package:tribes/models/post_model.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
 import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/services/util_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 
 class PostList extends StatelessWidget {
@@ -70,7 +70,7 @@ class PostList extends StatelessWidget {
         controller: controller,
         padding: EdgeInsets.only(
           top: Constants.defaultPadding,
-          bottom: Platform.isIOS ? 8.0 : 4.0,
+          bottom: UtilService().isIOS ? 8.0 : 4.0,
         ),
         query: DatabaseService().posts(tribe.id),
         onLoaded: _scrollToNewPostIfAuthor,

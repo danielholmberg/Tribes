@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tribes/core/tribe/dialogs/tribe_settings/tribe_settings_view_model.dart';
 import 'package:tribes/models/tribe_model.dart';
+import 'package:tribes/services/util_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
@@ -26,7 +26,7 @@ class TribeSettingsView extends ViewModelWidget<TribeSettingsViewModel> {
         backgroundColor: themeData.backgroundColor,
         leading: IconButton(
           icon: CustomAwesomeIcon(
-            icon: Platform.isIOS
+            icon: UtilService().isIOS
                 ? FontAwesomeIcons.chevronLeft
                 : FontAwesomeIcons.arrowLeft,
             color: model.currentTribeColor,

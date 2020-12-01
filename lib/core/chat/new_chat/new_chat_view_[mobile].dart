@@ -117,7 +117,7 @@ class _NewChatViewMobile extends ViewModelWidget<NewChatViewModel> {
                               children: <Widget>[
                                 IconButton(
                                   icon: Icon(
-                                    Platform.isIOS
+                                    UtilService().isIOS
                                         ? FontAwesomeIcons.chevronLeft
                                         : FontAwesomeIcons.arrowLeft,
                                     color: themeData.primaryColor,

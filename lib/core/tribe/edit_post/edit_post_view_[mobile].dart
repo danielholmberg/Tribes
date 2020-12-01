@@ -392,7 +392,7 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
                   ),
                 ),
                 Positioned(
-                  bottom: Platform.isIOS ? 8.0 : 0.0,
+                  bottom: UtilService().isIOS ? 8.0 : 0.0,
                   left: 0.0,
                   right: 0.0,
                   child: _buildSaveButton(),

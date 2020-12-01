@@ -10,7 +10,7 @@ class _ChatRoomViewMobile extends ViewModelWidget<ChatRoomViewModel> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Platform.isIOS
+          icon: Icon(UtilService().isIOS
               ? FontAwesomeIcons.chevronLeft
               : FontAwesomeIcons.arrowLeft),
           color: Constants.buttonIconColor,
@@ -88,7 +88,7 @@ class _ChatRoomViewMobile extends ViewModelWidget<ChatRoomViewModel> {
         constraints: BoxConstraints(minHeight: 70),
         padding: EdgeInsets.only(
           top: 8.0,
-          bottom: Platform.isIOS
+          bottom: UtilService().isIOS
               ? (model.textFieldFocus.hasFocus ? 8.0 : 24.0)
               : 8.0,
         ),

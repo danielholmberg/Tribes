@@ -43,7 +43,7 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
             child: FloatingActionButton(
               mini: true,
               child: CustomAwesomeIcon(
-                icon: Platform.isIOS
+                icon: UtilService().isIOS
                     ? FontAwesomeIcons.chevronLeft
                     : FontAwesomeIcons.arrowLeft,
                 color: Colors.white,

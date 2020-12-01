@@ -14,11 +14,10 @@ import 'shared/constants.dart' as Constants;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   final AdaptiveThemeMode savedThemeMode = await AdaptiveTheme.getThemeMode();
   setUpLocator(); // get_it
   setUpCustomDialogUI();
-  setUpCustomSnackbarUI();
-  await Firebase.initializeApp();
   runApp(
     Main(savedThemeMode: savedThemeMode),
     /* 
@@ -30,8 +29,6 @@ void main() async {
         */
   );
 }
-
-void setUpCustomSnackbarUI() {}
 
 class Main extends StatefulWidget {
   final AdaptiveThemeMode savedThemeMode;
