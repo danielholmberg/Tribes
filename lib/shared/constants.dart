@@ -3,6 +3,8 @@ library Constants;
 
 import 'package:flutter/material.dart';
 
+const String appTitle = 'Tribes';
+
 // Route names
 const AuthViewRoute = 'AuthView';
 const HomeViewRoute = 'HomeView';

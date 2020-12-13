@@ -16,14 +16,18 @@ class _SignInViewMobile extends ViewModelWidget<SignInViewModel> {
           children: <Widget>[
             SizedBox(height: Constants.defaultSpacing),
             TextFormField(
+              key: model.emailKey,
               focusNode: model.emailFocus,
               initialValue: model.email,
               cursorRadius: Radius.circular(1000),
               keyboardType: TextInputType.emailAddress,
               decoration: Decorations.signInInput.copyWith(
-                  hintText: 'Email',
-                  prefixIcon:
-                      Icon(FontAwesomeIcons.at, color: Constants.primaryColor)),
+                hintText: 'Email',
+                prefixIcon: Icon(
+                  FontAwesomeIcons.at,
+                  color: Constants.primaryColor,
+                ),
+              ),
               inputFormatters: model.inputFormatters,
               validator: model.emailValidator,
               onChanged: (val) => model.setEmail(val),
@@ -31,13 +35,17 @@ class _SignInViewMobile extends ViewModelWidget<SignInViewModel> {
             ),
             SizedBox(height: Constants.defaultSpacing),
             TextFormField(
+              key: model.passwordKey,
               focusNode: model.passwordFocus,
               cursorRadius: Radius.circular(1000),
               obscureText: true,
               decoration: Decorations.signInInput.copyWith(
-                  hintText: 'Password',
-                  prefixIcon: Icon(FontAwesomeIcons.lock,
-                      color: Constants.primaryColor)),
+                hintText: 'Password',
+                prefixIcon: Icon(
+                  FontAwesomeIcons.lock,
+                  color: Constants.primaryColor,
+                ),
+              ),
               inputFormatters: model.inputFormatters,
               validator: model.passwordValidator,
               onChanged: (val) => model.setPassword(val),
@@ -75,6 +83,7 @@ class _SignInViewMobile extends ViewModelWidget<SignInViewModel> {
             ),
             SizedBox(height: Constants.defaultSpacing),
             ButtonTheme(
+              key: model.signInButtonKey,
               minWidth: MediaQuery.of(context).size.width,
               height: 50.0,
               child: CustomRaisedButton(

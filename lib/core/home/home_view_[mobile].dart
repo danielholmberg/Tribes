@@ -12,7 +12,8 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
         elevation: 0,
         backgroundColor: themeData.backgroundColor,
         title: Text(
-          'Tribes',
+          model.appTitle,
+          key: model.appTitleKey,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: themeData.primaryColor,

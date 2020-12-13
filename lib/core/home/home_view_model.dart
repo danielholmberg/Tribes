@@ -6,6 +6,8 @@ import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
 import 'package:tribes/router.dart';
 import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/test_keys.dart';
 
 class HomeViewModel extends ReactiveViewModel {
   final DatabaseService _databaseService = locator<DatabaseService>();
@@ -17,6 +19,9 @@ class HomeViewModel extends ReactiveViewModel {
 
   int _currentPageIndex =
       0; // Keep track of current page to avoid unnecessary renders
+
+  String get appTitle => Constants.appTitle;
+  ValueKey get appTitleKey => ValueKey(TestKeys.homeAppTitle);
 
   Stream<List<Tribe>> get joinedTribes => _databaseService.joinedTribes;
 

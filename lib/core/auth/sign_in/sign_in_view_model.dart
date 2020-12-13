@@ -5,6 +5,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/services/firebase/auth_service.dart';
+import 'package:tribes/shared/test_keys.dart';
 
 /* 
 * Handels all logic. 
@@ -24,8 +25,10 @@ class SignInViewModel extends BaseViewModel {
   String _password = '';
   String _error = '';
 
-  AuthService get authService => _authService;
   GlobalKey<FormState> get formKey => _formKey;
+  ValueKey get emailKey => ValueKey(TestKeys.signInEmailInput);
+  ValueKey get passwordKey => ValueKey(TestKeys.signInPasswordInput);
+  ValueKey get signInButtonKey => ValueKey(TestKeys.signInButton);
   FocusNode get emailFocus => _emailFocus;
   FocusNode get passwordFocus => _passwordFocus;
   FocusNode get signInButtonFocus => _signInButtonFocus;
