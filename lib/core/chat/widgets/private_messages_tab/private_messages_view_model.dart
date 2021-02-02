@@ -13,16 +13,26 @@ class PrivateMessagesViewModel extends ReactiveViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
 
   String _notMyId;
+  bool _hasLoaded = false;
 
   String get notMyId => _notMyId;
+  bool get hasLoaded => _hasLoaded;
 
   MyUser get currentUser => _databaseService.currentUserData;
   Stream<MyUser> get friendDataStream => _databaseService.userData(_notMyId);
-  Query get privateChatRooms =>
-      _databaseService.privateChatRooms;
+  Query get privateChatRooms => _databaseService.privateChatRooms;
 
   Stream<Message> getMostRecentMessageStream(String messageId) {
     return _databaseService.mostRecentMessage(messageId);
+  }
+
+  void onData() {
+    if (!_hasLoaded) {
+      Future.delayed(Duration(milliseconds: 500), () {
+        _hasLoaded = true;
+        notifyListeners();
+      });
+    }
   }
 
   void onPrivateChatPress(ChatData data, {bool reply = false}) {

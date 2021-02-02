@@ -11,14 +11,116 @@ class _PrivateMessagesViewMobile
     _buildChatRoomListItem(ChatData chatData) {
       model.setNotMyId(chatData.members
           .firstWhere((memberID) => memberID != model.currentUser.id));
-
       return StreamBuilder<MyUser>(
         stream: model.friendDataStream,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            MyUser friend = snapshot.data;
+          if (snapshot.hasError) {
+            print('Error retrieving user data: ${snapshot.error.toString()}');
+            return Center(child: Text('Unable to retrieve private chat'));
+          }
 
-            return StreamBuilder<Message>(
+          MyUser friend = snapshot.data;
+
+          return AnimatedCrossFade(
+            duration: const Duration(milliseconds: 500),
+            crossFadeState: friend != null && model.hasLoaded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            firstChild: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: 50,
+                minWidth: double.infinity,
+                maxHeight: MediaQuery.of(context).size.height * 0.4,
+                maxWidth: double.infinity,
+              ),
+              child: Container(
+                padding: EdgeInsets.fromLTRB(
+                  10.0,
+                  4.0,
+                  10.0,
+                  4.0,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20.0),
+                    bottomRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: themeData.backgroundColor,
+                    borderRadius: BorderRadius.circular(20.0),
+                    boxShadow: [Constants.defaultBoxShadow],
+                    border: Border.all(
+                      color: themeData.primaryColor.withOpacity(0.5),
+                      width: 2.0,
+                    ),
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
+                    leading: UserAvatar(
+                      user: null,
+                      color: themeData.primaryColor.withOpacity(0.5),
+                      radius: Constants.chatMessageAvatarSize,
+                      onlyAvatar: true,
+                    ),
+                    title: Shimmer.fromColors(
+                      baseColor: Colors.white,
+                      highlightColor: themeData.primaryColor.withOpacity(0.5),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            height: 14,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    subtitle: Shimmer.fromColors(
+                      baseColor: Colors.white,
+                      highlightColor: themeData.primaryColor.withOpacity(0.5),
+                      child: Container(
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                    trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Shimmer.fromColors(
+                          baseColor: Colors.white,
+                          highlightColor:
+                              themeData.primaryColor.withOpacity(0.5),
+                          child: Container(
+                            height: 14,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            secondChild: friend != null ? StreamBuilder<Message>(
               stream: model.getMostRecentMessageStream(chatData.id),
               builder: (context, snapshot) {
                 Message message;
@@ -33,7 +135,11 @@ class _PrivateMessagesViewMobile
 
                 return Container(
                   padding: EdgeInsets.fromLTRB(
-                      10.0, 4.0, isNewMessage ? 6.0 : 10.0, 4.0),
+                    10.0,
+                    4.0,
+                    isNewMessage ? 6.0 : 10.0,
+                    4.0,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(20.0),
@@ -61,9 +167,11 @@ class _PrivateMessagesViewMobile
                             ),
                           ),
                           margin: EdgeInsets.only(
-                              right: isMe || message == null ? 0.0 : 22.0),
+                            right: isMe || message == null ? 0.0 : 22.0,
+                          ),
                           padding: EdgeInsets.only(
-                              right: isMe || message == null ? 6.0 : 22.0),
+                            right: isMe || message == null ? 6.0 : 22.0,
+                          ),
                           child: ListTile(
                             contentPadding:
                                 EdgeInsets.symmetric(horizontal: 12.0),
@@ -161,13 +269,8 @@ class _PrivateMessagesViewMobile
                   ),
                 );
               },
-            );
-          } else if (snapshot.hasError) {
-            print('Error retrieving user data: ${snapshot.error.toString()}');
-            return Center(child: Text('Unable to retrieve private chat'));
-          } else {
-            return Center(child: Loading());
-          }
+            ) : SizedBox.shrink(),
+          );
         },
       );
     }
@@ -184,6 +287,7 @@ class _PrivateMessagesViewMobile
           reverse: false,
           shrinkWrap: true,
           query: model.privateChatRooms,
+          onLoaded: (doc) => model.onData(),
           itemBuilder: (
             BuildContext context,
             DocumentSnapshot snapshot,

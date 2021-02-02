@@ -123,6 +123,8 @@ const imageGridViewMainAxisSpacing = 16.0;
 
 // [Map]
 // - Chat
+const privateChatTabTitle = 'Private';
+const tribesChatTabTitle = 'Tribes';
 const newMessageFormPadding = 16.0;
 const sendButtonColor = chatsColor;
 const initialLat = 59.325695;

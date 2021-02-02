@@ -6,12 +6,16 @@ import 'package:tribes/models/notification_data_model.dart';
 import 'package:tribes/models/user_model.dart';
 import 'package:tribes/router.dart';
 import 'package:tribes/services/firebase/database_service.dart';
+import 'package:tribes/shared/constants.dart' as Constants;
 
 class ChatViewModel extends ReactiveViewModel {
   final DatabaseService _databaseService = locator<DatabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
 
-  final List<String> _tabs = ['Private', 'Tribes'];
+  final List<String> _tabs = [
+    Constants.privateChatTabTitle,
+    Constants.tribesChatTabTitle
+  ];
 
   NotificationData _notificationData;
 
@@ -28,10 +32,10 @@ class ChatViewModel extends ReactiveViewModel {
 
     if (_notificationData != null) {
       switch (_notificationData.tab) {
-        case 'Private':
+        case Constants.privateChatTabTitle:
           setCurrentTab(0);
           break;
-        case 'Tribes':
+        case Constants.tribesChatTabTitle:
           setCurrentTab(1);
           break;
         default:
