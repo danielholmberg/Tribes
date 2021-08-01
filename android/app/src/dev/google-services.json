@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "176011244702",
+    "project_id": "tribes-dev-2931d",
+    "storage_bucket": "tribes-dev-2931d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176011244702:android:d0c56ce1f2cb53fcdcb78f",
+        "android_client_info": {
+          "package_name": "dev.danielholmberg.tribes.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176011244702-i54htbgvi88pdsgifkm7ccrghddvhnrk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLsyrb3DtzleXZoE7Qmvb5Rlw4ihtW6f0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176011244702-i54htbgvi88pdsgifkm7ccrghddvhnrk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

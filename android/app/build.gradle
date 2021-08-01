@@ -54,6 +54,21 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    flavorDimensions "app"
+
+    productFlavors {
+        dev {
+            dimension "app"
+            resValue "string", "app_name", "[D] Tribes"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+        }
+        prod {
+            dimension "app"
+            resValue "string", "app_name", "Tribes"
+        }
+    }
 }
 
 flutter {
@@ -70,8 +85,8 @@ dependencies {
 
 apply plugin: 'com.google.gms.google-services'
 
-/* Workaround for ISSUE (https://github.com/flutter/flutter/issues/19868): 
-The library com.google.firebase:firebase-iid is being requested by various other libraries at [[20.0.1,20.0.1]], 
+/* Workaround for ISSUE (https://github.com/flutter/flutter/issues/19868):
+The library com.google.firebase:firebase-iid is being requested by various other libraries at [[20.0.1,20.0.1]],
 but resolves to 18.0.0. Disable the plugin and check your dependencies tree using ./gradlew :app:dependencies.
 */
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
