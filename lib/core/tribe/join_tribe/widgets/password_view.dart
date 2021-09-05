@@ -68,7 +68,8 @@ class PasswordView extends StatelessWidget {
                                       focusNode: model.nodeOne,
                                       autofocus: true,
                                       textInputAction: TextInputAction.next,
-                                      cursorRadius: Radius.circular(1000),
+                                      showCursor: false,
+                                      enableInteractiveSelection: false,
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: model.inputFormatters,
@@ -81,7 +82,6 @@ class PasswordView extends StatelessWidget {
                                         bool isFocused,
                                       }) =>
                                           null,
-                                      cursorColor: model.activeTribeColor,
                                       style: TextStyle(
                                         color: model.activeTribeColor,
                                       ),
@@ -120,7 +120,8 @@ class PasswordView extends StatelessWidget {
                                     child: TextFormField(
                                       focusNode: model.nodeTwo,
                                       textInputAction: TextInputAction.next,
-                                      cursorRadius: Radius.circular(1000),
+                                      showCursor: false,
+                                      enableInteractiveSelection: false,
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: model.inputFormatters,
@@ -133,7 +134,6 @@ class PasswordView extends StatelessWidget {
                                         bool isFocused,
                                       }) =>
                                           null,
-                                      cursorColor: model.activeTribeColor,
                                       style: TextStyle(
                                         color: model.activeTribeColor,
                                       ),
@@ -175,7 +175,8 @@ class PasswordView extends StatelessWidget {
                                     child: TextFormField(
                                       focusNode: model.nodeThree,
                                       textInputAction: TextInputAction.next,
-                                      cursorRadius: Radius.circular(1000),
+                                      showCursor: false,
+                                      enableInteractiveSelection: false,
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: model.inputFormatters,
@@ -188,7 +189,6 @@ class PasswordView extends StatelessWidget {
                                         bool isFocused,
                                       }) =>
                                           null,
-                                      cursorColor: model.activeTribeColor,
                                       style: TextStyle(
                                         color: model.activeTribeColor,
                                       ),
@@ -229,7 +229,8 @@ class PasswordView extends StatelessWidget {
                                     child: TextFormField(
                                       focusNode: model.nodeFour,
                                       textInputAction: TextInputAction.next,
-                                      cursorRadius: Radius.circular(1000),
+                                      showCursor: false,
+                                      enableInteractiveSelection: false,
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: model.inputFormatters,
@@ -242,7 +243,6 @@ class PasswordView extends StatelessWidget {
                                         bool isFocused,
                                       }) =>
                                           null,
-                                      cursorColor: model.activeTribeColor,
                                       style: TextStyle(
                                         color: model.activeTribeColor,
                                       ),
@@ -284,7 +284,8 @@ class PasswordView extends StatelessWidget {
                                     child: TextFormField(
                                       focusNode: model.nodeFive,
                                       textInputAction: TextInputAction.next,
-                                      cursorRadius: Radius.circular(1000),
+                                      showCursor: false,
+                                      enableInteractiveSelection: false,
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: model.inputFormatters,
@@ -297,7 +298,6 @@ class PasswordView extends StatelessWidget {
                                         bool isFocused,
                                       }) =>
                                           null,
-                                      cursorColor: model.activeTribeColor,
                                       style: TextStyle(
                                         color: model.activeTribeColor,
                                       ),
@@ -339,7 +339,8 @@ class PasswordView extends StatelessWidget {
                                     child: TextFormField(
                                       focusNode: model.nodeSix,
                                       textInputAction: TextInputAction.done,
-                                      cursorRadius: Radius.circular(1000),
+                                      showCursor: false,
+                                      enableInteractiveSelection: false,
                                       textAlign: TextAlign.center,
                                       keyboardType: TextInputType.number,
                                       inputFormatters: model.inputFormatters,
@@ -352,7 +353,6 @@ class PasswordView extends StatelessWidget {
                                         bool isFocused,
                                       }) =>
                                           null,
-                                      cursorColor: model.activeTribeColor,
                                       style: TextStyle(
                                         color: model.activeTribeColor,
                                       ),
