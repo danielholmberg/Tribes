@@ -163,31 +163,15 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
                         margin: EdgeInsets.zero,
                       ),
                 Positioned(
-                  top: 4,
-                  left: 4,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 1.0),
-                    decoration: BoxDecoration(
-                      color: Colors.black38,
-                      borderRadius: BorderRadius.circular(1000),
-                    ),
-                    child: GestureDetector(
-                      child:
-                          CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
-                      onTap: () => model.onRemoveImage(index, isNewImage),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 4,
-                  right: 4,
+                  top: 6,
+                  left: 6,
                   child: Visibility(
-                    visible: model.oldImagesCount + model.newImagesCount > 1,
+                    visible: model.imagesCount > 1,
                     child: Container(
                       height: 24,
                       width: 24,
                       decoration: BoxDecoration(
-                        color: model.tribeColor.withOpacity(0.6),
+                        color: model.tribeColor,
                         borderRadius: BorderRadius.circular(1000),
                       ),
                       child: Center(
@@ -201,6 +185,23 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
                           ),
                         ),
                       ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 1.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(1000),
+                    ),
+                    child: GestureDetector(
+                      child: CustomAwesomeIcon(
+                        icon: FontAwesomeIcons.timesCircle,
+                      ),
+                      onTap: () => model.onRemoveImage(index, isNewImage),
                     ),
                   ),
                 ),
