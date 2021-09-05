@@ -21,11 +21,17 @@ enum DialogType {
   INFO_DARK,
 }
 
-setUpCustomDialogUI() {
-  DialogService dialogService = locator<DialogService>();
+final DialogService dialogService = locator<DialogService>();
 
-  _buildRetryDialog(DialogRequest dialogRequest, bool isDark) {
-    ThemeData theme = isDark ? darkTheme : lightTheme;
+class _RetryDialog extends StatelessWidget {
+  final DialogRequest dialogRequest;
+  final bool isDark;
+  const _RetryDialog({Key key, this.dialogRequest, this.isDark}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = isDark ? darkTheme : lightTheme;
+
     return Dialog(
       backgroundColor: theme.backgroundColor,
       shape: RoundedRectangleBorder(
@@ -73,7 +79,7 @@ setUpCustomDialogUI() {
                         .isVisible(dialogRequest.showIconInMainButton),
                     Text(
                       dialogRequest.mainButtonTitle ?? 'Retry',
-                      style: theme.textTheme.button,
+                      style: theme.textTheme.button.copyWith(color: Colors.white),
                     ),
                   ],
                 ),
@@ -84,9 +90,17 @@ setUpCustomDialogUI() {
       ),
     );
   }
+}
 
-  _buildConfirmDialog(DialogRequest dialogRequest, bool isDark) {
-    ThemeData theme = isDark ? darkTheme : lightTheme;
+class _ConfirmDialog extends StatelessWidget {
+  final DialogRequest dialogRequest;
+  final bool isDark;
+  const _ConfirmDialog({Key key, this.dialogRequest, this.isDark}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = isDark ? darkTheme : lightTheme;
+
     return Dialog(
       backgroundColor: theme.backgroundColor,
       shape: RoundedRectangleBorder(
@@ -179,9 +193,17 @@ setUpCustomDialogUI() {
       ),
     );
   }
+}
 
-  _buildInfoDialog(DialogRequest dialogRequest, bool isDark) {
-    ThemeData theme = isDark ? darkTheme : lightTheme;
+class _InfoDialog extends StatelessWidget {
+  final DialogRequest dialogRequest;
+  final bool isDark;
+  const _InfoDialog({Key key, this.dialogRequest, this.isDark}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = isDark ? darkTheme : lightTheme;
+
     return Dialog(
       backgroundColor: theme.backgroundColor,
       shape: RoundedRectangleBorder(
@@ -240,40 +262,17 @@ setUpCustomDialogUI() {
       ),
     );
   }
+}
 
-  // Retry Dialog
-  dialogService.registerCustomDialogBuilder(
-    variant: DialogType.RETRY_LIGHT,
-    builder: (BuildContext context, DialogRequest dialogRequest) =>
-        _buildRetryDialog(dialogRequest, false),
-  );
-  dialogService.registerCustomDialogBuilder(
-    variant: DialogType.RETRY_DARK,
-    builder: (BuildContext context, DialogRequest dialogRequest) =>
-        _buildRetryDialog(dialogRequest, true),
-  );
+setUpCustomDialogUI() {
+  final dialogs = {
+    DialogType.RETRY_LIGHT: (context, dialogRequest, completer) => _RetryDialog(dialogRequest: dialogRequest, isDark: false),
+    DialogType.RETRY_DARK: (context, dialogRequest, completer) => _RetryDialog(dialogRequest: dialogRequest, isDark: true),
+    DialogType.CONFIRM_LIGHT: (context, dialogRequest, completer) => _ConfirmDialog(dialogRequest: dialogRequest, isDark: false),
+    DialogType.CONFIRM_DARK: (context, dialogRequest, completer) => _ConfirmDialog(dialogRequest: dialogRequest, isDark: true),
+    DialogType.INFO_LIGHT: (context, dialogRequest, completer) => _InfoDialog(dialogRequest: dialogRequest, isDark: false),
+    DialogType.INFO_DARK: (context, dialogRequest, completer) => _InfoDialog(dialogRequest: dialogRequest, isDark: true)
+  };
 
-  // Confrim Dialog
-  dialogService.registerCustomDialogBuilder(
-    variant: DialogType.CONFIRM_LIGHT,
-    builder: (BuildContext context, DialogRequest dialogRequest) =>
-        _buildConfirmDialog(dialogRequest, false),
-  );
-  dialogService.registerCustomDialogBuilder(
-    variant: DialogType.CONFIRM_DARK,
-    builder: (BuildContext context, DialogRequest dialogRequest) =>
-        _buildConfirmDialog(dialogRequest, true),
-  );
-
-  // Info Dialog
-  dialogService.registerCustomDialogBuilder(
-    variant: DialogType.INFO_LIGHT,
-    builder: (BuildContext context, DialogRequest dialogRequest) =>
-        _buildInfoDialog(dialogRequest, false),
-  );
-  dialogService.registerCustomDialogBuilder(
-    variant: DialogType.INFO_DARK,
-    builder: (BuildContext context, DialogRequest dialogRequest) =>
-        _buildInfoDialog(dialogRequest, true),
-  );
+  dialogService.registerCustomDialogBuilders(dialogs);
 }

@@ -78,7 +78,7 @@ class _ChatRoomViewMobile extends ViewModelWidget<ChatRoomViewModel> {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
             ),
-          ),
+          ).onlyDevelopment(true),
         ],
       );
     }
@@ -99,56 +99,61 @@ class _ChatRoomViewMobile extends ViewModelWidget<ChatRoomViewModel> {
             IconButton(
               icon: Icon(FontAwesomeIcons.paperclip),
               iconSize: Constants.defaultIconSize,
+              padding: const EdgeInsets.only(left: 8),
               color: model.currentTribe != null
                   ? model.currentTribe.color
                   : themeData.primaryColor,
               onPressed: model.onAddAttachment,
-            ),
+            ).onlyDevelopment(true, keepSpace: false),
             Expanded(
-              child: TextField(
-                focusNode: model.textFieldFocus,
-                controller: model.controller,
-                autofocus: model.reply != null ? model.reply : false,
-                textCapitalization: TextCapitalization.sentences,
-                minLines: 1,
-                maxLines: 10,
-                cursorRadius: Radius.circular(1000),
-                cursorColor: model.currentTribe != null
-                    ? model.currentTribe.color
-                    : themeData.primaryColor,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(12.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(
-                        color: model.currentTribe != null
-                            ? model.currentTribe.color
-                            : themeData.primaryColor,
-                        width: 2.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(
-                        color: Colors.grey.withOpacity(0.2), width: 2.0),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(
-                      color: model.currentTribeColor,
-                      width: 2.0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  focusNode: model.textFieldFocus,
+                  controller: model.controller,
+                  autofocus: model.reply != null ? model.reply : false,
+                  textCapitalization: TextCapitalization.sentences,
+                  minLines: 1,
+                  maxLines: 10,
+                  cursorRadius: Radius.circular(1000),
+                  cursorColor: model.currentTribe != null
+                      ? model.currentTribe.color
+                      : themeData.primaryColor,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(12.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                          color: model.currentTribe != null
+                              ? model.currentTribe.color
+                              : themeData.primaryColor,
+                          width: 2.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                          color: Colors.grey.withOpacity(0.2), width: 2.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(
+                        color: model.currentTribeColor,
+                        width: 2.0,
+                      ),
+                    ),
+                    hintText: 'Type a message...',
+                    hintStyle: TextStyle(
+                      fontFamily: 'TribesRounded',
                     ),
                   ),
-                  hintText: 'Type a message...',
-                  hintStyle: TextStyle(
-                    fontFamily: 'TribesRounded',
-                  ),
+                  onChanged: model.onMessageChanged,
                 ),
-                onChanged: model.onMessageChanged,
               ),
             ),
             IconButton(
               icon: Icon(FontAwesomeIcons.solidPaperPlane),
               iconSize: Constants.defaultIconSize,
+              padding: const EdgeInsets.only(right: 8),
               color: model.currentTribeColor,
               onPressed: model.message.isEmpty
                   ? null

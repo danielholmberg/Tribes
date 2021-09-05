@@ -7,29 +7,31 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
 
     _showModalBottomSheet({Widget child}) {
       showModalBottomSheet(
-          context: context,
-          isDismissible: false,
-          isScrollControlled: true,
-          builder: (buildContext) {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.9,
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-                child: child,
+        context: context,
+        isDismissible: false,
+        isScrollControlled: true,
+        enableDrag: false,
+        builder: (buildContext) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.9,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
               ),
-            );
-          },
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+              child: child,
             ),
+          );
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
           ),
-          backgroundColor: Colors.transparent,
-          elevation: 8.0);
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 8.0,
+      );
     }
 
     _buildDismissButton() {

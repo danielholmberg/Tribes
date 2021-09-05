@@ -13,7 +13,7 @@ class _MapViewMobile extends ViewModelWidget<MapViewModel> {
               child: GoogleMap(
                 padding: EdgeInsets.only(
                   left: 12,
-                  bottom: kBottomNavigationBarHeight + 92,
+                  bottom: kBottomNavigationBarHeight + (friendsList.isEmpty ? 8 : 92),
                 ),
                 onMapCreated: model.onMapCreated,
                 myLocationButtonEnabled: true,

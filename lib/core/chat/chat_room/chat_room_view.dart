@@ -12,8 +12,8 @@ import 'package:tribes/core/chat/chat_room/chat_room_view_model.dart';
 import 'package:tribes/core/chat/widgets/chat_messages.dart';
 import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
-import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/extensions.dart';
 import 'package:tribes/shared/widgets/user_avatar.dart';
 
 part 'chat_room_view_[mobile].dart';

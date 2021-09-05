@@ -9,14 +9,16 @@ class Message {
 
   Message({
     this.id,
-    this.message, 
-    this.senderID, 
+    this.message,
+    this.senderID,
     this.created,
   });
 
   factory Message.fromSnapshot(DocumentSnapshot doc) {
-    var created = doc.data()['created'];
-    
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+    var created = data['created'];
+
     // Convert int-timestamp values
     if(created.runtimeType == int) {
       created = Timestamp.fromMillisecondsSinceEpoch(created);
@@ -24,8 +26,8 @@ class Message {
 
     return Message(
       id: doc.id,
-      message: doc.data()['message'] ?? '',
-      senderID: doc.data()['senderID'] ?? '',
+      message: data['message'] ?? '',
+      senderID: data['senderID'] ?? '',
       created: created,
     );
   }

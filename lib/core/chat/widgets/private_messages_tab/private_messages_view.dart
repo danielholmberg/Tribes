@@ -1,8 +1,5 @@
 library private_messages_view;
 
-
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_ui/animated_firestore_list.dart';
 import 'package:flutter/material.dart';

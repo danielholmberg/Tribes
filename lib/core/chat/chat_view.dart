@@ -9,6 +9,7 @@ import 'package:tribes/core/chat/chat_view_model.dart';
 import 'package:tribes/core/chat/widgets/private_messages_tab/private_messages_view.dart';
 import 'package:tribes/core/chat/widgets/tribe_messages_tab/tribe_messages_view.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/extensions.dart';
 
 part 'chat_view_[mobile].dart';
 

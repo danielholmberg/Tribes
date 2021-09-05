@@ -8,7 +8,9 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
     _showDiscardDialog() {
       return showDialog(
         context: context,
-        builder: (context) => DiscardChangesDialog(color: model.tribeColor)
+        builder: (context) => DiscardChangesDialog(
+          color: model.tribeColor,
+        ),
       );
     }
 
@@ -25,7 +27,8 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Text('Editing', 
+            Text(
+              'Editing',
               style: TextStyle(
                 fontFamily: 'TribesRounded',
                 fontWeight: FontWeight.bold,
@@ -35,7 +38,8 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
             SizedBox(width: Constants.defaultPadding),
             Visibility(
               visible: model.edited,
-              child: Text('| edited', 
+              child: Text(
+                '| edited',
                 style: TextStyle(
                   fontFamily: 'TribesRounded',
                   fontStyle: FontStyle.normal,
@@ -46,7 +50,8 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
             ),
           ],
         ),
-        leading: IconButton(icon: Icon(FontAwesomeIcons.times), 
+        leading: IconButton(
+          icon: Icon(FontAwesomeIcons.times),
           color: model.tribeColor,
           onPressed: () {
             model.edited ? _showDiscardDialog() : model.back();
@@ -57,17 +62,23 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
             splashColor: Colors.transparent,
             color: themeData.backgroundColor,
             icon: CustomAwesomeIcon(
-              icon: FontAwesomeIcons.solidTrashAlt, 
+              icon: FontAwesomeIcons.solidTrashAlt,
               color: model.tribeColor,
             ),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
-                  backgroundColor: Constants
-                      .profileSettingsBackgroundColor,
-                  title: Text('Are your sure you want to delete this post?',
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(
+                        Constants.dialogCornerRadius,
+                      ),
+                    ),
+                  ),
+                  backgroundColor: Constants.profileSettingsBackgroundColor,
+                  title: Text(
+                    'Are your sure you want to delete this post?',
                     style: TextStyle(
                       fontFamily: 'TribesRounded',
                       fontWeight: Constants.defaultDialogTitleFontWeight,
@@ -75,8 +86,9 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
                     ),
                   ),
                   actions: <Widget>[
-                    FlatButton(
-                      child: Text('No', 
+                    TextButton(
+                      child: Text(
+                        'No',
                         style: TextStyle(
                           color: model.tribeColor,
                           fontFamily: 'TribesRounded',
@@ -86,8 +98,9 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
                         Navigator.of(context).pop();
                       },
                     ),
-                    FlatButton(
-                      child: Text('Yes',
+                    TextButton(
+                      child: Text(
+                        'Yes',
                         style: TextStyle(
                           color: Colors.red,
                           fontFamily: 'TribesRounded',
@@ -102,7 +115,7 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
             },
           ),
           SizedBox(width: 4.0)
-        ]
+        ],
       );
     }
 
@@ -111,18 +124,22 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
         alignment: Alignment.center,
         children: <Widget>[
           CustomAwesomeIcon(
-            icon: FontAwesomeIcons.camera, 
+            icon: FontAwesomeIcons.image,
             size: 30,
-            color: model.tribeColor.withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
-          ), 
+            color: model.tribeColor.withOpacity(
+              model.photoButtonIsDisabled ? 0.4 : 1.0,
+            ),
+          ),
           Positioned(
-            left: 30,
-            top: 30,
+            right: 22,
+            bottom: 25,
             child: Container(
               child: CustomAwesomeIcon(
-                icon: FontAwesomeIcons.plus, 
-                size: 14, 
-                color: model.tribeColor.withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
+                icon: FontAwesomeIcons.plus,
+                size: 14,
+                color: model.tribeColor.withOpacity(
+                  model.photoButtonIsDisabled ? 0.4 : 1.0,
+                ),
                 strokeWidth: 2.0,
               ),
             ),
@@ -136,7 +153,7 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
         int _imageNumber = index + 1 + (isNewImage ? model.oldImagesCount : 0);
 
         return Container(
-            decoration: BoxDecoration(
+          decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
@@ -144,79 +161,81 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
                   blurRadius: 2,
                   offset: Offset(0, 0),
                 ),
-              ]
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Stack(
-                children: <Widget>[
-                  isNewImage ? AssetThumb(
-                    asset: model.newImages[index],
-                    width: 300,
-                    height: 300,
-                  ) : CustomImage(
-                    imageURL: model.oldImages[index],
-                    color: model.tribeColor,
-                    width: 300,
-                    height: 300,
-                    margin: EdgeInsets.zero,
-                  ),
-                  Positioned(
-                    top: 4,
-                    left: 4,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        color: Colors.black38,
-                        borderRadius: BorderRadius.circular(1000),
+              ]),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Stack(
+              children: <Widget>[
+                isNewImage
+                    ? AssetThumb(
+                        asset: model.newImages[index],
+                        width: 300,
+                        height: 300,
+                      )
+                    : CustomImage(
+                        imageURL: model.oldImages[index],
+                        color: model.tribeColor,
+                        width: 300,
+                        height: 300,
+                        margin: EdgeInsets.zero,
                       ),
-                      child: GestureDetector(
-                        child: CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
-                        onTap: () => model.onRemoveImage(index, isNewImage),
-                      ),
+                Positioned(
+                  top: 4,
+                  left: 4,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 1.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.circular(1000),
+                    ),
+                    child: GestureDetector(
+                      child:
+                          CustomAwesomeIcon(icon: FontAwesomeIcons.timesCircle),
+                      onTap: () => model.onRemoveImage(index, isNewImage),
                     ),
                   ),
-                  Positioned(
-                    top: 4,
-                    right: 4,
-                    child: Visibility(
-                      visible: model.oldImagesCount + model.newImagesCount > 1,
-                      child: Container(
-                        height: 24,
-                        width: 24,
-                        decoration: BoxDecoration(
-                          color: model.tribeColor.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '$_imageNumber',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                              fontFamily: 'TribesRounded',
-                            ),
+                ),
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Visibility(
+                    visible: model.oldImagesCount + model.newImagesCount > 1,
+                    child: Container(
+                      height: 24,
+                      width: 24,
+                      decoration: BoxDecoration(
+                        color: model.tribeColor.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(1000),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$_imageNumber',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10,
+                            fontFamily: 'TribesRounded',
                           ),
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
+          ),
+        );
       });
     }
 
     _buildGridView() {
       List<Widget> children = [];
 
-      if(model.oldImagesCount > 0) {
+      if (model.oldImagesCount > 0) {
         children += _buildImages(model.oldImagesCount, false);
       }
 
-      if(model.newImagesCount > 0) {
+      if (model.newImagesCount > 0) {
         children += _buildImages(model.newImagesCount, true);
       }
 
@@ -227,20 +246,23 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
         crossAxisSpacing: Constants.imageGridViewCrossAxisSpacing,
         mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
         children: <Widget>[
-          GestureDetector(
-            onTap: model. photoButtonIsDisabled ? null : model.onNewImage,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(
-                  width: 2.0,
-                  color: model.tribeColor.withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
+              GestureDetector(
+                onTap: model.photoButtonIsDisabled ? null : model.onNewImage,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(
+                      width: 2.0,
+                      color: model.tribeColor.withOpacity(
+                        model.photoButtonIsDisabled ? 0.4 : 1.0,
+                      ),
+                    ),
+                  ),
+                  child: _buildNewImageIcon(),
                 ),
               ),
-              child: _buildNewImageIcon(),
-            ),
-          ),
-        ] + children,
+            ] +
+            children,
       );
     }
 
@@ -251,25 +273,32 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: completed ? model.tribeColor.withOpacity(0.6) : Colors.transparent,
+            color: completed
+                ? model.tribeColor.withOpacity(0.6)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(1000),
-            border: Border.all(color: model.tribeColor, width: 2.0)
+            border: Border.all(
+              color: model.tribeColor,
+              width: 2.0,
+            ),
           ),
           child: Center(
-            child: completed ? CustomAwesomeIcon(
-              icon: FontAwesomeIcons.check, 
-              size: 10, 
-              color: Colors.white) 
-            : Text(
-              '$number',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: model.tribeColor,
-                fontFamily: 'TribesRounded',
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            child: completed
+                ? CustomAwesomeIcon(
+                    icon: FontAwesomeIcons.check,
+                    size: 10,
+                    color: Colors.white,
+                  )
+                : Text(
+                    '$number',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: model.tribeColor,
+                      fontFamily: 'TribesRounded',
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
           ),
         ),
       );
@@ -284,7 +313,14 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
           margin: EdgeInsets.all(16.0),
           color: model.tribeColor,
           icon: FontAwesomeIcons.check,
-          label: Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'TribesRounded')),
+          label: Text(
+            'Save',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'TribesRounded',
+            ),
+          ),
           labelColor: Colors.white,
           onPressed: model.edited ? model.onSavePost : null,
         ),
@@ -297,109 +333,147 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
         color: model.tribeColor,
         child: SafeArea(
           bottom: false,
-          child: model.isBusy ? Loading(color: model.tribeColor) : Scaffold(
-            backgroundColor: themeData.backgroundColor,
-            appBar: _buildAppBar(),
-            body: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned.fill(
-                  child: ScrollConfiguration(
-                    behavior: CustomScrollBehavior(),
-                    child: ListView(
-                      padding: EdgeInsets.only(bottom: 86.0, right: 16.0),
-                      shrinkWrap: true,
-                      children: <Widget>[
-                        Container(
-                          alignment: Alignment.topLeft,
-                          child: Form(
-                            key: model.formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
-                                      child: _buildStepIndicator(1, completed: model.step1Completed),
-                                    ),
-                                    Expanded(
-                                      child: TextFormField(
-                                        focusNode: model.titleFocus,
-                                        cursorRadius: Radius.circular(1000),
-                                        cursorWidth: 4,
-                                        initialValue: model.title,
-                                        textCapitalization: TextCapitalization.sentences,
-                                        style: themeData.textTheme.headline6,
-                                        cursorColor: model.tribeColor,
-                                        decoration: Decorations.postInput.copyWith(hintText: 'Title'),
-                                        validator: model.titleValidator,
-                                        onChanged: model.onTitleChanged,
-                                        onFieldSubmitted: model.onTitleSubmitted,
+          child: model.isBusy
+              ? Loading(color: model.tribeColor)
+              : Scaffold(
+                  backgroundColor: themeData.backgroundColor,
+                  appBar: _buildAppBar(),
+                  body: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      Positioned.fill(
+                        child: ScrollConfiguration(
+                          behavior: CustomScrollBehavior(),
+                          child: ListView(
+                            padding: EdgeInsets.only(bottom: 86.0, right: 16.0),
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              Container(
+                                alignment: Alignment.topLeft,
+                                child: Form(
+                                  key: model.formKey,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 6.0,
+                                              horizontal: 16.0,
+                                            ),
+                                            child: _buildStepIndicator(
+                                              1,
+                                              completed: model.step1Completed,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: TextFormField(
+                                              focusNode: model.titleFocus,
+                                              cursorRadius: Radius.circular(
+                                                1000,
+                                              ),
+                                              cursorWidth: 4,
+                                              initialValue: model.title,
+                                              textCapitalization:
+                                                  TextCapitalization.sentences,
+                                              style:
+                                                  themeData.textTheme.headline6,
+                                              cursorColor: model.tribeColor,
+                                              decoration: Decorations.postInput
+                                                  .copyWith(
+                                                hintText: 'Title',
+                                              ),
+                                              onChanged: model.onTitleChanged,
+                                              onFieldSubmitted:
+                                                  model.onTitleSubmitted,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(height: 4.0),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0,
+                                            ),
+                                            child: _buildStepIndicator(
+                                              2,
+                                              completed: model.step2Completed,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: TextFormField(
+                                              focusNode: model.contentFocus,
+                                              cursorRadius: Radius.circular(
+                                                1000,
+                                              ),
+                                              cursorWidth: 2,
+                                              initialValue: model.content,
+                                              textCapitalization:
+                                                  TextCapitalization.sentences,
+                                              style:
+                                                  themeData.textTheme.bodyText2,
+                                              cursorColor: model.tribeColor,
+                                              keyboardType:
+                                                  TextInputType.multiline,
+                                              maxLines: null,
+                                              decoration: Decorations.postInput
+                                                  .copyWith(
+                                                hintText: 'Content',
+                                              ),
+                                              onChanged: model.onContentChanged,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                SizedBox(height: 4.0),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                      child: _buildStepIndicator(2, completed: model.step2Completed),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0,
+                                      horizontal: 16.0,
                                     ),
-                                    Expanded(
-                                      child: TextFormField(
-                                        focusNode: model.contentFocus,
-                                        cursorRadius: Radius.circular(1000),
-                                        cursorWidth: 2,
-                                        initialValue: model.content,
-                                        textCapitalization: TextCapitalization.sentences,
-                                        style: themeData.textTheme.bodyText2,
-                                        cursorColor: model.tribeColor,
-                                        keyboardType: TextInputType.multiline,
-                                        maxLines: null,
-                                        decoration: Decorations.postInput.copyWith(hintText: 'Content'),
-                                        validator: model.contentValidator,
-                                        onChanged: model.onContentChanged,
-                                      ),
+                                    child: _buildStepIndicator(
+                                      3,
+                                      completed: model.step3Completed,
                                     ),
-                                  ],
-                                )
-                              ],
-                            ),
+                                  ),
+                                  Expanded(child: _buildGridView())
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                              child: _buildStepIndicator(3, completed: model.step3Completed),
-                            ),
-                            Expanded(child: _buildGridView())
-                          ],
-                        ),
-                      ],
-                    ),
+                      ),
+                      Positioned(
+                        bottom: Platform.isIOS ? 8.0 : 0.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: _buildSaveButton(),
+                      )
+                    ],
                   ),
                 ),
-                Positioned(
-                  bottom: Platform.isIOS ? 8.0 : 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: _buildSaveButton(),
-                )
-              ],
-            ),
-          ),
         ),
       ),
     );

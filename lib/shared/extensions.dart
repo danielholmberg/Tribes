@@ -62,12 +62,24 @@ extension PaddedWidget on Widget {
     );
   }
 }
- 
+
 extension VisibleWidget on Widget {
   Visibility isVisible(bool visible) {
     return Visibility(
       visible: visible,
       child: this,
+    );
+  }
+}
+
+extension OnlyDevelopment on Widget {
+  Visibility onlyDevelopment(bool disable, {bool keepSpace = true}) {
+    return Visibility(
+      visible: !disable,
+      maintainSize: keepSpace,
+      maintainAnimation: keepSpace,
+      maintainState: keepSpace,
+      child: this
     );
   }
 }

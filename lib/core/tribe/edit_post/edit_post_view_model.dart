@@ -7,14 +7,13 @@ import 'package:tribes/locator.dart';
 import 'package:tribes/models/post_model.dart';
 import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/services/firebase/storage_service.dart';
-import 'package:tribes/shared/constants.dart' as Constants;
 
 class EditPostViewModel extends ReactiveViewModel {
   final Color tribeColor;
   final Function(Post) onSave;
   final Function onDelete;
   EditPostViewModel({
-    this.tribeColor = Constants.primaryColor,
+    @required this.tribeColor,
     @required this.onSave,
     @required this.onDelete,
   });
@@ -30,6 +29,7 @@ class EditPostViewModel extends ReactiveViewModel {
   BuildContext _context;
   bool _isMounted = false;
   Post _post;
+  String _tribeColor = '';
 
   bool _photoButtonIsDisabled;
 
@@ -59,6 +59,7 @@ class EditPostViewModel extends ReactiveViewModel {
 
   int get oldImagesCount => _oldImages.length;
   int get newImagesCount => _newImages.length;
+  int get imagesCount => oldImagesCount + newImagesCount;
 
   bool get edited =>
       _originalTitle != _title ||
@@ -71,6 +72,8 @@ class EditPostViewModel extends ReactiveViewModel {
 
   bool get completed => step1Completed && step2Completed && step3Completed;
 
+  int get maxImages => 5;
+
   void initState({
     @required BuildContext context,
     @required bool isMounted,
@@ -79,15 +82,16 @@ class EditPostViewModel extends ReactiveViewModel {
     _context = context;
     _isMounted = isMounted;
     _post = post;
+    _tribeColor = '#${tribeColor.value.toRadixString(16)}';
 
     _originalTitle = post.title;
     _originalContent = post.content;
     _originalImages = new List<String>.from(post.images);
+    _photoButtonIsDisabled = _originalImages.length == maxImages;
 
     _title = _originalTitle;
     _content = _originalContent;
     _oldImages = new List<String>.from(_originalImages);
-    _photoButtonIsDisabled = _oldImages.length == 5;
 
     Future.delayed(Duration(milliseconds: 650)).then((val) {
       FocusScope.of(context).requestFocus(titleFocus);
@@ -98,8 +102,8 @@ class EditPostViewModel extends ReactiveViewModel {
     List<Asset> resultList;
 
     try {
-      int remainingImages = 5 - (oldImages.length + newImages.length);
-      String title = remainingImages == 5
+      int remainingImages = maxImages - imagesCount;
+      String title = remainingImages == maxImages
           ? "Add images"
           : "Add $remainingImages more image${remainingImages > 1 ? 's' : ''}";
 
@@ -109,16 +113,17 @@ class EditPostViewModel extends ReactiveViewModel {
         materialOptions: MaterialOptions(
           actionBarTitle: title,
           allViewTitle: title,
-          actionBarColor: "#ed217c", // TO-DO: Change
+          actionBarColor: _tribeColor, // TO-DO: Change
           actionBarTitleColor: "#ffffff", // TO-DO: Change
           lightStatusBar: false,
-          statusBarColor: '#ed217c', // TO-DO: Change
+          useDetailsView: true,
+          statusBarColor: _tribeColor, // TO-DO: Change
           startInAllView: true,
-          selectCircleStrokeColor: "#ed217c", // TO-DO: Change
+          selectCircleStrokeColor: _tribeColor, // TO-DO: Change
           selectionLimitReachedText: "You can't add any more.",
         ),
         cupertinoOptions: CupertinoOptions(
-          selectionFillColor: "#ed217c", // TO-DO: Change
+          selectionFillColor: _tribeColor, // TO-DO: Change
           selectionTextColor: "#ffffff", // TO-DO: Change
           selectionCharacter: "✓",
         ),
@@ -143,17 +148,11 @@ class EditPostViewModel extends ReactiveViewModel {
     if (!_isMounted) return;
 
     if (resultList.length > 0) {
-      _newImages += resultList;
-      _photoButtonIsDisabled = (oldImagesCount + newImagesCount) == 5;
+      _newImages = _newImages + resultList;
+      _photoButtonIsDisabled = imagesCount == maxImages;
     }
-  }
 
-  String titleValidator(String value) {
-    return value.isEmpty ? 'Enter a title' : null;
-  }
-
-  String contentValidator(String value) {
-    return value.isEmpty ? 'Enter some content' : null;
+    notifyListeners();
   }
 
   void onTitleChanged(String value) {
@@ -186,7 +185,8 @@ class EditPostViewModel extends ReactiveViewModel {
 
   void onRemoveImage(int index, bool isNewImage) {
     isNewImage ? _newImages.removeAt(index) : _oldImages.removeAt(index);
-    _photoButtonIsDisabled = (oldImagesCount + newImagesCount) == 5;
+    _photoButtonIsDisabled = imagesCount == maxImages;
+    notifyListeners();
   }
 
   Future onNewImage() async {
@@ -210,13 +210,15 @@ class EditPostViewModel extends ReactiveViewModel {
   }
 
   Future onSavePost() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState.validate() && imagesCount > 0) {
       setBusy(true);
       List<String> imageURLs = [];
 
       for (Asset image in newImages) {
-        String imageURL =
-            await _storageService.uploadPostImage(_post.id, image);
+        String imageURL = await _storageService.uploadPostImage(
+          _post.id,
+          image,
+        );
         imageURLs.add(imageURL);
       }
 

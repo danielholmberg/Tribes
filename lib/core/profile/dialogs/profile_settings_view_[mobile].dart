@@ -34,7 +34,7 @@ class _ProfileSettingsViewMobile extends ViewModelWidget<ProfileSettingsViewMode
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            icon: Icon(FontAwesomeIcons.signOutAlt, color: themeData.primaryColor), 
+            icon: Icon(FontAwesomeIcons.signOutAlt, color: themeData.primaryColor),
             onPressed: () => showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -50,7 +50,7 @@ class _ProfileSettingsViewMobile extends ViewModelWidget<ProfileSettingsViewMode
                   ),
                 ),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text(
                       'No',
                       style: TextStyle(
@@ -62,7 +62,7 @@ class _ProfileSettingsViewMobile extends ViewModelWidget<ProfileSettingsViewMode
                       Navigator.of(context).pop();
                     },
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text(
                       'Yes',
                       style: TextStyle(
@@ -83,7 +83,7 @@ class _ProfileSettingsViewMobile extends ViewModelWidget<ProfileSettingsViewMode
 
     _buildSaveButton() {
       return Visibility(
-        visible: model.edited, 
+        visible: model.edited,
         child: CustomButton(
           height: 60.0,
           width: MediaQuery.of(context).size.width,
@@ -156,7 +156,7 @@ class _ProfileSettingsViewMobile extends ViewModelWidget<ProfileSettingsViewMode
                                     maxLength: Constants.profileUsernameMaxLength,
                                     textInputAction: TextInputAction.done,
                                     decoration: Decorations.profileSettingsInput.copyWith(
-                                      labelText: 'Username', 
+                                      labelText: 'Username',
                                     ),
                                     inputFormatters: model.inputFormatters,
                                     validator: model.usernameValidator,

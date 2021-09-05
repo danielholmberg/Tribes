@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:observable_ish/observable_ish.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:tribes/locator.dart';
@@ -19,8 +18,8 @@ class AuthService with ReactiveServiceMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  RxValue<User> _currentFirebaseUser = RxValue<User>(
-    initial: FirebaseAuth.instance.currentUser,
+  ReactiveValue<User> _currentFirebaseUser = ReactiveValue<User>(
+    FirebaseAuth.instance.currentUser,
   );
   User get currentFirebaseUser => _currentFirebaseUser.value;
 
@@ -225,7 +224,7 @@ class AuthService with ReactiveServiceMixin {
         await _setUserLocation();
       }
 
-      print('User \'${currentFirebaseUser.toString()}\' signed in with Google');
+      print('User with uid \'${currentFirebaseUser.uid}\' signed in with Google');
     } on PlatformException catch (error) {
       print('Error signing in with Google: $error');
 

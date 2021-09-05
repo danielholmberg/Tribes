@@ -99,9 +99,9 @@ class _FullscreenCarouselState extends State<FullscreenCarousel>
               },
             ),
             itemCount: widget.images.length,
-            itemBuilder: (context, index) {
+            itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
               return CustomImage(
-                imageURL: widget.images[index],
+                imageURL: widget.images[itemIndex],
                 color: widget.color,
                 fullscreen: true,
               );

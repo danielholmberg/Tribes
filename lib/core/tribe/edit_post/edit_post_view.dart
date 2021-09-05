@@ -11,8 +11,6 @@ import 'package:stacked/stacked.dart';
 import 'package:tribes/core/tribe/edit_post/edit_post_view_model.dart';
 import 'package:tribes/core/tribe/widgets/custom_image.dart';
 import 'package:tribes/models/post_model.dart';
-import 'package:tribes/services/firebase/database_service.dart';
-import 'package:tribes/services/firebase/storage_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';

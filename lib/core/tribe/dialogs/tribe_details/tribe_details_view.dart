@@ -330,7 +330,7 @@ class TribeDetailsView extends ViewModelWidget<TribeDetailsViewModel> {
                           ),
                         ),
                         actions: <Widget>[
-                          FlatButton(
+                          TextButton(
                             child: Text(
                               'Cancel',
                               style: TextStyle(
@@ -343,7 +343,7 @@ class TribeDetailsView extends ViewModelWidget<TribeDetailsViewModel> {
                                   .pop(); // Dialog: "Please type..."
                             },
                           ),
-                          FlatButton(
+                          TextButton(
                             child: Text(
                               'Delete',
                               style: TextStyle(
@@ -378,7 +378,7 @@ class TribeDetailsView extends ViewModelWidget<TribeDetailsViewModel> {
                         fontSize: Constants.defaultDialogTitleFontSize),
                   ),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       child: Text(
                         'No',
                         style: TextStyle(
@@ -390,7 +390,7 @@ class TribeDetailsView extends ViewModelWidget<TribeDetailsViewModel> {
                         Navigator.of(context).pop();
                       },
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text(
                         'Yes',
                         style: TextStyle(

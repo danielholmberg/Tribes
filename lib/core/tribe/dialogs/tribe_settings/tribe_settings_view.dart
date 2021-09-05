@@ -82,7 +82,7 @@ class TribeSettingsView extends ViewModelWidget<TribeSettingsViewModel> {
                       ),
                     ),
                     actions: <Widget>[
-                      FlatButton(
+                      TextButton(
                         child: Text(
                           'Abort',
                           style: TextStyle(
@@ -92,7 +92,7 @@ class TribeSettingsView extends ViewModelWidget<TribeSettingsViewModel> {
                         ),
                         onPressed: model.back,
                       ),
-                      FlatButton(
+                      TextButton(
                         child: Text(
                           'OK',
                           style: TextStyle(
@@ -276,7 +276,7 @@ class TribeSettingsView extends ViewModelWidget<TribeSettingsViewModel> {
                         ),
                       ),
                       actions: <Widget>[
-                        FlatButton(
+                        TextButton(
                           child: Text(
                             'Cancel',
                             style: TextStyle(
@@ -289,7 +289,7 @@ class TribeSettingsView extends ViewModelWidget<TribeSettingsViewModel> {
                                 .pop(); // Dialog: "Please type..."
                           },
                         ),
-                        FlatButton(
+                        TextButton(
                           child: Text(
                             'Delete',
                             style: TextStyle(

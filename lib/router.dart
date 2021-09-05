@@ -42,11 +42,13 @@ class MyRouter {
       case newTribeRoute:
         return CustomPageTransition(
           type: CustomPageTransitionType.newTribe,
+          duration: Constants.pageTransition300,
           child: NewTribeView(),
         );
       case joinTribeRoute:
         return CustomPageTransition(
           type: CustomPageTransitionType.joinTribe,
+          duration: Constants.pageTransition300,
           child: JoinTribeView(),
         );
       case tribeRoomRoute:
@@ -61,14 +63,14 @@ class MyRouter {
       case newChatRoute:
         return CustomPageTransition(
           type: CustomPageTransitionType.newMessage,
-          duration: Constants.pageTransition600,
+          duration: Constants.pageTransition300,
           child: NewChatView(),
         );
       case chatRoomRoute:
         ChatRoomArguments args = settings.arguments;
         return CustomPageTransition(
           type: CustomPageTransitionType.chatRoom,
-          duration: Constants.pageTransition600,
+          duration: Constants.pageTransition300,
           child: ChatRoomView(
               roomID: args.roomId, members: args.members, reply: true),
         );

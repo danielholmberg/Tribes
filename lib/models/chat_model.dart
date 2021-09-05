@@ -9,9 +9,10 @@ class ChatData {
   });
 
   factory ChatData.fromSnapshot(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return ChatData(
       id: doc.id,
-      members: List.from(doc.data()['members'] ?? []),
+      members: List.from(data['members'] ?? []),
     );
   }
 }

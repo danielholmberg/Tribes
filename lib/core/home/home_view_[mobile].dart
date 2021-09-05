@@ -98,41 +98,43 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
           builder: (context, snapshot) {
             List<Tribe> joinedTribes = snapshot.data;
 
-            return joinedTribes.isEmpty
-                ? _buildEmptyListWidget()
-                : PageView.builder(
-                    reverse: false,
-                    scrollDirection: Axis.horizontal,
-                    controller: model.tribeItemController,
-                    itemCount: joinedTribes.length,
-                    itemBuilder: (context, index) {
-                      Tribe currentTribe = joinedTribes[index];
-                      double padding =
-                          MediaQuery.of(context).size.height * 0.08;
-                      double verticalMargin = index == model.currentPageIndex
-                          ? 0.0
-                          : MediaQuery.of(context).size.height * 0.04;
+            if(joinedTribes == null || joinedTribes.isEmpty) {
+              return _buildEmptyListWidget();
+            }
 
-                      return AnimatedContainer(
-                        duration: Duration(milliseconds: 1000),
-                        curve: Curves.easeOutQuint,
-                        padding: EdgeInsets.only(
-                          bottom: kBottomNavigationBarHeight + padding,
-                          top: 20.0,
-                        ),
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                          vertical: verticalMargin,
-                        ),
-                        child: GestureDetector(
-                          onTap: () => model.showTribeRoom(
-                            joinedTribes[index],
-                          ),
-                          child: TribeItem(tribe: currentTribe),
-                        ),
-                      );
-                    },
-                  );
+            return PageView.builder(
+              reverse: false,
+              scrollDirection: Axis.horizontal,
+              controller: model.tribeItemController,
+              itemCount: joinedTribes.length,
+              itemBuilder: (context, index) {
+                Tribe currentTribe = joinedTribes[index];
+                double padding =
+                    MediaQuery.of(context).size.height * 0.08;
+                double verticalMargin = index == model.currentPageIndex
+                    ? 0.0
+                    : MediaQuery.of(context).size.height * 0.04;
+
+                return AnimatedContainer(
+                  duration: Duration(milliseconds: 1000),
+                  curve: Curves.easeOutQuint,
+                  padding: EdgeInsets.only(
+                    bottom: kBottomNavigationBarHeight + padding,
+                    top: 20.0,
+                  ),
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: verticalMargin,
+                  ),
+                  child: GestureDetector(
+                    onTap: () => model.showTribeRoom(
+                      joinedTribes[index],
+                    ),
+                    child: TribeItem(tribe: currentTribe),
+                  ),
+                );
+              },
+            );
           },
         ),
       );

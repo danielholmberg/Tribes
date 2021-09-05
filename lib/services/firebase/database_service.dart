@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:observable_ish/observable_ish.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tribes/locator.dart';
 import 'package:tribes/models/chat_message_model.dart';
@@ -35,10 +34,10 @@ class DatabaseService with ReactiveServiceMixin {
       FirebaseFirestore.instance.collection('chats');
 
   // Firebase Cloud Messaging
-  final FirebaseMessaging fcm = FirebaseMessaging();
+  final FirebaseMessaging fcm = FirebaseMessaging.instance;
 
   // Current User Data
-  RxValue<MyUser> _currentUserData = RxValue<MyUser>(initial: null);
+  ReactiveValue<MyUser> _currentUserData = ReactiveValue<MyUser>(null);
   MyUser get currentUserData => _currentUserData.value;
 
   StreamSubscription _userStreamSub;
@@ -174,7 +173,7 @@ class DatabaseService with ReactiveServiceMixin {
 
   Stream<List<MyUser>> membersData(String tribeID) {
     return tribesRoot.doc(tribeID).snapshots().map((tribeData) => tribeData
-        .data()['members']
+        .get('members')
         .map((userID) => usersRoot
             .doc(userID)
             .snapshots()

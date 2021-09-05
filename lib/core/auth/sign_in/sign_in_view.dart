@@ -9,6 +9,7 @@ import 'package:tribes/core/auth/auth_view_model.dart';
 import 'package:tribes/core/auth/sign_in/sign_in_view_model.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/decorations.dart' as Decorations;
+import 'package:tribes/shared/extensions.dart';
 import 'package:tribes/shared/widgets/custom_awesome_icon.dart';
 import 'package:tribes/shared/widgets/custom_raised_button.dart';
 import 'package:tribes/shared/widgets/custom_scroll_behavior.dart';

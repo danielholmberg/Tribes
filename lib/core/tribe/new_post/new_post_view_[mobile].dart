@@ -33,20 +33,22 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
         alignment: Alignment.center,
         children: <Widget>[
           CustomAwesomeIcon(
-            icon: FontAwesomeIcons.camera,
+            icon: FontAwesomeIcons.image,
             size: 30,
-            color: model.tribeColor
-                .withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
+            color: model.tribeColor.withOpacity(
+              model.photoButtonIsDisabled ? 0.4 : 1.0,
+            ),
           ),
           Positioned(
-            left: 30,
-            top: 30,
+            right: 22,
+            bottom: 25,
             child: Container(
               child: CustomAwesomeIcon(
                 icon: FontAwesomeIcons.plus,
                 size: 14,
-                color: model.tribeColor
-                    .withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
+                color: model.tribeColor.withOpacity(
+                  model.photoButtonIsDisabled ? 0.4 : 1.0,
+                ),
                 strokeWidth: 2.0,
               ),
             ),
@@ -57,43 +59,46 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
 
     _buildGridView() {
       return GridView.count(
-          crossAxisCount: 3,
-          padding: Constants.imageGridViewPadding,
-          shrinkWrap: true,
-          crossAxisSpacing: Constants.imageGridViewCrossAxisSpacing,
-          mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
-          children: <Widget>[
-                GestureDetector(
-                  onTap: model.photoButtonIsDisabled
-                      ? null
-                      : () async => await model.loadAssets(),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(
-                        width: 2.0,
-                        color: model.tribeColor.withOpacity(
-                            model.photoButtonIsDisabled ? 0.4 : 1.0),
-                      ),
+        crossAxisCount: 3,
+        padding: Constants.imageGridViewPadding,
+        shrinkWrap: true,
+        crossAxisSpacing: Constants.imageGridViewCrossAxisSpacing,
+        mainAxisSpacing: Constants.imageGridViewMainAxisSpacing,
+        children: <Widget>[
+              GestureDetector(
+                onTap: model.photoButtonIsDisabled
+                    ? null
+                    : () async => await model.loadAssets(),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(
+                      width: 2.0,
+                      color: model.tribeColor
+                          .withOpacity(model.photoButtonIsDisabled ? 0.4 : 1.0),
                     ),
-                    child: _buildNewImageIcon(),
                   ),
+                  child: _buildNewImageIcon(),
                 ),
-              ] +
-              List.generate(model.imagesCount, (index) {
+              ),
+            ] +
+            List.generate(
+              model.imagesCount,
+              (index) {
                 int _imageNumber = index + 1;
                 Asset asset = model.images[index];
 
                 return Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black54,
-                          blurRadius: 2,
-                          offset: Offset(0, 0),
-                        ),
-                      ]),
+                    borderRadius: BorderRadius.circular(8.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 2,
+                        offset: Offset(0, 0),
+                      ),
+                    ],
+                  ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: Stack(
@@ -104,31 +109,15 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
                           height: 300,
                         ),
                         Positioned(
-                          top: 4,
-                          left: 4,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 1.0),
-                            decoration: BoxDecoration(
-                              color: Colors.black38,
-                              borderRadius: BorderRadius.circular(1000),
-                            ),
-                            child: GestureDetector(
-                              child: CustomAwesomeIcon(
-                                  icon: FontAwesomeIcons.timesCircle),
-                              onTap: () => model.onRemoveImage(index),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 4,
-                          right: 4,
+                          top: 6,
+                          left: 6,
                           child: Visibility(
                             visible: model.imagesCount > 1,
                             child: Container(
-                              height: 24,
-                              width: 24,
+                              height: 20,
+                              width: 20,
                               decoration: BoxDecoration(
-                                color: model.tribeColor.withOpacity(0.6),
+                                color: model.tribeColor,
                                 borderRadius: BorderRadius.circular(1000),
                               ),
                               child: Center(
@@ -145,11 +134,30 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
                             ),
                           ),
                         ),
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 1.0),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(1000),
+                            ),
+                            child: GestureDetector(
+                              child: CustomAwesomeIcon(
+                                icon: FontAwesomeIcons.timesCircle,
+                              ),
+                              onTap: () => model.onRemoveImage(index),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 );
-              }));
+              },
+            ),
+      );
     }
 
     _buildPublishButton() {
@@ -262,8 +270,9 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
                                           Expanded(
                                             child: TextFormField(
                                               focusNode: model.titleFocus,
-                                              cursorRadius:
-                                                  Radius.circular(1000),
+                                              cursorRadius: Radius.circular(
+                                                1000,
+                                              ),
                                               cursorWidth: 4,
                                               textCapitalization:
                                                   TextCapitalization.sentences,
@@ -331,13 +340,15 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 12.0, horizontal: 16.0),
+                                      vertical: 12.0,
+                                      horizontal: 16.0,
+                                    ),
                                     child: _buildStepIndicator(
                                       3,
                                       completed: model.step3Completed,
                                     ),
                                   ),
-                                  Expanded(child: _buildGridView())
+                                  Expanded(child: _buildGridView()),
                                 ],
                               ),
                             ],
@@ -349,7 +360,7 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
                         left: 0.0,
                         right: 0.0,
                         child: _buildPublishButton(),
-                      )
+                      ),
                     ],
                   ),
                 ),

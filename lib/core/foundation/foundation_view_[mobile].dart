@@ -25,7 +25,7 @@ class _FoundationViewMobile extends ViewModelWidget<FoundationViewModel> {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text(
                 'OK',
                 style: TextStyle(

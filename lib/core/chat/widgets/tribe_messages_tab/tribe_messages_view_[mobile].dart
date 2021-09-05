@@ -3,17 +3,17 @@ part of tribe_messages_view;
 class _TribeMessagesViewMobile extends StatelessWidget {
   final TribeMessagesViewModel viewModel;
   _TribeMessagesViewMobile(this.viewModel);
-  
+
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    
+
     _buildTribeTile(Tribe currentTribe) {
       return GestureDetector(
-        onTap: () => Navigator.push(context, 
+        onTap: () => Navigator.push(context,
           CustomPageTransition(
-            type: CustomPageTransitionType.chatRoom, 
-            duration: Constants.pageTransition600, 
+            type: CustomPageTransitionType.chatRoom,
+            duration: Constants.pageTransition300,
             child: ChatRoomView(roomID: currentTribe.id, currentTribe: currentTribe),
           )
         ),
@@ -87,14 +87,14 @@ class _TribeMessagesViewMobile extends StatelessWidget {
         ),
       );
     }
-    
+
     return !viewModel.dataReady ? Loading()
     : ClipRRect(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20.0),
         topRight: Radius.circular(20.0),
       ),
-      child: viewModel.hasError ? Center(child: Text('Unable to retrieve Tribes')) 
+      child: viewModel.hasError ? Center(child: Text('Unable to retrieve Tribes'))
       : ScrollConfiguration(
         behavior: CustomScrollBehavior(),
           child: viewModel.joinedTribes.isNotEmpty ? GridView.builder(
@@ -108,7 +108,7 @@ class _TribeMessagesViewMobile extends StatelessWidget {
               Tribe currentTribe = viewModel.joinedTribes[index];
               return _buildTribeTile(currentTribe);
             },
-          ) 
+          )
         : Center(
           child: Text('No joined Tribes',
             style: TextStyle(

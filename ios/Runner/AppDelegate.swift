@@ -1,5 +1,4 @@
 import UIKit
-import Flutter
 import GoogleMaps
 import Firebase
 
@@ -11,9 +10,7 @@ import Firebase
   ) -> Bool {
     // Google Maps
     GMSServices.provideAPIKey("AIzaSyA8P89rqIw9QbEP4Fdc1t_9rZyPKtrR-5U")
-    // Firebase
-    FirebaseApp.configure()
-    
+
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

@@ -8,7 +8,7 @@ class DiscardChangesDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
-    
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(Constants.dialogCornerRadius))),
       backgroundColor: themeData.backgroundColor,
@@ -20,8 +20,8 @@ class DiscardChangesDialog extends StatelessWidget {
         ),
       ),
       actions: <Widget>[
-        FlatButton(
-          child: Text('No', 
+        TextButton(
+          child: Text('No',
             style: TextStyle(
               color: color,
               fontFamily: 'TribesRounded',
@@ -31,7 +31,7 @@ class DiscardChangesDialog extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
-        FlatButton(
+        TextButton(
           child: Text('Yes',
             style: TextStyle(
               color: color,

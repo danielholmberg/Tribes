@@ -43,15 +43,21 @@ class ChatMessages extends StatelessWidget {
 
     _scrollToNewMessageIfAuthor(QuerySnapshot snapshot) {
       List<DocumentChange> listChanges = snapshot.docChanges;
-      if (listChanges.isNotEmpty &&
-          listChanges.first.type == DocumentChangeType.added &&
-          snapshot.docs.first.data()['author'] == currentUser.id) {
-        if (controller.hasClients)
-          controller.animateTo(
-            0,
-            duration: Duration(milliseconds: 1000),
-            curve: Curves.easeIn,
-          );
+
+      try {
+        Map<String, dynamic> data = snapshot.docs.first.data();
+        if (listChanges.isNotEmpty &&
+            listChanges.first.type == DocumentChangeType.added &&
+            data['author'] == currentUser.id) {
+          if (controller.hasClients)
+            controller.animateTo(
+              0,
+              duration: Duration(milliseconds: 1000),
+              curve: Curves.easeIn,
+            );
+        }
+      } on StateError catch(error) {
+        print('Failed on scrolling to new message with error: $error');
       }
     }
 

@@ -56,7 +56,7 @@ class _ChatViewMobile extends ViewModelWidget<ChatViewModel> {
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.BOTTOM,
               ),
-            ),
+            ).onlyDevelopment(true),
             _buildCategorySelector(),
             IconButton(
               icon: Icon(FontAwesomeIcons.commentMedical),

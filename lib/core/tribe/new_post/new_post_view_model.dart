@@ -47,20 +47,23 @@ class NewPostViewModel extends ReactiveViewModel {
   int get imagesCount => _images.length;
 
   bool get edited =>
-      _title.isNotEmpty || _content.isNotEmpty || _images.length > 0;
+      _title.isNotEmpty || _content.isNotEmpty || imagesCount > 0;
   bool get step1Completed => _title.trim().isNotEmpty;
   bool get step2Completed => _content.trim().isNotEmpty;
-  bool get step3Completed => _images.length > 0;
+  bool get step3Completed => imagesCount > 0;
   bool get completedAllSteps =>
       step1Completed && step2Completed && step3Completed;
+
+  int get maxImages => 5;
 
   void initState({
     BuildContext context,
     Tribe tribe,
     bool isMounted,
   }) {
+    _context = context;
     _tribe = tribe;
-    _tribeColor = tribe.color.value.toRadixString(16);
+    _tribeColor = '#${_tribe.color.value.toRadixString(16)}';
     _isMounted = isMounted;
   }
 
@@ -68,8 +71,8 @@ class NewPostViewModel extends ReactiveViewModel {
     List<Asset> resultList;
 
     try {
-      int remainingImages = 5 - _images.length;
-      String title = remainingImages == 5
+      int remainingImages = maxImages - imagesCount;
+      String title = remainingImages == maxImages
           ? "Add images"
           : "Add $remainingImages more image${remainingImages > 1 ? 's' : ''}";
 
@@ -79,16 +82,17 @@ class NewPostViewModel extends ReactiveViewModel {
         materialOptions: MaterialOptions(
           actionBarTitle: title,
           allViewTitle: title,
-          actionBarColor: "#ed217c", // TO-DO: Change
+          actionBarColor: _tribeColor, // TO-DO: Change
           actionBarTitleColor: "#ffffff", // TO-DO: Change
           lightStatusBar: false,
-          statusBarColor: '#ed217c', // TO-DO: Change
+          useDetailsView: true,
+          statusBarColor: _tribeColor, // TO-DO: Change
           startInAllView: true,
-          selectCircleStrokeColor: "#ed217c", // TO-DO: Change
+          selectCircleStrokeColor: _tribeColor, // TO-DO: Change
           selectionLimitReachedText: "You can't add any more.",
         ),
         cupertinoOptions: CupertinoOptions(
-          selectionFillColor: "#ed217c", // TO-DO: Change
+          selectionFillColor: _tribeColor, // TO-DO: Change
           selectionTextColor: "#ffffff", // TO-DO: Change
           selectionCharacter: "✓",
         ),
@@ -114,7 +118,7 @@ class NewPostViewModel extends ReactiveViewModel {
 
     if (resultList.length > 0) {
       _images = _images + resultList;
-      _photoButtonIsDisabled = _images.length == 5;
+      _photoButtonIsDisabled = imagesCount == maxImages;
     }
 
     notifyListeners();
@@ -149,7 +153,7 @@ class NewPostViewModel extends ReactiveViewModel {
 
   void onRemoveImage(int index) {
     _images.removeAt(index);
-    _photoButtonIsDisabled = _images.length == 5;
+    _photoButtonIsDisabled = imagesCount == maxImages;
     notifyListeners();
   }
 
@@ -162,7 +166,10 @@ class NewPostViewModel extends ReactiveViewModel {
       String postID = _databaseService.newPostId;
 
       for (Asset image in _images) {
-        String imageURL = await _storageService.uploadPostImage(postID, image);
+        String imageURL = await _storageService.uploadPostImage(
+          postID,
+          image,
+        );
         imageURLs.add(imageURL);
       }
 

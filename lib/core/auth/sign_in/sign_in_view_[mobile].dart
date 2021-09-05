@@ -67,7 +67,7 @@ class _SignInViewMobile extends ViewModelWidget<SignInViewModel> {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                ),
+                ).onlyDevelopment(false),
                 GestureDetector(
                   onTap: () => parentModel.showRegisterView(),
                   child: Text(

@@ -20,57 +20,66 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Firebase
-  firebase_core: ^0.5.2+1
-  firebase_auth: ^0.18.1+2
-  cloud_firestore: ^0.14.3
-  firestore_ui: ^1.12.0
-  firebase_storage: ^5.0.1
-  firebase_messaging: ^7.0.3
-  cloud_functions: ^0.7.0+1
+  # Core
+  intl: ^0.17.0 # latest
+  provider: ^5.0.0 # latest
+  get_it: ^7.2.0 # latest
+  responsive_builder: ^0.4.1 # latest
+  adaptive_theme: ^2.2.0 # latest
+  fluttertoast: ^8.0.8 # latest
+  flutter_colorpicker: ^0.5.0 # latest
+  auto_size_text: ^2.1.0 # latest
 
-  google_sign_in: ^4.5.6
-  google_maps_flutter: ^1.0.6
-  
-  geolocator: ^6.1.7
-  geocoder: ^0.2.1
+  # Firebase
+  firebase_core: ^1.4.0 # latest
+  firebase_auth: ^3.0.1 # latest
+  cloud_firestore: ^2.4.0 # latest
+  cloud_functions: ^3.0.0 # latest
+  firebase_storage: ^10.0.1 # latest
+  firebase_messaging: ^10.0.4 # latest
+  firestore_ui: ^1.20.0 # latest
+
+  # Google Auth
+  google_sign_in: ^5.0.5 # latest
+
+  # Google Maps
+  google_maps_flutter: ^2.0.6 # latest
+
+  geolocator: ^7.4.0 # latest
+  geocoder: ^0.2.1 # latest
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.1+1
-  flutter_launcher_icons: ^0.8.1 
-  font_awesome_flutter: ^8.10.0
+  cupertino_icons: ^1.0.3 # latest
+  flutter_launcher_icons: ^0.9.1 # latest
+  font_awesome_flutter: ^9.1.0 # latest
 
-  provider: ^4.3.2+2
-  get_it: ^5.0.1
-  stacked: ^1.7.6
-  stacked_services: ^0.5.4+5
-  stacked_hooks: ^0.1.3+1
-  flutter_hooks: ^0.14.1
-  observable_ish: ^2.1.4
+  # Stacked
+  stacked: ^2.2.3 # latest
+  stacked_services: ^0.8.13 # latest
+  #stacked_services: ^0.5.4+5
+  stacked_hooks: ^0.2.1 # latest
+  flutter_hooks: ^0.17.0 # latest
 
-  responsive_builder: ^0.3.0
-  adaptive_theme: ^1.1.0
-  flutter_spinkit: ^4.1.2+1
-  fluttertoast: ^7.1.3
-  flutter_colorpicker: ^0.3.4
-  auto_size_text: ^2.1.0
-  image_picker: ^0.6.7+14
-  multi_image_picker: ^4.7.14
-  carousel_slider: ^2.3.1
-  cached_network_image: ^2.3.3
-  intl: ^0.16.1
-  image_cropper: ^1.3.1
-  shimmer: ^1.1.2
+  # Images
+  image_picker: ^0.8.2 # latest
+  multi_image_picker: ^4.8.1 # latest
+  carousel_slider: ^4.0.0 # latest
+  cached_network_image: ^3.1.0 # latest
+  image_cropper: ^1.4.1 # latest
+
+  # Loading
+  flutter_spinkit: ^5.0.0 # latest
+  shimmer: ^2.0.0 # latest
 
 dev_dependencies:
   test: ^1.15.7
-  flutter_test:
-    sdk: flutter
-  flutter_driver:
-    sdk: flutter
-  integration_test: ^1.0.1 # Depends on flutter_test and flutter_driver
   mockito: ^4.1.3
+
+dependency_overrides:
+  # Fix to dependencies conflict with firebase_ui 1.20.0
+  cloud_firestore: ^2.4.0
+  cloud_firestore_platform_interface: ^5.3.0
 
 flutter_icons:
   image_path: "assets/launcher/icon-512.png"

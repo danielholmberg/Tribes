@@ -47,31 +47,30 @@ class FoundationViewModel extends ReactiveViewModel {
   List<TextInputFormatter> get inputFormatters =>
       [new FilteringTextInputFormatter.deny(new RegExp('[\\ ]'))];
 
-  void initState({@required TickerProvider vsync}) {
+  Future initState({@required TickerProvider vsync}) async {
     _tabController = TabController(length: _tabList.length, vsync: vsync);
     _tabController.animateTo(0);
     setCurrentTab(0);
 
-    _initFCM();
+    await _initFCM();
   }
 
-  void _initFCM() {
+  Future _initFCM() async {
     if (Platform.isIOS) {
-      _iosSubscription =
-          _databaseService.fcm.onIosSettingsRegistered.listen((data) {
-        _databaseService.saveFCMToken();
-      });
+      // _iosSubscription = _databaseService.fcm.onIosSettingsRegistered((data) {
+      //   _databaseService.saveFCMToken();
+      // });
 
-      _databaseService.fcm
-          .requestNotificationPermissions(IosNotificationSettings());
+      NotificationSettings settings = await _databaseService.fcm.requestPermission();
+      print('iOS FCM permission status: ${settings.authorizationStatus}');
     } else {
       _databaseService.saveFCMToken();
     }
 
-    _databaseService.fcm.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print('onMessage: ${message.toString()}');
-        var messageData = message['data'];
+    // Called when an incoming FCM payload is received whilst the Flutter instance is in the foreground.
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('onMessage: ${message.toString()}');
+        var messageData = message.data;
         var routeName = messageData['routeName'];
         var tab = messageData['tab'];
         var senderID = messageData['senderID'];
@@ -83,25 +82,12 @@ class FoundationViewModel extends ReactiveViewModel {
             senderID: senderID,
           )); */
         }
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print('onLaunch: ${message.toString()}');
-        /* var messageData = message['data'];
-        var routeName = messageData['routeName'];
-        var tab = messageData['tab'];
-        var senderID = messageData['senderID'];
-        
-        if(routeName == '/home/chats') {
-          await locator<NavigationService>().navigateTo(ChatView.routeName, arguments: NotificationData(
-            routeName: routeName,
-            tab: tab,
-            senderID: senderID,
-          ));
-        } */
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print('onResume: ${message.toString()}');
-        var messageData = message['data'];
+    });
+
+    // Called when a user presses a notification displayed via FCM.
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('onMessageOpenedApp: ${message.toString()}');
+        var messageData = message.data;
         var routeName = messageData['routeName'];
         var tab = messageData['tab'];
         var senderID = messageData['senderID'];
@@ -113,8 +99,13 @@ class FoundationViewModel extends ReactiveViewModel {
             senderID: senderID,
           )); */
         }
-      },
-    );
+    });
+
+    // Sets a background message handler to trigger when the app is in the background or terminated.
+    FirebaseMessaging.onBackgroundMessage((RemoteMessage message) {
+      print('onBackgroundMessage. ${message.toString()}');
+      return;
+    });
 
     print('FCM configured!');
   }

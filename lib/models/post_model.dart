@@ -27,9 +27,11 @@ class Post {
       this.updated});
 
   factory Post.fromSnapshot(DocumentSnapshot doc) {
-    var created = doc.data()['created'];
-    var updated = doc.data()['updated'];
-    
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+    var created = data['created'];
+    var updated = data['updated'];
+
     // Convert int-timestamp values
     if(created.runtimeType == int) {
       created = Timestamp.fromMillisecondsSinceEpoch(created);
@@ -40,14 +42,14 @@ class Post {
 
     return Post(
       id: doc.id,
-      author: doc.data()['author'] ?? '',
-      title: doc.data()['title'] ?? '',
-      content: doc.data()['content'] ?? '',
-      tribeID: doc.data()['tribeID'] ?? '',
-      images: List.from(doc.data()['images'] ?? []),
-      lat: doc.data()['lat'] ?? 0, // value 0 is used for fail-safe check for a location
-      lng: doc.data()['lng'] ?? 0, // value 0 is used for fail-safe check for a location
-      likes: doc.data()['likes'] ?? 0,
+      author: data['author'] ?? '',
+      title: data['title'] ?? '',
+      content: data['content'] ?? '',
+      tribeID: data['tribeID'] ?? '',
+      images: List.from(data['images'] ?? []),
+      lat: data['lat'] ?? 0, // value 0 is used for fail-safe check for a location
+      lng: data['lng'] ?? 0, // value 0 is used for fail-safe check for a location
+      likes: data['likes'] ?? 0,
       created: created,
       updated: updated,
     );

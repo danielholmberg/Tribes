@@ -137,7 +137,7 @@ class ProfileSettingsViewModel extends ReactiveViewModel {
           ),
         ),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             child: Text(
               'OK',
               style: TextStyle(

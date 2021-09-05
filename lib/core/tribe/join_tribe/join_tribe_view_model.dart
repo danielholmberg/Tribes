@@ -93,12 +93,12 @@ class JoinTribeViewModel extends ReactiveViewModel {
 
   void setTribesList(List<Tribe> tribesList) {
     _tribesList = tribesList;
-    notifyListeners();
+    // notifyListeners();
   }
 
   void setSecretTribesList(List<Tribe> secretTribesList) {
     _secretTribesList = secretTribesList;
-    notifyListeners();
+    // notifyListeners();
   }
 
   Tribe getTribeFromSearchList(int index) => _searchResult[index];

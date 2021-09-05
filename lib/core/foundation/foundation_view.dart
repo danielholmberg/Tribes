@@ -27,7 +27,7 @@ class _FoundationViewState extends State<FoundationView> with SingleTickerProvid
   Widget build(BuildContext context) {
     return ViewModelBuilder<FoundationViewModel>.reactive(
       viewModelBuilder: () => FoundationViewModel(),
-      onModelReady: (viewModel) => viewModel.initState(vsync: this),
+      onModelReady: (viewModel) async => await viewModel.initState(vsync: this),
       builder: (context, viewModel, child) => ScreenTypeLayout.builder(
         mobile: (BuildContext context) => _FoundationViewMobile(),
       ),

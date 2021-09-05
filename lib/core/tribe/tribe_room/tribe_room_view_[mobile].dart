@@ -7,29 +7,31 @@ class _TribeRoomViewMobile extends ViewModelWidget<TribeRoomViewModel> {
 
     _showModalBottomSheet({Widget child}) {
       showModalBottomSheet(
-          context: context,
-          isDismissible: false,
-          isScrollControlled: true,
-          builder: (buildContext) {
-            return Container(
-              height: model.calculatePostsHeight,
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-                child: child,
+        context: context,
+        isDismissible: false,
+        isScrollControlled: true,
+        enableDrag: false,
+        builder: (buildContext) {
+          return Container(
+            height: model.calculatePostsHeight,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
               ),
-            );
-          },
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+              child: child,
             ),
+          );
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
           ),
-          backgroundColor: Colors.transparent,
-          elevation: 8.0);
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 8.0,
+      );
     }
 
     _buildAppBar(Tribe currentTribe) {
@@ -122,21 +124,21 @@ class _TribeRoomViewMobile extends ViewModelWidget<TribeRoomViewModel> {
         stream: model.tribeStream,
         builder: (context, snapshot) {
           final Tribe currentTribe = snapshot.hasData ? snapshot.data : null;
+          final tribeColor = currentTribe != null
+              ? currentTribe.color
+              : themeData.primaryColor;
 
           return Container(
-            color: currentTribe.color ?? themeData.primaryColor,
+            color: tribeColor,
             child: SafeArea(
               bottom: false,
               child: Scaffold(
                 resizeToAvoidBottomInset: false,
-                backgroundColor: currentTribe != null
-                    ? currentTribe.color
-                    : themeData.primaryColor,
+                backgroundColor: tribeColor,
                 body: currentTribe == null
                     ? Loading()
                     : Container(
-                        color: currentTribe.color.withOpacity(0.2) ??
-                            themeData.backgroundColor,
+                        color: tribeColor.withOpacity(0.2),
                         child: Column(
                           children: <Widget>[
                             _buildAppBar(currentTribe),
@@ -170,13 +172,14 @@ class _TribeRoomViewMobile extends ViewModelWidget<TribeRoomViewModel> {
                                         return _showModalBottomSheet(
                                           child: EditPostView(
                                             post: post,
-                                            tribeColor: currentTribe.color,
+                                            tribeColor: tribeColor,
                                           ),
                                         );
                                       },
                                       onEmptyTextPress: () {
                                         return _showModalBottomSheet(
-                                          child: NewPostView(tribe: currentTribe),
+                                          child:
+                                              NewPostView(tribe: currentTribe),
                                         );
                                       },
                                     ),

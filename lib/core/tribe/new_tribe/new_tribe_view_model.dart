@@ -107,7 +107,7 @@ class NewTribeViewModel extends ReactiveViewModel {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text(
                 'Abort',
                 style: TextStyle(
@@ -117,7 +117,7 @@ class NewTribeViewModel extends ReactiveViewModel {
               ),
               onPressed: _navigationService.back,
             ),
-            FlatButton(
+            TextButton(
               child: Text(
                 'OK',
                 style: TextStyle(

@@ -20,8 +20,9 @@ class StorageService {
   final Reference tribeImagesRoot =
       FirebaseStorage.instance.ref().child('tribeImages');
 
-  Future<Reference> getReferenceFromUrl(String fullUrl) async {
-    final Reference ref = await FirebaseStorage.instance.getReferenceFromUrl(fullUrl);
+  Reference getReferenceFromUrl(String fullUrl) {
+    print('getRefFromUrl: $fullUrl');
+    final Reference ref = FirebaseStorage.instance.ref(fullUrl);
     if (ref != null) {
       return ref;
     } else {
@@ -29,8 +30,8 @@ class StorageService {
     }
   }
 
-  Future deleteOldFile(String oldImageURL) async {
-    Reference imageRef = await getReferenceFromUrl(oldImageURL);
+  Future deleteOldFile(String oldImageURL) {
+    Reference imageRef = getReferenceFromUrl(oldImageURL);
     if(imageRef != null) {
       return imageRef.delete();
     } else {
@@ -39,12 +40,12 @@ class StorageService {
     }
   }
 
-  Future<String> uploadUserImage(File newImageFile, String oldImageURL) async {    
-    Reference storageRef = userImagesRoot.child('${Path.basename(newImageFile.path)}');    
-    
-    await storageRef.putFile(newImageFile);    
+  Future<String> uploadUserImage(File newImageFile, String oldImageURL) async {
+    Reference storageRef = userImagesRoot.child('${Path.basename(newImageFile.path)}');
 
-    print('File Uploaded');    
+    await storageRef.putFile(newImageFile);
+
+    print('File Uploaded');
 
     String picURL = await storageRef.getDownloadURL();
     if(oldImageURL != null) {
@@ -63,7 +64,7 @@ class StorageService {
     ByteData byteData = await asset.getByteData();
     List<int> imageData = byteData.buffer.asUint8List();
     Reference ref = StorageService().postImagesRoot.child(postID).child('${asset.name}');
-    
+
     await ref.putData(imageData);
 
     return await ref.getDownloadURL();
@@ -80,9 +81,7 @@ class StorageService {
   }
 
   Future deletePostImages(String postID) {
-    return CloudFunctions.instance.getHttpsCallable(
-      functionName: 'deletePostImages'
-    ).call({
+    return FirebaseFunctions.instance.httpsCallable('deletePostImages').call({
       'postID': postID,
     });
   }

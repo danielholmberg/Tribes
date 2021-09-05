@@ -17,30 +17,32 @@ class MyUser {
   final List<String> likedPosts;
 
   MyUser({
-    @required this.id, 
-    this.name, 
-    this.username, 
+    @required this.id,
+    this.name,
+    this.username,
     this.email,
-    this.info, 
+    this.info,
     this.picURL,
-    this.lat, 
-    this.lng, 
+    this.lat,
+    this.lng,
     this.createdPosts,
     this.likedPosts
   });
 
   factory MyUser.fromSnapshot(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
     return MyUser(
       id: doc.id,
-      name: doc.data()['name'] ?? '',
-      username: doc.data()['username'] ?? '',
-      email: doc.data()['email'] ?? '',
-      info: doc.data()['info'] ?? '',
-      picURL: doc.data()['picURL'] ?? Constants.placeholderPicURL,
-      lat: doc.data()['lat'] ?? Constants.initialLat,
-      lng: doc.data()['lng'] ?? Constants.initialLng,
-      createdPosts: List.from(doc.data()['createdPosts'] ?? []),
-      likedPosts: List.from(doc.data()['likedPosts'] ?? []),
+      name: data['name'] ?? '',
+      username: data['username'] ?? '',
+      email: data['email'] ?? '',
+      info: data['info'] ?? '',
+      picURL: data['picURL'] ?? Constants.placeholderPicURL,
+      lat: data['lat'] ?? Constants.initialLat,
+      lng: data['lng'] ?? Constants.initialLng,
+      createdPosts: List.from(data['createdPosts'] ?? []),
+      likedPosts: List.from(data['likedPosts'] ?? []),
     );
   }
 
@@ -62,9 +64,11 @@ class MyUserLocationMarker {
   MyUserLocationMarker({this.lat, this.lng});
 
   factory MyUserLocationMarker.fromSnapshot(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
     return MyUserLocationMarker(
-      lat: doc.data()['lat'],
-      lng: doc.data()['lng'],
+      lat: data['lat'],
+      lng: data['lng'],
     );
   }
 

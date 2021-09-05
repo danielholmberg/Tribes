@@ -91,9 +91,9 @@ class _ImageCarouselState extends State<ImageCarousel>
               },
             ),
             itemCount: widget.images.length,
-            itemBuilder: (context, index) {
+            itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
               return CustomImage(
-                imageURL: widget.images[index],
+                imageURL: widget.images[itemIndex],
                 color: widget.color,
                 small: widget.small,
                 fullscreen: false,

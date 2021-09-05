@@ -30,9 +30,11 @@ class Tribe {
       this.updated});
 
   factory Tribe.fromSnapshot(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
     String fallbackColor = Constants.primaryColor.value.toRadixString(16);
-    var created = doc.data()['created'];
-    var updated = doc.data()['updated'];
+    var created = data['created'];
+    var updated = data['updated'];
 
     // Convert int-timestamp values
     if (created.runtimeType == int) {
@@ -44,14 +46,14 @@ class Tribe {
 
     return Tribe(
       id: doc.id,
-      name: doc.data()['name'] ?? '',
-      desc: doc.data()['desc'] ?? '',
-      members: List.from(doc.data()['members'] ?? []),
-      founder: doc.data()['founder'] ?? '',
-      password: doc.data()['password'] ?? '',
-      color: Color(int.parse('0x${doc.data()['color'] ?? fallbackColor}')),
-      imageURL: doc.data()['imageURL'] ?? 'tribe-placeholder.jpg',
-      secret: doc.data()['secret'] ?? false,
+      name: data['name'] ?? '',
+      desc: data['desc'] ?? '',
+      members: List.from(data['members'] ?? []),
+      founder: data['founder'] ?? '',
+      password: data['password'] ?? '',
+      color: Color(int.parse('0x${data['color'] ?? fallbackColor}')),
+      imageURL: data['imageURL'] ?? 'tribe-placeholder.jpg',
+      secret: data['secret'] ?? false,
       created: created,
       updated: updated,
     );
