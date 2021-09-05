@@ -47,23 +47,9 @@ class _ChatViewMobile extends ViewModelWidget<ChatViewModel> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            IconButton(
-              icon: Icon(FontAwesomeIcons.search),
-              iconSize: Constants.defaultIconSize,
-              color: Colors.white,
-              onPressed: () => Fluttertoast.showToast(
-                msg: 'Coming soon!',
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-              ),
-            ).onlyDevelopment(true),
+            model.currentTabAppBarLeftButton,
             _buildCategorySelector(),
-            IconButton(
-              icon: Icon(FontAwesomeIcons.commentMedical),
-              iconSize: Constants.defaultIconSize,
-              color: Colors.white,
-              onPressed: model.onStartNewChat,
-            ),
+            model.currentTabAppBarRightButton
           ],
         ),
       );

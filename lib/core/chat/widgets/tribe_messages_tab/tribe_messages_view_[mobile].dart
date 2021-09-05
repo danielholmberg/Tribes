@@ -1,8 +1,8 @@
 part of tribe_messages_view;
 
 class _TribeMessagesViewMobile extends StatelessWidget {
-  final TribeMessagesViewModel viewModel;
-  _TribeMessagesViewMobile(this.viewModel);
+  final TribeMessagesViewModel model;
+  _TribeMessagesViewMobile(this.model);
 
   @override
   Widget build(BuildContext context) {
@@ -88,36 +88,81 @@ class _TribeMessagesViewMobile extends StatelessWidget {
       );
     }
 
-    return !viewModel.dataReady ? Loading()
+    _buildEmptyListWidget() {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Nothing here yet...',
+              style: TextStyle(
+                color: Colors.blueGrey.withOpacity(0.8),
+                fontSize: 16.0,
+                fontFamily: 'TribesRounded',
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Icon(
+                    FontAwesomeIcons.search,
+                    color: Colors.blueGrey.withOpacity(0.8),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: model.showJoinTribePage,
+                  child: Text(
+                    'Join a Tribe',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.blueGrey.withOpacity(0.8),
+                      fontSize: 16.0,
+                      fontFamily: 'TribesRounded',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              ' to start chatting right now!',
+              style: TextStyle(
+                color: Colors.blueGrey.withOpacity(0.8),
+                fontSize: 16.0,
+                fontFamily: 'TribesRounded',
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return !model.dataReady ? Loading()
     : ClipRRect(
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20.0),
         topRight: Radius.circular(20.0),
       ),
-      child: viewModel.hasError ? Center(child: Text('Unable to retrieve Tribes'))
+      child: model.hasError ? Center(child: Text('Unable to retrieve Tribes'))
       : ScrollConfiguration(
         behavior: CustomScrollBehavior(),
-          child: viewModel.joinedTribes.isNotEmpty ? GridView.builder(
+          child: model.joinedTribes.isNotEmpty ? GridView.builder(
             padding: EdgeInsets.only(top: 4.0, bottom: 72.0),
-            itemCount: viewModel.joinedTribes.length,
+            itemCount: model.joinedTribes.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 1,
               childAspectRatio: 1.5
             ),
             itemBuilder: (context, index) {
-              Tribe currentTribe = viewModel.joinedTribes[index];
+              Tribe currentTribe = model.joinedTribes[index];
               return _buildTribeTile(currentTribe);
             },
           )
-        : Center(
-          child: Text('No joined Tribes',
-            style: TextStyle(
-              fontFamily: 'TribesRounded',
-              color: Colors.black26,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
+        : _buildEmptyListWidget()
       ),
     );
   }

@@ -70,6 +70,16 @@ extension VisibleWidget on Widget {
       child: this,
     );
   }
+
+  Visibility hideButFillSpace() {
+    return Visibility(
+      visible: false,
+      maintainSize: true,
+      maintainAnimation: true,
+      maintainState: true,
+      child: this
+    );
+  }
 }
 
 extension OnlyDevelopment on Widget {
