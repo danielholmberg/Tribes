@@ -302,7 +302,7 @@ class TribeSettingsView extends ViewModelWidget<TribeSettingsViewModel> {
                           ),
                           onPressed: isDeleteButtonDisabled
                               ? null
-                              : model.onPressDeleteButton,
+                              : model.onDeleteTribe,
                         ),
                       ],
                     );

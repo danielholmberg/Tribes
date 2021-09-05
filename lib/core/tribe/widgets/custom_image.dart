@@ -46,7 +46,7 @@ class CustomImage extends StatelessWidget {
       return Container(
         width: fullscreen ? null : MediaQuery.of(context).size.width,
         child: fullscreen
-            ? Center(child: Loading(size: 100))
+            ? Center(child: Loading(color: color, size: 100))
             : Loading(color: color),
       );
     }

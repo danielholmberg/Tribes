@@ -18,12 +18,12 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
       return AppBar(
         backgroundColor: themeData.backgroundColor,
         elevation: 0.0,
+        titleSpacing: 0,
         iconTheme: IconThemeData(
           color: model.tribeColor,
         ),
-        centerTitle: true,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
@@ -120,31 +120,14 @@ class _EditPostViewMobile extends ViewModelWidget<EditPostViewModel> {
     }
 
     _buildNewImageIcon() {
-      return Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          CustomAwesomeIcon(
-            icon: FontAwesomeIcons.image,
-            size: 30,
-            color: model.tribeColor.withOpacity(
-              model.photoButtonIsDisabled ? 0.4 : 1.0,
-            ),
+      return Center(
+        child: CustomAwesomeIcon(
+          icon: Icons.add_photo_alternate_rounded,
+          size: 30,
+          color: model.tribeColor.withOpacity(
+            model.photoButtonIsDisabled ? 0.4 : 1.0,
           ),
-          Positioned(
-            right: 22,
-            bottom: 25,
-            child: Container(
-              child: CustomAwesomeIcon(
-                icon: FontAwesomeIcons.plus,
-                size: 14,
-                color: model.tribeColor.withOpacity(
-                  model.photoButtonIsDisabled ? 0.4 : 1.0,
-                ),
-                strokeWidth: 2.0,
-              ),
-            ),
-          ),
-        ],
+        ),
       );
     }
 

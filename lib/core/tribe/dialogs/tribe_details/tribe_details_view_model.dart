@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:tribes/locator.dart';
@@ -10,6 +11,7 @@ import 'package:tribes/shared/constants.dart' as Constants;
 class TribeDetailsViewModel extends ReactiveViewModel {
   final DatabaseService _databaseService = locator<DatabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService _dialogService = locator<DialogService>();
 
   List<MyUser> _membersList = [];
   List<MyUser> _searchResult = [];
@@ -81,14 +83,29 @@ class TribeDetailsViewModel extends ReactiveViewModel {
     onSearchTextChanged('');
   }
 
-  void onLeaveTribe() {
-    _databaseService.leaveTribe(currentTribe.id);
-    _navigationService.popUntil((route) => route.isFirst);
+  Future<void> onLeaveTribe() async {
+    try {
+      await _databaseService.leaveTribe(currentTribe.id);
+      _navigationService.popUntil((route) => route.isFirst);
+    } catch(error) {
+      await _dialogService.showDialog(
+        title: 'Failed to leave Tribe!',
+        description: 'An error occurred trying to leave this Tribe, please try again later.',
+      );
+    }
   }
 
-  void onDeleteTribe() {
-    _databaseService.deleteTribe(currentTribe.id);
-    _navigationService.popUntil((route) => route.isFirst);
+  Future<void> onDeleteTribe() async {
+    try {
+      await _databaseService.deleteTribe(currentTribe.id);
+      _navigationService.popUntil((route) => route.isFirst);
+    } catch(error) {
+      await _dialogService.showDialog(
+        title: 'Failed to delete Tribe!',
+        description: 'An error occurred trying to delete this Tribe, please try again later.',
+      );
+      _navigationService.back();
+    }
   }
 
   @override

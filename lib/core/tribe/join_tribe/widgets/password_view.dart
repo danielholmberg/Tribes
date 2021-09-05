@@ -52,7 +52,7 @@ class PasswordView extends StatelessWidget {
                     ),
                     SizedBox(height: Constants.defaultSpacing),
                     model.isBusy
-                        ? Loading()
+                        ? Loading(color: activeTribe.color)
                         : Container(
                             child: Form(
                               key: model.passwordFormKey,

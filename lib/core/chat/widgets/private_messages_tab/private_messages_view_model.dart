@@ -49,6 +49,10 @@ class PrivateMessagesViewModel extends ReactiveViewModel {
     _notMyId = id;
   }
 
+  void onStartNewChat() {
+    _navigationService.navigateTo(MyRouter.newChatRoute);
+  }
+
   @override
   List<ReactiveServiceMixin> get reactiveServices => [_databaseService];
 }

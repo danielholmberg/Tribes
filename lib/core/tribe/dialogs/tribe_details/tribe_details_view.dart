@@ -60,7 +60,8 @@ class TribeDetailsView extends ViewModelWidget<TribeDetailsViewModel> {
                     ),
                     contentPadding: EdgeInsets.zero,
                     content: ViewModelBuilder<TribeSettingsViewModel>.reactive(
-                      viewModelBuilder: () => TribeSettingsViewModel(onSave: model.onSaveUpdatedTribe),
+                      viewModelBuilder: () => TribeSettingsViewModel(
+                          onSave: model.onSaveUpdatedTribe),
                       onModelReady: (_model) => _model.initState(
                         context: context,
                         tribe: model.currentTribe,
@@ -444,20 +445,21 @@ class TribeDetailsView extends ViewModelWidget<TribeDetailsViewModel> {
 
             // Center Widget
             Expanded(
-                child: TextField(
-              controller: model.controller,
-              autofocus: false,
-              decoration: InputDecoration(
-                hintText: 'Find tribe member',
-                border: InputBorder.none,
-                hintStyle: TextStyle(
-                  fontFamily: 'TribesRounded',
-                  fontSize: 16,
-                  color: Colors.black54.withOpacity(0.3),
+              child: TextField(
+                controller: model.controller,
+                autofocus: false,
+                decoration: InputDecoration(
+                  hintText: 'Find tribe member',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(
+                    fontFamily: 'TribesRounded',
+                    fontSize: 16,
+                    color: Colors.black54.withOpacity(0.3),
+                  ),
                 ),
+                onChanged: model.onSearchTextChanged,
               ),
-              onChanged: model.onSearchTextChanged,
-            )),
+            ),
 
             // Trailing Actions
             Row(
@@ -468,9 +470,11 @@ class TribeDetailsView extends ViewModelWidget<TribeDetailsViewModel> {
                     FontAwesomeIcons.solidTimesCircle,
                     color: model.controller.text.isEmpty
                         ? Colors.grey
-                        : themeData.primaryColor,
+                        : model.currentTribeColor,
                   ),
-                  onPressed: model.onSearchTextClearPress,
+                  onPressed: model.controller.text.isEmpty
+                      ? null
+                      : model.onSearchTextClearPress,
                 ),
               ],
             ),
@@ -534,7 +538,7 @@ class TribeDetailsView extends ViewModelWidget<TribeDetailsViewModel> {
             print('Error retrieving friends: ${snapshot.error.toString()}');
             return Center(child: Text('Unable to retrieve friends'));
           } else {
-            return Center(child: Loading());
+            return Center(child: Loading(color: model.currentTribeColor));
           }
         },
       );

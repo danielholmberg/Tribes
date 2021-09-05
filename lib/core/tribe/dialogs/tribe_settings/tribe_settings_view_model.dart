@@ -14,6 +14,7 @@ class TribeSettingsViewModel extends ReactiveViewModel {
 
   final DatabaseService _databaseService = locator<DatabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final DialogService _dialogService = locator<DialogService>();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FocusNode _nameFocus = new FocusNode();
@@ -135,10 +136,19 @@ class TribeSettingsViewModel extends ReactiveViewModel {
     back();
   }
 
-  void onPressDeleteButton() {
+  Future<void> onDeleteTribe() async {
     setBusy(true);
-    _navigationService.popUntil((route) => route.isFirst);
-    _databaseService.deleteTribe(_tribe.id);
+    try {
+      await _databaseService.deleteTribe(_tribe.id);
+      _navigationService.popUntil((route) => route.isFirst);
+    } catch(error) {
+      await _dialogService.showDialog(
+        title: 'Failed to delete Tribe!',
+        description: 'An error occurred trying to delete this Tribe, please try again later.',
+      );
+      _navigationService.back();
+    }
+    setBusy(false);
   }
 
   void setFirstToggle(bool value) {

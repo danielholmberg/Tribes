@@ -328,8 +328,8 @@ class _ProfileViewMobile extends ViewModelWidget<ProfileViewModel> {
                 return <Widget>[
                   SliverAppBar(
                     expandedHeight: model.isAnotherUser
-                        ? (model.profileUser.info.isNotEmpty ? 330 : 280)
-                        : (model.currentUser.info.isNotEmpty ? 330 : 280),
+                        ? (model.profileUser.info.isNotEmpty ? 335 : 280)
+                        : (model.currentUser.info.isNotEmpty ? 335 : 280),
                     floating: false,
                     pinned: false,
                     elevation: 4.0,

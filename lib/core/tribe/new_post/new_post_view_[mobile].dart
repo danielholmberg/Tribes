@@ -9,6 +9,7 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
       return AppBar(
         elevation: 0.0,
         backgroundColor: themeData.backgroundColor,
+        titleSpacing: 0,
         leading: IconButton(
           icon: CustomAwesomeIcon(
             icon: FontAwesomeIcons.times,
@@ -21,39 +22,23 @@ class _NewPostViewMobile extends ViewModelWidget<NewPostViewModel> {
           maxLines: 1,
           softWrap: false,
           overflow: TextOverflow.fade,
-          style: themeData.textTheme.headline6
-              .copyWith(fontWeight: FontWeight.bold),
+          style: themeData.textTheme.headline6.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: <Widget>[],
       );
     }
 
     _buildNewImageIcon() {
-      return Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          CustomAwesomeIcon(
-            icon: FontAwesomeIcons.image,
-            size: 30,
-            color: model.tribeColor.withOpacity(
-              model.photoButtonIsDisabled ? 0.4 : 1.0,
-            ),
+      return Center(
+        child: CustomAwesomeIcon(
+          icon: Icons.add_photo_alternate_rounded,
+          size: 30,
+          color: model.tribeColor.withOpacity(
+            model.photoButtonIsDisabled ? 0.4 : 1.0,
           ),
-          Positioned(
-            right: 22,
-            bottom: 25,
-            child: Container(
-              child: CustomAwesomeIcon(
-                icon: FontAwesomeIcons.plus,
-                size: 14,
-                color: model.tribeColor.withOpacity(
-                  model.photoButtonIsDisabled ? 0.4 : 1.0,
-                ),
-                strokeWidth: 2.0,
-              ),
-            ),
-          ),
-        ],
+        ),
       );
     }
 
