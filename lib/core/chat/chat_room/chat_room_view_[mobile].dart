@@ -10,9 +10,11 @@ class _ChatRoomViewMobile extends ViewModelWidget<ChatRoomViewModel> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Platform.isIOS
-              ? FontAwesomeIcons.chevronLeft
-              : FontAwesomeIcons.arrowLeft),
+          icon: Icon(
+            Platform.isIOS
+                ? FontAwesomeIcons.chevronLeft
+                : FontAwesomeIcons.arrowLeft,
+          ),
           color: Constants.buttonIconColor,
           onPressed: model.onExitPress,
         ),
@@ -155,9 +157,7 @@ class _ChatRoomViewMobile extends ViewModelWidget<ChatRoomViewModel> {
               iconSize: Constants.defaultIconSize,
               padding: const EdgeInsets.only(right: 8),
               color: model.currentTribeColor,
-              onPressed: model.message.isEmpty
-                  ? null
-                  : model.onSendMessage,
+              onPressed: model.message.isEmpty ? null : model.onSendMessage,
             ),
           ],
         ),

@@ -11,6 +11,7 @@ import 'package:tribes/models/tribe_model.dart';
 import 'package:tribes/models/user_model.dart';
 import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class PostList extends StatelessWidget {
   final Tribe tribe;
@@ -93,7 +94,9 @@ class PostList extends StatelessWidget {
             ),
           );
         },
+        defaultChild: Loading(color: tribe.color),
         emptyChild: _buildEmptyListWidget(),
+        errorChild: _buildEmptyListWidget(),
       ),
     );
   }

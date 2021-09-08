@@ -7,6 +7,7 @@ import 'package:tribes/models/chat_message_model.dart';
 import 'package:tribes/models/user_model.dart';
 import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
+import 'package:tribes/shared/widgets/Loading.dart';
 
 class ChatMessages extends StatelessWidget {
   final String roomID;
@@ -86,7 +87,9 @@ class ChatMessages extends StatelessWidget {
             color: color,
           ),
         ),
+        defaultChild: Loading(),
         emptyChild: _buildEmptyListWidget(),
+        errorChild: _buildEmptyListWidget(),
       ),
     );
   }

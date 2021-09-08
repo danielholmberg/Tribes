@@ -359,6 +359,7 @@ class _PrivateMessagesViewMobile
               ),
             );
           },
+          defaultChild: Loading(),
           emptyChild: _buildEmptyListWidget(),
           errorChild: _buildEmptyListWidget(),
         ),
