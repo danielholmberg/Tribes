@@ -72,7 +72,10 @@ class MyRouter {
           type: CustomPageTransitionType.chatRoom,
           duration: Constants.pageTransition300,
           child: ChatRoomView(
-              roomID: args.roomId, members: args.members, reply: true),
+            roomID: args.roomId,
+            members: args.members,
+            reply: args.reply,
+          ),
         );
       default:
         return MaterialPageRoute(

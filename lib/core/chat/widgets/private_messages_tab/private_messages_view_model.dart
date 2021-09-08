@@ -41,6 +41,7 @@ class PrivateMessagesViewModel extends ReactiveViewModel {
       arguments: ChatRoomArguments(
         roomId: data.id,
         members: data.members,
+        reply: reply
       ),
     );
   }
