@@ -20,7 +20,7 @@ class Message {
     var created = data['created'];
 
     // Convert int-timestamp values
-    if(created.runtimeType == int) {
+    if (created.runtimeType == int) {
       created = Timestamp.fromMillisecondsSinceEpoch(created);
     }
 
@@ -33,6 +33,8 @@ class Message {
   }
 
   String formattedTime() {
-    return DateFormat('kk:mm').format(DateTime.parse(created.toDate().toString()));
+    return DateFormat('dd MMM\nkk:mm')
+        .format(created.toDate())
+        .replaceAll('24:', '00:');
   }
 }

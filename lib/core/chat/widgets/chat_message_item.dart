@@ -32,7 +32,7 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
       padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
       decoration: BoxDecoration(
         color:
-            isMe ? widget.color.withOpacity(0.7) : Colors.grey.withOpacity(0.7),
+            isMe ? widget.color.withOpacity(0.9) : widget.color.withOpacity(0.7),
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Column(
@@ -59,6 +59,7 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
         children: <Widget>[
           Text(
             widget.message.formattedTime(),
+            textAlign: TextAlign.right,
             style: TextStyle(
               color: Colors.black26,
               fontFamily: 'TribesRounded',
@@ -80,13 +81,14 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
                   }
 
                   return UserAvatar(
-                      currentUserID: currentUser.id,
-                      user: snapshot.data,
-                      padding: const EdgeInsets.symmetric(vertical: 6.0),
-                      color: widget.color,
-                      radius: 10,
-                      strokeWidth: 1.0,
-                      onlyAvatar: true);
+                    currentUserID: currentUser.id,
+                    user: snapshot.data,
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
+                    color: widget.color,
+                    radius: 10,
+                    strokeWidth: 1.0,
+                    onlyAvatar: true,
+                  );
                 },
               ),
             ],
@@ -130,6 +132,7 @@ class _ChatMessageItemState extends State<ChatMessageItem> {
         ),
         Text(
           widget.message.formattedTime(),
+          textAlign: TextAlign.left,
           style: TextStyle(
             color: Colors.black26,
             fontFamily: 'TribesRounded',
