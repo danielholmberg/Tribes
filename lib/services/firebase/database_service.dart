@@ -432,12 +432,18 @@ class DatabaseService with ReactiveServiceMixin {
             .first);
   }
 
-  Query fiveLatestMessages(String tribeID) {
+  Stream<List<Message>> mostRecentMessages(String tribeID, {int count = 5}) {
     return chatsRoot
         .doc(tribeID)
         .collection('messages')
-        .limit(5)
-        .orderBy('created', descending: true);
+        .limit(count)
+        .orderBy('created', descending: true)
+        .snapshots()
+        .map(
+          (list) => list.docs.reversed.map(
+            (messageDoc) => Message.fromSnapshot(messageDoc),
+          ).toList(),
+        );
   }
 
   Query allMessages(String roomID) {
@@ -449,7 +455,8 @@ class DatabaseService with ReactiveServiceMixin {
 
   Query get privateChatRooms {
     return chatsRoot
-        .where('members', arrayContains: locator<AuthService>().currentFirebaseUser.uid)
+        .where('members',
+            arrayContains: locator<AuthService>().currentFirebaseUser.uid)
         .where('hasMessages', isEqualTo: true)
         .orderBy('updated', descending: true);
   }

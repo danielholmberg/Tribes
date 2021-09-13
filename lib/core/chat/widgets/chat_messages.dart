@@ -12,11 +12,9 @@ import 'package:tribes/shared/widgets/Loading.dart';
 class ChatMessages extends StatelessWidget {
   final String roomID;
   final Color color;
-  final bool isTribePreview;
   ChatMessages({
     this.roomID,
-    this.color = Constants.primaryColor,
-    this.isTribePreview = false,
+    this.color = Constants.primaryColor
   });
 
   final ScrollController controller = new ScrollController();
@@ -25,9 +23,7 @@ class ChatMessages extends StatelessWidget {
   Widget build(BuildContext context) {
     final MyUser currentUser = locator<DatabaseService>().currentUserData;
 
-    Query query = isTribePreview
-        ? DatabaseService().fiveLatestMessages(roomID)
-        : DatabaseService().allMessages(roomID);
+    Query query = DatabaseService().allMessages(roomID);
 
     _buildEmptyListWidget() {
       return Center(
@@ -65,12 +61,10 @@ class ChatMessages extends StatelessWidget {
     return Container(
       child: FirestoreAnimatedList(
         controller: controller,
-        physics: isTribePreview
-            ? NeverScrollableScrollPhysics()
-            : ClampingScrollPhysics(),
+        physics: ClampingScrollPhysics(),
         reverse: true,
         shrinkWrap: false,
-        padding: EdgeInsets.symmetric(vertical: isTribePreview ? 2.0 : 4.0),
+        padding: EdgeInsets.symmetric(vertical: 4.0),
         duration: Duration(milliseconds: 500),
         onLoaded: _scrollToNewMessageIfAuthor,
         query: query,
