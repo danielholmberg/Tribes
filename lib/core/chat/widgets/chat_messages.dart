@@ -81,7 +81,7 @@ class ChatMessages extends StatelessWidget {
             color: color,
           ),
         ),
-        defaultChild: Loading(),
+        defaultChild: Loading(color: color),
         emptyChild: _buildEmptyListWidget(),
         errorChild: _buildEmptyListWidget(),
       ),

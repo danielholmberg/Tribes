@@ -113,19 +113,16 @@ class _TribeMessagesViewMobile extends StatelessWidget {
                           },
                         );
                       } else if (snapshot.hasData && snapshot.data.length > 0) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: List.generate(
-                            snapshot.data.length,
-                            (index) {
-                              return ChatMessageItem(
-                                message: snapshot.data[index],
-                                color: currentTribe.color,
-                              );
-                            },
-                            growable: false,
-                          ),
+                        return ListView.builder(
+                          reverse: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (context, index) {
+                            return ChatMessageItem(
+                              message: snapshot.data[index],
+                              color: currentTribe.color,
+                            );
+                          },
                         );
                       } else {
                         return _buildEmptyChatListWidget();

@@ -440,7 +440,7 @@ class DatabaseService with ReactiveServiceMixin {
         .orderBy('created', descending: true)
         .snapshots()
         .map(
-          (list) => list.docs.reversed.map(
+          (list) => list.docs.map(
             (messageDoc) => Message.fromSnapshot(messageDoc),
           ).toList(),
         );
