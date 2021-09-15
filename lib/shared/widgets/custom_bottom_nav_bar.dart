@@ -45,6 +45,13 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black54,
+            blurRadius: 5,
+            spreadRadius: 1
+          )
+        ],
         color: widget.backgroundColor,
       ),
       width: double.infinity,
@@ -62,7 +69,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 double width =  widget.currentIndex == index
                       ? (MediaQuery.of(context).size.width / items.length) + 20
                       : 50;
-                      
+
                 return AnimatedContainer(
                   duration: Duration(milliseconds: 300),
                   padding: EdgeInsets.all(12),
