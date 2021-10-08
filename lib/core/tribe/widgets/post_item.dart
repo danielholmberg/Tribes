@@ -50,9 +50,9 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
       addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
     }
 
-    likedAnimationController = new AnimationController(vsync: this, duration: Duration(milliseconds: 800));
-    likedAnimation = Tween(begin: 20.0, end: 100.0).animate(CurvedAnimation(
-      curve: Curves.bounceOut, parent: likedAnimationController)
+    likedAnimationController = new AnimationController(vsync: this, duration: Duration(milliseconds: 1500));
+    likedAnimation = Tween(begin: 40.0, end: 100.0).animate(CurvedAnimation(
+      curve: Curves.elasticInOut, parent: likedAnimationController)
     );
 
     likedAnimationController.addStatusListener((AnimationStatus status) {

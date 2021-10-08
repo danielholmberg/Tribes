@@ -107,9 +107,9 @@ class PostRoomViewModel extends ReactiveViewModel {
     _fadeInController.forward();
 
     _likedAnimationController = new AnimationController(
-        vsync: vsync, duration: Duration(milliseconds: 800));
-    _likedAnimation = Tween(begin: 20.0, end: 100.0).animate(CurvedAnimation(
-        curve: Curves.bounceOut, parent: _likedAnimationController));
+        vsync: vsync, duration: Duration(milliseconds: 1500));
+    _likedAnimation = Tween(begin: 40.0, end: 100.0).animate(CurvedAnimation(
+        curve: Curves.elasticInOut, parent: _likedAnimationController));
 
     _likedAnimationController.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed ||
