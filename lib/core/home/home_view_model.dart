@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:tribes/locator.dart';
@@ -8,40 +9,36 @@ import 'package:tribes/router.dart';
 import 'package:tribes/services/firebase/database_service.dart';
 import 'package:tribes/shared/constants.dart' as Constants;
 import 'package:tribes/shared/test_keys.dart';
-
-class HomeViewModel extends ReactiveViewModel {
+class HomeViewModel extends StreamViewModel<List<Tribe>> {
   final DatabaseService _databaseService = locator<DatabaseService>();
   final NavigationService _navigationService = locator<NavigationService>();
 
-  final PageController _tribeItemController = new PageController(
-    viewportFraction: 0.8,
-  );
+  String _PreferredGridLayoutKey = "PreferredGridLayoutKey";
 
-  int _currentPageIndex =
-      0; // Keep track of current page to avoid unnecessary renders
+  SharedPreferences _prefs;
+  List<Tribe> _tribeList;
+  List<String> _tribeListOrder;
+  bool _gridHasMultipleColumns = false;
+  int _currentDragTargetIndex;
+
+  bool hasUpdatedTribeItemSize = false;
+  double tribeItemWidth;
+  double tribeItemHeight;
 
   String get appTitle => Constants.appTitle;
   ValueKey get appTitleKey => ValueKey(TestKeys.homeAppTitle);
+  bool get gridHasMultipleColumns => _gridHasMultipleColumns;
+  int get currentDragTargetIndex => _currentDragTargetIndex;
 
-  Stream<List<Tribe>> get joinedTribes => _databaseService.joinedTribes;
-
+  List<Tribe> get joinedTribes => _tribeList;
   MyUser get currentUser => _databaseService.currentUserData;
-  int get currentPageIndex => _currentPageIndex;
-  PageController get tribeItemController => _tribeItemController;
 
-  void initState() {
-    _tribeItemController.addListener(() {
-      int next = _tribeItemController.page.round();
-
-      if (_currentPageIndex != next) {
-        setCurrentPage(next);
-      }
-    });
-  }
-
-  void setCurrentPage(int index) {
-    _currentPageIndex = index;
-    notifyListeners();
+  void initState() async {
+    _prefs = await SharedPreferences.getInstance();
+    _tribeList = List.empty(growable: true);
+    _tribeListOrder = _prefs.getStringList(currentUser.id) ?? List.empty(growable: true);;
+    _gridHasMultipleColumns = _prefs.getInt(_PreferredGridLayoutKey) == 2;
+    print('INIT tribeList: $_tribeListOrder');
   }
 
   void showNewTribePage() {
@@ -62,12 +59,74 @@ class HomeViewModel extends ReactiveViewModel {
     );
   }
 
-  @override
-  void dispose() {
-    _tribeItemController.dispose();
-    super.dispose();
+  saveTribeListOrder(List<Tribe> tribes) async {
+    List<String> newTribeListOrder = [];
+    tribes.forEach((tribe) {
+      newTribeListOrder.add(tribe.id);
+    });
+    await _prefs.setStringList(currentUser.id, newTribeListOrder);
+    _tribeListOrder = newTribeListOrder;
+    print('new tribeListOrder: $newTribeListOrder');
+  }
+
+  Future<void> toggleGridLayout() async {
+    hasUpdatedTribeItemSize = false;
+    _gridHasMultipleColumns = !_gridHasMultipleColumns;
+    await savePreferredGridLayout();
+    notifyListeners();
+  }
+
+  Future<void> savePreferredGridLayout() async {
+    await _prefs.setInt(_PreferredGridLayoutKey, _gridHasMultipleColumns ? 2 : 1);
+    print('Saved preferred Grid layout: ${gridHasMultipleColumns ? 'MULTIPLE': 'SINGLE'}');
+  }
+
+  void setCurrentDragTargetIndex(int newIndex) {
+    _currentDragTargetIndex = newIndex;
+    notifyListeners();
   }
 
   @override
-  List<ReactiveServiceMixin> get reactiveServices => [_databaseService];
+  void onData(List<Tribe> data) {
+    super.onData(data);
+
+    print('onData: $data');
+    print('_tribeListOrder: $_tribeListOrder');
+
+    if (data == null) {
+      _tribeList = List.empty(growable: true);
+      return;
+    };
+
+    List<Tribe> newTribeList = List.empty(growable: true);
+    print('newTribeList: $newTribeList');
+    newTribeList.length = data.length > _tribeListOrder.length ? data.length : _tribeListOrder.length;
+
+    data.forEach((tribe) {
+      if (tribe == null) return;
+
+      if (_tribeListOrder.contains(tribe.id)) {
+        int index = _tribeListOrder.indexOf(tribe.id);
+        if (newTribeList.isEmpty) {
+          newTribeList.add(tribe);
+        } else {
+          newTribeList.insert(index, tribe);
+        }
+      } else {
+        newTribeList.add(tribe);
+      }
+    });
+
+    newTribeList.removeWhere((tribe) => tribe == null);
+    _tribeList = newTribeList;
+
+    List<String> _incomingTribeListOrder = _tribeList.map((tribe) => tribe.id).toList();
+    if (!_incomingTribeListOrder.every((tribeId) => _tribeListOrder.contains(tribeId))) {
+      saveTribeListOrder(_tribeList);
+    }
+
+  }
+
+  @override
+  Stream<List<Tribe>> get stream => _databaseService.joinedTribes;
 }

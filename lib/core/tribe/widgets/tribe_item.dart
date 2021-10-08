@@ -44,7 +44,7 @@ class TribeItem extends StatelessWidget {
         child: AutoSizeText(
           tribe.desc,
           textAlign: TextAlign.center,
-          maxLines: null,
+          maxLines: 2,
           minFontSize: 12.0,
           style: TextStyle(
             color: Colors.white,
@@ -72,7 +72,7 @@ class TribeItem extends StatelessWidget {
           .toList()
         ),
         builder: (context, snapshot) {
-          var postsList = snapshot.hasData ? snapshot.data : []; 
+          var postsList = snapshot.hasData ? snapshot.data : [];
 
           return Row(
             children: <Widget>[
@@ -118,47 +118,50 @@ class TribeItem extends StatelessWidget {
       );
     }
 
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-          color: tribe.color,
-          borderRadius: BorderRadius.circular(20.0),
-          border: Border.all(color: Colors.black26, width: 2.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black45,
-              blurRadius: 8,
-              offset: Offset(4, 4),
+    return DefaultTextStyle(
+      style: Theme.of(context).textTheme.headline1,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: tribe.color,
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border.all(color: Colors.black26, width: 2.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black45,
+                blurRadius: 8,
+                offset: Offset(4, 4),
+              ),
+            ]),
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            ListView(
+              physics: ClampingScrollPhysics(),
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(bottom: 24.0),
+              children: <Widget>[
+                _buildTribeName(),
+                _buildDescription(),
+              ],
             ),
-          ]),
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          ListView(
-            physics: ClampingScrollPhysics(),
-            shrinkWrap: true,
-            padding: const EdgeInsets.only(bottom: 24.0),
-            children: <Widget>[
-              _buildTribeName(),
-              _buildDescription(),
-            ],
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: _buildSecretTribeWaterMark(),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            child: _buildNumberOfPosts(),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: _buildNumberOfMembers(),
-          ),
-        ],
+            Positioned(
+              top: 0,
+              right: 0,
+              child: _buildSecretTribeWaterMark(),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: _buildNumberOfPosts(),
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: _buildNumberOfMembers(),
+            ),
+          ],
+        ),
       ),
     );
   }

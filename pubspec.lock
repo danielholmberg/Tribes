@@ -232,6 +232,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.12"
+  drag_and_drop_gridview:
+    dependency: "direct main"
+    description:
+      name: drag_and_drop_gridview
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.8"
   ffi:
     dependency: transitive
     description:
@@ -803,12 +810,12 @@ packages:
     source: hosted
     version: "0.27.1"
   shared_preferences:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.6"
+    version: "2.0.7"
   shared_preferences_linux:
     dependency: transitive
     description:

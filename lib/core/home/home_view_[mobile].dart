@@ -10,16 +10,32 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
         toolbarHeight: kToolbarHeight + Constants.largePadding,
         centerTitle: true,
         elevation: 0,
-        backgroundColor: themeData.backgroundColor,
-        title: Text(
-          model.appTitle,
-          key: model.appTitleKey,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: themeData.primaryColor,
-            fontFamily: 'OleoScriptSwashCaps',
-            fontWeight: FontWeight.bold,
-            fontSize: 30,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              tileMode: TileMode.decal,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[
+                themeData.backgroundColor,
+                themeData.backgroundColor.withOpacity(0)
+              ],
+            ),
+          ),
+        ),
+        title: GestureDetector(
+          onTap: model.toggleGridLayout,
+          child: Text(
+            model.appTitle,
+            key: model.appTitleKey,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: themeData.primaryColor,
+              fontFamily: 'OleoScriptSwashCaps',
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+            ),
           ),
         ),
         actions: [
@@ -90,53 +106,84 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
     }
 
     _buildTribesList() {
-      return ScrollConfiguration(
-        behavior: CustomScrollBehavior(),
-        child: StreamBuilder<List<Tribe>>(
-          initialData: [],
-          stream: model.joinedTribes,
-          builder: (context, snapshot) {
-            List<Tribe> joinedTribes = snapshot.data;
+      return StreamBuilder<List<Tribe>>(
+        initialData: [],
+        stream: model.stream,
+        builder: (context, snapshot) {
+          if (model.joinedTribes == null || model.joinedTribes.isEmpty) {
+            return _buildEmptyListWidget();
+          }
 
-            if(joinedTribes == null || joinedTribes.isEmpty) {
-              return _buildEmptyListWidget();
+          _onReorder(int oldIndex, int newIndex) async {
+            print('onReorder: $oldIndex : $newIndex');
+
+            if (oldIndex != newIndex) {
+              model.setCurrentDragTargetIndex(null);
             }
 
-            return PageView.builder(
-              reverse: false,
-              scrollDirection: Axis.horizontal,
-              controller: model.tribeItemController,
-              itemCount: joinedTribes.length,
-              itemBuilder: (context, index) {
-                Tribe currentTribe = joinedTribes[index];
-                double padding =
-                    MediaQuery.of(context).size.height * 0.08;
-                double verticalMargin = index == model.currentPageIndex
-                    ? 0.0
-                    : MediaQuery.of(context).size.height * 0.04;
+            Tribe row = model.joinedTribes.removeAt(oldIndex);
+            model.joinedTribes.insert(newIndex, row);
+            await model.saveTribeListOrder(model.joinedTribes);
+          }
 
-                return AnimatedContainer(
-                  duration: Duration(milliseconds: 1000),
-                  curve: Curves.easeOutQuint,
-                  padding: EdgeInsets.only(
-                    bottom: kBottomNavigationBarHeight + padding,
-                    top: 20.0,
-                  ),
-                  margin: EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: verticalMargin,
-                  ),
-                  child: GestureDetector(
-                    onTap: () => model.showTribeRoom(
-                      joinedTribes[index],
-                    ),
-                    child: TribeItem(tribe: currentTribe),
-                  ),
+          _onWillAccept(int oldIndex, int newIndex) {
+            print('onWillAccept: $oldIndex : $newIndex');
+            if (oldIndex != newIndex) {
+              model.setCurrentDragTargetIndex(newIndex);
+            } else {
+              model.setCurrentDragTargetIndex(null);
+            }
+            return true;
+          }
+
+          return ScrollConfiguration(
+            behavior: CustomScrollBehavior(),
+            child: DragAndDropGridView(
+              controller: new ScrollController(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: model.gridHasMultipleColumns ? 2 : 1,
+                childAspectRatio: 1,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              padding: const EdgeInsets.fromLTRB(
+                16,
+                kToolbarHeight + Constants.largePadding,
+                16,
+                kBottomNavigationBarHeight + 24,
+              ),
+              itemCount: model.joinedTribes.length,
+              itemBuilder: (context, index) {
+                Tribe tribe = model.joinedTribes[index];
+                return LayoutBuilder(
+                  builder: (context, costrains) {
+                    if (!model.hasUpdatedTribeItemSize) {
+                      model.tribeItemHeight = costrains.maxHeight;
+                      model.tribeItemWidth = costrains.maxWidth;
+                      model.hasUpdatedTribeItemSize = true;
+                    }
+                    return AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: model.currentDragTargetIndex != null ? model.currentDragTargetIndex == index ? 0.4 : 1 : 1,
+                      child: Container(
+                        width: model.tribeItemWidth,
+                        height: model.tribeItemHeight,
+                        child: GestureDetector(
+                          onTap: () => model.showTribeRoom(
+                            tribe,
+                          ),
+                          child: TribeItem(tribe: tribe),
+                        ),
+                      ),
+                    );
+                  }
                 );
               },
-            );
-          },
-        ),
+              onReorder: _onReorder,
+              onWillAccept: _onWillAccept,
+            ),
+          );
+        },
       );
     }
 
@@ -145,16 +192,9 @@ class _HomeViewMobile extends ViewModelWidget<HomeViewModel> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: themeData.backgroundColor,
+        extendBodyBehindAppBar: true,
         appBar: _buildAppBar(),
-        body: model.isBusy
-            ? Loading()
-            : Column(
-                children: <Widget>[
-                  Expanded(
-                    child: _buildTribesList(),
-                  ),
-                ],
-              ),
+        body: model.isBusy ? Loading() : _buildTribesList(),
       ),
     );
   }
