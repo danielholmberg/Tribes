@@ -400,7 +400,7 @@ class _PostRoomViewMobile extends ViewModelWidget<PostRoomViewModel> {
                 builder: (context, child) => CustomAwesomeIcon(
                   icon: FontAwesomeIcons.solidHeart,
                   size: model.likedAnimation.value,
-                  color: themeData.primaryColor,
+                  color: Constants.likeHeartAnimationColor,
                   shadows: [
                     Shadow(
                       offset: Offset(0, 0),

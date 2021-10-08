@@ -20,8 +20,8 @@ class PostTile extends StatefulWidget {
   final Post post;
   final Color tribeColor;
   PostTile({
-    @required this.post, 
-    this.tribeColor = Constants.primaryColor, 
+    @required this.post,
+    this.tribeColor = Constants.primaryColor,
   });
 
   @override
@@ -44,7 +44,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
   bool showLikedAnimation = false;
 
   @override
-  void initState() { 
+  void initState() {
     if((widget.post.lat != 0 && widget.post.lng != 0)) {
       coordinates = Coordinates(widget.post.lat, widget.post.lng);
       addressFuture = Geocoder.local.findAddressesFromCoordinates(coordinates);
@@ -95,11 +95,11 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
                 builder: (context, snapshot) {
                   if(snapshot.hasError) {
                     print('Error retrieving author data: ${snapshot.error.toString()}');
-                  } 
-                  
+                  }
+
                   return UserAvatar(
                     currentUserID: currentUser.id,
-                    user: snapshot.data, 
+                    user: snapshot.data,
                     color: widget.tribeColor,
                     radius: 12,
                     strokeWidth: 2.0,
@@ -178,7 +178,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
                           child: Text(
                             'See more',
                             style: themeData.textTheme.bodyText1.copyWith(
-                              color: Colors.white, 
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -195,7 +195,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
 
     _buildLocationWidget() {
       return GestureDetector(
-        onTap: () { 
+        onTap: () {
           if(locationContainerExpanded) {
             setState(() {
               locationContainerExpanded = false;
@@ -262,7 +262,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
 
     _buildDateAndTimeWidget() {
       Timestamp timestamp = widget.post.created;
-      
+
       return AnimatedOpacity(
         duration: const Duration(milliseconds: 300),
         opacity: timestamp != null ? 1.0 : 0.0,
@@ -278,7 +278,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
             child: timestamp != null ? PostedDateTime(
               vsync: this,
               alignment: Alignment.centerLeft,
-              timestamp: DateTime.parse(timestamp.toDate().toString()), 
+              timestamp: DateTime.parse(timestamp.toDate().toString()),
               color: Colors.white,
               fontSize: 10,
             ) : SizedBox.shrink(),
@@ -320,8 +320,8 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
               Padding(
                 padding: const EdgeInsets.only(right: 2.0),
                 child: LikeButton(
-                  currentUser: currentUser, 
-                  postID: widget.post.id, 
+                  currentUser: currentUser,
+                  postID: widget.post.id,
                   color: Colors.white,
                   backgroundColor: widget.tribeColor.withOpacity(0.9),
                   fab: true,
@@ -363,7 +363,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
 
             // Images
             ImageCarousel(
-              images: widget.post.images, 
+              images: widget.post.images,
               color: widget.tribeColor,
               onPageChange: (int index) => setState(() => currentImageIndex = index),
               initialIndex: currentImageIndex,
@@ -372,7 +372,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
             // Title and Content
             Positioned.fill(
               child: Visibility(
-                visible: showTextContent, 
+                visible: showTextContent,
                 child: _postTextContent(),
               ),
             ),
@@ -423,9 +423,9 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
                 child: AnimatedBuilder(
                   animation: likedAnimationController,
                   builder: (context, child) => CustomAwesomeIcon(
-                    icon: FontAwesomeIcons.solidHeart, 
-                    size: likedAnimation.value, 
-                    color: themeData.primaryColor,
+                    icon: FontAwesomeIcons.solidHeart,
+                    size: likedAnimation.value,
+                    color: Constants.likeHeartAnimationColor,
                     shadows: [
                       Shadow(
                         offset: Offset(0, 0),
@@ -448,7 +448,7 @@ class _PostTileState extends State<PostTile> with TickerProviderStateMixin {
         pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
           return PostRoomView(
             post: widget.post,
-            tribeColor: widget.tribeColor, 
+            tribeColor: widget.tribeColor,
             initialImage: currentImageIndex,
             showTextContent: showTextContent,
           );

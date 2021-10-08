@@ -21,6 +21,7 @@ const buttonColor = primaryColor;
 const timestampFontSize = 11.0;
 const primaryColorHueValue = 333.24;
 const whiteWaterMarkColor = Colors.white60;
+const likeHeartAnimationColor = Colors.red;
 
 const defaultPadding = 4.0;
 const smallPadding = 2.0;
