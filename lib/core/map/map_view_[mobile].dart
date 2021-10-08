@@ -122,8 +122,7 @@ class _MapViewMobile extends ViewModelWidget<MapViewModel> {
                         .where((memberID) => (!friendsList.contains(memberID) &&
                             model.currentUser.id != memberID))));
 
-                    friendsList.forEach((friendID) => friendsDataList.add(
-                        usersList.singleWhere((user) => user.id == friendID)));
+                    friendsDataList = friendsList.map((friendID) => usersList.singleWhere((user) => user.id == friendID)).toList();
                     friendsDataList.forEach(
                       (friendData) => markers.add(
                         Marker(
