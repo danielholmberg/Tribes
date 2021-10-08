@@ -84,7 +84,7 @@ dependency_overrides:
   cloud_firestore_platform_interface: ^5.3.0
 
 flutter_icons:
-  image_path: "assets/launcher/icon-512.png"
+  image_path: "assets/launcher/launcher-512.png"
   android: true
   ios: true
 

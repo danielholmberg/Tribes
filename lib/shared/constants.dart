@@ -13,9 +13,9 @@ const ChatViewRoute = 'ChatView';
 const ProfileViewRoute = 'ProfileView';
 
 // Core
-const primaryColor = Color(0xFFed217c);
+const primaryColor = Color(0xFF001427);
 const accentColor = Color(0xFFFEF9EB);
-const backgroundColor = Color(0xFFfefffd);
+const backgroundColor = Color(0xFFEBF5FF);
 const buttonIconColor = Colors.white;
 const buttonColor = primaryColor;
 const timestampFontSize = 11.0;
@@ -43,7 +43,7 @@ const defaultUsernameFontSize = 16.0;
 const defaultNameFontSize = 14.0;
 
 const inputLabelColor = primaryColor;
-const inputEnabledColor = Color(0x50ed217c);
+const inputEnabledColor = Color(0x50001427);
 const inputFocusColor = primaryColor;
 const inputCounterColor = inputEnabledColor;
 
@@ -78,9 +78,6 @@ const floatingActionButtonElevation = 4.0;
 
 // Navigation Bar
 const tribesColor = primaryColor;
-const chatsColor = Color(0xFF59B2B2);
-const profileColor = Color(0xFF96B259);
-const bottomNavBarBackgroundColor = Color(0xFFf7edde);
 
 // -------- TABs -------- //
 // [Tribes]
@@ -111,7 +108,7 @@ List<Color> defaultTribeColors = [
 const tribeDetailIconColor = Color(0xCCFFFFFF); // CC = 80% Opacity
 
 // - Post
-const postBackgroundColor = Color(0xFFFAFAFA);
+const postBackgroundColor = Color(0xFF004A8F);
 const postInputFocusColor = tribesColor;
 const postTileContentMaxLines = 10;
 const postTileScaleFactor = 0.5;
@@ -126,7 +123,6 @@ const imageGridViewMainAxisSpacing = 16.0;
 const privateChatTabTitle = 'Private';
 const tribesChatTabTitle = 'Tribes';
 const newMessageFormPadding = 16.0;
-const sendButtonColor = chatsColor;
 const initialLat = 59.325695;
 const initialLng = 18.071869;
 const chatMessageAvatarSize = 24.0;
