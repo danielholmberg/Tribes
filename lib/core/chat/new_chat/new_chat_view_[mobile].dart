@@ -33,6 +33,50 @@ class _NewChatViewMobile extends ViewModelWidget<NewChatViewModel> {
       );
     }
 
+    _buildEmptyListWidget() {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Icon(
+                    FontAwesomeIcons.search,
+                    color: Colors.blueGrey.withOpacity(0.8),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: model.onJoinTribe,
+                  child: Text(
+                    'Join a Tribe',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.blueGrey.withOpacity(0.8),
+                      fontSize: 16.0,
+                      fontFamily: 'TribesRounded',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              ' to connect with fellow Tribe members',
+              style: TextStyle(
+                color: Colors.blueGrey.withOpacity(0.8),
+                fontSize: 16.0,
+                fontFamily: 'TribesRounded',
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: themeData.primaryColor,
       body: SafeArea(
@@ -47,39 +91,42 @@ class _NewChatViewMobile extends ViewModelWidget<NewChatViewModel> {
                         initialData: [],
                         future: model.friendsFuture,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                                  ConnectionState.done &&
-                              snapshot.hasData) {
+                          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
                             model.setFriendsList(snapshot.data);
-                            return Container(
-                              child: ScrollConfiguration(
-                                behavior: CustomScrollBehavior(),
-                                child: model.notEmptySearchResult ||
-                                        model.controller.text.isNotEmpty
-                                    ? ListView.builder(
-                                        padding: model.gridPadding,
-                                        itemCount: model.searchResultCount,
-                                        itemBuilder: (context, index) {
-                                          return _friendTile(
-                                            model.getFriendFromSearch(
-                                              index,
-                                            ),
-                                          );
-                                        },
-                                      )
-                                    : ListView.builder(
-                                        padding: model.gridPadding,
-                                        itemCount: model.friendsListCount,
-                                        itemBuilder: (context, index) {
-                                          return _friendTile(
-                                            model.getFriendFromFriends(
-                                              index,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                              ),
-                            );
+
+                            if (snapshot.data.isNotEmpty) {
+                              return Container(
+                                child: ScrollConfiguration(
+                                  behavior: CustomScrollBehavior(),
+                                  child: model.notEmptySearchResult ||
+                                          model.controller.text.isNotEmpty
+                                      ? ListView.builder(
+                                          padding: model.gridPadding,
+                                          itemCount: model.searchResultCount,
+                                          itemBuilder: (context, index) {
+                                            return _friendTile(
+                                              model.getFriendFromSearch(
+                                                index,
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : ListView.builder(
+                                          padding: model.gridPadding,
+                                          itemCount: model.friendsListCount,
+                                          itemBuilder: (context, index) {
+                                            return _friendTile(
+                                              model.getFriendFromFriends(
+                                                index,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                ),
+                              );
+                            } else {
+                              return _buildEmptyListWidget();
+                            }
                           } else if (snapshot.hasError) {
                             print(
                                 'Error retrieving friends: ${snapshot.error.toString()}');

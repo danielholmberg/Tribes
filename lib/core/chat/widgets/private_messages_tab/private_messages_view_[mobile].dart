@@ -217,7 +217,7 @@ class _PrivateMessagesViewMobile
                                                 ),
                                               )
                                             : TextSpan(
-                                                text: 'No messages',
+                                                text: 'Unable to load message',
                                                 style: TextStyle(
                                                   fontFamily: 'TribesRounded',
                                                   color: Colors.black26,

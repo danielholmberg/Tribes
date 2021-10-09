@@ -28,7 +28,7 @@ class ChatMessages extends StatelessWidget {
     _buildEmptyListWidget() {
       return Center(
         child: Text(
-          'No messages',
+          'Be the first to send a message',
           style: TextStyle(
             fontFamily: 'TribesRounded',
             color: Colors.black26,

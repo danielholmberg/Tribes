@@ -11,7 +11,7 @@ class _TribeMessagesViewMobile extends StatelessWidget {
     _buildEmptyChatListWidget() {
       return Center(
         child: Text(
-          'No messages',
+          'Be the first to send a message',
           style: TextStyle(
             fontFamily: 'TribesRounded',
             color: Colors.black26,
@@ -32,6 +32,7 @@ class _TribeMessagesViewMobile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(18.0),
                 child: Container(
+                  padding: const EdgeInsets.all(4),
                   color: themeData.backgroundColor,
                   child: StreamBuilder<List<Message>>(
                     initialData: [],

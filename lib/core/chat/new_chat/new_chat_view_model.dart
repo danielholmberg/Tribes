@@ -35,6 +35,11 @@ class NewChatViewModel extends ReactiveViewModel {
 
   bool get notEmptySearchResult => _searchResult.isNotEmpty;
 
+  void onJoinTribe() {
+    _navigationService.back();
+    _navigationService.navigateTo(MyRouter.joinTribeRoute);
+  }
+
   void initState() {
     _friendsFuture = DatabaseService().friendsList(currentUser.id);
   }

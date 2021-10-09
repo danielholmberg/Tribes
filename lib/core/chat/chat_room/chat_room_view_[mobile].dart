@@ -88,12 +88,7 @@ class _ChatRoomViewMobile extends ViewModelWidget<ChatRoomViewModel> {
     _buildMessageComposer() {
       return Container(
         constraints: BoxConstraints(minHeight: 70),
-        padding: EdgeInsets.only(
-          top: 8.0,
-          bottom: Platform.isIOS
-              ? (model.textFieldFocus.hasFocus ? 8.0 : 24.0)
-              : 8.0,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
