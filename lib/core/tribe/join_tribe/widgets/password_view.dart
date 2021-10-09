@@ -83,7 +83,7 @@ class PasswordView extends StatelessWidget {
                                       }) =>
                                           null,
                                       style: TextStyle(
-                                        color: model.activeTribeColor,
+                                        color: Constants.primaryColor,
                                       ),
                                       decoration: Decorations.tribePasswordInput
                                           .copyWith(
@@ -94,7 +94,7 @@ class PasswordView extends StatelessWidget {
                                           borderSide: BorderSide(
                                             color: model.one.isEmpty
                                                 ? Colors.black26
-                                                : model.activeTribeColor,
+                                                : Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -103,7 +103,7 @@ class PasswordView extends StatelessWidget {
                                             Radius.circular(8.0),
                                           ),
                                           borderSide: BorderSide(
-                                            color: model.activeTribeColor,
+                                            color: Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -135,12 +135,12 @@ class PasswordView extends StatelessWidget {
                                       }) =>
                                           null,
                                       style: TextStyle(
-                                        color: model.activeTribeColor,
+                                        color: Constants.primaryColor,
                                       ),
                                       decoration: Decorations.tribePasswordInput
                                           .copyWith(
                                         labelStyle: TextStyle(
-                                          color: model.activeTribeColor,
+                                          color: Constants.primaryColor,
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -149,7 +149,7 @@ class PasswordView extends StatelessWidget {
                                           borderSide: BorderSide(
                                             color: model.two.isEmpty
                                                 ? Colors.black26
-                                                : model.activeTribeColor,
+                                                : Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -158,7 +158,7 @@ class PasswordView extends StatelessWidget {
                                             Radius.circular(8.0),
                                           ),
                                           borderSide: BorderSide(
-                                            color: model.activeTribeColor,
+                                            color: Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -190,12 +190,12 @@ class PasswordView extends StatelessWidget {
                                       }) =>
                                           null,
                                       style: TextStyle(
-                                        color: model.activeTribeColor,
+                                        color: Constants.primaryColor,
                                       ),
                                       decoration: Decorations.tribePasswordInput
                                           .copyWith(
                                         labelStyle: TextStyle(
-                                          color: model.activeTribeColor,
+                                          color: Constants.primaryColor,
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -203,7 +203,7 @@ class PasswordView extends StatelessWidget {
                                           borderSide: BorderSide(
                                             color: model.three.isEmpty
                                                 ? Colors.black26
-                                                : model.activeTribeColor,
+                                                : Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -212,7 +212,7 @@ class PasswordView extends StatelessWidget {
                                             Radius.circular(8.0),
                                           ),
                                           borderSide: BorderSide(
-                                            color: model.activeTribeColor,
+                                            color: Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -244,12 +244,12 @@ class PasswordView extends StatelessWidget {
                                       }) =>
                                           null,
                                       style: TextStyle(
-                                        color: model.activeTribeColor,
+                                        color: Constants.primaryColor,
                                       ),
                                       decoration: Decorations.tribePasswordInput
                                           .copyWith(
                                         labelStyle: TextStyle(
-                                          color: model.activeTribeColor,
+                                          color: Constants.primaryColor,
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -258,7 +258,7 @@ class PasswordView extends StatelessWidget {
                                           borderSide: BorderSide(
                                             color: model.four.isEmpty
                                                 ? Colors.black26
-                                                : model.activeTribeColor,
+                                                : Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -267,7 +267,7 @@ class PasswordView extends StatelessWidget {
                                             Radius.circular(8.0),
                                           ),
                                           borderSide: BorderSide(
-                                            color: model.activeTribeColor,
+                                            color: Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -299,12 +299,12 @@ class PasswordView extends StatelessWidget {
                                       }) =>
                                           null,
                                       style: TextStyle(
-                                        color: model.activeTribeColor,
+                                        color: Constants.primaryColor,
                                       ),
                                       decoration: Decorations.tribePasswordInput
                                           .copyWith(
                                         labelStyle: TextStyle(
-                                          color: model.activeTribeColor,
+                                          color: Constants.primaryColor,
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -313,7 +313,7 @@ class PasswordView extends StatelessWidget {
                                           borderSide: BorderSide(
                                             color: model.five.isEmpty
                                                 ? Colors.black26
-                                                : model.activeTribeColor,
+                                                : Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -322,7 +322,7 @@ class PasswordView extends StatelessWidget {
                                             Radius.circular(8.0),
                                           ),
                                           borderSide: BorderSide(
-                                            color: model.activeTribeColor,
+                                            color: Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -354,12 +354,12 @@ class PasswordView extends StatelessWidget {
                                       }) =>
                                           null,
                                       style: TextStyle(
-                                        color: model.activeTribeColor,
+                                        color: Constants.primaryColor,
                                       ),
                                       decoration: Decorations.tribePasswordInput
                                           .copyWith(
                                         labelStyle: TextStyle(
-                                          color: model.activeTribeColor,
+                                          color: Constants.primaryColor,
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -368,7 +368,7 @@ class PasswordView extends StatelessWidget {
                                           borderSide: BorderSide(
                                             color: model.six.isEmpty
                                                 ? Colors.black26
-                                                : model.activeTribeColor,
+                                                : Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
@@ -377,7 +377,7 @@ class PasswordView extends StatelessWidget {
                                             Radius.circular(8.0),
                                           ),
                                           borderSide: BorderSide(
-                                            color: model.activeTribeColor,
+                                            color: Constants.primaryColor,
                                             width: 2.0,
                                           ),
                                         ),
